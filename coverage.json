@@ -1,0 +1,156 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-03-02T18:21:27.612Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 10,
+    "implemented": 7,
+    "items": [
+      {
+        "id": "REQ-14",
+        "summary": "Extend the Spiritual Shop backend data by adding new product categories and seeding at least 20 additional products: Rudraksha (individual bead types: 1-mukhi through 14-mukhi, Gauri Shankar, Ganesha, Siddha Rudraksha — each as a separate product with name, description, category='Rudraksha', price, benefits, astrological purpose); Nav Grah Photo Murti (all 9 planetary deity idols: Surya, Chandra, Mangal, Budh, Guru, Shukra, Shani, Rahu, Ketu — each as a separate product with category='Nav Grah Murti'); Nav Grah Yatra Photos (pilgrimage photo prints for the 9 Nav Grah temples, category='Nav Grah Yatra'); Devi-Devta Photo Yatra (deity yatra photo collection for major deities: Durga, Lakshmi, Saraswati, Kali, Shiva, Vishnu, Krishna, Ram, Hanuman, Ganesh — category='Devi Devta Yatra'). All products must be accessible through the existing getProducts, getProductById, and addToCart/checkout flows.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-15",
+        "summary": "In the frontend Spiritual Shop page (frontend/src/pages/SpiritualShop.tsx), add the four new product categories — Rudraksha, Nav Grah Murti, Nav Grah Yatra, and Devi Devta Yatra — to the category filter tabs/buttons so users can browse and filter products by these categories. Ensure product cards, detail pages, and add-to-cart flow work identically to existing categories.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/SpiritualShop.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/SpiritualShop.tsx"
+        ]
+      },
+      {
+        "id": "REQ-16",
+        "summary": "Add Nav Grah mantras for all 9 planets (Surya, Chandra, Mangal, Budh, Guru/Brihaspati, Shukra, Shani, Rahu, Ketu) and at least 10 major Devi-Devta mantras (e.g., Durga Mantra, Lakshmi Mantra, Saraswati Mantra, Ganesh Mantra, Shiva Panchakshara, Vishnu Mantra, Krishna Mantra, Hanuman Mantra, Ram Mantra, Kali Mantra) as new seeded entries in the backend devotional content store. Each entry must have title, deity, type='Mantra', full Sanskrit text with Hindi/English transliteration, and language tag. These entries must appear in the existing Devotional Content Library page under the Mantras tab.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/DevotionalLibrary.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-17",
+        "summary": "Add a dedicated Bhajan Library page (frontend/src/pages/BhajanlLibrary.tsx) as a standalone section separate from the existing Devotional Content Library. The page must feature a full music player UI with play/pause, next track, previous track, playlist queue display, repeat mode, and shuffle mode controls. Pre-load at least 12 mock bhajan entries (title, artist/deity, duration placeholder, lyrics text, placeholder audio URL) rendered as a playlist. Include both a typing search bar and a voice search button (using Web Speech API SpeechRecognition, with graceful fallback if unsupported) to filter the bhajan list by title or deity. The player should show currently playing track name, a progress bar (non-functional/mock for placeholder audio), and track artwork placeholder. Add a 'Bhajan Library' nav link in the main Layout header and footer.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/BhajanLibrary.tsx",
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/BhajanLibrary.tsx",
+          "frontend/src/components/Layout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-18",
+        "summary": "Add a dedicated Vrat Katha page (frontend/src/pages/VratKatha.tsx) at route /vrat-katha. Seed at least 10 Vrat Katha entries in the backend with: title, vrat/festival name (e.g., Ekadashi Katha, Solah Somvar Katha, Satyanarayan Katha, Ganesh Chaturthi Katha, Navratri Katha, Karva Chauth Katha, Pradosh Katha, Shivratri Katha, Janmashtami Katha, Diwali Lakshmi Puja Katha), full story text (mock placeholder paragraphs in Hindi/English), audio URL (placeholder), and festival type. The frontend page displays katha entries in a card grid. Clicking a card opens a detail view showing the full story text with paragraph formatting and an audio player bar (play/pause, with placeholder audio source). Add 'Vrat Katha' to the main nav and footer links.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/VratKatha.tsx",
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/VratKatha.tsx",
+          "frontend/src/components/Layout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-19",
+        "summary": "Add a dedicated Holy Books Audio page (frontend/src/pages/HolyBooksAudio.tsx) at route /holy-books. Seed the backend with at least 12 holy book entries covering all major Hindu texts: Bhagavad Gita (18 chapters as tracks), Ramcharitmanas (7 Kandas), Shrimad Bhagavatam (overview + selected cantos), Rigveda (sample suktas), Samaveda, Yajurveda, Atharvaveda, Hanuman Chalisa (full path recitation), Sundarkand, Durga Saptashati (13 chapters), Vishnu Sahasranama, and Shiva Mahimna Stotram. Each entry has: bookTitle, chapter/track title, shloka/verse text (mock Sanskrit + transliteration), audioUrl (placeholder), bookCategory (Veda/Purana/Stotra/Epic), and trackNumber. The frontend page has a sidebar/accordion list of books with their chapters. Selecting a chapter loads it in a central music-player panel with play/pause, next chapter, previous chapter, chapter list navigation, and the shloka text displayed below the player. Add 'Holy Books' to main nav and footer.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HolyBooksAudio.tsx",
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HolyBooksAudio.tsx",
+          "frontend/src/components/Layout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Add an Admin CMS section as a separate password-gated page (frontend/src/pages/AdminCMS.tsx) at route /admin-cms, distinct from the existing AstrologerDashboard. It must require a hardcoded password (e.g., 'admin2024') entered in a gate form before access is granted. The CMS has three tabs: (1) Bhajan Library Management — admin can add a new bhajan (title, deity, artist, lyrics text, audio file upload converted to base64) and view/delete existing bhajan entries; (2) Vrat Katha Management — admin can add/edit/delete katha entries (title, festival name, story text, audio file upload as base64); (3) Holy Books Management — admin can add new book chapters (bookTitle, chapterTitle, shloka text, audio file upload as base64, bookCategory). Audio files uploaded via the CMS are stored as base64 Text in the Motoko backend. Backend must expose update/create/delete endpoints for bhajan, vrat katha, and holy book audio entries accessible only with an admin principal check or a simple flag.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AdminCMS.tsx",
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AdminCMS.tsx",
+          "frontend/src/components/Layout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-21",
+        "summary": "Extend the Motoko backend (backend/main.mo) to add stable storage and CRUD operations for: (1) BhajanEntry type (id, title, deity, artist, lyricsText, audioBase64, createdAt); (2) VratKathaEntry type (id, title, festivalName, storyText, audioBase64, createdAt); (3) HolyBookEntry type (id, bookTitle, chapterTitle, shlokaText, audioBase64, bookCategory, trackNumber, createdAt). Expose query functions: getBhajans(), getVratKathas(), getHolyBookEntries(bookTitle: Text) and update functions: addBhajan(...), updateBhajan(...), deleteBhajan(id), addVratKatha(...), updateVratKatha(...), deleteVratKatha(id), addHolyBookEntry(...), deleteHolyBookEntry(id). Seed initial mock data for all three types matching the frontend requirements (REQ-17, REQ-18, REQ-19).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-22",
+        "summary": "Add React Query hooks in frontend/src/hooks/useQueries.ts for the new backend endpoints: useBhajans(), useVratKathas(), useHolyBookEntries(bookTitle), useAddBhajan(), useUpdateBhajan(), useDeleteBhajan(), useAddVratKatha(), useUpdateVratKatha(), useDeleteVratKatha(), useAddHolyBookEntry(), useDeleteHolyBookEntry(). These hooks follow the same pattern as existing hooks in that file.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-23",
+        "summary": "Update the main App.tsx router to add routes for the four new pages: /bhajan-library (BhajanLibrary), /vrat-katha (VratKatha), /holy-books (HolyBooksAudio), /admin-cms (AdminCMS). Update the Layout.tsx navigation header to include links for 'Bhajan Library', 'Vrat Katha', and 'Holy Books' in the appropriate nav section (devotional/content group). Update the footer in Layout.tsx to include all four new section links. Update the Home.tsx landing page to add CTA cards or quick-access buttons for Bhajan Library, Vrat Katha, and Holy Books in the features/quick-access section.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/pages/Home.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/pages/Home.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/README.md",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/bhajan-library-banner.dim_1200x400.png",
+    "frontend/public/assets/generated/holy-books-banner.dim_1200x400.png",
+    "frontend/public/assets/generated/navgrah-banner.dim_1200x400.png",
+    "frontend/public/assets/generated/navgrah-murti-product.dim_400x400.png",
+    "frontend/public/assets/generated/rudraksha-product.dim_400x400.png",
+    "frontend/public/assets/generated/vrat-katha-banner.dim_1200x400.png",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminCMS.tsx",
+    "frontend/src/pages/BhajanLibrary.tsx",
+    "frontend/src/pages/HolyBooksAudio.tsx",
+    "frontend/src/pages/Home.tsx",
+    "frontend/src/pages/SpiritualShop.tsx",
+    "frontend/src/pages/VratKatha.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}
