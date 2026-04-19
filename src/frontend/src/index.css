@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;500;600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -64,6 +65,26 @@
     --maroon: 0.35 0.12 25;
     --cream: 0.97 0.015 85;
     --deep-maroon: 0.22 0.08 22;
+
+    /* Astrology Dashboard Extensions */
+    --chakra-1: 0.65 0.2 30;
+    --chakra-2: 0.68 0.2 48;
+    --chakra-3: 0.78 0.14 75;
+    --chakra-4: 0.62 0.16 120;
+    --chakra-5: 0.55 0.18 200;
+    --chart-bg: 0.95 0.008 82;
+    --grid-lines: 0.88 0.03 72;
+    --planet-sun: 0.8 0.18 65;
+    --planet-moon: 0.92 0.04 85;
+    --planet-mars: 0.55 0.2 28;
+    --planet-mercury: 0.65 0.14 85;
+    --planet-jupiter: 0.72 0.16 55;
+    --planet-venus: 0.78 0.12 70;
+    --planet-saturn: 0.42 0.08 50;
+    --rahu-shadow: 0.35 0.12 25;
+    --ketu-shadow: 0.25 0.08 35;
+    --success-yoga: 0.65 0.16 140;
+    --caution-dosha: 0.55 0.22 25;
   }
 
   .dark {
@@ -94,6 +115,15 @@
     --sidebar-accent-foreground: 0.94 0.015 80;
     --sidebar-border: 0.22 0.05 28;
     --sidebar-ring: 0.72 0.18 55;
+
+    /* Dark mode astrology tokens */
+    --chart-bg: 0.12 0.04 25;
+    --grid-lines: 0.22 0.05 28;
+    --chakra-1: 0.55 0.18 30;
+    --chakra-2: 0.72 0.18 55;
+    --chakra-3: 0.78 0.14 75;
+    --chakra-4: 0.62 0.16 120;
+    --chakra-5: 0.65 0.16 200;
   }
 
   * {
@@ -350,6 +380,474 @@
 
   .animate-ripple {
     animation: ripple 1s ease-out forwards;
+  }
+
+  /* Calculator Result Card Styles */
+  .calculator-result-card {
+    @apply bg-card rounded-lg border border-border p-6 md:p-8 shadow-sm hover:shadow-spiritual transition-all duration-300;
+    background: linear-gradient(
+      135deg,
+      oklch(0.99 0.008 80) 0%,
+      oklch(0.97 0.015 85 / 0.5) 100%
+    );
+  }
+
+  .calculator-result-card.dark {
+    background: linear-gradient(
+      135deg,
+      oklch(0.18 0.05 28) 0%,
+      oklch(0.12 0.04 25) 100%
+    );
+  }
+
+  .result-value {
+    @apply font-heading text-4xl md:text-5xl font-bold tracking-tight;
+    color: oklch(var(--saffron));
+  }
+
+  .result-label {
+    @apply text-sm font-body text-muted-foreground uppercase tracking-widest;
+  }
+
+  .result-detail {
+    @apply text-xs md:text-sm font-body text-muted-foreground mt-1;
+  }
+
+  /* Speaker Button */
+  .speaker-btn {
+    @apply inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200;
+    background: oklch(var(--gold) / 0.1);
+    color: oklch(var(--gold));
+    border: 1px solid oklch(var(--gold) / 0.2);
+  }
+
+  .speaker-btn:hover {
+    background: oklch(var(--gold) / 0.2);
+    border-color: oklch(var(--gold) / 0.4);
+    transform: scale(1.05);
+  }
+
+  .speaker-btn:active {
+    background: oklch(var(--gold) / 0.3);
+    transform: scale(0.95);
+  }
+
+  .speaker-btn.playing {
+    animation: pulse-audio 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse-audio {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 oklch(var(--gold) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 4px oklch(var(--gold) / 0.1);
+    }
+  }
+
+  /* Astrology Dashboard Panels */
+  .astro-panel {
+    @apply bg-card rounded-lg border border-border p-4 md:p-6 transition-all duration-300;
+  }
+
+  .astro-panel-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .astro-panel-title {
+    @apply font-heading font-bold text-lg;
+    color: oklch(var(--maroon));
+  }
+
+  .astro-panel-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    background: oklch(var(--saffron) / 0.1);
+    color: oklch(var(--saffron));
+    border: 1px solid oklch(var(--saffron) / 0.2);
+  }
+
+  /* Chart Grid Layout */
+  .chart-grid {
+    @apply relative w-full aspect-square rounded-lg border-2 flex items-center justify-center;
+    background: oklch(var(--chart-bg));
+    border-color: oklch(var(--grid-lines));
+  }
+
+  .chart-grid svg {
+    @apply w-full h-full;
+  }
+
+  .chart-house {
+    @apply text-xs md:text-sm font-body font-medium;
+    color: oklch(var(--maroon));
+  }
+
+  .chart-planet {
+    @apply text-sm md:text-base font-heading font-bold;
+    color: oklch(var(--saffron));
+  }
+
+  /* Planet Colors in Charts */
+  .planet-sun {
+    color: oklch(var(--planet-sun));
+  }
+  .planet-moon {
+    color: oklch(var(--planet-moon));
+  }
+  .planet-mars {
+    color: oklch(var(--planet-mars));
+  }
+  .planet-mercury {
+    color: oklch(var(--planet-mercury));
+  }
+  .planet-jupiter {
+    color: oklch(var(--planet-jupiter));
+  }
+  .planet-venus {
+    color: oklch(var(--planet-venus));
+  }
+  .planet-saturn {
+    color: oklch(var(--planet-saturn));
+  }
+  .planet-rahu {
+    color: oklch(var(--rahu-shadow));
+  }
+  .planet-ketu {
+    color: oklch(var(--ketu-shadow));
+  }
+
+  /* Comparison View */
+  .comparison-column {
+    @apply flex-1 space-y-3;
+  }
+
+  .comparison-row {
+    @apply grid grid-cols-2 gap-4 md:gap-6;
+  }
+
+  .comparison-item {
+    @apply bg-muted/40 rounded-lg p-3 md:p-4;
+  }
+
+  .comparison-label {
+    @apply text-xs font-heading uppercase tracking-wider text-muted-foreground;
+  }
+
+  .comparison-value {
+    @apply text-base md:text-lg font-heading font-bold mt-1;
+    color: oklch(var(--maroon));
+  }
+
+  /* Product Pages */
+  .product-card {
+    @apply bg-card rounded-lg border border-border overflow-hidden transition-all duration-300 hover:shadow-spiritual;
+  }
+
+  .product-image {
+    @apply w-full aspect-square object-cover;
+  }
+
+  .product-header {
+    @apply p-4 md:p-6 border-b border-border;
+  }
+
+  .product-title {
+    @apply font-heading font-bold text-lg md:text-xl;
+    color: oklch(var(--maroon));
+  }
+
+  .product-category {
+    @apply text-xs font-body uppercase tracking-widest text-muted-foreground mt-1;
+  }
+
+  .product-specs {
+    @apply space-y-3 p-4 md:p-6;
+  }
+
+  .product-spec {
+    @apply flex justify-between items-start;
+  }
+
+  .product-spec-label {
+    @apply text-sm font-body text-muted-foreground;
+  }
+
+  .product-spec-value {
+    @apply text-sm font-heading font-semibold text-foreground;
+  }
+
+  .product-footer {
+    @apply p-4 md:p-6 border-t border-border flex gap-3;
+  }
+
+  .product-price {
+    @apply text-lg md:text-2xl font-heading font-bold;
+    color: oklch(var(--gold));
+  }
+
+  /* Logo Creator Canvas */
+  .canvas-container {
+    @apply relative w-full max-w-2xl aspect-square rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/20;
+    border-color: oklch(var(--grid-lines));
+  }
+
+  .canvas-toolbar {
+    @apply flex flex-wrap gap-2 p-4 bg-muted/30 rounded-lg;
+  }
+
+  .canvas-btn {
+    @apply px-3 py-2 rounded-md text-xs font-medium transition-all duration-200;
+    background: oklch(var(--gold) / 0.1);
+    color: oklch(var(--gold));
+    border: 1px solid oklch(var(--gold) / 0.2);
+  }
+
+  .canvas-btn:hover {
+    background: oklch(var(--gold) / 0.2);
+    border-color: oklch(var(--gold) / 0.4);
+  }
+
+  .canvas-btn.active {
+    background: oklch(var(--gold));
+    color: oklch(0.18 0.04 30);
+  }
+
+  /* Name Selection Tool */
+  .name-suggestion-card {
+    @apply bg-card rounded-lg border border-border p-4 md:p-6 transition-all duration-300 hover:border-primary;
+  }
+
+  .name-suggestion-header {
+    @apply flex items-center justify-between mb-3;
+  }
+
+  .name-value {
+    @apply font-heading font-bold text-lg;
+    color: oklch(var(--saffron));
+  }
+
+  .name-score {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    background: oklch(var(--success-yoga) / 0.15);
+    color: oklch(var(--success-yoga));
+    border: 1px solid oklch(var(--success-yoga) / 0.3);
+  }
+
+  .name-details {
+    @apply space-y-2 text-sm;
+  }
+
+  .name-detail-item {
+    @apply flex justify-between items-start;
+  }
+
+  .name-detail-label {
+    @apply font-body text-muted-foreground;
+  }
+
+  .name-detail-value {
+    @apply font-heading font-semibold text-foreground;
+  }
+
+  /* Lo Shu Grid Visualization */
+  .loshu-grid {
+    @apply grid grid-cols-3 gap-2 md:gap-4 max-w-sm;
+  }
+
+  .loshu-cell {
+    @apply aspect-square rounded-lg border-2 flex items-center justify-center font-heading font-bold text-xl md:text-2xl transition-all duration-300;
+    background: oklch(var(--chart-bg));
+    border-color: oklch(var(--grid-lines));
+    color: oklch(var(--maroon));
+  }
+
+  .loshu-cell.present {
+    background: oklch(var(--success-yoga) / 0.15);
+    border-color: oklch(var(--success-yoga));
+    color: oklch(var(--success-yoga));
+  }
+
+  .loshu-cell.missing {
+    opacity: 0.4;
+  }
+
+  /* Dasha Timeline */
+  .dasha-timeline {
+    @apply space-y-3;
+  }
+
+  .dasha-entry {
+    @apply relative pl-6 pb-4 border-l-2;
+    border-color: oklch(var(--grid-lines));
+  }
+
+  .dasha-entry::before {
+    @apply absolute -left-3 top-0 w-4 h-4 rounded-full;
+    background: oklch(var(--saffron));
+    content: "";
+  }
+
+  .dasha-entry.current {
+    border-color: oklch(var(--saffron));
+  }
+
+  .dasha-entry.current::before {
+    background: oklch(var(--gold));
+    box-shadow: 0 0 0 2px oklch(var(--gold) / 0.3);
+  }
+
+  .dasha-planet {
+    @apply font-heading font-bold text-sm;
+    color: oklch(var(--maroon));
+  }
+
+  .dasha-period {
+    @apply text-xs font-body text-muted-foreground mt-0.5;
+  }
+
+  /* Astro Score Visualization */
+  .astro-score {
+    @apply relative w-32 h-32 rounded-full flex items-center justify-center;
+    background: conic-gradient(
+      oklch(var(--success-yoga)) 0deg,
+      oklch(var(--saffron)) 180deg,
+      oklch(var(--caution-dosha)) 360deg
+    );
+  }
+
+  .astro-score-inner {
+    @apply absolute w-28 h-28 rounded-full bg-card flex items-center justify-center;
+  }
+
+  .astro-score-value {
+    @apply font-heading font-bold text-3xl;
+    color: oklch(var(--maroon));
+  }
+
+  /* Yoga & Dosha Badge */
+  .yoga-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    background: oklch(var(--success-yoga) / 0.15);
+    color: oklch(var(--success-yoga));
+    border: 1px solid oklch(var(--success-yoga) / 0.3);
+  }
+
+  .yoga-badge.present {
+    background: oklch(var(--success-yoga) / 0.15);
+    color: oklch(var(--success-yoga));
+    border-color: oklch(var(--success-yoga) / 0.3);
+  }
+
+  .yoga-badge.partial {
+    background: oklch(var(--saffron) / 0.15);
+    color: oklch(var(--saffron));
+    border-color: oklch(var(--saffron) / 0.3);
+  }
+
+  .yoga-badge.missing {
+    background: oklch(var(--caution-dosha) / 0.15);
+    color: oklch(var(--caution-dosha));
+    border-color: oklch(var(--caution-dosha) / 0.3);
+  }
+
+  /* Planetary Strength Table */
+  .planet-table {
+    @apply w-full border-collapse;
+  }
+
+  .planet-table th {
+    @apply bg-muted/50 px-3 py-2 text-left text-xs font-heading uppercase tracking-wider;
+    color: oklch(var(--maroon));
+    border-bottom: 2px solid oklch(var(--grid-lines));
+  }
+
+  .planet-table td {
+    @apply px-3 py-2 border-b border-border text-sm font-body;
+  }
+
+  .planet-table tr:hover {
+    background: oklch(var(--muted) / 0.3);
+  }
+
+  /* Ashtakvarga Visualization */
+  .ashtakvarga-cell {
+    @apply w-10 h-10 rounded flex items-center justify-center text-xs font-bold;
+    background: oklch(var(--chart-bg));
+    color: oklch(var(--maroon));
+    border: 1px solid oklch(var(--grid-lines));
+  }
+
+  .ashtakvarga-cell.high {
+    background: oklch(var(--success-yoga) / 0.2);
+    color: oklch(var(--success-yoga));
+    border-color: oklch(var(--success-yoga) / 0.4);
+  }
+
+  .ashtakvarga-cell.medium {
+    background: oklch(var(--saffron) / 0.2);
+    color: oklch(var(--saffron));
+    border-color: oklch(var(--saffron) / 0.4);
+  }
+
+  .ashtakvarga-cell.low {
+    background: oklch(var(--caution-dosha) / 0.2);
+    color: oklch(var(--caution-dosha));
+    border-color: oklch(var(--caution-dosha) / 0.4);
+  }
+
+  /* AI Question Card */
+  .question-card {
+    @apply bg-card rounded-lg border border-border p-4 md:p-6 transition-all duration-300 hover:shadow-spiritual;
+  }
+
+  .question-card.locked {
+    @apply opacity-60;
+  }
+
+  .question-number {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-heading font-bold;
+    background: oklch(var(--saffron) / 0.1);
+    color: oklch(var(--saffron));
+  }
+
+  .question-text {
+    @apply font-body text-base md:text-lg font-medium mt-3;
+    color: oklch(var(--maroon));
+  }
+
+  .question-lock {
+    @apply inline-flex items-center justify-center w-6 h-6 rounded-full text-xs;
+    background: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+  }
+
+  .question-unlock-btn {
+    @apply mt-4 px-4 py-2 rounded-lg text-sm font-heading font-semibold transition-all duration-200;
+    background: oklch(var(--saffron));
+    color: oklch(0.99 0.005 80);
+    border: none;
+  }
+
+  .question-unlock-btn:hover {
+    background: oklch(var(--saffron) / 0.9);
+    box-shadow: 0 4px 12px oklch(var(--saffron) / 0.3);
+  }
+
+  /* Script / language font classes */
+  .font-devanagari {
+    font-family: "Noto Sans Devanagari", "Mangal", sans-serif;
+    line-height: 1.8;
+  }
+
+  .font-gurmukhi {
+    font-family: "Noto Sans Gurmukhi", sans-serif;
+    line-height: 1.6;
+  }
+
+  .font-shloka {
+    font-family: "Tiro Devanagari Sanskrit", "Noto Sans Devanagari", serif;
+    line-height: 2.0;
   }
 
   /* Scrollbar styling */

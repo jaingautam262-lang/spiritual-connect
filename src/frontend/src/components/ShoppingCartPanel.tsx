@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useCreateCheckoutSession } from "../hooks/useQueries";
 import { useCartStore } from "../stores/cartStore";
 
@@ -28,11 +28,9 @@ export default function ShoppingCartPanel({
     if (items.length === 0) return;
 
     const shoppingItems = items.map((item) => ({
-      productName: item.name,
-      productDescription: item.category,
+      name: item.name,
+      price: item.price,
       quantity: BigInt(item.quantity),
-      priceInCents: BigInt(Math.round(item.price * 100)),
-      currency: "inr",
     }));
 
     const baseUrl = `${window.location.protocol}//${window.location.host}`;

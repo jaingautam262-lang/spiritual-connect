@@ -1,9 +1,30 @@
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, BookOpen, Search, Star } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import BenefitsSection from "../components/BenefitsSection";
+import { findBenefitsByTitle } from "../data/content-benefits-data";
+import { part12Stotras } from "../data/part12Stotras";
+import { part13Stotras } from "../data/part13Stotras";
+import { part14Stotras } from "../data/part14Stotras";
+import { part15Stotras } from "../data/part15Stotras";
+import { part16Stotras } from "../data/part16Stotras";
+import { part17Stotras } from "../data/part17Stotras";
+import { part18Stotras } from "../data/part18Stotras";
+import { part19Stotras } from "../data/part19Stotras";
+import { part20Stotras } from "../data/part20Stotras";
+import { part21Stotras } from "../data/part21Stotras";
+import { part22aStotras } from "../data/part22aStotras";
+import { part22bStotras } from "../data/part22bStotras";
+import { part23aStotras } from "../data/part23aStotras";
+import { part23bStotras } from "../data/part23bStotras";
+import { part24aStotras } from "../data/part24aStotras";
+import { part24bStotras } from "../data/part24bStotras";
+import { part25Stotras } from "../data/part25Stotras";
+import { part26Stotras } from "../data/part26Stotras";
+import { part27Stotras } from "../data/part27Stotras";
 import {
   type Stotra as StotraEntry,
-  allStotras,
+  stotraData,
   stotraTypes,
 } from "../data/stotraData";
 
@@ -42,6 +63,9 @@ const deityIcons: Record<string, string> = {
   Surya: "☀️",
   Annapurna: "🍚",
   Kali: "🔪",
+  "Lalita Devi": "👑",
+  Ganga: "🌊",
+  Shani: "⚖️",
 };
 
 function TypeBadge({ type }: { type: string }) {
@@ -160,6 +184,7 @@ function DetailView({
   onBack,
 }: { stotra: StotraEntry; onBack: () => void }) {
   const icon = deityIcons[stotra.deity] ?? "📿";
+  const benefitsData = findBenefitsByTitle(stotra.title);
   return (
     <div className="max-w-3xl mx-auto">
       {/* Back button */}
@@ -276,10 +301,9 @@ function DetailView({
           style={{ background: "oklch(0.99 0.008 80)" }}
         >
           <pre
-            className="whitespace-pre-wrap font-body text-base md:text-lg leading-loose"
+            className="whitespace-pre-wrap font-body text-base md:text-lg leading-loose font-devanagari"
             style={{
               color: "oklch(0.22 0.06 28)",
-              fontFamily: "'Noto Sans Devanagari', 'Lato', serif",
               letterSpacing: "0.01em",
             }}
           >
@@ -287,6 +311,19 @@ function DetailView({
           </pre>
         </div>
       </div>
+
+      {/* Benefits Section */}
+      {benefitsData && (
+        <BenefitsSection
+          className="mt-6"
+          benefits={benefitsData.benefits}
+          bestTime={benefitsData.bestTime}
+          repetitions={benefitsData.repetitions}
+          deityBlessings={benefitsData.deityBlessings}
+          occasions={benefitsData.occasions}
+          contentName={stotra.title}
+        />
+      )}
     </div>
   );
 }
@@ -295,6 +332,38 @@ export default function Stotra() {
   const [search, setSearch] = useState("");
   const [activeType, setActiveType] = useState("All");
   const [selected, setSelected] = useState<StotraEntry | null>(null);
+
+  const allStotras = useMemo(() => {
+    const raw = [
+      ...stotraData,
+      ...part12Stotras,
+      ...part13Stotras,
+      ...part14Stotras,
+      ...part15Stotras,
+      ...part16Stotras,
+      ...part17Stotras,
+      ...part18Stotras,
+      ...part19Stotras,
+      ...part20Stotras,
+      ...part21Stotras,
+      ...part22aStotras,
+      ...part22bStotras,
+      ...part23aStotras,
+      ...part23bStotras,
+      ...part24aStotras,
+      ...part24bStotras,
+      ...part25Stotras,
+      ...part26Stotras,
+      ...part27Stotras,
+    ];
+    // Deduplicate by id — keep first occurrence (canonical source wins)
+    const seen = new Set<string>();
+    return raw.filter((s) => {
+      if (seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
+  }, []);
 
   const filtered = allStotras.filter((s) => {
     const matchSearch =

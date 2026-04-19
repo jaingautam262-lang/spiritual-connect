@@ -1,11 +1,20 @@
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { ChevronDown, Heart, Menu, ShoppingCart, X } from "lucide-react";
-import { useState } from "react";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  ChevronDown,
+  Heart,
+  Menu,
+  Search,
+  ShoppingCart,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "../stores/cartStore";
+import LanguageToggle from "./LanguageToggle";
 import ShoppingCartPanel from "./ShoppingCartPanel";
 import StripePaymentSetup from "./StripePaymentSetup";
+import UnifiedMediaPlayer from "./UnifiedMediaPlayer";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,29 +24,219 @@ const navLinks = [
   { to: "/aarti", label: "🧘 Aarti" },
   { to: "/chalisa", label: "📖 Chalisa" },
   { to: "/mantra", label: "🔔 Mantra" },
-  { to: "/stotra", label: "📿 Stotra" },
+  { to: "/stotra", label: "💿 Stotra" },
   { to: "/kavach", label: "🛡️ कवच" },
-  { to: "/temples", label: "🛕 Temples" },
-  { to: "/temple-services", label: "Puja" },
-  { to: "/shop", label: "Shop" },
+  { to: "/energized-products", label: "🌰 Energized Products" },
 ];
 
-const moreLinks = [
-  { to: "/jain-pujan", label: "🙏 जैन पूजन" },
-  { to: "/horoscope", label: "Horoscope" },
-  { to: "/astrologer", label: "Astrologers" },
-  { to: "/reports", label: "Reports" },
-  { to: "/devotional", label: "Devotional" },
-  { to: "/bhajan-library", label: "Bhajan Library" },
-  { to: "/vrat-katha", label: "Vrat Katha" },
+const megaMenuSections = [
+  {
+    title: "🛕 जैन विभाग",
+    links: [
+      { to: "/jain-pujan", label: "जैन पूजन" },
+      { to: "/tirthankars", label: "24 तीर्थंकर" },
+      { to: "/jain-encyclopedia", label: "📚 जैन विश्वकोश" },
+      { to: "/jainipedia", label: "📖 Jainipedia" },
+      { to: "/jain-vrat-kathas", label: "🙏 जैन व्रत कथाएं" },
+    ],
+  },
+  {
+    title: "🔮 ज्योतिष विभाग",
+    links: [
+      { to: "/vedic-dashboard", label: "🪐 Vedic Dashboard (कुंडली)" },
+      { to: "/horoscope", label: "राशिफल/Horoscope" },
+      { to: "/horoscope-comparison", label: "🌐 Tri-System Comparison" },
+      { to: "/auspicious-times", label: "🌟 Auspicious Times | शुभ मुहूर्त" },
+      { to: "/live-panchang", label: "📅 Live Panchang" },
+      { to: "/shadow-planets", label: "☊ Shadow Planets" },
+      { to: "/current-transits", label: "🪐 Current Transits" },
+      { to: "/astrologer", label: "ज्योतिषी परामर्श" },
+      { to: "/palmistry", label: "🖐️ हस्तरेखा विश्लेषण" },
+      { to: "/palm-photo", label: "📸 हस्त फोटो विश्लेषण" },
+      { to: "/combined-vedic-reading", label: "🔯 संयुक्त वैदिक पाठन" },
+      { to: "/vastu", label: "🏛️ वास्तु शास्त्र" },
+      { to: "/vastu-checker", label: "🏠 वास्तु कक्ष जांच" },
+      { to: "/reports", label: "ज्योतिषी रिपोर्ट" },
+      { to: "/astrologer-dashboard", label: "ज्योतिषी डैशबोर्ड" },
+    ],
+  },
+  {
+    title: "🕉️ सहस्रनाम",
+    links: [
+      { to: "/sahasranam-sangrah", label: "✨ सहस्रनाम संग्रह" },
+      { to: "/sahasranam", label: "सहस्रनाम लाइब्रेरी" },
+      { to: "/stuti", label: "स्तुति लाइब्रेरी" },
+      { to: "/ashtakam", label: "अष्टकम लाइब्रेरी" },
+    ],
+  },
+  {
+    title: "📚 भक्ति पुस्तकालय",
+    links: [
+      { to: "/bhajan-library", label: "भजन लाइब्रेरी" },
+      { to: "/pathshala", label: "🏫 पाठशाला | Bal Sanskar" },
+      { to: "/media-player", label: "🎵 Media Player" },
+      { to: "/festival-calendar", label: "📅 Festival Calendar 2026" },
+      { to: "/vrat-katha", label: "व्रत कथा" },
+      { to: "/sikh-kirtans", label: "🕌 Sikh Kirtans & Nitnem" },
+      { to: "/holy-books-reader", label: "📖 Holy Books Reader" },
+      { to: "/holy-books-overview", label: "Holy Books Overview" },
+      { to: "/vedas-suktam", label: "🕉️ Vedas & Suktam Library" },
+      { to: "/suktam-library", label: "📜 सूक्तम् Library (43)" },
+      { to: "/holy-books", label: "Holy Books" },
+      { to: "/devotional", label: "Devotional" },
+    ],
+  },
+  {
+    title: "🛕 मंदिर & सेवाएं",
+    links: [
+      { to: "/chadhava", label: "🪔 Chadhava & Sacred Bhet" },
+      { to: "/virtual-temple", label: "My Temple" },
+      { to: "/temples", label: "Temple Directory" },
+      { to: "/temple-services", label: "Puja Services" },
+      { to: "/pujas-catalog", label: "🙏 Book a Puja" },
+      { to: "/puja-booking", label: "📋 Puja Booking" },
+      { to: "/booking-history", label: "🕰️ बुकिंग इतिहास" },
+      { to: "/puja-types", label: "📋 Puja Types Directory" },
+      { to: "/puja-reports", label: "🗒️ Puja Reports" },
+      { to: "/energized-products", label: "🌰 Energized Products" },
+      { to: "/shop", label: "Shop" },
+      { to: "/gemstones/emerald", label: "💚 Emerald (Panna) Stone" },
+    ],
+  },
+  {
+    title: "🔢 संख्या विज्ञान & व्यापार",
+    links: [
+      { to: "/calculator-index", label: "🔢 All Calculators" },
+      { to: "/numerology", label: "Numerology" },
+      { to: "/business-tools", label: "Business Tools" },
+    ],
+  },
+  {
+    title: "🧮 Calculators",
+    links: [
+      { to: "/calculator/love", label: "❤️ Love Calculator" },
+      { to: "/calculator/name-numerology", label: "🔤 Name Numerology" },
+      { to: "/calculator/sun-sign", label: "☀️ Sun Sign" },
+      { to: "/calculator/rashi", label: "🌙 Rashi / Moon Sign" },
+      { to: "/calculator/rising-ascendant", label: "⬆️ Rising / Ascendant" },
+      { to: "/calculator/birth-chart", label: "🗺️ Birth Chart" },
+      { to: "/calculator/mangal-dosha", label: "🔴 Mangal Dosha" },
+      { to: "/calculator/sade-sati", label: "🪐 Shani Sade Sati" },
+      { to: "/calculator/ishta-devata", label: "🕉️ Ishta Devata" },
+      { to: "/calculator/nakshatra", label: "⭐ Nakshatra Finder" },
+      {
+        to: "/tools/carat-ratti-calculator",
+        label: "⚖️ Carat ↔ Ratti Calculator",
+      },
+    ],
+  },
+  {
+    title: "⚙️ Divine Tools & Admin",
+    links: [
+      { to: "/divine-info", label: "Divine Info" },
+      { to: "/dashboard", label: "Dashboard" },
+      { to: "/admin-cms", label: "Admin CMS" },
+    ],
+  },
+  {
+    title: "🌿 आयुर्वेद",
+    links: [{ to: "/ayurveda", label: "✨ आयुर्वेद & घरेलू नुस्खे" }],
+  },
+  {
+    title: "📝 Blog & Stories",
+    links: [
+      { to: "/blog", label: "📖 Spiritual Blog" },
+      { to: "/web-stories", label: "✨ Web Stories" },
+      { to: "/festival-calendar", label: "📅 Festival Calendar" },
+    ],
+  },
+  {
+    title: "☀️ Hindu Festivals",
+    links: [
+      { to: "/surya-dev", label: "☀️ Surya Deva — Lord Surya" },
+      { to: "/hindu-calendar", label: "📅 Hindu Calendar (Month-wise)" },
+      { to: "/top-hindu-festivals", label: "🏆 Top 25 Hindu Festivals" },
+      { to: "/top-hindu-festivals-20", label: "Top 20 Hindu Festivals" },
+      { to: "/top-hindu-festivals-10", label: "Top 10 Hindu Festivals" },
+      { to: "/festival-calendar", label: "🌞 Sankranti Festivals" },
+    ],
+  },
+];
+
+const allMobileLinks = [
+  ...navLinks,
+  { to: "/chadhava", label: "🪔 Chadhava & Sacred Bhet" },
+  { to: "/jain-pujan", label: "🛕 जैन पूजन" },
+  { to: "/tirthankars", label: "24 तीर्थंकर" },
+  { to: "/jain-encyclopedia", label: "📚 जैन विश्वकोश" },
+  { to: "/horoscope", label: "🔮 राशिफल" },
+  { to: "/horoscope-comparison", label: "🌐 Tri-System Comparison" },
+  { to: "/auspicious-times", label: "🌟 शुभ मुहूर्त" },
+  { to: "/live-panchang", label: "📅 Live Panchang" },
+  { to: "/shadow-planets", label: "☊ Shadow Planets" },
+  { to: "/current-transits", label: "🪐 Current Transits" },
+  { to: "/astrologer", label: "ज्योतिषी" },
+  { to: "/palmistry", label: "🖐️ हस्तरेखा" },
+  { to: "/palm-photo", label: "📸 हस्त फोटो विश्लेषण" },
+  { to: "/combined-vedic-reading", label: "🔯 संयुक्त वैदिक पाठन" },
+  { to: "/vastu", label: "🏛️ वास्तु शास्त्र" },
+  { to: "/vastu-checker", label: "🏠 वास्तु कक्ष जांच" },
+  { to: "/reports", label: "ज्योतिषी रिपोर्ट" },
+  { to: "/sahasranam-sangrah", label: "🕉️ सहस्रनाम संग्रह" },
+  { to: "/sahasranam", label: "सहस्रनामलाइब्रेरी" },
+  { to: "/stuti", label: "स्तुति" },
+  { to: "/ashtakam", label: "अष्टकम" },
+  { to: "/bhajan-library", label: "🎵 भजन" },
+  { to: "/pathshala", label: "🏫 पाठशाला | Bal Sanskar" },
+  { to: "/media-player", label: "🎵 Media Player" },
+  { to: "/festival-calendar", label: "📅 Festival Calendar" },
+  { to: "/vrat-katha", label: "व्रत कथा" },
+  { to: "/sikh-kirtans", label: "🕌 Sikh Kirtans & Nitnem" },
+  { to: "/jain-vrat-kathas", label: "🙏 जैन व्रत कथाएं" },
+  { to: "/holy-books-reader", label: "📖 Holy Books Reader" },
+  { to: "/holy-books-overview", label: "Holy Books Overview" },
+  { to: "/vedas-suktam", label: "🕉️ Vedas & Suktam" },
+  { to: "/suktam-library", label: "📜 सूक्तम् Library" },
   { to: "/holy-books", label: "Holy Books" },
-  { to: "/virtual-temple", label: "My Temple" },
-  { to: "/numerology", label: "Numerology" },
+  { to: "/devotional", label: "Devotional" },
+  { to: "/virtual-temple", label: "🛕 My Temple" },
+  { to: "/temples", label: "Temples" },
+  { to: "/temple-services", label: "Puja Services" },
+  { to: "/pujas-catalog", label: "🙏 Book a Puja" },
+  { to: "/puja-booking", label: "📋 Puja Booking Form" },
+  { to: "/booking-history", label: "🕰️ बुकिंग इतिहास / Booking History" },
+  { to: "/puja-types", label: "📋 Puja Types" },
+  { to: "/puja-reports", label: "🗒️ Puja Reports" },
+  { to: "/shop", label: "Shop" },
+  { to: "/gemstones/emerald", label: "💚 Emerald (Panna) Stone" },
+  { to: "/energized-products", label: "🌰 Energized Products" },
+  { to: "/numerology", label: "🔢 Numerology" },
+  { to: "/calculator-index", label: "🔢 All Calculators" },
   { to: "/business-tools", label: "Business Tools" },
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/tirthankars", label: "24 Tirthankars" },
+  { to: "/calculator/love", label: "❤️ Love Calculator" },
+  { to: "/calculator/name-numerology", label: "🔤 Name Numerology" },
+  { to: "/calculator/sun-sign", label: "☀️ Sun Sign Calculator" },
+  { to: "/calculator/rashi", label: "🌙 Rashi / Moon Sign" },
+  { to: "/calculator/rising-ascendant", label: "⬆️ Rising / Ascendant" },
+  { to: "/calculator/birth-chart", label: "🗺️ Birth Chart" },
+  { to: "/calculator/mangal-dosha", label: "🔴 Mangal Dosha" },
+  { to: "/calculator/sade-sati", label: "🪐 Shani Sade Sati" },
+  { to: "/calculator/ishta-devata", label: "🕉️ Ishta Devata" },
+  { to: "/calculator/nakshatra", label: "⭐ Nakshatra Finder" },
+  { to: "/tools/carat-ratti-calculator", label: "⚖️ Carat ↔ Ratti Calculator" },
   { to: "/divine-info", label: "Divine Info" },
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/astrologer-dashboard", label: "Admin Dashboard" },
+  { to: "/admin-cms", label: "Admin CMS" },
+  { to: "/ayurveda", label: "🌿 आयुर्वेद" },
+  { to: "/blog", label: "📖 Spiritual Blog" },
+  { to: "/web-stories", label: "✨ Web Stories" },
+  { to: "/festival-calendar", label: "📅 Festival Calendar" },
+  { to: "/surya-dev", label: "☀️ Surya Deva" },
+  { to: "/hindu-calendar", label: "📅 Hindu Calendar" },
+  { to: "/top-hindu-festivals", label: "🏆 Top 25 Hindu Festivals" },
+  { to: "/top-hindu-festivals-20", label: "Top 20 Hindu Festivals" },
+  { to: "/top-hindu-festivals-10", label: "Top 10 Hindu Festivals" },
 ];
 
 const footerSections = [
@@ -45,18 +244,27 @@ const footerSections = [
     title: "Temple Services",
     links: [
       { to: "/temple-services", label: "Puja Booking" },
-      { to: "/temple-services", label: "Virtual Chadhava" },
-      { to: "/temple-services", label: "Prasad Delivery" },
-      { to: "/temple-services", label: "Virtual Aarti" },
+      { to: "/pujas-catalog", label: "🙏 Book a Puja" },
+      { to: "/puja-types", label: "Puja Types" },
+      { to: "/puja-reports", label: "Puja Reports" },
+      { to: "/virtual-temple", label: "My Temple" },
     ],
   },
   {
     title: "Astrology",
     links: [
       { to: "/horoscope", label: "Daily Panchang" },
+      { to: "/live-panchang", label: "Live Panchang" },
       { to: "/horoscope", label: "Rashifal" },
-      { to: "/horoscope", label: "Kundli Generator" },
+      { to: "/auspicious-times", label: "🌟 Auspicious Times" },
+      { to: "/shadow-planets", label: "Shadow Planets" },
+      { to: "/current-transits", label: "Current Transits" },
+      { to: "/horoscope-comparison", label: "Tri-System Comparison" },
+      { to: "/palmistry", label: "Palmistry Reading" },
+      { to: "/palm-photo", label: "📸 Palm Photo Reading" },
+      { to: "/vastu", label: "Vastu Shastra" },
       { to: "/astrologer", label: "Consult Astrologer" },
+      { to: "/reports", label: "Astro Reports" },
     ],
   },
   {
@@ -65,19 +273,101 @@ const footerSections = [
       { to: "/aarti", label: "Aarti Library" },
       { to: "/chalisa", label: "Chalisa Library" },
       { to: "/mantra", label: "Mantra Library" },
-      { to: "/stotra", label: "Stotra Library" },
-      { to: "/kavach", label: "कवच Library" },
+      { to: "/pathshala", label: "🏫 पाठशाला | Bal Sanskar" },
+      { to: "/sahasranam-sangrah", label: "सहस्रनाम संग्रह" },
       { to: "/jain-pujan", label: "जैन पूजन" },
+      { to: "/jain-encyclopedia", label: "जैन विश्वकोश" },
+      { to: "/ayurveda", label: "आयुर्वेद" },
     ],
   },
   {
     title: "Tools & More",
     links: [
       { to: "/shop", label: "Spiritual Shop" },
+      { to: "/calculator-index", label: "🔢 All Calculators" },
       { to: "/numerology", label: "Numerology" },
       { to: "/business-tools", label: "Business Tools" },
+      { to: "/blog", label: "📖 Blog" },
+      { to: "/web-stories", label: "✨ Web Stories" },
       { to: "/dashboard", label: "My Dashboard" },
+      { to: "/booking-history", label: "🕰️ Booking History" },
       { to: "/admin-cms", label: "Admin CMS" },
+    ],
+  },
+  {
+    title: "Horoscope",
+    links: [
+      { to: "/horoscope?type=daily", label: "Daily Horoscope" },
+      { to: "/horoscope?type=love", label: "Today's Love Horoscope" },
+      { to: "/horoscope?type=yesterday", label: "Yesterday's Horoscope" },
+      { to: "/horoscope?type=tomorrow", label: "Tomorrow's Horoscope" },
+      { to: "/horoscope?type=weekly", label: "Weekly Horoscope" },
+      { to: "/horoscope?type=monthly", label: "Monthly Horoscope" },
+      { to: "/horoscope?type=yearly", label: "Yearly Horoscope" },
+    ],
+  },
+  {
+    title: "Shubh Muhurat 2026",
+    links: [
+      { to: "/panchang?ceremony=annaprashan", label: "Annanprashan" },
+      { to: "/panchang?ceremony=naamkaran", label: "Naamkaran" },
+      { to: "/panchang?ceremony=car-bike", label: "Car / Bike Muhurat" },
+      { to: "/panchang?ceremony=marriage", label: "Marriage Muhurat" },
+      { to: "/panchang?ceremony=bhoomi-pujan", label: "Bhoomi Pujan" },
+      { to: "/panchang?ceremony=griha-pravesh", label: "Griha Pravesh" },
+      { to: "/panchang?ceremony=mundan", label: "Mundan Muhurat" },
+    ],
+  },
+  {
+    title: "Important Links",
+    links: [
+      { to: "/shop", label: "Spiritual Connect Store" },
+      { to: "/live-panchang", label: "Today Panchang" },
+      { to: "/astrologer", label: "Live Astrologers" },
+      { to: "/horoscope", label: "Free Kundli" },
+      { to: "/horoscope", label: "Kundli Matching" },
+      { to: "/astrologer", label: "Chat with Astrologer" },
+      { to: "/astrologer", label: "Talk to Astrologer" },
+      { to: "/horoscope", label: "Astrology Yoga" },
+      { to: "/horoscope", label: "Kaalsarp Dosha" },
+      { to: "/calculator/nakshatra", label: "Nakshatras Constellations" },
+      { to: "/numerology", label: "Numerology" },
+      { to: "/mantra", label: "Mantras" },
+      { to: "/horoscope", label: "Zodiac Signs" },
+      { to: "/calculator/love", label: "Love Calculator" },
+      { to: "/calculator/birth-chart", label: "Birth Chart" },
+      { to: "/vastu", label: "Vastu Shastra" },
+      { to: "/blog", label: "Spiritual Blog" },
+      { to: "/calculator-index", label: "All Calculators" },
+    ],
+  },
+  {
+    title: "Shop Products",
+    links: [
+      { to: "/shop?category=evil-eye", label: "Evil Eye" },
+      { to: "/shop?category=rudraksha", label: "Rudraksha" },
+      { to: "/shop?category=karungali", label: "Karungali" },
+      {
+        to: "/shop?category=gemstone-consultation",
+        label: "Gemstone Consultation",
+      },
+      { to: "/shop?category=gemstones", label: "Buy Gemstones" },
+      { to: "/shop?category=pyrite", label: "Pyrite" },
+      { to: "/shop?category=selenite", label: "Selenite" },
+      {
+        to: "/shop?category=rudraksha-bracelet-men",
+        label: "Rudraksha Bracelet For Men",
+      },
+      {
+        to: "/shop?category=rudraksha-bracelet-women",
+        label: "Rudraksha Bracelet For Women",
+      },
+      { to: "/shop?category=murtis", label: "Murtis and Idols" },
+      { to: "/shop?category=raw-pyrite", label: "Raw Pyrite Stone" },
+      {
+        to: "/shop?category=money-magnet-bracelet",
+        label: "Money Magnet Bracelet",
+      },
     ],
   },
 ];
@@ -85,10 +375,23 @@ const footerSections = [
 export default function Layout({ children }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const totalItems = useCartStore((s) => s.totalItems);
   const { identity, login, clear, loginStatus } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
+  const megaRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (megaRef.current && !megaRef.current.contains(e.target as Node)) {
+        setMegaMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleAuth = async () => {
     if (isAuthenticated) {
@@ -113,7 +416,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Stripe Setup (admin only, shown when not configured) */}
+      {/* Stripe Setup */}
       <StripePaymentSetup />
 
       {/* Header */}
@@ -168,37 +471,93 @@ export default function Layout({ children }: LayoutProps) {
                   {link.label}
                 </Link>
               ))}
-              <div className="relative group">
+
+              {/* Mega Menu */}
+              <div className="relative" ref={megaRef}>
                 <button
                   type="button"
                   className="px-3 py-2 rounded-md text-xs font-heading font-medium tracking-wide flex items-center gap-1 hover:bg-white/10 transition-all"
                   style={{ color: "oklch(0.88 0.06 75)" }}
+                  onClick={() => setMegaMenuOpen((v) => !v)}
+                  data-ocid="nav.more_button"
                 >
-                  More <ChevronDown className="h-3 w-3" />
+                  More{" "}
+                  <ChevronDown
+                    className={`h-3 w-3 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
-                <div
-                  className="absolute top-full right-0 mt-1 w-52 rounded-lg shadow-xl border py-1 hidden group-hover:block z-50"
-                  style={{
-                    background: "oklch(0.20 0.08 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                  }}
-                >
-                  {moreLinks.map((link) => (
-                    <Link
-                      key={link.to + link.label}
-                      to={link.to}
-                      className="flex items-center px-4 py-2 text-sm font-heading transition-colors hover:bg-white/10"
-                      style={{ color: "oklch(0.88 0.06 75)" }}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
+
+                {megaMenuOpen && (
+                  <div
+                    className="absolute top-full right-0 mt-2 rounded-xl shadow-2xl border overflow-auto z-50"
+                    style={{
+                      background: "oklch(0.20 0.08 22)",
+                      borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                      maxHeight: "80vh",
+                      width: "640px",
+                    }}
+                    data-ocid="nav.dropdown_menu"
+                  >
+                    <div className="grid grid-cols-2 gap-0">
+                      {megaMenuSections.map((section, sIdx) => (
+                        <div
+                          key={section.title}
+                          className="p-4 border-b"
+                          style={{
+                            borderColor: "oklch(0.78 0.14 75 / 0.12)",
+                            borderRight:
+                              sIdx % 2 === 0
+                                ? "1px solid oklch(0.78 0.14 75 / 0.12)"
+                                : "none",
+                          }}
+                        >
+                          <p
+                            className="text-xs font-bold uppercase tracking-wider mb-2"
+                            style={{ color: "oklch(0.78 0.14 75)" }}
+                          >
+                            {section.title}
+                          </p>
+                          <div className="space-y-0.5">
+                            {section.links.map((link) => (
+                              <Link
+                                key={link.to + link.label}
+                                to={link.to}
+                                onClick={() => setMegaMenuOpen(false)}
+                                className="flex items-center px-2 py-1.5 text-xs rounded-lg transition-colors hover:bg-white/10"
+                                style={{ color: "oklch(0.88 0.06 75)" }}
+                                data-ocid="nav.link"
+                              >
+                                {link.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </nav>
 
             {/* Actions */}
             <div className="flex items-center gap-2">
+              {/* Language Toggle */}
+              <div className="hidden sm:block">
+                <LanguageToggle />
+              </div>
+
+              {/* Search button */}
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/search" })}
+                className="p-2 rounded-full transition-colors hover:bg-white/10"
+                style={{ color: "oklch(0.88 0.06 75)" }}
+                aria-label="Search"
+                data-ocid="nav.search_button"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+
               <button
                 type="button"
                 onClick={() => setCartOpen(true)}
@@ -261,23 +620,26 @@ export default function Layout({ children }: LayoutProps) {
         {/* Mobile Nav */}
         {mobileOpen && (
           <div
-            className="lg:hidden border-t px-4 py-3 space-y-1"
+            className="lg:hidden border-t px-4 py-3"
             style={{
               background: "oklch(0.18 0.07 22)",
               borderColor: "oklch(0.78 0.14 75 / 0.15)",
             }}
           >
-            {[...navLinks, ...moreLinks].map((link) => (
-              <Link
-                key={link.to + link.label}
-                to={link.to}
-                onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm font-heading transition-colors hover:bg-white/10"
-                style={{ color: "oklch(0.88 0.06 75)" }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            <div className="space-y-1 max-h-[70vh] overflow-y-auto">
+              {allMobileLinks.map((link) => (
+                <Link
+                  key={link.to + link.label}
+                  to={link.to}
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-3 py-2 rounded-md text-sm font-heading transition-colors hover:bg-white/10"
+                  style={{ color: "oklch(0.88 0.06 75)" }}
+                  data-ocid="nav.mobile.link"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
             <button
               type="button"
               onClick={() => {
@@ -285,7 +647,7 @@ export default function Layout({ children }: LayoutProps) {
                 setMobileOpen(false);
               }}
               disabled={loginStatus === "logging-in"}
-              className="w-full mt-2 px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all disabled:opacity-50"
+              className="w-full mt-3 px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all disabled:opacity-50"
               style={{
                 background:
                   "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
@@ -405,6 +767,9 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Shopping Cart Panel */}
       <ShoppingCartPanel open={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* Unified Media Player — persistent across all pages */}
+      <UnifiedMediaPlayer />
     </div>
   );
 }

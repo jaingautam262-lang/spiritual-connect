@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MobileNumerology from "../components/MobileNumerology";
 import NameCompatibility from "../components/NameCompatibility";
+import NumerologySuiteA from "../components/NumerologySuiteA";
 import PersonalNumerology from "../components/PersonalNumerology";
 
 export default function Numerology() {
@@ -26,27 +27,28 @@ export default function Numerology() {
             className="font-decorative text-3xl md:text-5xl font-bold mb-3"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            🔢 Numerology
+            🔢 Numerology Suite
           </h1>
           <p
             className="font-body text-lg"
             style={{ color: "oklch(0.85 0.04 75)" }}
           >
-            Chaldean numerology, Lo Shu Grid & compatibility analysis
+            नाम अंक · भाग्यांक · मूलांक · Lo Shu Grid · Compatibility
           </p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-10">
-        <Tabs defaultValue="personal">
+        <Tabs defaultValue="suite-a">
           <TabsList
-            className="w-full max-w-lg mx-auto grid grid-cols-3 mb-8 h-auto p-1 rounded-xl"
+            className="w-full max-w-2xl mx-auto grid grid-cols-4 mb-8 h-auto p-1 rounded-xl"
             style={{ background: "oklch(0.22 0.08 22)" }}
           >
             {[
+              { value: "suite-a", label: "🔢 Suite A" },
               { value: "personal", label: "👤 Personal" },
               { value: "mobile", label: "📱 Mobile" },
-              { value: "compatibility", label: "💑 Compatibility" },
+              { value: "compatibility", label: "💑 Match" },
             ].map((tab) => (
               <TabsTrigger
                 key={tab.value}
@@ -58,6 +60,9 @@ export default function Numerology() {
               </TabsTrigger>
             ))}
           </TabsList>
+          <TabsContent value="suite-a">
+            <NumerologySuiteA />
+          </TabsContent>
           <TabsContent value="personal">
             <PersonalNumerology />
           </TabsContent>

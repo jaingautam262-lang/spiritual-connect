@@ -89,36 +89,39 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface Product {
+export interface JainKatha {
     id: string;
+    title: string;
+    createdAt: bigint;
+    parv: string;
+    fullText: string;
+    occasion: string;
+    significance: string;
+}
+export interface SuktamEntry {
+    id: string;
+    hindiMeaning: string;
+    nameHindi: string;
+    sanskritText: string;
     name: string;
-    createdAt: Time;
-    description: string;
-    stock: bigint;
-    astrologicalPurpose: string;
-    category: string;
+    vedaSource: string;
+    transliteration: string;
+    englishMeaning: string;
+    recitationInstructions: string;
     benefits: string;
-    price: number;
+    deityHindi: string;
+    deity: string;
+    benefitsHindi: string;
 }
-export interface _CaffeineStorageRefillResult {
-    success?: boolean;
-    topped_up_amount?: bigint;
-}
-export interface UserProfile {
-    birthDate: string;
-    birthTime: string;
-    name: string;
-    createdAt: Time;
-    birthPlace: string;
-    email: string;
-    gotra: string;
+export interface JainQAPair {
+    question: string;
+    answer: string;
+    answerHindi: string;
+    questionHindi: string;
 }
 export interface TransformationOutput {
-    status: bigint;
-    body: Uint8Array;
-    headers: Array<http_header>;
+    response: HttpResponse;
 }
-export type Time = bigint;
 export interface PrasadDeliveryRequest {
     id: string;
     status: string;
@@ -128,14 +131,6 @@ export interface PrasadDeliveryRequest {
     address: string;
     templeId: string;
 }
-export interface _CaffeineStorageRefillInformation {
-    proposed_top_up_amount?: bigint;
-}
-export interface OrderItem {
-    productId: string;
-    quantity: bigint;
-    unitPrice: number;
-}
 export interface BusinessNameRecord {
     id: string;
     result: string;
@@ -143,41 +138,10 @@ export interface BusinessNameRecord {
     createdAt: Time;
     businessName: string;
 }
-export interface BhajanEntry {
-    id: string;
-    title: string;
-    audioBase64: string;
-    createdAt: Time;
-    lyricsText: string;
-    artist: string;
-    deity: string;
-}
-export interface WalletTransaction {
-    id: string;
-    transactionType: string;
-    userId: Principal;
-    createdAt: Time;
-    description: string;
-    amount: number;
-}
-export interface _CaffeineStorageCreateCertificateResult {
-    method: string;
-    blob_hash: string;
-}
-export interface AstrologerProfile {
-    id: string;
-    bio: string;
-    name: string;
-    createdAt: Time;
-    languages: Array<string>;
-    experienceYears: bigint;
-    perMinuteRate: number;
-    rating: number;
-    specializations: Array<string>;
-}
-export interface TransformationInput {
-    context: Uint8Array;
-    response: http_request_result;
+export interface DaanItem {
+    value: number;
+    item: string;
+    quantity: string;
 }
 export interface DevotionalContent {
     id: string;
@@ -196,21 +160,391 @@ export interface NumerologyRecord {
     name: string;
     createdAt: Time;
 }
-export type StripeSessionStatus = {
-    __kind__: "completed";
-    completed: {
-        userPrincipal?: string;
-        response: string;
-    };
-} | {
-    __kind__: "failed";
-    failed: {
-        error: string;
-    };
-};
+export interface StripeSessionStatus {
+    status: string;
+    paymentStatus: string;
+    customerEmail: string;
+}
 export interface StripeConfiguration {
     allowedCountries: Array<string>;
     secretKey: string;
+}
+export interface PujaType {
+    id: string;
+    descriptionHindi: string;
+    duration: string;
+    vidhiHindi: string;
+    nameHindi: string;
+    vidhi: string;
+    name: string;
+    when: string;
+    description: string;
+    samagriHindi: Array<string>;
+    whenHindi: string;
+    samagri: Array<string>;
+    imageUrl: string;
+    category: string;
+    benefits: string;
+    deity: string;
+    benefitsHindi: string;
+}
+export interface KundaliMatchInput {
+    personBName: string;
+    personANakshatra: string;
+    grahaMaitriScore: bigint;
+    personBTime: string;
+    personARashi: string;
+    bhakootDosha: boolean;
+    personASunSign: string;
+    ganaScore: bigint;
+    personADob: string;
+    personBDob: string;
+    personBPlace: string;
+    yoniScore: bigint;
+    doshaRemedies: string;
+    personBSunSign: string;
+    personBMarsSign: string;
+    totalScore: bigint;
+    personAName: string;
+    personBRashi: string;
+    personATime: string;
+    compatibilityPercent: bigint;
+    manglikDoshaA: boolean;
+    manglikDoshaB: boolean;
+    nadiScore: bigint;
+    taraScore: bigint;
+    personAMarsSign: string;
+    personBMoonSign: string;
+    personBAscendant: string;
+    varnaScore: bigint;
+    vasyaScore: bigint;
+    bhakootScore: bigint;
+    personAMoonSign: string;
+    personBNakshatra: string;
+    personAAscendant: string;
+    nadiDosha: boolean;
+    personAPlace: string;
+}
+export interface ReportRequest {
+    id: string;
+    dob: string;
+    pob: string;
+    tob: string;
+    status: string;
+    content: string;
+    userId: Principal;
+    name: string;
+    createdAt: Time;
+    reportType: string;
+}
+export interface JainGlossaryTerm {
+    term: string;
+    definition: string;
+}
+export interface StorySlide {
+    id: string;
+    title: string;
+    order: bigint;
+    description: string;
+    imageUrl: string;
+}
+export interface _ImmutableObjectStorageRefillInformation {
+    proposed_top_up_amount?: bigint;
+}
+export interface ServiceBooking {
+    id: string;
+    status: string;
+    serviceName: string;
+    serviceType: string;
+    userId: Principal;
+    specialRequests: string;
+    createdAt: bigint;
+    email: string;
+    pricing: number;
+    preferredDate: string;
+    phone: string;
+    devoteeName: string;
+    location: string;
+}
+export interface PalmistryContent {
+    id: string;
+    title: string;
+    locationOnPalm: string;
+    descriptionEn: string;
+    descriptionHi: string;
+    createdAt: bigint;
+    benefitsEn: string;
+    benefitsHi: string;
+    updatedAt: bigint;
+    category: string;
+    titleHi: string;
+    lineOrPalmType: string;
+    characteristicsEn: string;
+    characteristicsHi: string;
+}
+export interface _ImmutableObjectStorageCreateCertificateResult {
+    method: string;
+    blob_hash: string;
+}
+export interface FestivalEvent {
+    id: string;
+    title: string;
+    titleHindi: string;
+    date: string;
+    description: string;
+    significance: string;
+    deity: string;
+    faith: string;
+    eventType: string;
+}
+export interface CalculatorFAQ {
+    id: string;
+    qaPairs: Array<CalculatorQAPair>;
+    calculatorId: string;
+    calculatorName: string;
+}
+export interface Order {
+    id: string;
+    total: number;
+    paymentStatus: string;
+    userId: Principal;
+    createdAt: Time;
+    stripePaymentIntentId: string;
+    items: Array<OrderItem>;
+}
+export interface ShoppingItem {
+    name: string;
+    quantity: bigint;
+    price: number;
+}
+export interface PujaReport {
+    id: string;
+    durationMins: bigint;
+    sankalp: string;
+    bookingId: string;
+    daanItems: Array<DaanItem>;
+    performedDate: bigint;
+    reportStatus: string;
+    userId: Principal;
+    pujaType: string;
+    deity: string;
+    priestName: string;
+    intention: string;
+    completionNotes: string;
+}
+export interface ChadhavaOffering {
+    id: string;
+    status: string;
+    userId: Principal;
+    createdAt: Time;
+    templeId: string;
+    items: Array<string>;
+}
+export interface UserProfile {
+    birthDate: string;
+    birthTime: string;
+    name: string;
+    createdAt: Time;
+    birthPlace: string;
+    email: string;
+    gotra: string;
+}
+export interface KundaliMatch {
+    id: string;
+    personBName: string;
+    personANakshatra: string;
+    grahaMaitriScore: bigint;
+    personBTime: string;
+    personARashi: string;
+    bhakootDosha: boolean;
+    personASunSign: string;
+    ganaScore: bigint;
+    userId: Principal;
+    createdAt: bigint;
+    personADob: string;
+    personBDob: string;
+    personBPlace: string;
+    yoniScore: bigint;
+    doshaRemedies: string;
+    personBSunSign: string;
+    personBMarsSign: string;
+    totalScore: bigint;
+    personAName: string;
+    personBRashi: string;
+    personATime: string;
+    compatibilityPercent: bigint;
+    manglikDoshaA: boolean;
+    manglikDoshaB: boolean;
+    nadiScore: bigint;
+    taraScore: bigint;
+    personAMarsSign: string;
+    personBMoonSign: string;
+    personBAscendant: string;
+    varnaScore: bigint;
+    vasyaScore: bigint;
+    bhakootScore: bigint;
+    personAMoonSign: string;
+    personBNakshatra: string;
+    personAAscendant: string;
+    nadiDosha: boolean;
+    personAPlace: string;
+}
+export interface CombinedVedicReading {
+    id: string;
+    sunSign: string;
+    palmInsightsJson: string;
+    birthDate: string;
+    activeDasha: string;
+    birthTime: string;
+    combinedInsightsText: string;
+    userId: Principal;
+    palmReadingId: string;
+    createdAt: bigint;
+    moonSign: string;
+    doshasJson: string;
+    birthPlace: string;
+    remediesText: string;
+    lagnaSign: string;
+}
+export interface PujaBooking {
+    id: string;
+    status: string;
+    userId: Principal;
+    createdAt: Time;
+    pujaType: string;
+    specialWishes: string;
+    gotra: string;
+    preferredDate: string;
+    templeId: string;
+    devoteeName: string;
+}
+export type Time = bigint;
+export interface VastuRoomCheck {
+    id: string;
+    issuesJson: string;
+    roomDimensions: string;
+    floorPlanUrl: string;
+    userId: Principal;
+    createdAt: bigint;
+    elementBalance: string;
+    remediesJson: string;
+    entranceDirection: string;
+    complianceScore: bigint;
+    roomType: string;
+}
+export interface JainPathshalaEntry {
+    id: string;
+    title: string;
+    content: string;
+    createdAt: bigint;
+    part: string;
+    category: string;
+    chapter: string;
+}
+export interface BlogArticle {
+    id: string;
+    title: string;
+    content: string;
+    isPublished: boolean;
+    publishDate: bigint;
+    createdAt: bigint;
+    slug: string;
+    tags: Array<string>;
+    author: string;
+    updatedAt: bigint;
+    featuredImageUrl: string;
+    category: string;
+}
+export interface OrderItem {
+    productId: string;
+    quantity: bigint;
+    unitPrice: number;
+}
+export interface PalmistryReading {
+    id: string;
+    readingDate: bigint;
+    headLine: string;
+    userId: Principal;
+    traits: Array<string>;
+    fateLine: string;
+    lifeLine: string;
+    summary: string;
+    imageUrl: string;
+    heartLine: string;
+}
+export interface BhajanEntry {
+    id: string;
+    title: string;
+    audioBase64: string;
+    createdAt: Time;
+    lyricsText: string;
+    artist: string;
+    deity: string;
+}
+export interface WalletTransaction {
+    id: string;
+    transactionType: string;
+    userId: Principal;
+    createdAt: Time;
+    description: string;
+    amount: number;
+}
+export interface _ImmutableObjectStorageRefillResult {
+    success?: boolean;
+    topped_up_amount?: bigint;
+}
+export interface AstrologerProfile {
+    id: string;
+    bio: string;
+    name: string;
+    createdAt: Time;
+    languages: Array<string>;
+    experienceYears: bigint;
+    perMinuteRate: number;
+    rating: number;
+    specializations: Array<string>;
+}
+export interface VastuContent {
+    id: string;
+    title: string;
+    doshaEn: string;
+    doshaHi: string;
+    tipsEn: string;
+    tipsHi: string;
+    effectsEn: string;
+    effectsHi: string;
+    createdAt: bigint;
+    remediesEn: string;
+    remediesHi: string;
+    planetaryRuler: string;
+    planetaryRulerHi: string;
+    updatedAt: bigint;
+    yantra: string;
+    directionOrRoom: string;
+    category: string;
+    elementsInvolved: string;
+    titleHi: string;
+}
+export interface TransformationInput {
+    context: Uint8Array;
+    response: HttpResponse;
+}
+export interface MediaPlayerItem {
+    id: string;
+    title: string;
+    duration: bigint;
+    contentType: string;
+    audioUrl: string;
+    deity: string;
+    faith: string;
+}
+export interface WebStory {
+    id: string;
+    title: string;
+    isPublished: boolean;
+    createdAt: bigint;
+    slides: Array<StorySlide>;
+    category: string;
 }
 export interface VirtualTempleConfig {
     background: string;
@@ -249,50 +583,94 @@ export interface Temple {
     deity: string;
     location: string;
 }
-export interface ReportRequest {
+export interface JainEncyclopediaArticle {
     id: string;
-    dob: string;
-    pob: string;
-    tob: string;
-    status: string;
+    glossaryTerms: Array<JainGlossaryTerm>;
+    contentHindi: string;
     content: string;
-    userId: Principal;
-    name: string;
-    createdAt: Time;
-    reportType: string;
+    volumeNumber: bigint;
+    articleTitleHindi: string;
+    qaPairs: Array<JainQAPair>;
+    articleTitle: string;
+    volumeTitle: string;
+    crossLinks: Array<string>;
 }
-export interface Order {
+export interface AstroChart {
     id: string;
-    total: number;
-    paymentStatus: string;
-    userId: Principal;
-    createdAt: Time;
-    stripePaymentIntentId: string;
-    items: Array<OrderItem>;
+    shadbalaData: string;
+    chartData: string;
+    chartType: string;
+    birthDate: string;
+    birthTime: string;
+    userId: string;
+    createdAt: bigint;
+    birthPlace: string;
+    dashaInfo: string;
+    astroScore: bigint;
+    ashtakvargaData: string;
+    yogas: Array<string>;
 }
-export interface http_header {
-    value: string;
-    name: string;
+export interface ProductVariant {
+    variantName: string;
+    stock: bigint;
+    price: number;
 }
-export interface http_request_result {
+export interface ProductUpdateRequest {
+    mrp?: number;
+    sku?: string;
+    variantLabel?: string;
+    name?: string;
+    description?: string;
+    variants?: Array<ProductVariant>;
+    stock?: bigint;
+    astrologicalPurpose?: string;
+    discount?: bigint;
+    category?: string;
+    benefits?: string;
+    price?: number;
+}
+export interface PathshalaLesson {
+    id: string;
+    contentHi: string;
+    content: string;
+    chapterNumber: bigint;
+    isPublished: boolean;
+    moralLesson: string;
+    createdAt: bigint;
+    part: string;
+    tags: Array<string>;
+    moralLessonHi: string;
+    summaryHi: string;
+    chapterTitleHi: string;
+    chapterTitle: string;
+    summary: string;
+    updatedAt: bigint;
+    titleEn: string;
+    titleHi: string;
+}
+export interface CalculatorQAPair {
+    question: string;
+    answer: string;
+    answerHindi: string;
+    category: string;
+    questionHindi: string;
+}
+export interface HttpResponse {
     status: bigint;
     body: Uint8Array;
-    headers: Array<http_header>;
+    headers: Array<[string, string]>;
 }
-export interface ShoppingItem {
-    productName: string;
-    currency: string;
-    quantity: bigint;
-    priceInCents: bigint;
-    productDescription: string;
-}
-export interface ChadhavaOffering {
+export interface PalmPhotoReading {
     id: string;
-    status: string;
+    readingText: string;
+    lineAnnotations: string;
+    palmShape: string;
+    dominantLine: string;
     userId: Principal;
-    createdAt: Time;
-    templeId: string;
-    items: Array<string>;
+    createdAt: bigint;
+    photoUrl: string;
+    luckySigns: string;
+    handType: string;
 }
 export interface VratKathaEntry {
     id: string;
@@ -302,17 +680,21 @@ export interface VratKathaEntry {
     createdAt: Time;
     festivalName: string;
 }
-export interface PujaBooking {
+export interface Product {
     id: string;
-    status: string;
-    userId: Principal;
+    mrp?: number;
+    sku?: string;
+    variantLabel?: string;
+    name: string;
     createdAt: Time;
-    pujaType: string;
-    specialWishes: string;
-    gotra: string;
-    preferredDate: string;
-    templeId: string;
-    devoteeName: string;
+    description: string;
+    variants?: Array<ProductVariant>;
+    stock: bigint;
+    astrologicalPurpose: string;
+    discount?: bigint;
+    category: string;
+    benefits: string;
+    price: number;
 }
 export enum UserRole {
     admin = "admin",
@@ -320,24 +702,49 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    _caffeineStorageBlobIsLive(hash: Uint8Array): Promise<boolean>;
-    _caffeineStorageBlobsToDelete(): Promise<Array<Uint8Array>>;
-    /**
-     * / Admin-only: list all user profiles.
-     */
-    _caffeineStorageConfirmBlobDeletion(blobs: Array<Uint8Array>): Promise<void>;
-    _caffeineStorageCreateCertificate(blobHash: string): Promise<_CaffeineStorageCreateCertificateResult>;
-    _caffeineStorageRefillCashier(refillInformation: _CaffeineStorageRefillInformation | null): Promise<_CaffeineStorageRefillResult>;
-    _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
-    _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    _immutableObjectStorageBlobsAreLive(hashes: Array<Uint8Array>): Promise<Array<boolean>>;
+    _immutableObjectStorageBlobsToDelete(): Promise<Array<Uint8Array>>;
+    _immutableObjectStorageConfirmBlobDeletion(blobs: Array<Uint8Array>): Promise<void>;
+    _immutableObjectStorageCreateCertificate(blobHash: string): Promise<_ImmutableObjectStorageCreateCertificateResult>;
+    _immutableObjectStorageRefillCashier(refillInformation: _ImmutableObjectStorageRefillInformation | null): Promise<_ImmutableObjectStorageRefillResult>;
+    _immutableObjectStorageUpdateGatewayPrincipals(): Promise<void>;
+    _initializeAccessControl(): Promise<void>;
     /**
      * / Admin-only: add a new bhajan entry.
      */
     addBhajan(entry: BhajanEntry): Promise<void>;
     /**
+     * / Admin-only: add a festival event.
+     */
+    addFestivalEvent(event: FestivalEvent): Promise<void>;
+    /**
      * / Admin-only: add a new holy book entry.
      */
     addHolyBookEntry(entry: HolyBookEntry): Promise<void>;
+    /**
+     * / Admin-only: add a new Jain encyclopedia article.
+     */
+    addJainArticle(article: JainEncyclopediaArticle): Promise<void>;
+    /**
+     * / Admin-only: add a Jain Katha.
+     */
+    addJainKatha(katha: JainKatha): Promise<void>;
+    /**
+     * / Admin-only: add a Jain Pathshala entry.
+     */
+    addJainPathshalaEntry(entry: JainPathshalaEntry): Promise<void>;
+    /**
+     * / Admin-only: add a media player item.
+     */
+    addMediaPlayerItem(item: MediaPlayerItem): Promise<void>;
+    /**
+     * / Admin-only: add a new Pathshala lesson.
+     */
+    addPathshalaLesson(lesson: PathshalaLesson): Promise<void>;
+    /**
+     * / Admin-only: add a new suktam entry.
+     */
+    addSuktam(entry: SuktamEntry): Promise<void>;
     /**
      * / Authenticated users can submit a prasad delivery request for themselves.
      */
@@ -352,6 +759,10 @@ export interface backendInterface {
      */
     createAstrologerProfile(profile: AstrologerProfile): Promise<void>;
     /**
+     * / Admin-only: create a blog article.
+     */
+    createBlogArticle(article: BlogArticle): Promise<void>;
+    /**
      * / Authenticated users can create a business name analysis for themselves.
      */
     createBusinessNameRecord(record: BusinessNameRecord): Promise<void>;
@@ -363,6 +774,10 @@ export interface backendInterface {
      * / Authenticated users can create a Stripe checkout session (e.g. for payment).
      */
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
+    /**
+     * / Authenticated user: create a combined vedic reading. Returns the created entry.
+     */
+    createCombinedVedicReading(palmReadingId: string, birthDate: string, birthTime: string, birthPlace: string, lagnaSign: string, moonSign: string, sunSign: string, activeDasha: string, doshasJson: string, palmInsightsJson: string, combinedInsightsText: string, remediesText: string): Promise<CombinedVedicReading>;
     /**
      * / Authenticated users can book a consultation appointment for themselves.
      */
@@ -380,7 +795,15 @@ export interface backendInterface {
      */
     createOrder(order: Order): Promise<void>;
     /**
-     * / Admin-only: create a product.
+     * / Authenticated user: create a palm photo reading. Returns the created entry.
+     */
+    createPalmPhotoReading(photoUrl: string, handType: string, palmShape: string, lineAnnotations: string, readingText: string, dominantLine: string, luckySigns: string): Promise<PalmPhotoReading>;
+    /**
+     * / Admin-only: create a new palmistry content entry. Returns the created entry.
+     */
+    createPalmistryContent(title: string, titleHi: string, category: string, lineOrPalmType: string, descriptionEn: string, descriptionHi: string, characteristicsEn: string, characteristicsHi: string, locationOnPalm: string, benefitsEn: string, benefitsHi: string): Promise<PalmistryContent>;
+    /**
+     * / Admin or productManager: create a product.
      */
     createProduct(product: Product): Promise<void>;
     /**
@@ -388,37 +811,133 @@ export interface backendInterface {
      */
     createPujaBooking(booking: PujaBooking): Promise<void>;
     /**
+     * / Admin-only: create a puja report for a completed booking.
+     */
+    createPujaReport(report: PujaReport): Promise<void>;
+    /**
+     * / Admin-only: create a puja type.
+     */
+    createPujaType(pujaType: PujaType): Promise<void>;
+    /**
      * / Authenticated users can request a report for themselves.
      */
     createReportRequest(request: ReportRequest): Promise<void>;
+    /**
+     * / Authenticated users can create a service booking for themselves. Returns the booking id.
+     */
+    createServiceBooking(booking: ServiceBooking): Promise<string>;
     /**
      * / Admin-only: create a temple entry.
      */
     createTemple(temple: Temple): Promise<void>;
     /**
+     * / Admin-only: create a new vastu content entry. Returns the created entry.
+     */
+    createVastuContent(title: string, titleHi: string, category: string, directionOrRoom: string, planetaryRuler: string, planetaryRulerHi: string, effectsEn: string, effectsHi: string, doshaEn: string, doshaHi: string, remediesEn: string, remediesHi: string, yantra: string, elementsInvolved: string, tipsEn: string, tipsHi: string): Promise<VastuContent>;
+    /**
+     * / Authenticated user: create a vastu room check. Returns the created entry.
+     */
+    createVastuRoomCheck(floorPlanUrl: string, roomType: string, roomDimensions: string, entranceDirection: string, complianceScore: bigint, issuesJson: string, remediesJson: string, elementBalance: string): Promise<VastuRoomCheck>;
+    /**
+     * / Admin-only: create a web story.
+     */
+    createWebStory(story: WebStory): Promise<void>;
+    /**
+     * / Authenticated users can delete their own astro chart.
+     */
+    deleteAstroChart(id: string): Promise<boolean>;
+    /**
      * / Admin-only: delete a bhajan entry.
      */
     deleteBhajan(id: string): Promise<void>;
+    /**
+     * / Admin-only: delete a blog article.
+     */
+    deleteBlogArticle(id: string): Promise<void>;
+    /**
+     * / Authenticated user: delete a combined vedic reading they own. Returns true if deleted.
+     */
+    deleteCombinedVedicReading(id: string): Promise<boolean>;
     /**
      * / Admin-only: delete a devotional content entry.
      */
     deleteDevotionalContent(id: string): Promise<void>;
     /**
+     * / Admin-only: delete a festival event.
+     */
+    deleteFestivalEvent(id: string): Promise<void>;
+    /**
      * / Admin-only: delete a holy book entry.
      */
     deleteHolyBookEntry(id: string): Promise<void>;
+    /**
+     * / Admin-only: delete a Jain encyclopedia article.
+     */
+    deleteJainArticle(id: string): Promise<void>;
+    /**
+     * / Admin-only: delete a Jain Katha.
+     */
+    deleteJainKatha(id: string): Promise<void>;
+    /**
+     * / Admin-only: delete a Jain Pathshala entry.
+     */
+    deleteJainPathshalaEntry(id: string): Promise<void>;
+    /**
+     * / Authenticated users can delete their own kundali match. Returns true if deleted.
+     */
+    deleteKundaliMatch(id: string): Promise<boolean>;
+    /**
+     * / Authenticated user: delete a palm photo reading they own. Returns true if deleted.
+     */
+    deletePalmPhotoReading(id: string): Promise<boolean>;
+    /**
+     * / Admin-only: delete a palmistry content entry. Returns true if deleted, false if not found.
+     */
+    deletePalmistryContent(id: string): Promise<boolean>;
+    /**
+     * / Admin-only: delete a Pathshala lesson.
+     */
+    deletePathshalaLesson(id: string): Promise<void>;
     /**
      * / Admin-only: delete a product.
      */
     deleteProduct(id: string): Promise<void>;
     /**
+     * / Admin-only: delete a puja type.
+     */
+    deletePujaType(id: string): Promise<void>;
+    /**
+     * / Admin-only: delete a suktam entry.
+     */
+    deleteSuktam(id: string): Promise<void>;
+    /**
+     * / Admin-only: delete a vastu content entry. Returns true if deleted, false if not found.
+     */
+    deleteVastuContent(id: string): Promise<boolean>;
+    /**
+     * / Authenticated user: delete a vastu room check they own. Returns true if deleted.
+     */
+    deleteVastuRoomCheck(id: string): Promise<boolean>;
+    /**
      * / Admin-only: delete a vrat katha entry.
      */
     deleteVratKatha(id: string): Promise<void>;
     /**
+     * / Admin-only: delete a web story.
+     */
+    deleteWebStory(id: string): Promise<void>;
+    /**
      * / Public: anyone may browse astrologer profiles.
      */
     getAllAstrologerProfiles(): Promise<Array<AstrologerProfile>>;
+    /**
+     * / Public: get all blog articles (admin may see unpublished; public sees all).
+     */
+    getAllBlogArticles(): Promise<Array<BlogArticle>>;
+    /**
+     * / Public: get all calculator FAQs.
+     */
+    getAllCalculatorFAQs(): Promise<Array<CalculatorFAQ>>;
     /**
      * / Admin-only: list all appointments (for astrologer/admin dashboard).
      */
@@ -432,9 +951,41 @@ export interface backendInterface {
      */
     getAllDevotionalContents(): Promise<Array<DevotionalContent>>;
     /**
+     * / Public: get all festival events.
+     */
+    getAllFestivalEvents(): Promise<Array<FestivalEvent>>;
+    /**
+     * / Public: get all Jain encyclopedia articles.
+     */
+    getAllJainArticles(): Promise<Array<JainEncyclopediaArticle>>;
+    /**
+     * / Public: get all Jain Kathas.
+     */
+    getAllJainKathas(): Promise<Array<JainKatha>>;
+    /**
+     * / Public: get all Jain Pathshala entries.
+     */
+    getAllJainPathshalaEntries(): Promise<Array<JainPathshalaEntry>>;
+    /**
+     * / Admin-only: get all Pathshala lessons (published and unpublished).
+     */
+    getAllPathshalaLessons(): Promise<Array<PathshalaLesson>>;
+    /**
+     * / Admin-only: list all product manager principals.
+     */
+    getAllProductManagers(): Promise<Array<Principal>>;
+    /**
      * / Public: anyone may browse products.
      */
     getAllProducts(): Promise<Array<Product>>;
+    /**
+     * / Admin-only: get all puja reports.
+     */
+    getAllPujaReports(): Promise<Array<PujaReport>>;
+    /**
+     * / Public: anyone may browse puja types.
+     */
+    getAllPujaTypes(): Promise<Array<PujaType>>;
     /**
      * / Public: anyone may browse temples.
      */
@@ -443,6 +994,14 @@ export interface backendInterface {
      * / Admin-only: list all user profiles.
      */
     getAllUserProfiles(): Promise<Array<[Principal, UserProfile]>>;
+    /**
+     * / Public: get all web stories.
+     */
+    getAllWebStories(): Promise<Array<WebStory>>;
+    /**
+     * / Authenticated users can get a single astro chart by id (only their own).
+     */
+    getAstroChart(id: string): Promise<AstroChart | null>;
     /**
      * / Public: get a single astrologer profile by id.
      */
@@ -456,14 +1015,30 @@ export interface backendInterface {
      */
     getBhajans(): Promise<Array<BhajanEntry>>;
     /**
+     * / Public: get a blog article by its slug.
+     */
+    getBlogArticleBySlug(slug: string): Promise<BlogArticle | null>;
+    /**
+     * / Public: get the FAQ for a specific calculator by calculatorId.
+     */
+    getCalculatorFAQ(calculatorId: string): Promise<CalculatorFAQ | null>;
+    /**
      * / Get the calling user's own profile.
      */
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     /**
+     * / Get a single combined vedic reading by id (owner or admin).
+     */
+    getCombinedVedicReading(id: string): Promise<CombinedVedicReading | null>;
+    /**
      * / Public: get a single devotional content entry.
      */
     getDevotionalContent(id: string): Promise<DevotionalContent | null>;
+    /**
+     * / Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
+     */
+    getFestivalEventsByFaith(faith: string): Promise<Array<FestivalEvent>>;
     /**
      * / Public: anyone may browse holy book entries, optionally filtered by bookTitle.
      */
@@ -473,6 +1048,70 @@ export interface backendInterface {
      */
     getHolyBookEntryById(id: string): Promise<HolyBookEntry | null>;
     /**
+     * / Public: get a single Jain encyclopedia article by id.
+     */
+    getJainArticleById(id: string): Promise<JainEncyclopediaArticle | null>;
+    /**
+     * / Public: get all Jain encyclopedia articles for a given volume number.
+     */
+    getJainArticlesByVolume(volumeNumber: bigint): Promise<Array<JainEncyclopediaArticle>>;
+    /**
+     * / Public: get Jain Kathas filtered by parv (occasion/festival).
+     */
+    getJainKathasByParv(parv: string): Promise<Array<JainKatha>>;
+    /**
+     * / Public: get Jain Pathshala entries filtered by category.
+     */
+    getJainPathshalaEntriesByCategory(category: string): Promise<Array<JainPathshalaEntry>>;
+    /**
+     * / Authenticated users can retrieve a single kundali match by id (only their own).
+     */
+    getKundaliMatchById(id: string): Promise<KundaliMatch | null>;
+    /**
+     * / Authenticated users can retrieve all their own kundali match results, sorted newest first.
+     */
+    getKundaliMatches(): Promise<Array<KundaliMatch>>;
+    /**
+     * / Public: get all media player items.
+     */
+    getMediaPlayerItems(): Promise<Array<MediaPlayerItem>>;
+    /**
+     * / Public: get media player items filtered by contentType (aarti/chalisa/mantra/bhajan/katha).
+     */
+    getMediaPlayerItemsByType(contentType: string): Promise<Array<MediaPlayerItem>>;
+    /**
+     * / Authenticated user: get all their own combined vedic readings.
+     */
+    getMyCombinedVedicReadings(): Promise<Array<CombinedVedicReading>>;
+    /**
+     * / Authenticated user: get all their own palm photo readings.
+     */
+    getMyPalmPhotoReadings(): Promise<Array<PalmPhotoReading>>;
+    /**
+     * / Authenticated user: get all their own vastu room checks.
+     */
+    getMyVastuRoomChecks(): Promise<Array<VastuRoomCheck>>;
+    /**
+     * / Get a single palm photo reading by id (owner or admin).
+     */
+    getPalmPhotoReading(id: string): Promise<PalmPhotoReading | null>;
+    /**
+     * / Public: get a single palmistry content entry by id.
+     */
+    getPalmistryContent(id: string): Promise<PalmistryContent | null>;
+    /**
+     * / Public: anyone may browse all palmistry content entries.
+     */
+    getPalmistryContents(): Promise<Array<PalmistryContent>>;
+    /**
+     * / Public: get a single Pathshala lesson by id.
+     */
+    getPathshalaLesson(id: string): Promise<PathshalaLesson | null>;
+    /**
+     * / Public: get published Pathshala lessons filtered by part (Bhag-1 or Bhag-2).
+     */
+    getPathshalaLessonsByPart(part: string): Promise<Array<PathshalaLesson>>;
+    /**
      * / Admin-only: list all pending prasad deliveries.
      */
     getPendingPrasadDeliveries(): Promise<Array<PrasadDeliveryRequest>>;
@@ -481,9 +1120,45 @@ export interface backendInterface {
      */
     getProduct(id: string): Promise<Product | null>;
     /**
+     * / Public: get products filtered by category.
+     */
+    getProductsByCategory(category: string): Promise<Array<Product>>;
+    /**
+     * / Public: get only published blog articles.
+     */
+    getPublishedBlogArticles(): Promise<Array<BlogArticle>>;
+    /**
+     * / Public: get only published Pathshala lessons.
+     */
+    getPublishedPathshalaLessons(): Promise<Array<PathshalaLesson>>;
+    /**
+     * / Public: get only published web stories.
+     */
+    getPublishedWebStories(): Promise<Array<WebStory>>;
+    /**
+     * / Public: get a single puja type by id.
+     */
+    getPujaTypeById(id: string): Promise<PujaType | null>;
+    /**
+     * / Admin-only: get all service bookings for review.
+     */
+    getServiceBookings(): Promise<Array<ServiceBooking>>;
+    /**
      * / Authenticated users can check a Stripe session status (e.g. after checkout).
      */
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
+    /**
+     * / Public: get a single suktam entry by id.
+     */
+    getSuktamById(id: string): Promise<SuktamEntry | null>;
+    /**
+     * / Public: anyone may browse suktam entries.
+     */
+    getSuktams(): Promise<Array<SuktamEntry>>;
+    /**
+     * / Authenticated users can retrieve their own astro charts.
+     */
+    getUserAstroCharts(): Promise<Array<AstroChart>>;
     /**
      * / Users may only fetch their own business name records; admins may fetch any.
      */
@@ -505,6 +1180,10 @@ export interface backendInterface {
      */
     getUserOrders(userId: Principal): Promise<Array<Order>>;
     /**
+     * / Authenticated users can retrieve their own palmistry readings.
+     */
+    getUserPalmistryReadings(): Promise<Array<PalmistryReading>>;
+    /**
      * / Users may only fetch their own delivery requests; admins may fetch any.
      */
     getUserPrasadDeliveryRequests(userId: Principal): Promise<Array<PrasadDeliveryRequest>>;
@@ -517,9 +1196,29 @@ export interface backendInterface {
      */
     getUserPujaBookings(userId: Principal): Promise<Array<PujaBooking>>;
     /**
+     * / Authenticated users can retrieve their own puja reports.
+     */
+    getUserPujaReports(): Promise<Array<PujaReport>>;
+    /**
      * / Users may only fetch their own report requests; admins may fetch any user's.
      */
     getUserReportRequests(userId: Principal): Promise<Array<ReportRequest>>;
+    /**
+     * / Authenticated users can retrieve their own service bookings.
+     */
+    getUserServiceBookings(): Promise<Array<ServiceBooking>>;
+    /**
+     * / Public: get a single vastu content entry by id.
+     */
+    getVastuContent(id: string): Promise<VastuContent | null>;
+    /**
+     * / Public: anyone may browse all vastu content entries.
+     */
+    getVastuContents(): Promise<Array<VastuContent>>;
+    /**
+     * / Get a single vastu room check by id (owner or admin).
+     */
+    getVastuRoomCheck(id: string): Promise<VastuRoomCheck | null>;
     /**
      * / Users may only fetch their own temple config; admins may fetch any.
      */
@@ -546,6 +1245,10 @@ export interface backendInterface {
     handlePujaBooking(bookingId: string, status: string): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     /**
+     * / Returns true if the caller has productManager role.
+     */
+    isProductManager(): Promise<boolean>;
+    /**
      * / Public: check whether Stripe has been configured.
      */
     isStripeConfigured(): Promise<boolean>;
@@ -554,13 +1257,41 @@ export interface backendInterface {
      */
     rechargeWallet(userId: Principal, amount: number, transaction: WalletTransaction): Promise<void>;
     /**
+     * / Admin-only: remove a media player item.
+     */
+    removeMediaPlayerItem(id: string): Promise<void>;
+    /**
+     * / Admin-only: revoke productManager role from a user.
+     */
+    revokeProductManagerRole(userId: Principal): Promise<void>;
+    /**
+     * / Authenticated users can save an astrology chart for themselves.
+     */
+    saveAstroChart(chart: AstroChart): Promise<void>;
+    /**
+     * / Admin-only: save (create or replace) a calculator FAQ.
+     */
+    saveCalculatorFAQ(faq: CalculatorFAQ): Promise<void>;
+    /**
      * / Save / update the calling user's own profile.
      */
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     /**
+     * / Authenticated users can save a kundali match result for themselves.
+     */
+    saveKundaliMatch(match: KundaliMatchInput): Promise<string>;
+    /**
+     * / Authenticated users can save a palmistry reading for themselves.
+     */
+    savePalmistryReading(reading: PalmistryReading): Promise<void>;
+    /**
      * / Authenticated users can save their own virtual temple configuration.
      */
     saveVirtualTempleConfig(config: VirtualTempleConfig): Promise<void>;
+    /**
+     * / Admin-only: grant productManager role to a user.
+     */
+    setProductManagerRole(userId: Principal): Promise<void>;
     /**
      * / Admin-only: set the Stripe configuration.
      */
@@ -571,6 +1302,18 @@ export interface backendInterface {
      */
     updateBhajan(entry: BhajanEntry): Promise<void>;
     /**
+     * / Admin-only: update an existing blog article.
+     */
+    updateBlogArticle(article: BlogArticle): Promise<void>;
+    /**
+     * / Admin-only: update an existing calculator FAQ by id.
+     */
+    updateCalculatorFAQ(id: string, faq: CalculatorFAQ): Promise<void>;
+    /**
+     * / Authenticated user: update an existing combined vedic reading they own. Returns updated entry or null.
+     */
+    updateCombinedVedicReading(id: string, palmReadingId: string, birthDate: string, birthTime: string, birthPlace: string, lagnaSign: string, moonSign: string, sunSign: string, activeDasha: string, doshasJson: string, palmInsightsJson: string, combinedInsightsText: string, remediesText: string): Promise<CombinedVedicReading | null>;
+    /**
      * / Admin-only: update appointment status and notes.
      */
     updateConsultationAppointment(id: string, status: string, notes: string): Promise<void>;
@@ -579,128 +1322,196 @@ export interface backendInterface {
      */
     updateDevotionalContent(content: DevotionalContent): Promise<void>;
     /**
+     * / Admin-only: update an existing festival event.
+     */
+    updateFestivalEvent(event: FestivalEvent): Promise<void>;
+    /**
      * / Admin-only: update an existing holy book entry.
      */
     updateHolyBookEntry(entry: HolyBookEntry): Promise<void>;
+    /**
+     * / Admin-only: update an existing Jain encyclopedia article.
+     */
+    updateJainArticle(article: JainEncyclopediaArticle): Promise<void>;
+    /**
+     * / Admin-only: update an existing Jain Katha.
+     */
+    updateJainKatha(katha: JainKatha): Promise<void>;
+    /**
+     * / Admin-only: update an existing Jain Pathshala entry.
+     */
+    updateJainPathshalaEntry(entry: JainPathshalaEntry): Promise<void>;
     /**
      * / Admin-only: update order payment status.
      */
     updateOrderPaymentStatus(id: string, paymentStatus: string, stripePaymentIntentId: string): Promise<void>;
     /**
+     * / Authenticated user: update an existing palm photo reading they own. Returns updated entry or null.
+     */
+    updatePalmPhotoReading(id: string, photoUrl: string, handType: string, palmShape: string, lineAnnotations: string, readingText: string, dominantLine: string, luckySigns: string): Promise<PalmPhotoReading | null>;
+    /**
+     * / Admin-only: update an existing palmistry content entry. Returns the updated entry or null if not found.
+     */
+    updatePalmistryContent(id: string, title: string, titleHi: string, category: string, lineOrPalmType: string, descriptionEn: string, descriptionHi: string, characteristicsEn: string, characteristicsHi: string, locationOnPalm: string, benefitsEn: string, benefitsHi: string): Promise<PalmistryContent | null>;
+    /**
+     * / Admin-only: update an existing Pathshala lesson.
+     */
+    updatePathshalaLesson(id: string, lesson: PathshalaLesson): Promise<void>;
+    /**
      * / Admin-only: update the status of a prasad delivery request.
      */
     updatePrasadDeliveryStatus(id: string, status: string): Promise<void>;
     /**
-     * / Admin-only: update a product.
+     * / Admin or productManager: replace a product entirely (backward-compatible full update).
      */
     updateProduct(product: Product): Promise<void>;
+    /**
+     * / Admin or productManager: partial update — only supplied fields are changed.
+     */
+    updateProductFields(id: string, updates: ProductUpdateRequest): Promise<void>;
+    /**
+     * / Admin or productManager: update stock for a product.
+     */
+    updateProductStock(id: string, stock: bigint): Promise<void>;
+    /**
+     * / Admin or productManager: update only the variants array for a product (gemstone weight variants).
+     */
+    updateProductVariants(id: string, variants: Array<ProductVariant>): Promise<void>;
+    /**
+     * / Admin-only: update an existing puja report.
+     */
+    updatePujaReport(id: string, report: PujaReport): Promise<void>;
+    /**
+     * / Admin-only: update an existing puja type.
+     */
+    updatePujaType(pujaType: PujaType): Promise<void>;
     /**
      * / Admin-only: update report status and content.
      */
     updateReportRequest(id: string, status: string, content: string): Promise<void>;
     /**
+     * / Admin-only: update the status of a service booking.
+     */
+    updateServiceBookingStatus(id: string, status: string): Promise<void>;
+    /**
+     * / Admin-only: update an existing suktam entry.
+     */
+    updateSuktam(entry: SuktamEntry): Promise<void>;
+    /**
+     * / Admin-only: update an existing vastu content entry. Returns the updated entry or null if not found.
+     */
+    updateVastuContent(id: string, title: string, titleHi: string, category: string, directionOrRoom: string, planetaryRuler: string, planetaryRulerHi: string, effectsEn: string, effectsHi: string, doshaEn: string, doshaHi: string, remediesEn: string, remediesHi: string, yantra: string, elementsInvolved: string, tipsEn: string, tipsHi: string): Promise<VastuContent | null>;
+    /**
+     * / Authenticated user: update an existing vastu room check they own. Returns updated entry or null.
+     */
+    updateVastuRoomCheck(id: string, floorPlanUrl: string, roomType: string, roomDimensions: string, entranceDirection: string, complianceScore: bigint, issuesJson: string, remediesJson: string, elementBalance: string): Promise<VastuRoomCheck | null>;
+    /**
      * / Admin-only: update an existing vrat katha entry.
      */
     updateVratKatha(entry: VratKathaEntry): Promise<void>;
+    /**
+     * / Admin-only: update an existing web story.
+     */
+    updateWebStory(story: WebStory): Promise<void>;
 }
-import type { AstrologerProfile as _AstrologerProfile, BhajanEntry as _BhajanEntry, DevotionalContent as _DevotionalContent, HolyBookEntry as _HolyBookEntry, Product as _Product, StripeSessionStatus as _StripeSessionStatus, UserProfile as _UserProfile, UserRole as _UserRole, VirtualTempleConfig as _VirtualTempleConfig, VratKathaEntry as _VratKathaEntry, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { AstroChart as _AstroChart, AstrologerProfile as _AstrologerProfile, BhajanEntry as _BhajanEntry, BlogArticle as _BlogArticle, CalculatorFAQ as _CalculatorFAQ, CombinedVedicReading as _CombinedVedicReading, DevotionalContent as _DevotionalContent, HolyBookEntry as _HolyBookEntry, JainEncyclopediaArticle as _JainEncyclopediaArticle, KundaliMatch as _KundaliMatch, PalmPhotoReading as _PalmPhotoReading, PalmistryContent as _PalmistryContent, PathshalaLesson as _PathshalaLesson, Product as _Product, ProductUpdateRequest as _ProductUpdateRequest, ProductVariant as _ProductVariant, PujaType as _PujaType, SuktamEntry as _SuktamEntry, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, VastuContent as _VastuContent, VastuRoomCheck as _VastuRoomCheck, VirtualTempleConfig as _VirtualTempleConfig, VratKathaEntry as _VratKathaEntry, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
+    async _immutableObjectStorageBlobsAreLive(arg0: Array<Uint8Array>): Promise<Array<boolean>> {
         if (this.processError) {
             try {
-                const result = await this.actor._caffeineStorageBlobIsLive(arg0);
+                const result = await this.actor._immutableObjectStorageBlobsAreLive(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._caffeineStorageBlobIsLive(arg0);
+            const result = await this.actor._immutableObjectStorageBlobsAreLive(arg0);
             return result;
         }
     }
-    async _caffeineStorageBlobsToDelete(): Promise<Array<Uint8Array>> {
+    async _immutableObjectStorageBlobsToDelete(): Promise<Array<Uint8Array>> {
         if (this.processError) {
             try {
-                const result = await this.actor._caffeineStorageBlobsToDelete();
+                const result = await this.actor._immutableObjectStorageBlobsToDelete();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._caffeineStorageBlobsToDelete();
+            const result = await this.actor._immutableObjectStorageBlobsToDelete();
             return result;
         }
     }
-    async _caffeineStorageConfirmBlobDeletion(arg0: Array<Uint8Array>): Promise<void> {
+    async _immutableObjectStorageConfirmBlobDeletion(arg0: Array<Uint8Array>): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor._caffeineStorageConfirmBlobDeletion(arg0);
+                const result = await this.actor._immutableObjectStorageConfirmBlobDeletion(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._caffeineStorageConfirmBlobDeletion(arg0);
+            const result = await this.actor._immutableObjectStorageConfirmBlobDeletion(arg0);
             return result;
         }
     }
-    async _caffeineStorageCreateCertificate(arg0: string): Promise<_CaffeineStorageCreateCertificateResult> {
+    async _immutableObjectStorageCreateCertificate(arg0: string): Promise<_ImmutableObjectStorageCreateCertificateResult> {
         if (this.processError) {
             try {
-                const result = await this.actor._caffeineStorageCreateCertificate(arg0);
+                const result = await this.actor._immutableObjectStorageCreateCertificate(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._caffeineStorageCreateCertificate(arg0);
+            const result = await this.actor._immutableObjectStorageCreateCertificate(arg0);
             return result;
         }
     }
-    async _caffeineStorageRefillCashier(arg0: _CaffeineStorageRefillInformation | null): Promise<_CaffeineStorageRefillResult> {
+    async _immutableObjectStorageRefillCashier(arg0: _ImmutableObjectStorageRefillInformation | null): Promise<_ImmutableObjectStorageRefillResult> {
         if (this.processError) {
             try {
-                const result = await this.actor._caffeineStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
-                return from_candid__CaffeineStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor._immutableObjectStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
+                return from_candid__ImmutableObjectStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._caffeineStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
-            return from_candid__CaffeineStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor._immutableObjectStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
+            return from_candid__ImmutableObjectStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
         }
     }
-    async _caffeineStorageUpdateGatewayPrincipals(): Promise<void> {
+    async _immutableObjectStorageUpdateGatewayPrincipals(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor._caffeineStorageUpdateGatewayPrincipals();
+                const result = await this.actor._immutableObjectStorageUpdateGatewayPrincipals();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._caffeineStorageUpdateGatewayPrincipals();
+            const result = await this.actor._immutableObjectStorageUpdateGatewayPrincipals();
             return result;
         }
     }
-    async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
+    async _initializeAccessControl(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor._initializeAccessControlWithSecret(arg0);
+                const result = await this.actor._initializeAccessControl();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._initializeAccessControlWithSecret(arg0);
+            const result = await this.actor._initializeAccessControl();
             return result;
         }
     }
@@ -718,6 +1529,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async addFestivalEvent(arg0: FestivalEvent): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addFestivalEvent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addFestivalEvent(arg0);
+            return result;
+        }
+    }
     async addHolyBookEntry(arg0: HolyBookEntry): Promise<void> {
         if (this.processError) {
             try {
@@ -729,6 +1554,90 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.addHolyBookEntry(arg0);
+            return result;
+        }
+    }
+    async addJainArticle(arg0: JainEncyclopediaArticle): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addJainArticle(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addJainArticle(arg0);
+            return result;
+        }
+    }
+    async addJainKatha(arg0: JainKatha): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addJainKatha(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addJainKatha(arg0);
+            return result;
+        }
+    }
+    async addJainPathshalaEntry(arg0: JainPathshalaEntry): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addJainPathshalaEntry(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addJainPathshalaEntry(arg0);
+            return result;
+        }
+    }
+    async addMediaPlayerItem(arg0: MediaPlayerItem): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addMediaPlayerItem(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addMediaPlayerItem(arg0);
+            return result;
+        }
+    }
+    async addPathshalaLesson(arg0: PathshalaLesson): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addPathshalaLesson(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addPathshalaLesson(arg0);
+            return result;
+        }
+    }
+    async addSuktam(arg0: SuktamEntry): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addSuktam(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addSuktam(arg0);
             return result;
         }
     }
@@ -788,6 +1697,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createBlogArticle(arg0: BlogArticle): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createBlogArticle(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createBlogArticle(arg0);
+            return result;
+        }
+    }
     async createBusinessNameRecord(arg0: BusinessNameRecord): Promise<void> {
         if (this.processError) {
             try {
@@ -827,6 +1750,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createCheckoutSession(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async createCombinedVedicReading(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string): Promise<CombinedVedicReading> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createCombinedVedicReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createCombinedVedicReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
             return result;
         }
     }
@@ -886,17 +1823,45 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createProduct(arg0: Product): Promise<void> {
+    async createPalmPhotoReading(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string): Promise<PalmPhotoReading> {
         if (this.processError) {
             try {
-                const result = await this.actor.createProduct(arg0);
+                const result = await this.actor.createPalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createProduct(arg0);
+            const result = await this.actor.createPalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+            return result;
+        }
+    }
+    async createPalmistryContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string): Promise<PalmistryContent> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createPalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createPalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+            return result;
+        }
+    }
+    async createProduct(arg0: Product): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createProduct(to_candid_Product_n10(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createProduct(to_candid_Product_n10(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -914,6 +1879,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createPujaReport(arg0: PujaReport): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createPujaReport(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createPujaReport(arg0);
+            return result;
+        }
+    }
+    async createPujaType(arg0: PujaType): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createPujaType(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createPujaType(arg0);
+            return result;
+        }
+    }
     async createReportRequest(arg0: ReportRequest): Promise<void> {
         if (this.processError) {
             try {
@@ -925,6 +1918,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createReportRequest(arg0);
+            return result;
+        }
+    }
+    async createServiceBooking(arg0: ServiceBooking): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createServiceBooking(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createServiceBooking(arg0);
             return result;
         }
     }
@@ -942,6 +1949,62 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createVastuContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string, arg12: string, arg13: string, arg14: string, arg15: string): Promise<VastuContent> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+            return result;
+        }
+    }
+    async createVastuRoomCheck(arg0: string, arg1: string, arg2: string, arg3: string, arg4: bigint, arg5: string, arg6: string, arg7: string): Promise<VastuRoomCheck> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+            return result;
+        }
+    }
+    async createWebStory(arg0: WebStory): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createWebStory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createWebStory(arg0);
+            return result;
+        }
+    }
+    async deleteAstroChart(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteAstroChart(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteAstroChart(arg0);
+            return result;
+        }
+    }
     async deleteBhajan(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -953,6 +2016,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deleteBhajan(arg0);
+            return result;
+        }
+    }
+    async deleteBlogArticle(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteBlogArticle(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteBlogArticle(arg0);
+            return result;
+        }
+    }
+    async deleteCombinedVedicReading(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteCombinedVedicReading(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteCombinedVedicReading(arg0);
             return result;
         }
     }
@@ -970,6 +2061,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deleteFestivalEvent(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteFestivalEvent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteFestivalEvent(arg0);
+            return result;
+        }
+    }
     async deleteHolyBookEntry(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -981,6 +2086,104 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deleteHolyBookEntry(arg0);
+            return result;
+        }
+    }
+    async deleteJainArticle(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteJainArticle(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteJainArticle(arg0);
+            return result;
+        }
+    }
+    async deleteJainKatha(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteJainKatha(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteJainKatha(arg0);
+            return result;
+        }
+    }
+    async deleteJainPathshalaEntry(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteJainPathshalaEntry(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteJainPathshalaEntry(arg0);
+            return result;
+        }
+    }
+    async deleteKundaliMatch(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteKundaliMatch(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteKundaliMatch(arg0);
+            return result;
+        }
+    }
+    async deletePalmPhotoReading(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePalmPhotoReading(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePalmPhotoReading(arg0);
+            return result;
+        }
+    }
+    async deletePalmistryContent(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePalmistryContent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePalmistryContent(arg0);
+            return result;
+        }
+    }
+    async deletePathshalaLesson(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePathshalaLesson(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePathshalaLesson(arg0);
             return result;
         }
     }
@@ -998,6 +2201,62 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deletePujaType(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePujaType(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePujaType(arg0);
+            return result;
+        }
+    }
+    async deleteSuktam(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteSuktam(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteSuktam(arg0);
+            return result;
+        }
+    }
+    async deleteVastuContent(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteVastuContent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteVastuContent(arg0);
+            return result;
+        }
+    }
+    async deleteVastuRoomCheck(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteVastuRoomCheck(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteVastuRoomCheck(arg0);
+            return result;
+        }
+    }
     async deleteVratKatha(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -1012,6 +2271,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deleteWebStory(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteWebStory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteWebStory(arg0);
+            return result;
+        }
+    }
     async getAllAstrologerProfiles(): Promise<Array<AstrologerProfile>> {
         if (this.processError) {
             try {
@@ -1023,6 +2296,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getAllAstrologerProfiles();
+            return result;
+        }
+    }
+    async getAllBlogArticles(): Promise<Array<BlogArticle>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllBlogArticles();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllBlogArticles();
+            return result;
+        }
+    }
+    async getAllCalculatorFAQs(): Promise<Array<CalculatorFAQ>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllCalculatorFAQs();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllCalculatorFAQs();
             return result;
         }
     }
@@ -1074,17 +2375,129 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getAllProducts(): Promise<Array<Product>> {
+    async getAllFestivalEvents(): Promise<Array<FestivalEvent>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAllProducts();
+                const result = await this.actor.getAllFestivalEvents();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
+            const result = await this.actor.getAllFestivalEvents();
+            return result;
+        }
+    }
+    async getAllJainArticles(): Promise<Array<JainEncyclopediaArticle>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllJainArticles();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllJainArticles();
+            return result;
+        }
+    }
+    async getAllJainKathas(): Promise<Array<JainKatha>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllJainKathas();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllJainKathas();
+            return result;
+        }
+    }
+    async getAllJainPathshalaEntries(): Promise<Array<JainPathshalaEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllJainPathshalaEntries();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllJainPathshalaEntries();
+            return result;
+        }
+    }
+    async getAllPathshalaLessons(): Promise<Array<PathshalaLesson>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPathshalaLessons();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPathshalaLessons();
+            return result;
+        }
+    }
+    async getAllProductManagers(): Promise<Array<Principal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllProductManagers();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllProductManagers();
+            return result;
+        }
+    }
+    async getAllProducts(): Promise<Array<Product>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllProducts();
+                return from_candid_vec_n12(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
             const result = await this.actor.getAllProducts();
+            return from_candid_vec_n12(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getAllPujaReports(): Promise<Array<PujaReport>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPujaReports();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPujaReports();
+            return result;
+        }
+    }
+    async getAllPujaTypes(): Promise<Array<PujaType>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPujaTypes();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPujaTypes();
             return result;
         }
     }
@@ -1116,32 +2529,60 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getAllWebStories(): Promise<Array<WebStory>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllWebStories();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllWebStories();
+            return result;
+        }
+    }
+    async getAstroChart(arg0: string): Promise<AstroChart | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAstroChart(arg0);
+                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAstroChart(arg0);
+            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getAstrologerProfile(arg0: string): Promise<AstrologerProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getAstrologerProfile(arg0);
-                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAstrologerProfile(arg0);
-            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
         }
     }
     async getBhajanById(arg0: string): Promise<BhajanEntry | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getBhajanById(arg0);
-                return from_candid_opt_n11(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getBhajanById(arg0);
-            return from_candid_opt_n11(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
         }
     }
     async getBhajans(): Promise<Array<BhajanEntry>> {
@@ -1158,46 +2599,102 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getBlogArticleBySlug(arg0: string): Promise<BlogArticle | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getBlogArticleBySlug(arg0);
+                return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getBlogArticleBySlug(arg0);
+            return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCalculatorFAQ(arg0: string): Promise<CalculatorFAQ | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCalculatorFAQ(arg0);
+                return from_candid_opt_n22(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCalculatorFAQ(arg0);
+            return from_candid_opt_n22(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n13(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n24(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n13(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n24(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCombinedVedicReading(arg0: string): Promise<CombinedVedicReading | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCombinedVedicReading(arg0);
+                return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCombinedVedicReading(arg0);
+            return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
         }
     }
     async getDevotionalContent(arg0: string): Promise<DevotionalContent | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getDevotionalContent(arg0);
-                return from_candid_opt_n15(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getDevotionalContent(arg0);
-            return from_candid_opt_n15(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getFestivalEventsByFaith(arg0: string): Promise<Array<FestivalEvent>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFestivalEventsByFaith(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFestivalEventsByFaith(arg0);
+            return result;
         }
     }
     async getHolyBookEntries(arg0: string): Promise<Array<HolyBookEntry>> {
@@ -1218,14 +2715,238 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getHolyBookEntryById(arg0);
-                return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getHolyBookEntryById(arg0);
-            return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getJainArticleById(arg0: string): Promise<JainEncyclopediaArticle | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getJainArticleById(arg0);
+                return from_candid_opt_n29(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getJainArticleById(arg0);
+            return from_candid_opt_n29(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getJainArticlesByVolume(arg0: bigint): Promise<Array<JainEncyclopediaArticle>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getJainArticlesByVolume(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getJainArticlesByVolume(arg0);
+            return result;
+        }
+    }
+    async getJainKathasByParv(arg0: string): Promise<Array<JainKatha>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getJainKathasByParv(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getJainKathasByParv(arg0);
+            return result;
+        }
+    }
+    async getJainPathshalaEntriesByCategory(arg0: string): Promise<Array<JainPathshalaEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getJainPathshalaEntriesByCategory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getJainPathshalaEntriesByCategory(arg0);
+            return result;
+        }
+    }
+    async getKundaliMatchById(arg0: string): Promise<KundaliMatch | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getKundaliMatchById(arg0);
+                return from_candid_opt_n30(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getKundaliMatchById(arg0);
+            return from_candid_opt_n30(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getKundaliMatches(): Promise<Array<KundaliMatch>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getKundaliMatches();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getKundaliMatches();
+            return result;
+        }
+    }
+    async getMediaPlayerItems(): Promise<Array<MediaPlayerItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMediaPlayerItems();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMediaPlayerItems();
+            return result;
+        }
+    }
+    async getMediaPlayerItemsByType(arg0: string): Promise<Array<MediaPlayerItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMediaPlayerItemsByType(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMediaPlayerItemsByType(arg0);
+            return result;
+        }
+    }
+    async getMyCombinedVedicReadings(): Promise<Array<CombinedVedicReading>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyCombinedVedicReadings();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyCombinedVedicReadings();
+            return result;
+        }
+    }
+    async getMyPalmPhotoReadings(): Promise<Array<PalmPhotoReading>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyPalmPhotoReadings();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyPalmPhotoReadings();
+            return result;
+        }
+    }
+    async getMyVastuRoomChecks(): Promise<Array<VastuRoomCheck>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyVastuRoomChecks();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyVastuRoomChecks();
+            return result;
+        }
+    }
+    async getPalmPhotoReading(arg0: string): Promise<PalmPhotoReading | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPalmPhotoReading(arg0);
+                return from_candid_opt_n31(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPalmPhotoReading(arg0);
+            return from_candid_opt_n31(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPalmistryContent(arg0: string): Promise<PalmistryContent | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPalmistryContent(arg0);
+                return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPalmistryContent(arg0);
+            return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPalmistryContents(): Promise<Array<PalmistryContent>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPalmistryContents();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPalmistryContents();
+            return result;
+        }
+    }
+    async getPathshalaLesson(arg0: string): Promise<PathshalaLesson | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPathshalaLesson(arg0);
+                return from_candid_opt_n33(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPathshalaLesson(arg0);
+            return from_candid_opt_n33(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPathshalaLessonsByPart(arg0: string): Promise<Array<PathshalaLesson>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPathshalaLessonsByPart(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPathshalaLessonsByPart(arg0);
+            return result;
         }
     }
     async getPendingPrasadDeliveries(): Promise<Array<PrasadDeliveryRequest>> {
@@ -1246,28 +2967,154 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getProduct(arg0);
-                return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getProduct(arg0);
-            return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getProductsByCategory(arg0: string): Promise<Array<Product>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getProductsByCategory(arg0);
+                return from_candid_vec_n12(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getProductsByCategory(arg0);
+            return from_candid_vec_n12(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPublishedBlogArticles(): Promise<Array<BlogArticle>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPublishedBlogArticles();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPublishedBlogArticles();
+            return result;
+        }
+    }
+    async getPublishedPathshalaLessons(): Promise<Array<PathshalaLesson>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPublishedPathshalaLessons();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPublishedPathshalaLessons();
+            return result;
+        }
+    }
+    async getPublishedWebStories(): Promise<Array<WebStory>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPublishedWebStories();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPublishedWebStories();
+            return result;
+        }
+    }
+    async getPujaTypeById(arg0: string): Promise<PujaType | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPujaTypeById(arg0);
+                return from_candid_opt_n35(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPujaTypeById(arg0);
+            return from_candid_opt_n35(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getServiceBookings(): Promise<Array<ServiceBooking>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getServiceBookings();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getServiceBookings();
+            return result;
         }
     }
     async getStripeSessionStatus(arg0: string): Promise<StripeSessionStatus> {
         if (this.processError) {
             try {
                 const result = await this.actor.getStripeSessionStatus(arg0);
-                return from_candid_StripeSessionStatus_n18(this._uploadFile, this._downloadFile, result);
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getStripeSessionStatus(arg0);
-            return from_candid_StripeSessionStatus_n18(this._uploadFile, this._downloadFile, result);
+            return result;
+        }
+    }
+    async getSuktamById(arg0: string): Promise<SuktamEntry | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSuktamById(arg0);
+                return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSuktamById(arg0);
+            return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getSuktams(): Promise<Array<SuktamEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSuktams();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSuktams();
+            return result;
+        }
+    }
+    async getUserAstroCharts(): Promise<Array<AstroChart>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserAstroCharts();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserAstroCharts();
+            return result;
         }
     }
     async getUserBusinessNameRecords(arg0: Principal): Promise<Array<BusinessNameRecord>> {
@@ -1340,6 +3187,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getUserPalmistryReadings(): Promise<Array<PalmistryReading>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserPalmistryReadings();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserPalmistryReadings();
+            return result;
+        }
+    }
     async getUserPrasadDeliveryRequests(arg0: Principal): Promise<Array<PrasadDeliveryRequest>> {
         if (this.processError) {
             try {
@@ -1358,14 +3219,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserPujaBookings(arg0: Principal): Promise<Array<PujaBooking>> {
@@ -1379,6 +3240,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getUserPujaBookings(arg0);
+            return result;
+        }
+    }
+    async getUserPujaReports(): Promise<Array<PujaReport>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserPujaReports();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserPujaReports();
             return result;
         }
     }
@@ -1396,32 +3271,88 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getUserServiceBookings(): Promise<Array<ServiceBooking>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserServiceBookings();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserServiceBookings();
+            return result;
+        }
+    }
+    async getVastuContent(arg0: string): Promise<VastuContent | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVastuContent(arg0);
+                return from_candid_opt_n37(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVastuContent(arg0);
+            return from_candid_opt_n37(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getVastuContents(): Promise<Array<VastuContent>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVastuContents();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVastuContents();
+            return result;
+        }
+    }
+    async getVastuRoomCheck(arg0: string): Promise<VastuRoomCheck | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVastuRoomCheck(arg0);
+                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVastuRoomCheck(arg0);
+            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getVirtualTempleConfig(arg0: Principal): Promise<VirtualTempleConfig | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getVirtualTempleConfig(arg0);
-                return from_candid_opt_n22(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVirtualTempleConfig(arg0);
-            return from_candid_opt_n22(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVratKathaById(arg0: string): Promise<VratKathaEntry | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getVratKathaById(arg0);
-                return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVratKathaById(arg0);
-            return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVratKathas(): Promise<Array<VratKathaEntry>> {
@@ -1494,6 +3425,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async isProductManager(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isProductManager();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isProductManager();
+            return result;
+        }
+    }
     async isStripeConfigured(): Promise<boolean> {
         if (this.processError) {
             try {
@@ -1522,6 +3467,62 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async removeMediaPlayerItem(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeMediaPlayerItem(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeMediaPlayerItem(arg0);
+            return result;
+        }
+    }
+    async revokeProductManagerRole(arg0: Principal): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.revokeProductManagerRole(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.revokeProductManagerRole(arg0);
+            return result;
+        }
+    }
+    async saveAstroChart(arg0: AstroChart): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveAstroChart(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveAstroChart(arg0);
+            return result;
+        }
+    }
+    async saveCalculatorFAQ(arg0: CalculatorFAQ): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveCalculatorFAQ(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveCalculatorFAQ(arg0);
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -1536,6 +3537,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async saveKundaliMatch(arg0: KundaliMatchInput): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveKundaliMatch(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveKundaliMatch(arg0);
+            return result;
+        }
+    }
+    async savePalmistryReading(arg0: PalmistryReading): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.savePalmistryReading(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.savePalmistryReading(arg0);
+            return result;
+        }
+    }
     async saveVirtualTempleConfig(arg0: VirtualTempleConfig): Promise<void> {
         if (this.processError) {
             try {
@@ -1547,6 +3576,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveVirtualTempleConfig(arg0);
+            return result;
+        }
+    }
+    async setProductManagerRole(arg0: Principal): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setProductManagerRole(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setProductManagerRole(arg0);
             return result;
         }
     }
@@ -1592,6 +3635,48 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateBlogArticle(arg0: BlogArticle): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateBlogArticle(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateBlogArticle(arg0);
+            return result;
+        }
+    }
+    async updateCalculatorFAQ(arg0: string, arg1: CalculatorFAQ): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateCalculatorFAQ(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateCalculatorFAQ(arg0, arg1);
+            return result;
+        }
+    }
+    async updateCombinedVedicReading(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string, arg12: string): Promise<CombinedVedicReading | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateCombinedVedicReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+                return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateCombinedVedicReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+            return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async updateConsultationAppointment(arg0: string, arg1: string, arg2: string): Promise<void> {
         if (this.processError) {
             try {
@@ -1620,6 +3705,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateFestivalEvent(arg0: FestivalEvent): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateFestivalEvent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateFestivalEvent(arg0);
+            return result;
+        }
+    }
     async updateHolyBookEntry(arg0: HolyBookEntry): Promise<void> {
         if (this.processError) {
             try {
@@ -1634,6 +3733,48 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateJainArticle(arg0: JainEncyclopediaArticle): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateJainArticle(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateJainArticle(arg0);
+            return result;
+        }
+    }
+    async updateJainKatha(arg0: JainKatha): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateJainKatha(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateJainKatha(arg0);
+            return result;
+        }
+    }
+    async updateJainPathshalaEntry(arg0: JainPathshalaEntry): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateJainPathshalaEntry(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateJainPathshalaEntry(arg0);
+            return result;
+        }
+    }
     async updateOrderPaymentStatus(arg0: string, arg1: string, arg2: string): Promise<void> {
         if (this.processError) {
             try {
@@ -1645,6 +3786,48 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateOrderPaymentStatus(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async updatePalmPhotoReading(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string): Promise<PalmPhotoReading | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                return from_candid_opt_n31(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+            return from_candid_opt_n31(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updatePalmistryContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string): Promise<PalmistryContent | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+                return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+            return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updatePathshalaLesson(arg0: string, arg1: PathshalaLesson): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePathshalaLesson(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePathshalaLesson(arg0, arg1);
             return result;
         }
     }
@@ -1665,14 +3848,84 @@ export class Backend implements backendInterface {
     async updateProduct(arg0: Product): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProduct(arg0);
+                const result = await this.actor.updateProduct(to_candid_Product_n10(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProduct(arg0);
+            const result = await this.actor.updateProduct(to_candid_Product_n10(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async updateProductFields(arg0: string, arg1: ProductUpdateRequest): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n41(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n41(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async updateProductStock(arg0: string, arg1: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProductStock(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProductStock(arg0, arg1);
+            return result;
+        }
+    }
+    async updateProductVariants(arg0: string, arg1: Array<ProductVariant>): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProductVariants(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProductVariants(arg0, arg1);
+            return result;
+        }
+    }
+    async updatePujaReport(arg0: string, arg1: PujaReport): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePujaReport(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePujaReport(arg0, arg1);
+            return result;
+        }
+    }
+    async updatePujaType(arg0: PujaType): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePujaType(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePujaType(arg0);
             return result;
         }
     }
@@ -1690,6 +3943,62 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateServiceBookingStatus(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateServiceBookingStatus(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateServiceBookingStatus(arg0, arg1);
+            return result;
+        }
+    }
+    async updateSuktam(arg0: SuktamEntry): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateSuktam(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateSuktam(arg0);
+            return result;
+        }
+    }
+    async updateVastuContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string, arg12: string, arg13: string, arg14: string, arg15: string, arg16: string): Promise<VastuContent | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
+                return from_candid_opt_n37(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
+            return from_candid_opt_n37(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateVastuRoomCheck(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: bigint, arg6: string, arg7: string, arg8: string): Promise<VastuRoomCheck | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async updateVratKatha(arg0: VratKathaEntry): Promise<void> {
         if (this.processError) {
             try {
@@ -1704,41 +4013,100 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateWebStory(arg0: WebStory): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateWebStory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateWebStory(arg0);
+            return result;
+        }
+    }
 }
-function from_candid_StripeSessionStatus_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _StripeSessionStatus): StripeSessionStatus {
-    return from_candid_variant_n19(_uploadFile, _downloadFile, value);
+function from_candid_Product_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Product): Product {
+    return from_candid_record_n14(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n14(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid__CaffeineStorageRefillResult_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: __CaffeineStorageRefillResult): _CaffeineStorageRefillResult {
+function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: __ImmutableObjectStorageRefillResult): _ImmutableObjectStorageRefillResult {
     return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstrologerProfile]): AstrologerProfile | null {
+function from_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [number]): number | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BhajanEntry]): BhajanEntry | null {
+function from_candid_opt_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Array<_ProductVariant>]): Array<ProductVariant> | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_DevotionalContent]): DevotionalContent | null {
+function from_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstroChart]): AstroChart | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_HolyBookEntry]): HolyBookEntry | null {
+function from_candid_opt_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstrologerProfile]): AstrologerProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Product]): Product | null {
+function from_candid_opt_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BhajanEntry]): BhajanEntry | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
+function from_candid_opt_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BlogArticle]): BlogArticle | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VirtualTempleConfig]): VirtualTempleConfig | null {
+function from_candid_opt_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CalculatorFAQ]): CalculatorFAQ | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VratKathaEntry]): VratKathaEntry | null {
+function from_candid_opt_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CombinedVedicReading]): CombinedVedicReading | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_DevotionalContent]): DevotionalContent | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_HolyBookEntry]): HolyBookEntry | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_JainEncyclopediaArticle]): JainEncyclopediaArticle | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_KundaliMatch]): KundaliMatch | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmPhotoReading]): PalmPhotoReading | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmistryContent]): PalmistryContent | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PathshalaLesson]): PathshalaLesson | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Product]): Product | null {
+    return value.length === 0 ? null : from_candid_Product_n13(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PujaType]): PujaType | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_SuktamEntry]): SuktamEntry | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuContent]): VastuContent | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n38(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuRoomCheck]): VastuRoomCheck | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n39(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VirtualTempleConfig]): VirtualTempleConfig | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n40(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VratKathaEntry]): VratKathaEntry | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
@@ -1747,16 +4115,52 @@ function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
 function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    userPrincipal: [] | [string];
-    response: string;
+function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    mrp: [] | [number];
+    sku: [] | [string];
+    variantLabel: [] | [string];
+    name: string;
+    createdAt: _Time;
+    description: string;
+    variants: [] | [Array<_ProductVariant>];
+    stock: bigint;
+    astrologicalPurpose: string;
+    discount: [] | [bigint];
+    category: string;
+    benefits: string;
+    price: number;
 }): {
-    userPrincipal?: string;
-    response: string;
+    id: string;
+    mrp?: number;
+    sku?: string;
+    variantLabel?: string;
+    name: string;
+    createdAt: Time;
+    description: string;
+    variants?: Array<ProductVariant>;
+    stock: bigint;
+    astrologicalPurpose: string;
+    discount?: bigint;
+    category: string;
+    benefits: string;
+    price: number;
 } {
     return {
-        userPrincipal: record_opt_to_undefined(from_candid_opt_n21(_uploadFile, _downloadFile, value.userPrincipal)),
-        response: value.response
+        id: value.id,
+        mrp: record_opt_to_undefined(from_candid_opt_n15(_uploadFile, _downloadFile, value.mrp)),
+        sku: record_opt_to_undefined(from_candid_opt_n16(_uploadFile, _downloadFile, value.sku)),
+        variantLabel: record_opt_to_undefined(from_candid_opt_n16(_uploadFile, _downloadFile, value.variantLabel)),
+        name: value.name,
+        createdAt: value.createdAt,
+        description: value.description,
+        variants: record_opt_to_undefined(from_candid_opt_n17(_uploadFile, _downloadFile, value.variants)),
+        stock: value.stock,
+        astrologicalPurpose: value.astrologicalPurpose,
+        discount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.discount)),
+        category: value.category,
+        benefits: value.benefits,
+        price: value.price
     };
 }
 function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -1771,7 +4175,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
     };
 }
-function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -1780,43 +4184,71 @@ function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    completed: {
-        userPrincipal: [] | [string];
-        response: string;
-    };
-} | {
-    failed: {
-        error: string;
-    };
-}): {
-    __kind__: "completed";
-    completed: {
-        userPrincipal?: string;
-        response: string;
-    };
-} | {
-    __kind__: "failed";
-    failed: {
-        error: string;
-    };
-} {
-    return "completed" in value ? {
-        __kind__: "completed",
-        completed: from_candid_record_n20(_uploadFile, _downloadFile, value.completed)
-    } : "failed" in value ? {
-        __kind__: "failed",
-        failed: value.failed
-    } : value;
+function from_candid_vec_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Product>): Array<Product> {
+    return value.map((x)=>from_candid_Product_n13(_uploadFile, _downloadFile, x));
+}
+function to_candid_ProductUpdateRequest_n41(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProductUpdateRequest): _ProductUpdateRequest {
+    return to_candid_record_n42(_uploadFile, _downloadFile, value);
+}
+function to_candid_Product_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Product): _Product {
+    return to_candid_record_n11(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
-function to_candid__CaffeineStorageRefillInformation_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CaffeineStorageRefillInformation): __CaffeineStorageRefillInformation {
+function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ImmutableObjectStorageRefillInformation): __ImmutableObjectStorageRefillInformation {
     return to_candid_record_n3(_uploadFile, _downloadFile, value);
 }
-function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CaffeineStorageRefillInformation | null): [] | [__CaffeineStorageRefillInformation] {
-    return value === null ? candid_none() : candid_some(to_candid__CaffeineStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
+function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ImmutableObjectStorageRefillInformation | null): [] | [__ImmutableObjectStorageRefillInformation] {
+    return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
+}
+function to_candid_record_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    mrp?: number;
+    sku?: string;
+    variantLabel?: string;
+    name: string;
+    createdAt: Time;
+    description: string;
+    variants?: Array<ProductVariant>;
+    stock: bigint;
+    astrologicalPurpose: string;
+    discount?: bigint;
+    category: string;
+    benefits: string;
+    price: number;
+}): {
+    id: string;
+    mrp: [] | [number];
+    sku: [] | [string];
+    variantLabel: [] | [string];
+    name: string;
+    createdAt: _Time;
+    description: string;
+    variants: [] | [Array<_ProductVariant>];
+    stock: bigint;
+    astrologicalPurpose: string;
+    discount: [] | [bigint];
+    category: string;
+    benefits: string;
+    price: number;
+} {
+    return {
+        id: value.id,
+        mrp: value.mrp ? candid_some(value.mrp) : candid_none(),
+        sku: value.sku ? candid_some(value.sku) : candid_none(),
+        variantLabel: value.variantLabel ? candid_some(value.variantLabel) : candid_none(),
+        name: value.name,
+        createdAt: value.createdAt,
+        description: value.description,
+        variants: value.variants ? candid_some(value.variants) : candid_none(),
+        stock: value.stock,
+        astrologicalPurpose: value.astrologicalPurpose,
+        discount: value.discount ? candid_some(value.discount) : candid_none(),
+        category: value.category,
+        benefits: value.benefits,
+        price: value.price
+    };
 }
 function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     proposed_top_up_amount?: bigint;
@@ -1825,6 +4257,48 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 } {
     return {
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
+    };
+}
+function to_candid_record_n42(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    mrp?: number;
+    sku?: string;
+    variantLabel?: string;
+    name?: string;
+    description?: string;
+    variants?: Array<ProductVariant>;
+    stock?: bigint;
+    astrologicalPurpose?: string;
+    discount?: bigint;
+    category?: string;
+    benefits?: string;
+    price?: number;
+}): {
+    mrp: [] | [number];
+    sku: [] | [string];
+    variantLabel: [] | [string];
+    name: [] | [string];
+    description: [] | [string];
+    variants: [] | [Array<_ProductVariant>];
+    stock: [] | [bigint];
+    astrologicalPurpose: [] | [string];
+    discount: [] | [bigint];
+    category: [] | [string];
+    benefits: [] | [string];
+    price: [] | [number];
+} {
+    return {
+        mrp: value.mrp ? candid_some(value.mrp) : candid_none(),
+        sku: value.sku ? candid_some(value.sku) : candid_none(),
+        variantLabel: value.variantLabel ? candid_some(value.variantLabel) : candid_none(),
+        name: value.name ? candid_some(value.name) : candid_none(),
+        description: value.description ? candid_some(value.description) : candid_none(),
+        variants: value.variants ? candid_some(value.variants) : candid_none(),
+        stock: value.stock ? candid_some(value.stock) : candid_none(),
+        astrologicalPurpose: value.astrologicalPurpose ? candid_some(value.astrologicalPurpose) : candid_none(),
+        discount: value.discount ? candid_some(value.discount) : candid_none(),
+        category: value.category ? candid_some(value.category) : candid_none(),
+        benefits: value.benefits ? candid_some(value.benefits) : candid_none(),
+        price: value.price ? candid_some(value.price) : candid_none()
     };
 }
 function to_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {

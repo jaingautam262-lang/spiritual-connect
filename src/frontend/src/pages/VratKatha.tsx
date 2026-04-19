@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Calendar, Pause, Play, Search, X } from "lucide-react";
 import { useRef, useState } from "react";
-import type { VratKathaEntry } from "../backend";
 import { useVratKathas } from "../hooks/useQueries";
+import type { VratKathaEntry } from "../types/backend-types";
 
 const MOCK_KATHAS: VratKathaEntry[] = [
   {

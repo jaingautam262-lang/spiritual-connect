@@ -1,7 +1,7 @@
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useState } from "react";
 import { toast } from "sonner";
 import { SAMPLE_PLANETARY_POSITIONS } from "../data/reportOutputData";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useSaveCallerUserProfile } from "../hooks/useQueries";
 import BirthChartWheel from "./BirthChartWheel";
 

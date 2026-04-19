@@ -1,8 +1,8 @@
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { CheckCircle, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { REPORT_CATALOG } from "../data/reportCatalogData";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useCreateReportRequest } from "../hooks/useQueries";
 
 export default function Reports() {

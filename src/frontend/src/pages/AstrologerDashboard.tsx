@@ -1,12 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { ConsultationAppointment } from "../backend";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useGetAllAppointments,
   useUpdateConsultationAppointment,
 } from "../hooks/useQueries";
+import type { ConsultationAppointment } from "../types/backend-types";
 
 const ADMIN_PASSCODE = "om108";
 

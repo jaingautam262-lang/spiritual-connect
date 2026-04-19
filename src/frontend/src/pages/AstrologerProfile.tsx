@@ -2,9 +2,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, Award, Clock, Languages, Star } from "lucide-react";
 import { useState } from "react";
-import type { AstrologerProfile as AstrologerProfileType } from "../backend";
 import AppointmentBookingForm from "../components/AppointmentBookingForm";
 import { useGetAstrologerProfile } from "../hooks/useQueries";
+import type { AstrologerProfile as AstrologerProfileType } from "../types/backend-types";
 
 const PLACEHOLDER_PROFILES: Record<string, AstrologerProfileType> = {
   "ast-1": {

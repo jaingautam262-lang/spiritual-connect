@@ -1,12 +1,25 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export interface BookingDetails {
+  devoteeName: string;
+  email: string;
+  phone: string;
+  preferredDate: string;
+  location?: string;
+  specialRequests?: string;
+}
+
 export interface CartItem {
   id: string;
   name: string;
   price: number;
   quantity: number;
   category: string;
+  variantName?: string;
+  // Extended for service bookings
+  type?: "product" | "service";
+  bookingDetails?: BookingDetails;
 }
 
 interface CartState {
@@ -28,12 +41,27 @@ export const useCartStore = create<CartState>()(
       items: [],
       isOpen: false,
       addItem: (item) => {
-        const existing = get().items.find((i) => i.id === item.id);
+        // Service bookings always create a new cart line (each booking is unique)
+        if (item.type === "service") {
+          set((state) => ({
+            items: [...state.items, { ...item, quantity: 1 }],
+          }));
+          return;
+        }
+
+        const itemKey = item.variantName
+          ? `${item.id}__${item.variantName}`
+          : item.id;
+        const existing = get().items.find((i) => {
+          const iKey = i.variantName ? `${i.id}__${i.variantName}` : i.id;
+          return iKey === itemKey;
+        });
         if (existing) {
           set((state) => ({
-            items: state.items.map((i) =>
-              i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
-            ),
+            items: state.items.map((i) => {
+              const iKey = i.variantName ? `${i.id}__${i.variantName}` : i.id;
+              return iKey === itemKey ? { ...i, quantity: i.quantity + 1 } : i;
+            }),
           }));
         } else {
           set((state) => ({

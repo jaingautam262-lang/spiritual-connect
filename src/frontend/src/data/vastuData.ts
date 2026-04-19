@@ -1,0 +1,903 @@
+// ─── Vastu Shastra Seed Data ──────────────────────────────────────────────────
+
+export type VastuCategory =
+  | "direction"
+  | "room"
+  | "element"
+  | "brahma_sthana"
+  | "dosha";
+
+export interface VastuItem {
+  id: string;
+  category: VastuCategory;
+  titleEn: string;
+  titleHi: string;
+  directionOrRoom: string;
+  planetaryRuler: string;
+  planetaryRulerHi: string;
+  shortDesc: string;
+  shortDescHi: string;
+  effectsEn: string;
+  effectsHi: string;
+  doshaEn: string;
+  doshaHi: string;
+  remediesEn: string;
+  remediesHi: string;
+  yantra: string;
+  elementsInvolved: string;
+  tipsEn: string;
+  tipsHi: string;
+  color: string; // representative direction/element color
+  symbol: string; // emoji symbol
+}
+
+// ─── 8 Cardinal + Ordinal Directions ─────────────────────────────────────────
+
+export const VASTU_DIRECTIONS: VastuItem[] = [
+  {
+    id: "dir-east",
+    category: "direction",
+    titleEn: "East — Purva",
+    titleHi: "पूर्व दिशा",
+    directionOrRoom: "East",
+    planetaryRuler: "Sun (Surya)",
+    planetaryRulerHi: "सूर्य",
+    shortDesc: "Ruler of the East — prosperity, light, and new beginnings.",
+    shortDescHi: "पूर्व दिशा का स्वामी सूर्य — समृद्धि, प्रकाश और नई शुरुआत।",
+    effectsEn:
+      "Governs prosperity, health, and family relationships. An open and light east direction brings affluence, good health, and harmony in father-son relationships.",
+    effectsHi:
+      "पूर्व दिशा समृद्धि, स्वास्थ्य और पारिवारिक संबंधों पर शासन करती है। खुली और प्रकाशमय पूर्व दिशा धन-धान्य और पिता-पुत्र संबंधों में सामंजस्य लाती है।",
+    doshaEn:
+      "If obstructed: deterioration of father-son relationship, frequent disputes in the home, mental stress and anxiety among family members.",
+    doshaHi:
+      "यदि अवरुद्ध हो: पिता-पुत्र संबंध में गिरावट, घर में बार-बार विवाद, परिवार के सदस्यों में मानसिक तनाव।",
+    remediesEn:
+      "Install Surya Yantra in this direction. Offer Arghya (water) to Lord Sun daily at sunrise. Keep the east side open, uncluttered, and well-lit. Avoid heavy structures on the east.",
+    remediesHi:
+      "इस दिशा में सूर्य यंत्र स्थापित करें। प्रतिदिन प्रातः सूर्योदय के समय सूर्य को अर्घ्य दें। पूर्व दिशा को खुला, साफ और प्रकाशमान रखें। पूर्व में भारी संरचनाओं से बचें।",
+    yantra: "Surya Yantra",
+    elementsInvolved: "Fire (Agni), Light",
+    tipsEn:
+      "Place a water feature or tulsi plant near the east entrance. Keep this zone unblocked for maximum sunlight.",
+    tipsHi:
+      "पूर्वी प्रवेश द्वार के पास जल का स्रोत या तुलसी का पौधा रखें। अधिकतम सूर्यप्रकाश के लिए यह क्षेत्र खुला रखें।",
+    color: "oklch(0.75 0.20 60)",
+    symbol: "☀️",
+  },
+  {
+    id: "dir-west",
+    category: "direction",
+    titleEn: "West — Paschim",
+    titleHi: "पश्चिम दिशा",
+    directionOrRoom: "West",
+    planetaryRuler: "Saturn (Shani)",
+    planetaryRulerHi: "शनि",
+    shortDesc: "Saturn rules the West — discipline, gains, and stability.",
+    shortDescHi: "पश्चिम दिशा का स्वामी शनि — अनुशासन, लाभ और स्थिरता।",
+    effectsEn:
+      "Governs career gains, stability, and discipline. A balanced west direction supports professional success and protects household appliances.",
+    effectsHi:
+      "पश्चिम दिशा करियर लाभ, स्थिरता और अनुशासन पर शासन करती है। संतुलित पश्चिम दिशा पेशेवर सफलता और घरेलू उपकरणों की सुरक्षा करती है।",
+    doshaEn:
+      "If afflicted: electrical appliances (TV, fridge, telephone) malfunction frequently; job-related problems; family members suffer from airborne diseases and pain in bones and legs.",
+    doshaHi:
+      "यदि दोषयुक्त हो: बिजली के उपकरण (TV, फ्रिज, टेलीफोन) बार-बार खराब होते हैं; नौकरी संबंधी समस्याएं; परिवार के सदस्यों को वायुजनित रोग और हड्डियों-पैरों में दर्द होता है।",
+    remediesEn:
+      "Install Shani Yantra in the west direction. Offer flour (atta) to ants on Saturday. Keep heavy furniture and storage items in the west. Avoid major openings on the west side.",
+    remediesHi:
+      "पश्चिम दिशा में शनि यंत्र स्थापित करें। शनिवार को चींटियों को आटा खिलाएं। पश्चिम में भारी फर्नीचर और भंडारण रखें। पश्चिम दिशा में बड़े द्वार से बचें।",
+    yantra: "Shani Yantra",
+    elementsInvolved: "Air (Vayu), Earth",
+    tipsEn:
+      "Place heavy objects or storage cabinets in the west. Avoid leaving this direction entirely open.",
+    tipsHi:
+      "पश्चिम में भारी वस्तुएं या भंडारण कैबिनेट रखें। इस दिशा को पूरी तरह खुला न छोड़ें।",
+    color: "oklch(0.55 0.12 270)",
+    symbol: "🪐",
+  },
+  {
+    id: "dir-north",
+    category: "direction",
+    titleEn: "North — Uttar",
+    titleHi: "उत्तर दिशा",
+    directionOrRoom: "North",
+    planetaryRuler: "Mercury (Budh)",
+    planetaryRulerHi: "बुध",
+    shortDesc: "Mercury rules the North — wealth, money, and prosperity.",
+    shortDescHi: "उत्तर दिशा का स्वामी बुध — धन, सम्पत्ति और समृद्धि।",
+    effectsEn:
+      "North represents wealth, money, and profits. A clean and open north direction ensures financial stability, good sleep, and health of the respiratory system.",
+    effectsHi:
+      "उत्तर दिशा धन, सम्पत्ति और लाभ का प्रतिनिधित्व करती है। साफ और खुली उत्तर दिशा वित्तीय स्थिरता, अच्छी नींद और श्वसन तंत्र के स्वास्थ्य को सुनिश्चित करती है।",
+    doshaEn:
+      "If afflicted: financial loss, insomnia, throat and nose diseases, and problems related to communication and intellect.",
+    doshaHi:
+      "यदि दोषयुक्त हो: वित्तीय हानि, अनिद्रा, गले और नाक के रोग, और संचार व बुद्धि से संबंधित समस्याएं।",
+    remediesEn:
+      "Install Budh Yantra and offer water to the Tulsi plant. Recite Vishnu Sahasranaam. Keep this direction light and clean — avoid placing heavy items or storage here. Your safe or wardrobe door should open facing north.",
+    remediesHi:
+      "बुध यंत्र स्थापित करें और तुलसी के पौधे को जल दें। विष्णु सहस्रनाम का पाठ करें। इस दिशा को हल्का और साफ रखें — यहां भारी वस्तुएं न रखें। आपकी तिजोरी या अलमारी का दरवाजा उत्तर की ओर खुलना चाहिए।",
+    yantra: "Budh Yantra",
+    elementsInvolved: "Water (Jal), Earth",
+    tipsEn:
+      "Place Kuber's image or symbol in the north for wealth attraction. Keep this area well-lit and uncluttered.",
+    tipsHi:
+      "धन आकर्षण के लिए उत्तर में कुबेर की छवि या प्रतीक रखें। इस क्षेत्र को अच्छी तरह प्रकाशित और साफ रखें।",
+    color: "oklch(0.65 0.18 145)",
+    symbol: "💰",
+  },
+  {
+    id: "dir-south",
+    category: "direction",
+    titleEn: "South — Dakshina",
+    titleHi: "दक्षिण दिशा",
+    directionOrRoom: "South",
+    planetaryRuler: "Mars (Mangal)",
+    planetaryRulerHi: "मंगल",
+    shortDesc: "Mars rules the South — strength, legal matters, brotherhood.",
+    shortDescHi: "दक्षिण दिशा का स्वामी मंगल — शक्ति, कानूनी मामले, भाईचारा।",
+    effectsEn:
+      "South governs strength, elder brother relationships, and legal matters. Heavy objects in the south create a protective energy field for the household.",
+    effectsHi:
+      "दक्षिण दिशा शक्ति, बड़े भाई के संबंध और कानूनी मामलों पर शासन करती है। दक्षिण में भारी वस्तुएं घर के लिए सुरक्षात्मक ऊर्जा क्षेत्र बनाती हैं।",
+    doshaEn:
+      "If afflicted: tendency to get stuck in legal matters and debates; strained relations with elder brothers; blood-related diseases, leprosy, and skin disorders.",
+    doshaHi:
+      "यदि दोषयुक्त हो: कानूनी मामलों और विवादों में फंसने की प्रवृत्ति; बड़े भाइयों के साथ तनावपूर्ण संबंध; रक्त संबंधी रोग, कुष्ठ रोग और त्वचा विकार।",
+    remediesEn:
+      "Install Mangal Yantra to eliminate the malefic influence. Place heavy items and storage in this direction. Avoid major openings or windows in the south. Keep a Hanuman image in the south for protection.",
+    remediesHi:
+      "दुष्प्रभाव को दूर करने के लिए मंगल यंत्र स्थापित करें। इस दिशा में भारी वस्तुएं और भंडारण रखें। दक्षिण में बड़े द्वार या खिड़कियों से बचें। सुरक्षा के लिए दक्षिण में हनुमान जी की छवि रखें।",
+    yantra: "Mangal Yantra",
+    elementsInvolved: "Fire (Agni), Earth",
+    tipsEn:
+      "Never sleep with head towards south. Place heavy bookshelves or wardrobes along the south wall.",
+    tipsHi:
+      "दक्षिण की ओर सिर करके कभी न सोएं। दक्षिणी दीवार के साथ भारी बुकशेल्फ या अलमारी रखें।",
+    color: "oklch(0.60 0.22 30)",
+    symbol: "⚔️",
+  },
+  {
+    id: "dir-northeast",
+    category: "direction",
+    titleEn: "NE — Ishan Kona",
+    titleHi: "ईशान कोण (उत्तर-पूर्व)",
+    directionOrRoom: "North-East (Ishan)",
+    planetaryRuler: "Jupiter (Guru / Brihaspati)",
+    planetaryRulerHi: "गुरु / बृहस्पति",
+    shortDesc:
+      "Jupiter's divine corner — purity, worship, and divine blessings.",
+    shortDescHi: "बृहस्पति का दिव्य कोण — पवित्रता, पूजा और ईश्वरीय आशीर्वाद।",
+    effectsEn:
+      "The purest and most auspicious corner, owned by the Gods. The temple/puja room must face this direction. Positive energy from this corner governs divine blessings, wisdom, and wealth accumulation.",
+    effectsHi:
+      "सबसे पवित्र और शुभ कोण, देवताओं का स्थान। मंदिर/पूजा कक्ष इसी दिशा में होना चाहिए। इस कोण की सकारात्मक ऊर्जा दिव्य आशीर्वाद, बुद्धि और धन संचय पर शासन करती है।",
+    doshaEn:
+      "If afflicted: disruption of divine blessings and wealth accumulation; family members face problems in marriage; disorders related to stomach and ear diseases.",
+    doshaHi:
+      "यदि दोषयुक्त हो: दिव्य आशीर्वाद और धन संचय में व्यवधान; परिवार के सदस्यों को विवाह में समस्याएं; पेट और कान के रोगों से संबंधित विकार।",
+    remediesEn:
+      "Install Guru Yantra and worship Lord Shiva and Maa Saraswati. Never build toilets or kitchens in the Ishan corner. Keep this area clean, open, and sacred. Place a small fountain or water pot here.",
+    remediesHi:
+      "गुरु यंत्र स्थापित करें और भगवान शिव व माँ सरस्वती की पूजा करें। ईशान कोण में कभी शौचालय या रसोई न बनाएं। इस क्षेत्र को साफ, खुला और पवित्र रखें। यहां एक छोटा फव्वारा या जल-पात्र रखें।",
+    yantra: "Guru / Brihaspati Yantra",
+    elementsInvolved: "Water (Jal), Space (Akash)",
+    tipsEn:
+      "Never store heavy or dirty items in the NE. This is the most sacred zone — treat it with reverence.",
+    tipsHi:
+      "ईशान में कभी भारी या गंदी वस्तुएं न रखें। यह सबसे पवित्र क्षेत्र है — इसे सम्मान के साथ रखें।",
+    color: "oklch(0.70 0.18 220)",
+    symbol: "🙏",
+  },
+  {
+    id: "dir-northwest",
+    category: "direction",
+    titleEn: "NW — Vayavya Kona",
+    titleHi: "वायव्य कोण (उत्तर-पश्चिम)",
+    directionOrRoom: "North-West (Vayavya)",
+    planetaryRuler: "Moon (Chandra)",
+    planetaryRulerHi: "चंद्र",
+    shortDesc: "Moon governs the NW — emotions, relations, and mental peace.",
+    shortDescHi: "चंद्र वायव्य कोण का स्वामी — भावनाएं, संबंध और मानसिक शांति।",
+    effectsEn:
+      "North-West governs emotions, neighbor relations, and the health of the mother. A balanced NW direction ensures positive social relationships and timely marriage.",
+    effectsHi:
+      "उत्तर-पश्चिम भावनाओं, पड़ोसी संबंधों और माँ के स्वास्थ्य पर शासन करता है। संतुलित NW दिशा सकारात्मक सामाजिक संबंध और समय पर विवाह सुनिश्चित करती है।",
+    doshaEn:
+      "If afflicted: arguments with neighbors; mother's health may decline; delay in marriage of girls; mental stress, cold, cough, and urinary diseases.",
+    doshaHi:
+      "यदि दोषयुक्त हो: पड़ोसियों के साथ विवाद; माँ के स्वास्थ्य में गिरावट; लड़कियों के विवाह में देरी; मानसिक तनाव, सर्दी, खांसी और मूत्र संबंधी रोग।",
+    remediesEn:
+      "Place Chandra Yantra in this direction. Wear a garland of Five-Faced Rudraksha (Panch Mukhi). Worship Maa Durga. Keep this direction moderately heavy — neither too open nor too blocked.",
+    remediesHi:
+      "इस दिशा में चंद्र यंत्र रखें। पंचमुखी रुद्राक्ष की माला धारण करें। माँ दुर्गा की आराधना करें। इस दिशा को मध्यम भार में रखें — न बहुत खुला न बहुत बंद।",
+    yantra: "Chandra Yantra",
+    elementsInvolved: "Air (Vayu), Water",
+    tipsEn:
+      "Guest rooms are ideally placed in the NW. This direction supports temporary stays and relationships.",
+    tipsHi:
+      "अतिथि कक्ष आदर्श रूप से NW में रखे जाते हैं। यह दिशा अस्थायी प्रवास और संबंधों का समर्थन करती है।",
+    color: "oklch(0.75 0.10 200)",
+    symbol: "🌙",
+  },
+  {
+    id: "dir-southeast",
+    category: "direction",
+    titleEn: "SE — Agneya Kona",
+    titleHi: "आग्नेय कोण (दक्षिण-पूर्व)",
+    directionOrRoom: "South-East (Agneya)",
+    planetaryRuler: "Venus (Shukra)",
+    planetaryRulerHi: "शुक्र",
+    shortDesc:
+      "Venus and Fire rule the SE — kitchen, vehicles, health of women.",
+    shortDescHi: "शुक्र और अग्नि का कोण — रसोई, वाहन, और स्त्री-स्वास्थ्य।",
+    effectsEn:
+      "The Agneya corner is governed by Venus and the fire element, making it the ideal location for the kitchen. It supports wealth, beauty, and the health of women in the household.",
+    effectsHi:
+      "आग्नेय कोण शुक्र और अग्नि तत्व द्वारा शासित होता है, जो इसे रसोई के लिए आदर्श स्थान बनाता है। यह धन, सौंदर्य और घर की स्त्रियों के स्वास्थ्य का समर्थन करता है।",
+    doshaEn:
+      "If afflicted: decline in women's health; tensions between married couples; misunderstandings with tenants; problems with vehicles; diseases related to uterus, hernia, and diabetes.",
+    doshaHi:
+      "यदि दोषयुक्त हो: महिलाओं के स्वास्थ्य में गिरावट; विवाहित जोड़ों के बीच तनाव; किरायेदारों के साथ गलतफहमी; वाहनों में समस्याएं; गर्भाशय, हर्निया और मधुमेह के रोग।",
+    remediesEn:
+      "Place the Shukra Yantra in this direction. Seek blessings of young girls by touching their feet on auspicious occasions. Always place the kitchen in the SE corner.",
+    remediesHi:
+      "इस दिशा में शुक्र यंत्र रखें। शुभ अवसरों पर युवा कन्याओं के चरण स्पर्श करके उनका आशीर्वाद लें। रसोई हमेशा SE कोण में रखें।",
+    yantra: "Shukra Yantra",
+    elementsInvolved: "Fire (Agni)",
+    tipsEn:
+      "Never place the kitchen in the NE or SW. SE is the only correct position for cooking fire.",
+    tipsHi: "रसोई कभी NE या SW में न रखें। SE ही पाक-अग्नि के लिए एकमात्र सही स्थान है।",
+    color: "oklch(0.72 0.20 18)",
+    symbol: "🔥",
+  },
+  {
+    id: "dir-southwest",
+    category: "direction",
+    titleEn: "SW — Nairutya Kona",
+    titleHi: "नैऋत्य कोण (दक्षिण-पश्चिम)",
+    directionOrRoom: "South-West (Nairutya)",
+    planetaryRuler: "Rahu",
+    planetaryRulerHi: "राहु",
+    shortDesc:
+      "Rahu controls the SW — master bedroom, stability, and ancestors.",
+    shortDescHi: "राहु का नियंत्रण — मास्टर बेडरूम, स्थिरता और पितृ।",
+    effectsEn:
+      "The SW is the most stable and heavy corner — ideal for the master bedroom. It governs property, stability, and ancestral energies. The head of the household gains strength from this corner.",
+    effectsHi:
+      "SW सबसे स्थिर और भारी कोण है — मास्टर बेडरूम के लिए आदर्श। यह सम्पत्ति, स्थिरता और पितृ ऊर्जाओं पर शासन करता है। परिवार का मुखिया इस कोण से शक्ति प्राप्त करता है।",
+    doshaEn:
+      "If afflicted: Pitru Dosha (ancestral curses); persistent problems on paternal/maternal side; possibility of theft; family members may suffer from blood diseases, accidents, skin diseases, and brain disorders.",
+    doshaHi:
+      "यदि दोषयुक्त हो: पितृ दोष; पितृ-मातृ पक्ष में निरंतर समस्याएं; चोरी की संभावना; परिवार के सदस्यों को रक्त रोग, दुर्घटनाएं, त्वचा रोग और मस्तिष्क विकार हो सकते हैं।",
+    remediesEn:
+      "Install Rahu Yantra in this direction. Feed biscuits to dogs. Never leave the SW corner open or empty. Master bedroom should be placed here — the head sleeps with head towards south or west.",
+    remediesHi:
+      "इस दिशा में राहु यंत्र स्थापित करें। कुत्तों को बिस्किट खिलाएं। SW कोण को कभी खुला या खाली न छोड़ें। मास्टर बेडरूम यहां रखें — मुखिया दक्षिण या पश्चिम की ओर सिर करके सोए।",
+    yantra: "Rahu Yantra",
+    elementsInvolved: "Earth (Prithvi)",
+    tipsEn:
+      "Never place a prayer room or kitchen in the SW. Keep this area heavy and closed.",
+    tipsHi: "SW में कभी पूजा कक्ष या रसोई न रखें। इस क्षेत्र को भारी और बंद रखें।",
+    color: "oklch(0.50 0.15 330)",
+    symbol: "🌑",
+  },
+];
+
+// ─── Brahma Sthana (Center) ───────────────────────────────────────────────────
+
+export const BRAHMA_STHANA: VastuItem = {
+  id: "brahma-sthana",
+  category: "brahma_sthana",
+  titleEn: "Brahma Sthana — The Center",
+  titleHi: "ब्रह्म स्थान — केंद्र",
+  directionOrRoom: "Center",
+  planetaryRuler: "Lord Brahma (Creator)",
+  planetaryRulerHi: "भगवान ब्रह्मा",
+  shortDesc:
+    "The sacred center of every structure — must remain free and open.",
+  shortDescHi: "प्रत्येक भवन का पवित्र केंद्र — हमेशा मुक्त और खुला रहना चाहिए।",
+  effectsEn:
+    "Represents the middle or central part of a house, ruled by Lord Brahma. This area must be kept free, spacious, and clean — it is the heart of the house through which cosmic energy flows.",
+  effectsHi:
+    "यह घर के मध्य या केंद्रीय भाग का प्रतिनिधित्व करता है, जो भगवान ब्रह्मा द्वारा शासित है। इस क्षेत्र को मुक्त, विशाल और स्वच्छ रखना चाहिए — यह घर का हृदय है जिससे ब्रह्मांडीय ऊर्जा प्रवाहित होती है।",
+  doshaEn:
+    "If blocked: obstacles and disturbance within the family; members suffer from several illnesses; in worst cases, paranormal influence within the house.",
+  doshaHi:
+    "यदि अवरुद्ध हो: परिवार के भीतर बाधाएं और व्यवधान; सदस्य कई बीमारियों से पीड़ित होते हैं; बुरे मामलों में घर में अलौकिक प्रभाव।",
+  remediesEn:
+    "Keep this area light-weighted and free of heavy furniture. Chant Gayatri Mantra. Install Vastu Dosh Nivaran Yantra in the East direction. Never place pillars or staircases in the Brahma Sthana.",
+  remediesHi:
+    "इस क्षेत्र को हल्का और भारी फर्नीचर से मुक्त रखें। गायत्री मंत्र का जाप करें। पूर्व दिशा में वास्तु दोष निवारण यंत्र स्थापित करें। ब्रह्म स्थान में कभी खंभे या सीढ़ियां न बनाएं।",
+  yantra: "Vastu Dosh Nivaran Yantra",
+  elementsInvolved: "Space (Akash), All Five Elements",
+  tipsEn:
+    "Leave the center of each floor as an open courtyard (chowk) if possible. This space breathes life into the entire structure.",
+  tipsHi:
+    "यदि संभव हो तो प्रत्येक मंजिल के केंद्र को खुले आंगन के रूप में छोड़ें। यह स्थान पूरी संरचना में जीवन शक्ति भरता है।",
+  color: "oklch(0.70 0.16 280)",
+  symbol: "🏛️",
+};
+
+// ─── Panch Bhuta (5 Elements) ─────────────────────────────────────────────────
+
+export const PANCH_BHUTA: VastuItem[] = [
+  {
+    id: "element-prithvi",
+    category: "element",
+    titleEn: "Prithvi — Earth Element",
+    titleHi: "पृथ्वी तत्व",
+    directionOrRoom: "SW, Center",
+    planetaryRuler: "Saturn, Rahu",
+    planetaryRulerHi: "शनि, राहु",
+    shortDesc: "Earth brings stability, grounding, and material prosperity.",
+    shortDescHi: "पृथ्वी स्थिरता, भूमि-संपर्क और भौतिक समृद्धि लाती है।",
+    effectsEn:
+      "Earth element governs stability, patience, and material wealth. Strengthening it brings grounding energy, financial security, and family harmony.",
+    effectsHi:
+      "पृथ्वी तत्व स्थिरता, धैर्य और भौतिक धन पर शासन करता है। इसे मजबूत करने से भूमि-ऊर्जा, वित्तीय सुरक्षा और पारिवारिक सामंजस्य आता है।",
+    doshaEn:
+      "Imbalance causes instability, financial insecurity, and lack of grounding in life decisions.",
+    doshaHi:
+      "असंतुलन से अस्थिरता, वित्तीय असुरक्षा और जीवन के निर्णयों में भूमि-संपर्क की कमी होती है।",
+    remediesEn:
+      "Use earthy colors (brown, yellow, ochre) in SW and center. Maintain heavy furniture in the south and west.",
+    remediesHi:
+      "SW और केंद्र में पृथ्वी रंग (भूरा, पीला, गेरू) उपयोग करें। दक्षिण और पश्चिम में भारी फर्नीचर रखें।",
+    yantra: "Bhumi Yantra",
+    elementsInvolved: "Earth (Prithvi)",
+    tipsEn:
+      "Square or rectangular plots represent Earth energy best. Avoid irregular-shaped properties.",
+    tipsHi:
+      "वर्गाकार या आयताकार भूखंड पृथ्वी ऊर्जा का सबसे अच्छा प्रतिनिधित्व करते हैं। अनियमित आकार की संपत्तियों से बचें।",
+    color: "oklch(0.60 0.12 55)",
+    symbol: "🌍",
+  },
+  {
+    id: "element-jal",
+    category: "element",
+    titleEn: "Jal — Water Element",
+    titleHi: "जल तत्व",
+    directionOrRoom: "NE, North",
+    planetaryRuler: "Moon, Jupiter",
+    planetaryRulerHi: "चंद्र, बृहस्पति",
+    shortDesc: "Water brings flow, prosperity, and clarity of thought.",
+    shortDescHi: "जल प्रवाह, समृद्धि और विचार-स्पष्टता लाता है।",
+    effectsEn:
+      "Water element governs flow, wealth, intuition, and healing. Placing water features in the NE or north amplifies prosperity and mental clarity.",
+    effectsHi:
+      "जल तत्व प्रवाह, धन, अंतर्ज्ञान और उपचार पर शासन करता है। NE या उत्तर में जल सुविधाएं रखने से समृद्धि और मानसिक स्पष्टता बढ़ती है।",
+    doshaEn:
+      "Water in the south or SW causes financial drain, emotional instability, and health issues.",
+    doshaHi:
+      "दक्षिण या SW में जल से वित्तीय क्षति, भावनात्मक अस्थिरता और स्वास्थ्य समस्याएं होती हैं।",
+    remediesEn:
+      "Place aquariums, fountains, or water pots in the NE or north. Avoid underground water tanks in the south.",
+    remediesHi:
+      "NE या उत्तर में एक्वेरियम, फव्वारे या जल-पात्र रखें। दक्षिण में भूमिगत जल टंकी से बचें।",
+    yantra: "Jal Yantra",
+    elementsInvolved: "Water (Jal)",
+    tipsEn:
+      "Running water (fountain) in the north or NE activates wealth and career opportunities.",
+    tipsHi: "उत्तर या NE में बहता पानी (फव्वारा) धन और करियर के अवसर सक्रिय करता है।",
+    color: "oklch(0.65 0.18 220)",
+    symbol: "💧",
+  },
+  {
+    id: "element-agni",
+    category: "element",
+    titleEn: "Agni — Fire Element",
+    titleHi: "अग्नि तत्व",
+    directionOrRoom: "SE, East",
+    planetaryRuler: "Sun, Mars, Venus",
+    planetaryRulerHi: "सूर्य, मंगल, शुक्र",
+    shortDesc: "Fire brings energy, transformation, and digestive health.",
+    shortDescHi: "अग्नि ऊर्जा, परिवर्तन और पाचन स्वास्थ्य लाती है।",
+    effectsEn:
+      "Fire element governs energy, transformation, metabolism, and passion. The kitchen in the SE activates this element properly for health and vitality.",
+    effectsHi:
+      "अग्नि तत्व ऊर्जा, परिवर्तन, चयापचय और जोश पर शासन करता है। SE में रसोई इस तत्व को स्वास्थ्य और जीवन-शक्ति के लिए सही तरीके से सक्रिय करती है।",
+    doshaEn:
+      "Fire in the NE or SW causes health problems, accidents, and conflicts. Fire in the north causes financial loss.",
+    doshaHi:
+      "NE या SW में अग्नि से स्वास्थ्य समस्याएं, दुर्घटनाएं और विवाद होते हैं। उत्तर में अग्नि से वित्तीय हानि होती है।",
+    remediesEn:
+      "Always cook facing east. Use red, orange, and warm colors in the SE. Keep candles or lamps in the SE for activating fire energy.",
+    remediesHi:
+      "पूर्व की ओर मुख करके खाना पकाएं। SE में लाल, नारंगी और गर्म रंगों का उपयोग करें। अग्नि ऊर्जा सक्रिय करने के लिए SE में मोमबत्तियां या दीपक जलाएं।",
+    yantra: "Agni Yantra",
+    elementsInvolved: "Fire (Agni)",
+    tipsEn:
+      "Natural light (sunlight) from the east energizes the fire element. Open east-facing windows daily.",
+    tipsHi:
+      "पूर्व से प्राकृतिक प्रकाश (सूर्यप्रकाश) अग्नि तत्व को सक्रिय करता है। रोज पूर्व की ओर खिड़कियां खोलें।",
+    color: "oklch(0.70 0.22 35)",
+    symbol: "🔥",
+  },
+  {
+    id: "element-vayu",
+    category: "element",
+    titleEn: "Vayu — Air Element",
+    titleHi: "वायु तत्व",
+    directionOrRoom: "NW, East",
+    planetaryRuler: "Saturn, Mercury",
+    planetaryRulerHi: "शनि, बुध",
+    shortDesc: "Air brings movement, communication, and social connections.",
+    shortDescHi: "वायु गति, संचार और सामाजिक संपर्क लाती है।",
+    effectsEn:
+      "Air element governs movement, communication, social relationships, and respiratory health. Proper ventilation in the NW and east supports this element.",
+    effectsHi:
+      "वायु तत्व गति, संचार, सामाजिक संबंध और श्वसन स्वास्थ्य पर शासन करता है। NW और पूर्व में उचित वेंटिलेशन इस तत्व का समर्थन करता है।",
+    doshaEn:
+      "Blocked air flow causes respiratory ailments, communication problems, and social isolation.",
+    doshaHi: "अवरुद्ध वायु प्रवाह से श्वसन रोग, संचार समस्याएं और सामाजिक अलगाव होता है।",
+    remediesEn:
+      "Ensure cross-ventilation in every room. Open windows daily. Use wind chimes in the NW to attract positive air energy.",
+    remediesHi:
+      "हर कमरे में क्रॉस-वेंटिलेशन सुनिश्चित करें। रोज खिड़कियां खोलें। सकारात्मक वायु ऊर्जा आकर्षित करने के लिए NW में विंड चाइम्स लगाएं।",
+    yantra: "Vayu Yantra",
+    elementsInvolved: "Air (Vayu)",
+    tipsEn:
+      "Light curtains that move with the breeze activate the air element. Avoid heavy, static drapes in the NW.",
+    tipsHi:
+      "हवा के साथ हिलने वाले हल्के पर्दे वायु तत्व को सक्रिय करते हैं। NW में भारी, स्थिर पर्दों से बचें।",
+    color: "oklch(0.75 0.10 185)",
+    symbol: "🌬️",
+  },
+  {
+    id: "element-akash",
+    category: "element",
+    titleEn: "Akash — Space Element",
+    titleHi: "आकाश तत्व",
+    directionOrRoom: "Center, NE",
+    planetaryRuler: "Jupiter, Mercury",
+    planetaryRulerHi: "बृहस्पति, बुध",
+    shortDesc: "Space brings expansion, wisdom, and higher consciousness.",
+    shortDescHi: "आकाश विस्तार, ज्ञान और उच्च चेतना लाता है।",
+    effectsEn:
+      "Space element represents expansion, infinite potential, and higher wisdom. Open spaces in the center (Brahma Sthana) and NE represent and amplify this element.",
+    effectsHi:
+      "आकाश तत्व विस्तार, असीमित क्षमता और उच्च ज्ञान का प्रतिनिधित्व करता है। केंद्र (ब्रह्म स्थान) और NE में खुले स्थान इस तत्व का प्रतिनिधित्व और विस्तार करते हैं।",
+    doshaEn:
+      "Cluttered spaces suppress the space element, leading to mental congestion, lack of clarity, and spiritual stagnation.",
+    doshaHi:
+      "अव्यवस्थित स्थान आकाश तत्व को दबा देते हैं, जिससे मानसिक भीड़, स्पष्टता की कमी और आध्यात्मिक ठहराव होता है।",
+    remediesEn:
+      "Keep the center of every room clutter-free. Use mirrors strategically to expand space. High ceilings support the akash element.",
+    remediesHi:
+      "हर कमरे का केंद्र अव्यवस्था-मुक्त रखें। स्थान का विस्तार करने के लिए रणनीतिक रूप से दर्पण का उपयोग करें। ऊंची छतें आकाश तत्व का समर्थन करती हैं।",
+    yantra: "Akash Yantra",
+    elementsInvolved: "Space (Akash)",
+    tipsEn:
+      "Minimize ceiling decor and avoid low-hanging elements in the center of rooms. Space needs to breathe.",
+    tipsHi:
+      "छत की सजावट कम करें और कमरों के केंद्र में नीचे लटकने वाले तत्वों से बचें। स्थान को सांस लेने की जरूरत है।",
+    color: "oklch(0.68 0.08 280)",
+    symbol: "✨",
+  },
+];
+
+// ─── Room-wise Vastu Guidelines ────────────────────────────────────────────────
+
+export const VASTU_ROOMS: VastuItem[] = [
+  {
+    id: "room-bedroom",
+    category: "room",
+    titleEn: "Master Bedroom",
+    titleHi: "मास्टर शयन कक्ष",
+    directionOrRoom: "South-West (SW)",
+    planetaryRuler: "Rahu / Saturn",
+    planetaryRulerHi: "राहु / शनि",
+    shortDesc:
+      "The master bedroom in the SW brings stability and authority to the household head.",
+    shortDescHi: "SW में मास्टर बेडरूम घर के मुखिया को स्थिरता और अधिकार देता है।",
+    effectsEn:
+      "Proper bedroom placement ensures deep sleep, harmonious relationships, and stable health for the couple. The SW corner is the most grounding and protective.",
+    effectsHi:
+      "उचित शयन कक्ष स्थापन गहरी नींद, सामंजस्यपूर्ण संबंध और युगल के स्थिर स्वास्थ्य को सुनिश्चित करता है। SW कोण सबसे स्थिर और सुरक्षात्मक है।",
+    doshaEn:
+      "Bedroom in NE or SE causes health issues, restlessness, and marital discord.",
+    doshaHi:
+      "NE या SE में शयन कक्ष स्वास्थ्य समस्याएं, बेचैनी और वैवाहिक कलह का कारण बनता है।",
+    remediesEn:
+      "Sleep with head towards south or east (never north). Avoid mirrors facing the bed. Keep electronics away from the sleeping area.",
+    remediesHi:
+      "दक्षिण या पूर्व की ओर सिर करके सोएं (कभी उत्तर की ओर नहीं)। बिस्तर के सामने दर्पण से बचें। सोने के क्षेत्र से इलेक्ट्रॉनिक्स दूर रखें।",
+    yantra: "Shri Yantra (for bedroom harmony)",
+    elementsInvolved: "Earth (Prithvi), Space",
+    tipsEn:
+      "Use earth tones (brown, cream, muted gold) for bedroom walls. Avoid bright red in the bedroom.",
+    tipsHi:
+      "शयन कक्ष की दीवारों के लिए पृथ्वी रंग (भूरा, क्रीम, मंद सोना) उपयोग करें। शयन कक्ष में चमकीले लाल से बचें।",
+    color: "oklch(0.62 0.12 40)",
+    symbol: "🛏️",
+  },
+  {
+    id: "room-kitchen",
+    category: "room",
+    titleEn: "Kitchen — Rasoi Ghar",
+    titleHi: "रसोई घर",
+    directionOrRoom: "South-East (SE — Agneya)",
+    planetaryRuler: "Venus / Mars (Agni)",
+    planetaryRulerHi: "शुक्र / मंगल (अग्नि)",
+    shortDesc:
+      "The kitchen in SE harnesses fire energy for health and prosperity.",
+    shortDescHi: "SE में रसोई स्वास्थ्य और समृद्धि के लिए अग्नि ऊर्जा को सक्रिय करती है।",
+    effectsEn:
+      "A correctly placed kitchen in the SE activates fire energy that transforms raw food into nourishment, supporting the health and vitality of all family members.",
+    effectsHi:
+      "SE में सही तरह से रखी गई रसोई अग्नि ऊर्जा को सक्रिय करती है जो कच्चे भोजन को पोषण में परिवर्तित करती है, सभी परिवार के सदस्यों के स्वास्थ्य और जीवन-शक्ति का समर्थन करती है।",
+    doshaEn:
+      "Kitchen in NE causes spiritual and health problems. Kitchen in SW causes conflicts and financial drain. Kitchen in north causes wealth loss.",
+    doshaHi:
+      "NE में रसोई आध्यात्मिक और स्वास्थ्य समस्याएं पैदा करती है। SW में रसोई विवाद और वित्तीय क्षति का कारण बनती है। उत्तर में रसोई धन हानि का कारण बनती है।",
+    remediesEn:
+      "Always cook facing east. Place the gas stove in the SE quadrant of the kitchen. Keep the sink (water) and stove (fire) separated — never place them side by side.",
+    remediesHi:
+      "पूर्व की ओर मुख करके खाना पकाएं। रसोई के SE कोने में गैस स्टोव रखें। सिंक (पानी) और स्टोव (अग्नि) को अलग रखें — उन्हें कभी एक साथ न रखें।",
+    yantra: "Shukra Yantra",
+    elementsInvolved: "Fire (Agni), Water (Jal)",
+    tipsEn:
+      "Keep the kitchen clean and clutter-free. A clean kitchen attracts Lakshmi (Goddess of wealth).",
+    tipsHi:
+      "रसोई को साफ और अव्यवस्था-मुक्त रखें। साफ रसोई लक्ष्मी (धन की देवी) को आकर्षित करती है।",
+    color: "oklch(0.72 0.20 35)",
+    symbol: "🍳",
+  },
+  {
+    id: "room-puja",
+    category: "room",
+    titleEn: "Puja Room — Devghar",
+    titleHi: "पूजा कक्ष — देवघर",
+    directionOrRoom: "North-East (NE — Ishan Kona)",
+    planetaryRuler: "Jupiter (Guru)",
+    planetaryRulerHi: "गुरु / बृहस्पति",
+    shortDesc: "The NE corner is divine — ideal placement for the prayer room.",
+    shortDescHi: "NE कोण दिव्य है — पूजा कक्ष के लिए आदर्श स्थान।",
+    effectsEn:
+      "Placing the puja room in the Ishan corner aligns sacred energy with divine vibrations. Morning prayers here amplify blessings and spiritual progress for the entire household.",
+    effectsHi:
+      "ईशान कोण में पूजा कक्ष रखने से पवित्र ऊर्जा दिव्य कंपन के साथ संरेखित होती है। यहां सुबह की प्रार्थना पूरे परिवार के लिए आशीर्वाद और आध्यात्मिक प्रगति को बढ़ाती है।",
+    doshaEn:
+      "Puja room in the south or SW weakens spiritual energy and can attract negative vibrations.",
+    doshaHi:
+      "दक्षिण या SW में पूजा कक्ष आध्यात्मिक ऊर्जा को कमजोर करता है और नकारात्मक कंपन आकर्षित कर सकता है।",
+    remediesEn:
+      "Face east or north while praying. Keep idols/photos at eye level — never on the floor. Light a diya (lamp) daily in the morning and evening.",
+    remediesHi:
+      "प्रार्थना करते समय पूर्व या उत्तर की ओर मुख करें। मूर्तियां/तस्वीरें आंख के स्तर पर रखें — कभी फर्श पर नहीं। सुबह और शाम रोज दीपक जलाएं।",
+    yantra: "Guru Yantra / Shri Yantra",
+    elementsInvolved: "Space (Akash), Water, Fire",
+    tipsEn:
+      "Keep puja room door always closed when not in use. Never store money or valuables in the puja room.",
+    tipsHi:
+      "उपयोग न होने पर पूजा कक्ष का दरवाजा हमेशा बंद रखें। पूजा कक्ष में कभी पैसे या कीमती सामान न रखें।",
+    color: "oklch(0.70 0.18 220)",
+    symbol: "🪔",
+  },
+  {
+    id: "room-bathroom",
+    category: "room",
+    titleEn: "Bathroom & Toilet",
+    titleHi: "स्नानघर और शौचालय",
+    directionOrRoom: "North-West (NW) or West",
+    planetaryRuler: "Moon / Saturn",
+    planetaryRulerHi: "चंद्र / शनि",
+    shortDesc:
+      "NW or West placement ensures waste energy leaves the home properly.",
+    shortDescHi:
+      "NW या पश्चिम में स्थापना सुनिश्चित करती है कि अपशिष्ट ऊर्जा घर से ठीक से निकले।",
+    effectsEn:
+      "Properly placed bathroom/toilet in NW or west ensures that negative energies and waste are expelled efficiently without affecting the beneficial zones of the home.",
+    effectsHi:
+      "NW या पश्चिम में उचित तरह से रखे गए स्नानघर/शौचालय यह सुनिश्चित करते हैं कि नकारात्मक ऊर्जाएं और अपशिष्ट घर के लाभकारी क्षेत्रों को प्रभावित किए बिना कुशलतापूर्वक निष्कासित हों।",
+    doshaEn:
+      "Toilet in NE (Ishan) is the most severe Vastu defect — causes severe spiritual, health, and financial problems for all residents.",
+    doshaHi:
+      "NE (ईशान) में शौचालय सबसे गंभीर वास्तु दोष है — सभी निवासियों के लिए गंभीर आध्यात्मिक, स्वास्थ्य और वित्तीय समस्याएं उत्पन्न होती हैं।",
+    remediesEn:
+      "Never attach a bathroom to the NE or SW corners. Keep bathroom doors always closed. Place sea salt in a bowl inside the bathroom to absorb negative energies.",
+    remediesHi:
+      "NE या SW कोने में शौचालय कभी न जोड़ें। स्नानघर के दरवाजे हमेशा बंद रखें। नकारात्मक ऊर्जाओं को अवशोषित करने के लिए शौचालय में एक कटोरे में समुद्री नमक रखें।",
+    yantra: "Chandra Yantra (for NW bathroom)",
+    elementsInvolved: "Water (Jal), Air (Vayu)",
+    tipsEn:
+      "Always keep toilet lid closed. Never place mirrors directly facing the toilet. Keep the bathroom well-ventilated.",
+    tipsHi:
+      "शौचालय का ढक्कन हमेशा बंद रखें। शौचालय के सामने सीधे दर्पण कभी न लगाएं। स्नानघर को अच्छी तरह हवादार रखें।",
+    color: "oklch(0.68 0.10 185)",
+    symbol: "🚿",
+  },
+  {
+    id: "room-living",
+    category: "room",
+    titleEn: "Living Room — Baithak",
+    titleHi: "बैठक / लिविंग रूम",
+    directionOrRoom: "North, East, or NE",
+    planetaryRuler: "Mercury / Jupiter / Sun",
+    planetaryRulerHi: "बुध / बृहस्पति / सूर्य",
+    shortDesc:
+      "North or east-facing living room invites prosperity and positive social energy.",
+    shortDescHi:
+      "उत्तर या पूर्व में बैठक समृद्धि और सकारात्मक सामाजिक ऊर्जा को आमंत्रित करती है।",
+    effectsEn:
+      "A well-placed living room in the north or east attracts positive guests, social harmony, and business opportunities. This is the primary social zone of the home.",
+    effectsHi:
+      "उत्तर या पूर्व में अच्छी तरह से रखा गया बैठक कक्ष सकारात्मक मेहमानों, सामाजिक सामंजस्य और व्यावसायिक अवसरों को आकर्षित करता है। यह घर का प्राथमिक सामाजिक क्षेत्र है।",
+    doshaEn:
+      "Living room in the SW drains the host's energy and causes restlessness among guests.",
+    doshaHi: "SW में बैठक मेजबान की ऊर्जा को कम करती है और मेहमानों में बेचैनी पैदा करती है।",
+    remediesEn:
+      "Place the sofa set against the south or west wall. Keep the center of the living room open. Use cheerful, warm colors like yellow, cream, or soft orange.",
+    remediesHi:
+      "सोफा सेट को दक्षिण या पश्चिमी दीवार के खिलाफ रखें। लिविंग रूम का केंद्र खुला रखें। पीले, क्रीम या हल्के नारंगी जैसे खुशनुमा, गर्म रंगों का उपयोग करें।",
+    yantra: "Shri Yantra (for prosperity)",
+    elementsInvolved: "Space (Akash), Air (Vayu), Fire",
+    tipsEn:
+      "Place a money plant in the NE of the living room. Keep fresh flowers on the center table when guests are expected.",
+    tipsHi:
+      "लिविंग रूम के NE में मनी प्लांट रखें। जब मेहमानों की अपेक्षा हो तो केंद्र टेबल पर ताजे फूल रखें।",
+    color: "oklch(0.72 0.15 65)",
+    symbol: "🛋️",
+  },
+];
+
+// ─── Vastu Doshas & Remedies ──────────────────────────────────────────────────
+
+export const VASTU_DOSHAS: VastuItem[] = [
+  {
+    id: "dosha-geopathic",
+    category: "dosha",
+    titleEn: "Geopathic Stress",
+    titleHi: "भू-रोगजनक तनाव",
+    directionOrRoom: "Any zone",
+    planetaryRuler: "Rahu / Ketu",
+    planetaryRulerHi: "राहु / केतु",
+    shortDesc:
+      "Underground water veins and earth energy disturbances cause chronic illness.",
+    shortDescHi: "भूमिगत जल-नसें और पृथ्वी ऊर्जा विकार दीर्घकालिक रोग का कारण बनते हैं।",
+    effectsEn:
+      "Geopathic stress from underground water, earth fault lines, or electromagnetic disturbances creates chronic fatigue, persistent illness, and sleep disorders.",
+    effectsHi:
+      "भूमिगत जल, पृथ्वी दोष रेखाओं या विद्युत-चुम्बकीय गड़बड़ी से भू-रोगजनक तनाव पुरानी थकान, लगातार बीमारी और नींद संबंधी विकार पैदा करता है।",
+    doshaEn:
+      "Persistent illness despite medical treatment; plants die in specific areas; animals avoid sleeping in certain spots.",
+    doshaHi:
+      "चिकित्सा उपचार के बावजूद लगातार बीमारी; विशिष्ट क्षेत्रों में पौधे मर जाते हैं; जानवर कुछ स्थानों पर सोने से बचते हैं।",
+    remediesEn:
+      "Use copper rods or Vastu pyramids in affected zones. Shift bed position away from stress areas. Install Vastu Yantra or use dowsing to identify and neutralize geopathic zones.",
+    remediesHi:
+      "प्रभावित क्षेत्रों में तांबे की छड़ें या वास्तु पिरामिड का उपयोग करें। तनाव वाले क्षेत्रों से बिस्तर की स्थिति बदलें। वास्तु यंत्र स्थापित करें या भू-रोगजनक क्षेत्रों की पहचान और निष्प्रभावीकरण के लिए डोजिंग का उपयोग करें।",
+    yantra: "Vastu Pyramid / Dosh Nivaran Yantra",
+    elementsInvolved: "Earth (Prithvi), Water (Jal)",
+    tipsEn:
+      "Keep salt water bowls in affected areas. Replace them weekly. Burn camphor daily to purify the atmosphere.",
+    tipsHi:
+      "प्रभावित क्षेत्रों में नमक-पानी के कटोरे रखें। उन्हें साप्ताहिक बदलें। वातावरण को शुद्ध करने के लिए प्रतिदिन कपूर जलाएं।",
+    color: "oklch(0.55 0.18 25)",
+    symbol: "⚠️",
+  },
+  {
+    id: "dosha-beam",
+    category: "dosha",
+    titleEn: "Overhead Beams Dosha",
+    titleHi: "शिरोपरि बीम दोष",
+    directionOrRoom: "Ceiling / overhead",
+    planetaryRuler: "Saturn (Shani)",
+    planetaryRulerHi: "शनि",
+    shortDesc:
+      "Exposed beams overhead create pressure, stress, and health challenges.",
+    shortDescHi: "सिर के ऊपर उजागर बीम दबाव, तनाव और स्वास्थ्य चुनौतियां पैदा करते हैं।",
+    effectsEn:
+      "Sleeping or sitting under an exposed beam causes oppressive energy that manifests as chronic headaches, pressure on the spine, and persistent stress.",
+    effectsHi:
+      "उजागर बीम के नीचे सोने या बैठने से दमनकारी ऊर्जा उत्पन्न होती है जो पुरानी सिरदर्द, रीढ़ पर दबाव और लगातार तनाव के रूप में प्रकट होती है।",
+    doshaEn:
+      "Chronic headaches; spinal problems; persistent stress; feeling of weight and pressure despite rest.",
+    doshaHi:
+      "पुरानी सिरदर्द; रीढ़ की समस्याएं; लगातार तनाव; आराम के बावजूद वजन और दबाव का एहसास।",
+    remediesEn:
+      "Cover exposed beams with a false ceiling. Alternatively, hang two bamboo flutes (bansuri) on the beam in an upward diagonal to redirect energy. Never place a bed, sofa, or study desk directly under a beam.",
+    remediesHi:
+      "उजागर बीम को फॉल्स सीलिंग से ढकें। वैकल्पिक रूप से, ऊर्जा को पुनर्निर्देशित करने के लिए बीम पर ऊपर की ओर तिरछी दो बांसुरी लटकाएं। बीम के नीचे सीधे बिस्तर, सोफा या अध्ययन डेस्क कभी न रखें।",
+    yantra: "Shani Yantra",
+    elementsInvolved: "Earth (Prithvi), Space (Akash)",
+    tipsEn:
+      "If beams cannot be covered, use warm golden lighting to soften their energy impact.",
+    tipsHi:
+      "यदि बीम को ढका नहीं जा सकता, तो उनके ऊर्जा प्रभाव को नरम करने के लिए गर्म सुनहरी रोशनी का उपयोग करें।",
+    color: "oklch(0.58 0.15 45)",
+    symbol: "🏗️",
+  },
+  {
+    id: "dosha-underground-water",
+    category: "dosha",
+    titleEn: "Underground Water Dosha",
+    titleHi: "भूमिगत जल दोष",
+    directionOrRoom: "South, SW, SE",
+    planetaryRuler: "Rahu / Moon",
+    planetaryRulerHi: "राहु / चंद्र",
+    shortDesc:
+      "Underground water tanks in wrong zones drain wealth and health.",
+    shortDescHi: "गलत क्षेत्रों में भूमिगत जल टंकी धन और स्वास्थ्य को समाप्त करती है।",
+    effectsEn:
+      "Underground water tanks or sumps in the south or SW direction create a severe Vastu dosha that drains family wealth, causes emotional instability, and weakens the head of household's authority.",
+    effectsHi:
+      "दक्षिण या SW दिशा में भूमिगत जल टंकी या सम्प एक गंभीर वास्तु दोष बनाते हैं जो पारिवारिक धन को नष्ट करता है, भावनात्मक अस्थिरता पैदा करता है और परिवार के मुखिया के अधिकार को कमजोर करता है।",
+    doshaEn:
+      "Continuous financial drain; emotional instability; weakening of family head's authority and health.",
+    doshaHi:
+      "निरंतर वित्तीय क्षति; भावनात्मक अस्थिरता; परिवार के मुखिया के अधिकार और स्वास्थ्य का कमजोर होना।",
+    remediesEn:
+      "Relocate underground water tank to the north or NE. If relocation is not possible, place Vastu pyramids around the tank and install a Jal Yantra nearby. Fill the SW underground with solid material.",
+    remediesHi:
+      "भूमिगत जल टंकी को उत्तर या NE में स्थानांतरित करें। यदि स्थानांतरण संभव नहीं है, तो टंकी के चारों ओर वास्तु पिरामिड रखें और पास में जल यंत्र स्थापित करें। SW भूमिगत को ठोस सामग्री से भरें।",
+    yantra: "Jal Yantra / Vastu Pyramid",
+    elementsInvolved: "Water (Jal), Earth (Prithvi)",
+    tipsEn:
+      "Overhead water tanks are best placed in the SW (for weight) or west. Never place overhead tanks in the NE.",
+    tipsHi:
+      "ओवरहेड पानी की टंकियां SW (वजन के लिए) या पश्चिम में सबसे अच्छी तरह रखी जाती हैं। NE में ओवरहेड टंकी कभी न रखें।",
+    color: "oklch(0.50 0.15 215)",
+    symbol: "💦",
+  },
+];
+
+// ─── Combined export ───────────────────────────────────────────────────────────
+
+export const ALL_VASTU_ITEMS: VastuItem[] = [
+  ...VASTU_DIRECTIONS,
+  BRAHMA_STHANA,
+  ...PANCH_BHUTA,
+  ...VASTU_ROOMS,
+  ...VASTU_DOSHAS,
+];
+
+// ─── Category config ──────────────────────────────────────────────────────────
+
+export const CATEGORY_CONFIG: Record<
+  VastuCategory,
+  { label: string; labelHi: string; color: string; bg: string; border: string }
+> = {
+  direction: {
+    label: "Direction",
+    labelHi: "दिशा",
+    color: "oklch(0.78 0.14 75)",
+    bg: "oklch(0.78 0.14 75 / 0.15)",
+    border: "oklch(0.78 0.14 75 / 0.35)",
+  },
+  room: {
+    label: "Room",
+    labelHi: "कक्ष",
+    color: "oklch(0.68 0.20 35)",
+    bg: "oklch(0.68 0.20 35 / 0.15)",
+    border: "oklch(0.68 0.20 35 / 0.35)",
+  },
+  element: {
+    label: "Element",
+    labelHi: "तत्व",
+    color: "oklch(0.55 0.18 145)",
+    bg: "oklch(0.55 0.18 145 / 0.15)",
+    border: "oklch(0.55 0.18 145 / 0.35)",
+  },
+  brahma_sthana: {
+    label: "Brahma Sthana",
+    labelHi: "ब्रह्म स्थान",
+    color: "oklch(0.65 0.20 295)",
+    bg: "oklch(0.65 0.20 295 / 0.15)",
+    border: "oklch(0.65 0.20 295 / 0.35)",
+  },
+  dosha: {
+    label: "Dosha",
+    labelHi: "दोष",
+    color: "oklch(0.62 0.22 22)",
+    bg: "oklch(0.62 0.22 22 / 0.15)",
+    border: "oklch(0.62 0.22 22 / 0.35)",
+  },
+};
+
+// ─── Direction compass data ───────────────────────────────────────────────────
+
+export interface CompassPoint {
+  id: string;
+  directionEn: string;
+  directionHi: string;
+  angle: number; // degrees from top (N=0, NE=45, E=90…)
+  planetEn: string;
+  planetHi: string;
+  color: string;
+  symbol: string;
+  itemId: string; // links to VastuItem.id
+}
+
+export const COMPASS_POINTS: CompassPoint[] = [
+  {
+    id: "cp-north",
+    directionEn: "N",
+    directionHi: "उ",
+    angle: 0,
+    planetEn: "Mercury",
+    planetHi: "बुध",
+    color: "oklch(0.65 0.18 145)",
+    symbol: "☿",
+    itemId: "dir-north",
+  },
+  {
+    id: "cp-northeast",
+    directionEn: "NE",
+    directionHi: "ईशान",
+    angle: 45,
+    planetEn: "Jupiter",
+    planetHi: "गुरु",
+    color: "oklch(0.70 0.18 220)",
+    symbol: "♃",
+    itemId: "dir-northeast",
+  },
+  {
+    id: "cp-east",
+    directionEn: "E",
+    directionHi: "पू",
+    angle: 90,
+    planetEn: "Sun",
+    planetHi: "सूर्य",
+    color: "oklch(0.75 0.20 60)",
+    symbol: "☉",
+    itemId: "dir-east",
+  },
+  {
+    id: "cp-southeast",
+    directionEn: "SE",
+    directionHi: "आग्नेय",
+    angle: 135,
+    planetEn: "Venus",
+    planetHi: "शुक्र",
+    color: "oklch(0.72 0.20 18)",
+    symbol: "♀",
+    itemId: "dir-southeast",
+  },
+  {
+    id: "cp-south",
+    directionEn: "S",
+    directionHi: "द",
+    angle: 180,
+    planetEn: "Mars",
+    planetHi: "मंगल",
+    color: "oklch(0.60 0.22 30)",
+    symbol: "♂",
+    itemId: "dir-south",
+  },
+  {
+    id: "cp-southwest",
+    directionEn: "SW",
+    directionHi: "नैऋत्य",
+    angle: 225,
+    planetEn: "Rahu",
+    planetHi: "राहु",
+    color: "oklch(0.50 0.15 330)",
+    symbol: "☊",
+    itemId: "dir-southwest",
+  },
+  {
+    id: "cp-west",
+    directionEn: "W",
+    directionHi: "प",
+    angle: 270,
+    planetEn: "Saturn",
+    planetHi: "शनि",
+    color: "oklch(0.55 0.12 270)",
+    symbol: "♄",
+    itemId: "dir-west",
+  },
+  {
+    id: "cp-northwest",
+    directionEn: "NW",
+    directionHi: "वायव्य",
+    angle: 315,
+    planetEn: "Moon",
+    planetHi: "चंद्र",
+    color: "oklch(0.75 0.10 200)",
+    symbol: "☽",
+    itemId: "dir-northwest",
+  },
+];

@@ -3,8 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { X } from "lucide-react";
 import { useState } from "react";
-import type { DevotionalContent } from "../backend";
 import { useGetAllDevotionalContents } from "../hooks/useQueries";
+import type { DevotionalContent } from "../types/backend-types";
 
 const STATIC_CONTENT: DevotionalContent[] = [
   {

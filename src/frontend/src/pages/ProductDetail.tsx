@@ -1,8 +1,11 @@
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import type { ProductWithMRP } from "../data/shopData_new";
+import { ALL_NEW_PRODUCTS } from "../data/shopData_new";
 import { useGetProduct } from "../hooks/useQueries";
 import { useCartStore } from "../stores/cartStore";
 
@@ -11,6 +14,12 @@ const CATEGORY_ICONS: Record<string, string> = {
   Yantras: "🔯",
   Bracelets: "📿",
   "Ritual Items": "🪔",
+  "Puja Samagri": "🏺",
+  "God Idols": "🪆",
+  "Feng Shui": "🐢",
+  "God Pendants": "📿",
+  "Silver Adorns": "🥈",
+  Combos: "🎁",
 };
 
 export default function ProductDetail() {
@@ -18,6 +27,14 @@ export default function ProductDetail() {
   const { data: product, isLoading } = useGetProduct(id);
   const addItem = useCartStore((s) => s.addItem);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    null,
+  );
+
+  // Look up local enriched product for MRP + variants
+  const localProduct = ALL_NEW_PRODUCTS.find((p) => p.id === id) as
+    | ProductWithMRP
+    | undefined;
 
   if (isLoading) {
     return (
@@ -47,12 +64,25 @@ export default function ProductDetail() {
     );
   }
 
+  const variants = localProduct?.variants ?? [];
+  const mrp = localProduct?.mrp;
+  const selectedVariant = selectedVariantId
+    ? variants.find((v) => v.id === selectedVariantId)
+    : null;
+  const activePrice = selectedVariant ? selectedVariant.price : product.price;
+  const discountPct =
+    mrp && mrp > activePrice
+      ? Math.round(((mrp - activePrice) / mrp) * 100)
+      : null;
+
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
-        name: product.name,
-        price: product.price,
+        name: selectedVariant
+          ? `${product.name} — ${selectedVariant.name}`
+          : product.name,
+        price: activePrice,
         category: product.category,
       });
     }
@@ -70,6 +100,7 @@ export default function ProductDetail() {
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Product image area */}
         <div className="ornamental-border rounded-2xl overflow-hidden">
           <div
             className="h-72 flex items-center justify-center text-8xl"
@@ -98,7 +129,7 @@ export default function ProductDetail() {
           <div className="flex items-center gap-1">
             {Array.from({ length: 5 }, (_, i) => i).map((i) => (
               <Star
-                key={i}
+                key={`star-${i}`}
                 className="h-4 w-4"
                 style={{
                   fill: "oklch(0.78 0.14 75)",
@@ -110,12 +141,84 @@ export default function ProductDetail() {
               (108 reviews)
             </span>
           </div>
-          <p
-            className="font-heading font-bold text-3xl"
-            style={{ color: "oklch(0.68 0.20 48)" }}
-          >
-            ₹{product.price.toFixed(0)}
-          </p>
+
+          {/* Price block */}
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <p
+              className="font-heading font-bold text-3xl"
+              style={{ color: "oklch(0.68 0.20 48)" }}
+            >
+              ₹{activePrice.toLocaleString()}
+            </p>
+            {mrp && mrp > activePrice && (
+              <>
+                <p
+                  className="font-body text-lg line-through"
+                  style={{ color: "oklch(0.55 0.04 60)" }}
+                >
+                  ₹{mrp.toLocaleString()}
+                </p>
+                {discountPct && (
+                  <Badge
+                    className="text-xs font-heading font-bold"
+                    style={{
+                      background: "oklch(0.55 0.18 145 / 0.15)",
+                      color: "oklch(0.40 0.16 140)",
+                    }}
+                  >
+                    {discountPct}% OFF
+                  </Badge>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Gemstone weight / other variants */}
+          {variants.length > 0 && (
+            <div>
+              <p
+                className="font-heading font-semibold text-sm mb-2"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                Select Variant / Weight:
+              </p>
+              <div
+                className="flex flex-wrap gap-2"
+                data-ocid="product.variant_selector"
+              >
+                {variants.map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() =>
+                      setSelectedVariantId(
+                        selectedVariantId === v.id ? null : v.id,
+                      )
+                    }
+                    data-ocid={`product.variant.${v.id}`}
+                    className="px-3 py-1.5 rounded-full text-xs font-heading font-semibold border transition-all"
+                    style={{
+                      background:
+                        selectedVariantId === v.id
+                          ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
+                          : "oklch(0.95 0.02 80)",
+                      color:
+                        selectedVariantId === v.id
+                          ? "white"
+                          : "oklch(0.35 0.12 25)",
+                      borderColor:
+                        selectedVariantId === v.id
+                          ? "transparent"
+                          : "oklch(0.80 0.04 75)",
+                    }}
+                  >
+                    {v.name} — ₹{v.price.toLocaleString()}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <p
             className="font-body text-sm leading-relaxed"
             style={{ color: "oklch(0.30 0.06 30)" }}
@@ -195,6 +298,7 @@ export default function ProductDetail() {
             <button
               type="button"
               onClick={handleAddToCart}
+              data-ocid="product.add_to_cart_button"
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-heading font-bold text-sm transition-all hover:scale-105"
               style={{
                 background:

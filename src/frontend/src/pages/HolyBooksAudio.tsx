@@ -10,8 +10,8 @@ import {
   SkipForward,
 } from "lucide-react";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import type { HolyBookEntry } from "../backend";
 import { useHolyBookEntries } from "../hooks/useQueries";
+import type { HolyBookEntry } from "../types/backend-types";
 
 interface BookDef {
   title: string;

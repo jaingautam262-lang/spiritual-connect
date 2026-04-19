@@ -10,6 +10,21 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AstroChart {
+  'id' : string,
+  'shadbalaData' : string,
+  'chartData' : string,
+  'chartType' : string,
+  'birthDate' : string,
+  'birthTime' : string,
+  'userId' : string,
+  'createdAt' : bigint,
+  'birthPlace' : string,
+  'dashaInfo' : string,
+  'astroScore' : bigint,
+  'ashtakvargaData' : string,
+  'yogas' : Array<string>,
+}
 export interface AstrologerProfile {
   'id' : string,
   'bio' : string,
@@ -30,12 +45,39 @@ export interface BhajanEntry {
   'artist' : string,
   'deity' : string,
 }
+export interface BlogArticle {
+  'id' : string,
+  'title' : string,
+  'content' : string,
+  'isPublished' : boolean,
+  'publishDate' : bigint,
+  'createdAt' : bigint,
+  'slug' : string,
+  'tags' : Array<string>,
+  'author' : string,
+  'updatedAt' : bigint,
+  'featuredImageUrl' : string,
+  'category' : string,
+}
 export interface BusinessNameRecord {
   'id' : string,
   'result' : string,
   'userId' : Principal,
   'createdAt' : Time,
   'businessName' : string,
+}
+export interface CalculatorFAQ {
+  'id' : string,
+  'qaPairs' : Array<CalculatorQAPair>,
+  'calculatorId' : string,
+  'calculatorName' : string,
+}
+export interface CalculatorQAPair {
+  'question' : string,
+  'answer' : string,
+  'answerHindi' : string,
+  'category' : string,
+  'questionHindi' : string,
 }
 export interface ChadhavaOffering {
   'id' : string,
@@ -44,6 +86,23 @@ export interface ChadhavaOffering {
   'createdAt' : Time,
   'templeId' : string,
   'items' : Array<string>,
+}
+export interface CombinedVedicReading {
+  'id' : string,
+  'sunSign' : string,
+  'palmInsightsJson' : string,
+  'birthDate' : string,
+  'activeDasha' : string,
+  'birthTime' : string,
+  'combinedInsightsText' : string,
+  'userId' : Principal,
+  'palmReadingId' : string,
+  'createdAt' : bigint,
+  'moonSign' : string,
+  'doshasJson' : string,
+  'birthPlace' : string,
+  'remediesText' : string,
+  'lagnaSign' : string,
 }
 export interface ConsultationAppointment {
   'id' : string,
@@ -56,6 +115,11 @@ export interface ConsultationAppointment {
   'notes' : string,
   'specialQuestions' : string,
 }
+export interface DaanItem {
+  'value' : number,
+  'item' : string,
+  'quantity' : string,
+}
 export interface DevotionalContent {
   'id' : string,
   'title' : string,
@@ -64,6 +128,17 @@ export interface DevotionalContent {
   'createdAt' : Time,
   'language' : string,
   'deity' : string,
+}
+export interface FestivalEvent {
+  'id' : string,
+  'title' : string,
+  'titleHindi' : string,
+  'date' : string,
+  'description' : string,
+  'significance' : string,
+  'deity' : string,
+  'faith' : string,
+  'eventType' : string,
 }
 export interface HolyBookEntry {
   'id' : string,
@@ -74,6 +149,134 @@ export interface HolyBookEntry {
   'trackNumber' : bigint,
   'createdAt' : Time,
   'chapterTitle' : string,
+}
+export interface HttpResponse {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<[string, string]>,
+}
+export interface JainEncyclopediaArticle {
+  'id' : string,
+  'glossaryTerms' : Array<JainGlossaryTerm>,
+  'contentHindi' : string,
+  'content' : string,
+  'volumeNumber' : bigint,
+  'articleTitleHindi' : string,
+  'qaPairs' : Array<JainQAPair>,
+  'articleTitle' : string,
+  'volumeTitle' : string,
+  'crossLinks' : Array<string>,
+}
+export interface JainGlossaryTerm { 'term' : string, 'definition' : string }
+export interface JainKatha {
+  'id' : string,
+  'title' : string,
+  'createdAt' : bigint,
+  'parv' : string,
+  'fullText' : string,
+  'occasion' : string,
+  'significance' : string,
+}
+export interface JainPathshalaEntry {
+  'id' : string,
+  'title' : string,
+  'content' : string,
+  'createdAt' : bigint,
+  'part' : string,
+  'category' : string,
+  'chapter' : string,
+}
+export interface JainQAPair {
+  'question' : string,
+  'answer' : string,
+  'answerHindi' : string,
+  'questionHindi' : string,
+}
+export interface KundaliMatch {
+  'id' : string,
+  'personBName' : string,
+  'personANakshatra' : string,
+  'grahaMaitriScore' : bigint,
+  'personBTime' : string,
+  'personARashi' : string,
+  'bhakootDosha' : boolean,
+  'personASunSign' : string,
+  'ganaScore' : bigint,
+  'userId' : Principal,
+  'createdAt' : bigint,
+  'personADob' : string,
+  'personBDob' : string,
+  'personBPlace' : string,
+  'yoniScore' : bigint,
+  'doshaRemedies' : string,
+  'personBSunSign' : string,
+  'personBMarsSign' : string,
+  'totalScore' : bigint,
+  'personAName' : string,
+  'personBRashi' : string,
+  'personATime' : string,
+  'compatibilityPercent' : bigint,
+  'manglikDoshaA' : boolean,
+  'manglikDoshaB' : boolean,
+  'nadiScore' : bigint,
+  'taraScore' : bigint,
+  'personAMarsSign' : string,
+  'personBMoonSign' : string,
+  'personBAscendant' : string,
+  'varnaScore' : bigint,
+  'vasyaScore' : bigint,
+  'bhakootScore' : bigint,
+  'personAMoonSign' : string,
+  'personBNakshatra' : string,
+  'personAAscendant' : string,
+  'nadiDosha' : boolean,
+  'personAPlace' : string,
+}
+export interface KundaliMatchInput {
+  'personBName' : string,
+  'personANakshatra' : string,
+  'grahaMaitriScore' : bigint,
+  'personBTime' : string,
+  'personARashi' : string,
+  'bhakootDosha' : boolean,
+  'personASunSign' : string,
+  'ganaScore' : bigint,
+  'personADob' : string,
+  'personBDob' : string,
+  'personBPlace' : string,
+  'yoniScore' : bigint,
+  'doshaRemedies' : string,
+  'personBSunSign' : string,
+  'personBMarsSign' : string,
+  'totalScore' : bigint,
+  'personAName' : string,
+  'personBRashi' : string,
+  'personATime' : string,
+  'compatibilityPercent' : bigint,
+  'manglikDoshaA' : boolean,
+  'manglikDoshaB' : boolean,
+  'nadiScore' : bigint,
+  'taraScore' : bigint,
+  'personAMarsSign' : string,
+  'personBMoonSign' : string,
+  'personBAscendant' : string,
+  'varnaScore' : bigint,
+  'vasyaScore' : bigint,
+  'bhakootScore' : bigint,
+  'personAMoonSign' : string,
+  'personBNakshatra' : string,
+  'personAAscendant' : string,
+  'nadiDosha' : boolean,
+  'personAPlace' : string,
+}
+export interface MediaPlayerItem {
+  'id' : string,
+  'title' : string,
+  'duration' : bigint,
+  'contentType' : string,
+  'audioUrl' : string,
+  'deity' : string,
+  'faith' : string,
 }
 export interface NumerologyRecord {
   'id' : string,
@@ -97,6 +300,65 @@ export interface OrderItem {
   'quantity' : bigint,
   'unitPrice' : number,
 }
+export interface PalmPhotoReading {
+  'id' : string,
+  'readingText' : string,
+  'lineAnnotations' : string,
+  'palmShape' : string,
+  'dominantLine' : string,
+  'userId' : Principal,
+  'createdAt' : bigint,
+  'photoUrl' : string,
+  'luckySigns' : string,
+  'handType' : string,
+}
+export interface PalmistryContent {
+  'id' : string,
+  'title' : string,
+  'locationOnPalm' : string,
+  'descriptionEn' : string,
+  'descriptionHi' : string,
+  'createdAt' : bigint,
+  'benefitsEn' : string,
+  'benefitsHi' : string,
+  'updatedAt' : bigint,
+  'category' : string,
+  'titleHi' : string,
+  'lineOrPalmType' : string,
+  'characteristicsEn' : string,
+  'characteristicsHi' : string,
+}
+export interface PalmistryReading {
+  'id' : string,
+  'readingDate' : bigint,
+  'headLine' : string,
+  'userId' : Principal,
+  'traits' : Array<string>,
+  'fateLine' : string,
+  'lifeLine' : string,
+  'summary' : string,
+  'imageUrl' : string,
+  'heartLine' : string,
+}
+export interface PathshalaLesson {
+  'id' : string,
+  'contentHi' : string,
+  'content' : string,
+  'chapterNumber' : bigint,
+  'isPublished' : boolean,
+  'moralLesson' : string,
+  'createdAt' : bigint,
+  'part' : string,
+  'tags' : Array<string>,
+  'moralLessonHi' : string,
+  'summaryHi' : string,
+  'chapterTitleHi' : string,
+  'chapterTitle' : string,
+  'summary' : string,
+  'updatedAt' : bigint,
+  'titleEn' : string,
+  'titleHi' : string,
+}
 export interface PrasadDeliveryRequest {
   'id' : string,
   'status' : string,
@@ -108,13 +370,37 @@ export interface PrasadDeliveryRequest {
 }
 export interface Product {
   'id' : string,
+  'mrp' : [] | [number],
+  'sku' : [] | [string],
+  'variantLabel' : [] | [string],
   'name' : string,
   'createdAt' : Time,
   'description' : string,
+  'variants' : [] | [Array<ProductVariant>],
   'stock' : bigint,
   'astrologicalPurpose' : string,
+  'discount' : [] | [bigint],
   'category' : string,
   'benefits' : string,
+  'price' : number,
+}
+export interface ProductUpdateRequest {
+  'mrp' : [] | [number],
+  'sku' : [] | [string],
+  'variantLabel' : [] | [string],
+  'name' : [] | [string],
+  'description' : [] | [string],
+  'variants' : [] | [Array<ProductVariant>],
+  'stock' : [] | [bigint],
+  'astrologicalPurpose' : [] | [string],
+  'discount' : [] | [bigint],
+  'category' : [] | [string],
+  'benefits' : [] | [string],
+  'price' : [] | [number],
+}
+export interface ProductVariant {
+  'variantName' : string,
+  'stock' : bigint,
   'price' : number,
 }
 export interface PujaBooking {
@@ -129,6 +415,40 @@ export interface PujaBooking {
   'templeId' : string,
   'devoteeName' : string,
 }
+export interface PujaReport {
+  'id' : string,
+  'durationMins' : bigint,
+  'sankalp' : string,
+  'bookingId' : string,
+  'daanItems' : Array<DaanItem>,
+  'performedDate' : bigint,
+  'reportStatus' : string,
+  'userId' : Principal,
+  'pujaType' : string,
+  'deity' : string,
+  'priestName' : string,
+  'intention' : string,
+  'completionNotes' : string,
+}
+export interface PujaType {
+  'id' : string,
+  'descriptionHindi' : string,
+  'duration' : string,
+  'vidhiHindi' : string,
+  'nameHindi' : string,
+  'vidhi' : string,
+  'name' : string,
+  'when' : string,
+  'description' : string,
+  'samagriHindi' : Array<string>,
+  'whenHindi' : string,
+  'samagri' : Array<string>,
+  'imageUrl' : string,
+  'category' : string,
+  'benefits' : string,
+  'deity' : string,
+  'benefitsHindi' : string,
+}
 export interface ReportRequest {
   'id' : string,
   'dob' : string,
@@ -141,21 +461,57 @@ export interface ReportRequest {
   'createdAt' : Time,
   'reportType' : string,
 }
+export interface ServiceBooking {
+  'id' : string,
+  'status' : string,
+  'serviceName' : string,
+  'serviceType' : string,
+  'userId' : Principal,
+  'specialRequests' : string,
+  'createdAt' : bigint,
+  'email' : string,
+  'pricing' : number,
+  'preferredDate' : string,
+  'phone' : string,
+  'devoteeName' : string,
+  'location' : string,
+}
 export interface ShoppingItem {
-  'productName' : string,
-  'currency' : string,
+  'name' : string,
   'quantity' : bigint,
-  'priceInCents' : bigint,
-  'productDescription' : string,
+  'price' : number,
+}
+export interface StorySlide {
+  'id' : string,
+  'title' : string,
+  'order' : bigint,
+  'description' : string,
+  'imageUrl' : string,
 }
 export interface StripeConfiguration {
   'allowedCountries' : Array<string>,
   'secretKey' : string,
 }
-export type StripeSessionStatus = {
-    'completed' : { 'userPrincipal' : [] | [string], 'response' : string }
-  } |
-  { 'failed' : { 'error' : string } };
+export interface StripeSessionStatus {
+  'status' : string,
+  'paymentStatus' : string,
+  'customerEmail' : string,
+}
+export interface SuktamEntry {
+  'id' : string,
+  'hindiMeaning' : string,
+  'nameHindi' : string,
+  'sanskritText' : string,
+  'name' : string,
+  'vedaSource' : string,
+  'transliteration' : string,
+  'englishMeaning' : string,
+  'recitationInstructions' : string,
+  'benefits' : string,
+  'deityHindi' : string,
+  'deity' : string,
+  'benefitsHindi' : string,
+}
 export interface Temple {
   'id' : string,
   'name' : string,
@@ -167,13 +523,9 @@ export interface Temple {
 export type Time = bigint;
 export interface TransformationInput {
   'context' : Uint8Array,
-  'response' : http_request_result,
+  'response' : HttpResponse,
 }
-export interface TransformationOutput {
-  'status' : bigint,
-  'body' : Uint8Array,
-  'headers' : Array<http_header>,
-}
+export interface TransformationOutput { 'response' : HttpResponse }
 export interface UserProfile {
   'birthDate' : string,
   'birthTime' : string,
@@ -186,6 +538,40 @@ export interface UserProfile {
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface VastuContent {
+  'id' : string,
+  'title' : string,
+  'doshaEn' : string,
+  'doshaHi' : string,
+  'tipsEn' : string,
+  'tipsHi' : string,
+  'effectsEn' : string,
+  'effectsHi' : string,
+  'createdAt' : bigint,
+  'remediesEn' : string,
+  'remediesHi' : string,
+  'planetaryRuler' : string,
+  'planetaryRulerHi' : string,
+  'updatedAt' : bigint,
+  'yantra' : string,
+  'directionOrRoom' : string,
+  'category' : string,
+  'elementsInvolved' : string,
+  'titleHi' : string,
+}
+export interface VastuRoomCheck {
+  'id' : string,
+  'issuesJson' : string,
+  'roomDimensions' : string,
+  'floorPlanUrl' : string,
+  'userId' : Principal,
+  'createdAt' : bigint,
+  'elementBalance' : string,
+  'remediesJson' : string,
+  'entranceDirection' : string,
+  'complianceScore' : bigint,
+  'roomType' : string,
+}
 export interface VirtualTempleConfig {
   'background' : string,
   'decorStyle' : string,
@@ -210,51 +596,81 @@ export interface WalletTransaction {
   'description' : string,
   'amount' : number,
 }
-export interface _CaffeineStorageCreateCertificateResult {
+export interface WebStory {
+  'id' : string,
+  'title' : string,
+  'isPublished' : boolean,
+  'createdAt' : bigint,
+  'slides' : Array<StorySlide>,
+  'category' : string,
+}
+export interface _ImmutableObjectStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
 }
-export interface _CaffeineStorageRefillInformation {
+export interface _ImmutableObjectStorageRefillInformation {
   'proposed_top_up_amount' : [] | [bigint],
 }
-export interface _CaffeineStorageRefillResult {
+export interface _ImmutableObjectStorageRefillResult {
   'success' : [] | [boolean],
   'topped_up_amount' : [] | [bigint],
 }
-export interface http_header { 'value' : string, 'name' : string }
-export interface http_request_result {
-  'status' : bigint,
-  'body' : Uint8Array,
-  'headers' : Array<http_header>,
-}
 export interface _SERVICE {
-  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
-  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
-  /**
-   * / Admin-only: list all user profiles.
-   */
-  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+  '_immutableObjectStorageBlobsAreLive' : ActorMethod<
+    [Array<Uint8Array>],
+    Array<boolean>
+  >,
+  '_immutableObjectStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_immutableObjectStorageConfirmBlobDeletion' : ActorMethod<
     [Array<Uint8Array>],
     undefined
   >,
-  '_caffeineStorageCreateCertificate' : ActorMethod<
+  '_immutableObjectStorageCreateCertificate' : ActorMethod<
     [string],
-    _CaffeineStorageCreateCertificateResult
+    _ImmutableObjectStorageCreateCertificateResult
   >,
-  '_caffeineStorageRefillCashier' : ActorMethod<
-    [[] | [_CaffeineStorageRefillInformation]],
-    _CaffeineStorageRefillResult
+  '_immutableObjectStorageRefillCashier' : ActorMethod<
+    [[] | [_ImmutableObjectStorageRefillInformation]],
+    _ImmutableObjectStorageRefillResult
   >,
-  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
-  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  '_initializeAccessControl' : ActorMethod<[], undefined>,
   /**
    * / Admin-only: add a new bhajan entry.
    */
   'addBhajan' : ActorMethod<[BhajanEntry], undefined>,
   /**
+   * / Admin-only: add a festival event.
+   */
+  'addFestivalEvent' : ActorMethod<[FestivalEvent], undefined>,
+  /**
    * / Admin-only: add a new holy book entry.
    */
   'addHolyBookEntry' : ActorMethod<[HolyBookEntry], undefined>,
+  /**
+   * / Admin-only: add a new Jain encyclopedia article.
+   */
+  'addJainArticle' : ActorMethod<[JainEncyclopediaArticle], undefined>,
+  /**
+   * / Admin-only: add a Jain Katha.
+   */
+  'addJainKatha' : ActorMethod<[JainKatha], undefined>,
+  /**
+   * / Admin-only: add a Jain Pathshala entry.
+   */
+  'addJainPathshalaEntry' : ActorMethod<[JainPathshalaEntry], undefined>,
+  /**
+   * / Admin-only: add a media player item.
+   */
+  'addMediaPlayerItem' : ActorMethod<[MediaPlayerItem], undefined>,
+  /**
+   * / Admin-only: add a new Pathshala lesson.
+   */
+  'addPathshalaLesson' : ActorMethod<[PathshalaLesson], undefined>,
+  /**
+   * / Admin-only: add a new suktam entry.
+   */
+  'addSuktam' : ActorMethod<[SuktamEntry], undefined>,
   /**
    * / Authenticated users can submit a prasad delivery request for themselves.
    */
@@ -272,6 +688,10 @@ export interface _SERVICE {
    */
   'createAstrologerProfile' : ActorMethod<[AstrologerProfile], undefined>,
   /**
+   * / Admin-only: create a blog article.
+   */
+  'createBlogArticle' : ActorMethod<[BlogArticle], undefined>,
+  /**
    * / Authenticated users can create a business name analysis for themselves.
    */
   'createBusinessNameRecord' : ActorMethod<[BusinessNameRecord], undefined>,
@@ -285,6 +705,26 @@ export interface _SERVICE {
   'createCheckoutSession' : ActorMethod<
     [Array<ShoppingItem>, string, string],
     string
+  >,
+  /**
+   * / Authenticated user: create a combined vedic reading. Returns the created entry.
+   */
+  'createCombinedVedicReading' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    CombinedVedicReading
   >,
   /**
    * / Authenticated users can book a consultation appointment for themselves.
@@ -306,7 +746,33 @@ export interface _SERVICE {
    */
   'createOrder' : ActorMethod<[Order], undefined>,
   /**
-   * / Admin-only: create a product.
+   * / Authenticated user: create a palm photo reading. Returns the created entry.
+   */
+  'createPalmPhotoReading' : ActorMethod<
+    [string, string, string, string, string, string, string],
+    PalmPhotoReading
+  >,
+  /**
+   * / Admin-only: create a new palmistry content entry. Returns the created entry.
+   */
+  'createPalmistryContent' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    PalmistryContent
+  >,
+  /**
+   * / Admin or productManager: create a product.
    */
   'createProduct' : ActorMethod<[Product], undefined>,
   /**
@@ -314,37 +780,156 @@ export interface _SERVICE {
    */
   'createPujaBooking' : ActorMethod<[PujaBooking], undefined>,
   /**
+   * / Admin-only: create a puja report for a completed booking.
+   */
+  'createPujaReport' : ActorMethod<[PujaReport], undefined>,
+  /**
+   * / Admin-only: create a puja type.
+   */
+  'createPujaType' : ActorMethod<[PujaType], undefined>,
+  /**
    * / Authenticated users can request a report for themselves.
    */
   'createReportRequest' : ActorMethod<[ReportRequest], undefined>,
+  /**
+   * / Authenticated users can create a service booking for themselves. Returns the booking id.
+   */
+  'createServiceBooking' : ActorMethod<[ServiceBooking], string>,
   /**
    * / Admin-only: create a temple entry.
    */
   'createTemple' : ActorMethod<[Temple], undefined>,
   /**
+   * / Admin-only: create a new vastu content entry. Returns the created entry.
+   */
+  'createVastuContent' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    VastuContent
+  >,
+  /**
+   * / Authenticated user: create a vastu room check. Returns the created entry.
+   */
+  'createVastuRoomCheck' : ActorMethod<
+    [string, string, string, string, bigint, string, string, string],
+    VastuRoomCheck
+  >,
+  /**
+   * / Admin-only: create a web story.
+   */
+  'createWebStory' : ActorMethod<[WebStory], undefined>,
+  /**
+   * / Authenticated users can delete their own astro chart.
+   */
+  'deleteAstroChart' : ActorMethod<[string], boolean>,
+  /**
    * / Admin-only: delete a bhajan entry.
    */
   'deleteBhajan' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: delete a blog article.
+   */
+  'deleteBlogArticle' : ActorMethod<[string], undefined>,
+  /**
+   * / Authenticated user: delete a combined vedic reading they own. Returns true if deleted.
+   */
+  'deleteCombinedVedicReading' : ActorMethod<[string], boolean>,
   /**
    * / Admin-only: delete a devotional content entry.
    */
   'deleteDevotionalContent' : ActorMethod<[string], undefined>,
   /**
+   * / Admin-only: delete a festival event.
+   */
+  'deleteFestivalEvent' : ActorMethod<[string], undefined>,
+  /**
    * / Admin-only: delete a holy book entry.
    */
   'deleteHolyBookEntry' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: delete a Jain encyclopedia article.
+   */
+  'deleteJainArticle' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: delete a Jain Katha.
+   */
+  'deleteJainKatha' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: delete a Jain Pathshala entry.
+   */
+  'deleteJainPathshalaEntry' : ActorMethod<[string], undefined>,
+  /**
+   * / Authenticated users can delete their own kundali match. Returns true if deleted.
+   */
+  'deleteKundaliMatch' : ActorMethod<[string], boolean>,
+  /**
+   * / Authenticated user: delete a palm photo reading they own. Returns true if deleted.
+   */
+  'deletePalmPhotoReading' : ActorMethod<[string], boolean>,
+  /**
+   * / Admin-only: delete a palmistry content entry. Returns true if deleted, false if not found.
+   */
+  'deletePalmistryContent' : ActorMethod<[string], boolean>,
+  /**
+   * / Admin-only: delete a Pathshala lesson.
+   */
+  'deletePathshalaLesson' : ActorMethod<[string], undefined>,
   /**
    * / Admin-only: delete a product.
    */
   'deleteProduct' : ActorMethod<[string], undefined>,
   /**
+   * / Admin-only: delete a puja type.
+   */
+  'deletePujaType' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: delete a suktam entry.
+   */
+  'deleteSuktam' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: delete a vastu content entry. Returns true if deleted, false if not found.
+   */
+  'deleteVastuContent' : ActorMethod<[string], boolean>,
+  /**
+   * / Authenticated user: delete a vastu room check they own. Returns true if deleted.
+   */
+  'deleteVastuRoomCheck' : ActorMethod<[string], boolean>,
+  /**
    * / Admin-only: delete a vrat katha entry.
    */
   'deleteVratKatha' : ActorMethod<[string], undefined>,
   /**
+   * / Admin-only: delete a web story.
+   */
+  'deleteWebStory' : ActorMethod<[string], undefined>,
+  /**
    * / Public: anyone may browse astrologer profiles.
    */
   'getAllAstrologerProfiles' : ActorMethod<[], Array<AstrologerProfile>>,
+  /**
+   * / Public: get all blog articles (admin may see unpublished; public sees all).
+   */
+  'getAllBlogArticles' : ActorMethod<[], Array<BlogArticle>>,
+  /**
+   * / Public: get all calculator FAQs.
+   */
+  'getAllCalculatorFAQs' : ActorMethod<[], Array<CalculatorFAQ>>,
   /**
    * / Admin-only: list all appointments (for astrologer/admin dashboard).
    */
@@ -364,9 +949,41 @@ export interface _SERVICE {
    */
   'getAllDevotionalContents' : ActorMethod<[], Array<DevotionalContent>>,
   /**
+   * / Public: get all festival events.
+   */
+  'getAllFestivalEvents' : ActorMethod<[], Array<FestivalEvent>>,
+  /**
+   * / Public: get all Jain encyclopedia articles.
+   */
+  'getAllJainArticles' : ActorMethod<[], Array<JainEncyclopediaArticle>>,
+  /**
+   * / Public: get all Jain Kathas.
+   */
+  'getAllJainKathas' : ActorMethod<[], Array<JainKatha>>,
+  /**
+   * / Public: get all Jain Pathshala entries.
+   */
+  'getAllJainPathshalaEntries' : ActorMethod<[], Array<JainPathshalaEntry>>,
+  /**
+   * / Admin-only: get all Pathshala lessons (published and unpublished).
+   */
+  'getAllPathshalaLessons' : ActorMethod<[], Array<PathshalaLesson>>,
+  /**
+   * / Admin-only: list all product manager principals.
+   */
+  'getAllProductManagers' : ActorMethod<[], Array<Principal>>,
+  /**
    * / Public: anyone may browse products.
    */
   'getAllProducts' : ActorMethod<[], Array<Product>>,
+  /**
+   * / Admin-only: get all puja reports.
+   */
+  'getAllPujaReports' : ActorMethod<[], Array<PujaReport>>,
+  /**
+   * / Public: anyone may browse puja types.
+   */
+  'getAllPujaTypes' : ActorMethod<[], Array<PujaType>>,
   /**
    * / Public: anyone may browse temples.
    */
@@ -375,6 +992,14 @@ export interface _SERVICE {
    * / Admin-only: list all user profiles.
    */
   'getAllUserProfiles' : ActorMethod<[], Array<[Principal, UserProfile]>>,
+  /**
+   * / Public: get all web stories.
+   */
+  'getAllWebStories' : ActorMethod<[], Array<WebStory>>,
+  /**
+   * / Authenticated users can get a single astro chart by id (only their own).
+   */
+  'getAstroChart' : ActorMethod<[string], [] | [AstroChart]>,
   /**
    * / Public: get a single astrologer profile by id.
    */
@@ -388,14 +1013,33 @@ export interface _SERVICE {
    */
   'getBhajans' : ActorMethod<[], Array<BhajanEntry>>,
   /**
+   * / Public: get a blog article by its slug.
+   */
+  'getBlogArticleBySlug' : ActorMethod<[string], [] | [BlogArticle]>,
+  /**
+   * / Public: get the FAQ for a specific calculator by calculatorId.
+   */
+  'getCalculatorFAQ' : ActorMethod<[string], [] | [CalculatorFAQ]>,
+  /**
    * / Get the calling user's own profile.
    */
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   /**
+   * / Get a single combined vedic reading by id (owner or admin).
+   */
+  'getCombinedVedicReading' : ActorMethod<
+    [string],
+    [] | [CombinedVedicReading]
+  >,
+  /**
    * / Public: get a single devotional content entry.
    */
   'getDevotionalContent' : ActorMethod<[string], [] | [DevotionalContent]>,
+  /**
+   * / Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
+   */
+  'getFestivalEventsByFaith' : ActorMethod<[string], Array<FestivalEvent>>,
   /**
    * / Public: anyone may browse holy book entries, optionally filtered by bookTitle.
    */
@@ -405,6 +1049,76 @@ export interface _SERVICE {
    */
   'getHolyBookEntryById' : ActorMethod<[string], [] | [HolyBookEntry]>,
   /**
+   * / Public: get a single Jain encyclopedia article by id.
+   */
+  'getJainArticleById' : ActorMethod<[string], [] | [JainEncyclopediaArticle]>,
+  /**
+   * / Public: get all Jain encyclopedia articles for a given volume number.
+   */
+  'getJainArticlesByVolume' : ActorMethod<
+    [bigint],
+    Array<JainEncyclopediaArticle>
+  >,
+  /**
+   * / Public: get Jain Kathas filtered by parv (occasion/festival).
+   */
+  'getJainKathasByParv' : ActorMethod<[string], Array<JainKatha>>,
+  /**
+   * / Public: get Jain Pathshala entries filtered by category.
+   */
+  'getJainPathshalaEntriesByCategory' : ActorMethod<
+    [string],
+    Array<JainPathshalaEntry>
+  >,
+  /**
+   * / Authenticated users can retrieve a single kundali match by id (only their own).
+   */
+  'getKundaliMatchById' : ActorMethod<[string], [] | [KundaliMatch]>,
+  /**
+   * / Authenticated users can retrieve all their own kundali match results, sorted newest first.
+   */
+  'getKundaliMatches' : ActorMethod<[], Array<KundaliMatch>>,
+  /**
+   * / Public: get all media player items.
+   */
+  'getMediaPlayerItems' : ActorMethod<[], Array<MediaPlayerItem>>,
+  /**
+   * / Public: get media player items filtered by contentType (aarti/chalisa/mantra/bhajan/katha).
+   */
+  'getMediaPlayerItemsByType' : ActorMethod<[string], Array<MediaPlayerItem>>,
+  /**
+   * / Authenticated user: get all their own combined vedic readings.
+   */
+  'getMyCombinedVedicReadings' : ActorMethod<[], Array<CombinedVedicReading>>,
+  /**
+   * / Authenticated user: get all their own palm photo readings.
+   */
+  'getMyPalmPhotoReadings' : ActorMethod<[], Array<PalmPhotoReading>>,
+  /**
+   * / Authenticated user: get all their own vastu room checks.
+   */
+  'getMyVastuRoomChecks' : ActorMethod<[], Array<VastuRoomCheck>>,
+  /**
+   * / Get a single palm photo reading by id (owner or admin).
+   */
+  'getPalmPhotoReading' : ActorMethod<[string], [] | [PalmPhotoReading]>,
+  /**
+   * / Public: get a single palmistry content entry by id.
+   */
+  'getPalmistryContent' : ActorMethod<[string], [] | [PalmistryContent]>,
+  /**
+   * / Public: anyone may browse all palmistry content entries.
+   */
+  'getPalmistryContents' : ActorMethod<[], Array<PalmistryContent>>,
+  /**
+   * / Public: get a single Pathshala lesson by id.
+   */
+  'getPathshalaLesson' : ActorMethod<[string], [] | [PathshalaLesson]>,
+  /**
+   * / Public: get published Pathshala lessons filtered by part (Bhag-1 or Bhag-2).
+   */
+  'getPathshalaLessonsByPart' : ActorMethod<[string], Array<PathshalaLesson>>,
+  /**
    * / Admin-only: list all pending prasad deliveries.
    */
   'getPendingPrasadDeliveries' : ActorMethod<[], Array<PrasadDeliveryRequest>>,
@@ -413,9 +1127,45 @@ export interface _SERVICE {
    */
   'getProduct' : ActorMethod<[string], [] | [Product]>,
   /**
+   * / Public: get products filtered by category.
+   */
+  'getProductsByCategory' : ActorMethod<[string], Array<Product>>,
+  /**
+   * / Public: get only published blog articles.
+   */
+  'getPublishedBlogArticles' : ActorMethod<[], Array<BlogArticle>>,
+  /**
+   * / Public: get only published Pathshala lessons.
+   */
+  'getPublishedPathshalaLessons' : ActorMethod<[], Array<PathshalaLesson>>,
+  /**
+   * / Public: get only published web stories.
+   */
+  'getPublishedWebStories' : ActorMethod<[], Array<WebStory>>,
+  /**
+   * / Public: get a single puja type by id.
+   */
+  'getPujaTypeById' : ActorMethod<[string], [] | [PujaType]>,
+  /**
+   * / Admin-only: get all service bookings for review.
+   */
+  'getServiceBookings' : ActorMethod<[], Array<ServiceBooking>>,
+  /**
    * / Authenticated users can check a Stripe session status (e.g. after checkout).
    */
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
+  /**
+   * / Public: get a single suktam entry by id.
+   */
+  'getSuktamById' : ActorMethod<[string], [] | [SuktamEntry]>,
+  /**
+   * / Public: anyone may browse suktam entries.
+   */
+  'getSuktams' : ActorMethod<[], Array<SuktamEntry>>,
+  /**
+   * / Authenticated users can retrieve their own astro charts.
+   */
+  'getUserAstroCharts' : ActorMethod<[], Array<AstroChart>>,
   /**
    * / Users may only fetch their own business name records; admins may fetch any.
    */
@@ -449,6 +1199,10 @@ export interface _SERVICE {
    */
   'getUserOrders' : ActorMethod<[Principal], Array<Order>>,
   /**
+   * / Authenticated users can retrieve their own palmistry readings.
+   */
+  'getUserPalmistryReadings' : ActorMethod<[], Array<PalmistryReading>>,
+  /**
    * / Users may only fetch their own delivery requests; admins may fetch any.
    */
   'getUserPrasadDeliveryRequests' : ActorMethod<
@@ -464,9 +1218,29 @@ export interface _SERVICE {
    */
   'getUserPujaBookings' : ActorMethod<[Principal], Array<PujaBooking>>,
   /**
+   * / Authenticated users can retrieve their own puja reports.
+   */
+  'getUserPujaReports' : ActorMethod<[], Array<PujaReport>>,
+  /**
    * / Users may only fetch their own report requests; admins may fetch any user's.
    */
   'getUserReportRequests' : ActorMethod<[Principal], Array<ReportRequest>>,
+  /**
+   * / Authenticated users can retrieve their own service bookings.
+   */
+  'getUserServiceBookings' : ActorMethod<[], Array<ServiceBooking>>,
+  /**
+   * / Public: get a single vastu content entry by id.
+   */
+  'getVastuContent' : ActorMethod<[string], [] | [VastuContent]>,
+  /**
+   * / Public: anyone may browse all vastu content entries.
+   */
+  'getVastuContents' : ActorMethod<[], Array<VastuContent>>,
+  /**
+   * / Get a single vastu room check by id (owner or admin).
+   */
+  'getVastuRoomCheck' : ActorMethod<[string], [] | [VastuRoomCheck]>,
   /**
    * / Users may only fetch their own temple config; admins may fetch any.
    */
@@ -496,6 +1270,10 @@ export interface _SERVICE {
   'handlePujaBooking' : ActorMethod<[string, string], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   /**
+   * / Returns true if the caller has productManager role.
+   */
+  'isProductManager' : ActorMethod<[], boolean>,
+  /**
    * / Public: check whether Stripe has been configured.
    */
   'isStripeConfigured' : ActorMethod<[], boolean>,
@@ -507,13 +1285,41 @@ export interface _SERVICE {
     undefined
   >,
   /**
+   * / Admin-only: remove a media player item.
+   */
+  'removeMediaPlayerItem' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin-only: revoke productManager role from a user.
+   */
+  'revokeProductManagerRole' : ActorMethod<[Principal], undefined>,
+  /**
+   * / Authenticated users can save an astrology chart for themselves.
+   */
+  'saveAstroChart' : ActorMethod<[AstroChart], undefined>,
+  /**
+   * / Admin-only: save (create or replace) a calculator FAQ.
+   */
+  'saveCalculatorFAQ' : ActorMethod<[CalculatorFAQ], undefined>,
+  /**
    * / Save / update the calling user's own profile.
    */
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   /**
+   * / Authenticated users can save a kundali match result for themselves.
+   */
+  'saveKundaliMatch' : ActorMethod<[KundaliMatchInput], string>,
+  /**
+   * / Authenticated users can save a palmistry reading for themselves.
+   */
+  'savePalmistryReading' : ActorMethod<[PalmistryReading], undefined>,
+  /**
    * / Authenticated users can save their own virtual temple configuration.
    */
   'saveVirtualTempleConfig' : ActorMethod<[VirtualTempleConfig], undefined>,
+  /**
+   * / Admin-only: grant productManager role to a user.
+   */
+  'setProductManagerRole' : ActorMethod<[Principal], undefined>,
   /**
    * / Admin-only: set the Stripe configuration.
    */
@@ -523,6 +1329,35 @@ export interface _SERVICE {
    * / Admin-only: update an existing bhajan entry.
    */
   'updateBhajan' : ActorMethod<[BhajanEntry], undefined>,
+  /**
+   * / Admin-only: update an existing blog article.
+   */
+  'updateBlogArticle' : ActorMethod<[BlogArticle], undefined>,
+  /**
+   * / Admin-only: update an existing calculator FAQ by id.
+   */
+  'updateCalculatorFAQ' : ActorMethod<[string, CalculatorFAQ], undefined>,
+  /**
+   * / Authenticated user: update an existing combined vedic reading they own. Returns updated entry or null.
+   */
+  'updateCombinedVedicReading' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    [] | [CombinedVedicReading]
+  >,
   /**
    * / Admin-only: update appointment status and notes.
    */
@@ -535,29 +1370,146 @@ export interface _SERVICE {
    */
   'updateDevotionalContent' : ActorMethod<[DevotionalContent], undefined>,
   /**
+   * / Admin-only: update an existing festival event.
+   */
+  'updateFestivalEvent' : ActorMethod<[FestivalEvent], undefined>,
+  /**
    * / Admin-only: update an existing holy book entry.
    */
   'updateHolyBookEntry' : ActorMethod<[HolyBookEntry], undefined>,
+  /**
+   * / Admin-only: update an existing Jain encyclopedia article.
+   */
+  'updateJainArticle' : ActorMethod<[JainEncyclopediaArticle], undefined>,
+  /**
+   * / Admin-only: update an existing Jain Katha.
+   */
+  'updateJainKatha' : ActorMethod<[JainKatha], undefined>,
+  /**
+   * / Admin-only: update an existing Jain Pathshala entry.
+   */
+  'updateJainPathshalaEntry' : ActorMethod<[JainPathshalaEntry], undefined>,
   /**
    * / Admin-only: update order payment status.
    */
   'updateOrderPaymentStatus' : ActorMethod<[string, string, string], undefined>,
   /**
+   * / Authenticated user: update an existing palm photo reading they own. Returns updated entry or null.
+   */
+  'updatePalmPhotoReading' : ActorMethod<
+    [string, string, string, string, string, string, string, string],
+    [] | [PalmPhotoReading]
+  >,
+  /**
+   * / Admin-only: update an existing palmistry content entry. Returns the updated entry or null if not found.
+   */
+  'updatePalmistryContent' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    [] | [PalmistryContent]
+  >,
+  /**
+   * / Admin-only: update an existing Pathshala lesson.
+   */
+  'updatePathshalaLesson' : ActorMethod<[string, PathshalaLesson], undefined>,
+  /**
    * / Admin-only: update the status of a prasad delivery request.
    */
   'updatePrasadDeliveryStatus' : ActorMethod<[string, string], undefined>,
   /**
-   * / Admin-only: update a product.
+   * / Admin or productManager: replace a product entirely (backward-compatible full update).
    */
   'updateProduct' : ActorMethod<[Product], undefined>,
+  /**
+   * / Admin or productManager: partial update — only supplied fields are changed.
+   */
+  'updateProductFields' : ActorMethod<
+    [string, ProductUpdateRequest],
+    undefined
+  >,
+  /**
+   * / Admin or productManager: update stock for a product.
+   */
+  'updateProductStock' : ActorMethod<[string, bigint], undefined>,
+  /**
+   * / Admin or productManager: update only the variants array for a product (gemstone weight variants).
+   */
+  'updateProductVariants' : ActorMethod<
+    [string, Array<ProductVariant>],
+    undefined
+  >,
+  /**
+   * / Admin-only: update an existing puja report.
+   */
+  'updatePujaReport' : ActorMethod<[string, PujaReport], undefined>,
+  /**
+   * / Admin-only: update an existing puja type.
+   */
+  'updatePujaType' : ActorMethod<[PujaType], undefined>,
   /**
    * / Admin-only: update report status and content.
    */
   'updateReportRequest' : ActorMethod<[string, string, string], undefined>,
   /**
+   * / Admin-only: update the status of a service booking.
+   */
+  'updateServiceBookingStatus' : ActorMethod<[string, string], undefined>,
+  /**
+   * / Admin-only: update an existing suktam entry.
+   */
+  'updateSuktam' : ActorMethod<[SuktamEntry], undefined>,
+  /**
+   * / Admin-only: update an existing vastu content entry. Returns the updated entry or null if not found.
+   */
+  'updateVastuContent' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    [] | [VastuContent]
+  >,
+  /**
+   * / Authenticated user: update an existing vastu room check they own. Returns updated entry or null.
+   */
+  'updateVastuRoomCheck' : ActorMethod<
+    [string, string, string, string, string, bigint, string, string, string],
+    [] | [VastuRoomCheck]
+  >,
+  /**
    * / Admin-only: update an existing vrat katha entry.
    */
   'updateVratKatha' : ActorMethod<[VratKathaEntry], undefined>,
+  /**
+   * / Admin-only: update an existing web story.
+   */
+  'updateWebStory' : ActorMethod<[WebStory], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

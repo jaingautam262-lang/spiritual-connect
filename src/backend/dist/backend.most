@@ -1,0 +1,770 @@
+// Version: 1.0.0
+type AstroChart__1004299018 =
+  {
+    ashtakvargaData : Text;
+    astroScore : Int;
+    birthDate : Text;
+    birthPlace : Text;
+    birthTime : Text;
+    chartData : Text;
+    chartType : Text;
+    createdAt : Int;
+    dashaInfo : Text;
+    id : Text;
+    shadbalaData : Text;
+    userId : Text;
+    yogas : [Text]
+  };
+type AstrologerProfile__48942498 =
+  {
+    bio : Text;
+    createdAt : Time__900049286;
+    experienceYears : Nat;
+    id : Text;
+    languages : [Text];
+    name : Text;
+    perMinuteRate : Float;
+    rating : Float;
+    specializations : [Text]
+  };
+type BhajanEntry__1018555507 =
+  {
+    artist : Text;
+    audioBase64 : Text;
+    createdAt : Time__900049286;
+    deity : Text;
+    id : Text;
+    lyricsText : Text;
+    title : Text
+  };
+type BlogArticle__1056944285 =
+  {
+    author : Text;
+    category : Text;
+    content : Text;
+    createdAt : Int;
+    featuredImageUrl : Text;
+    id : Text;
+    isPublished : Bool;
+    publishDate : Int;
+    slug : Text;
+    tags : [Text];
+    title : Text;
+    updatedAt : Int
+  };
+type BusinessNameRecord__486464837 =
+  {
+    businessName : Text;
+    createdAt : Time__900049286;
+    id : Text;
+    result : Text;
+    userId : Principal
+  };
+type CalculatorFAQ__844554142 =
+  {
+    calculatorId : Text;
+    calculatorName : Text;
+    id : Text;
+    qaPairs : [CalculatorQAPair__175343456]
+  };
+type CalculatorQAPair__175343456 =
+  {
+    answer : Text;
+    answerHindi : Text;
+    category : Text;
+    question : Text;
+    questionHindi : Text
+  };
+type ChadhavaOffering__290594421 =
+  {
+    createdAt : Time__900049286;
+    id : Text;
+    items : [Text];
+    status : Text;
+    templeId : Text;
+    userId : Principal
+  };
+type CombinedVedicReading__733492072 =
+  {
+    activeDasha : Text;
+    birthDate : Text;
+    birthPlace : Text;
+    birthTime : Text;
+    combinedInsightsText : Text;
+    createdAt : Int;
+    doshasJson : Text;
+    id : Text;
+    lagnaSign : Text;
+    moonSign : Text;
+    palmInsightsJson : Text;
+    palmReadingId : Text;
+    remediesText : Text;
+    sunSign : Text;
+    userId : Principal
+  };
+type ConsultationAppointment__977767237 =
+  {
+    astrologerId : Text;
+    createdAt : Time__900049286;
+    id : Text;
+    notes : Text;
+    preferredDateTime : Text;
+    specialQuestions : Text;
+    status : Text;
+    topic : Text;
+    userId : Principal
+  };
+type DaanItem__169032537 = {item : Text; quantity : Text; value : Float};
+type Data__159895909<T> = {var count : Nat__490723111; elements : [var ?T]};
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DevotionalContent__1049272943 =
+  {
+    contentType : Text;
+    createdAt : Time__900049286;
+    deity : Text;
+    id : Text;
+    language : Text;
+    lyrics : Text;
+    title : Text
+  };
+type FestivalEvent__257208547 =
+  {
+    date : Text;
+    deity : Text;
+    description : Text;
+    eventType : Text;
+    faith : Text;
+    id : Text;
+    significance : Text;
+    title : Text;
+    titleHindi : Text
+  };
+type HolyBookEntry__686870446 =
+  {
+    audioBase64 : Text;
+    bookCategory : Text;
+    bookTitle : Text;
+    chapterTitle : Text;
+    createdAt : Time__900049286;
+    id : Text;
+    shlokaText : Text;
+    trackNumber : Nat
+  };
+type Int__270357528 = Int__616954475;
+type Int__616954475 = Int;
+type Internal__667636161<T> =
+  {children : [var ?Node__92254746<T>]; data : Data__159895909<T>};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type JainEncyclopediaArticle__896657966 =
+  {
+    articleTitle : Text;
+    articleTitleHindi : Text;
+    content : Text;
+    contentHindi : Text;
+    crossLinks : [Text];
+    glossaryTerms : [JainGlossaryTerm__176313390];
+    id : Text;
+    qaPairs : [JainQAPair__632180261];
+    volumeNumber : Int;
+    volumeTitle : Text
+  };
+type JainGlossaryTerm__176313390 = {definition : Text; term : Text};
+type JainKatha__19404201 =
+  {
+    createdAt : Int;
+    fullText : Text;
+    id : Text;
+    occasion : Text;
+    parv : Text;
+    significance : Text;
+    title : Text
+  };
+type JainPathshalaEntry__207617770 =
+  {
+    category : Text;
+    chapter : Text;
+    content : Text;
+    createdAt : Int;
+    id : Text;
+    part : Text;
+    title : Text
+  };
+type JainQAPair__632180261 =
+  {answer : Text; answerHindi : Text; question : Text; questionHindi : Text};
+type KundaliMatch__534664220 =
+  {
+    bhakootDosha : Bool;
+    bhakootScore : Nat;
+    compatibilityPercent : Nat;
+    createdAt : Int;
+    doshaRemedies : Text;
+    ganaScore : Nat;
+    grahaMaitriScore : Nat;
+    id : Text;
+    manglikDoshaA : Bool;
+    manglikDoshaB : Bool;
+    nadiDosha : Bool;
+    nadiScore : Nat;
+    personAAscendant : Text;
+    personADob : Text;
+    personAMarsSign : Text;
+    personAMoonSign : Text;
+    personANakshatra : Text;
+    personAName : Text;
+    personAPlace : Text;
+    personARashi : Text;
+    personASunSign : Text;
+    personATime : Text;
+    personBAscendant : Text;
+    personBDob : Text;
+    personBMarsSign : Text;
+    personBMoonSign : Text;
+    personBNakshatra : Text;
+    personBName : Text;
+    personBPlace : Text;
+    personBRashi : Text;
+    personBSunSign : Text;
+    personBTime : Text;
+    taraScore : Nat;
+    totalScore : Nat;
+    userId : Principal;
+    varnaScore : Nat;
+    vasyaScore : Nat;
+    yoniScore : Nat
+  };
+type Leaf__520550824<T> = {data : Data__159895909<T>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type MediaPlayerItem__1017825262 =
+  {
+    audioUrl : Text;
+    contentType : Text;
+    deity : Text;
+    duration : Int;
+    faith : Text;
+    id : Text;
+    title : Text
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Node__92254746<T> =
+  {#internal : Internal__667636161<T>; #leaf : Leaf__520550824<T>};
+type NumerologyRecord__496779578 =
+  {
+    createdAt : Time__900049286;
+    dob : Text;
+    id : Text;
+    name : Text;
+    result : Text;
+    userId : Principal
+  };
+type OrderItem__592186033 =
+  {productId : Text; quantity : Nat; unitPrice : Float};
+type Order__762448211 =
+  {
+    createdAt : Time__900049286;
+    id : Text;
+    items : [OrderItem__592186033];
+    paymentStatus : Text;
+    stripePaymentIntentId : Text;
+    total : Float;
+    userId : Principal
+  };
+type PalmPhotoReading__207676720 =
+  {
+    createdAt : Int;
+    dominantLine : Text;
+    handType : Text;
+    id : Text;
+    lineAnnotations : Text;
+    luckySigns : Text;
+    palmShape : Text;
+    photoUrl : Text;
+    readingText : Text;
+    userId : Principal
+  };
+type PalmistryContent__674633968 =
+  {
+    benefitsEn : Text;
+    benefitsHi : Text;
+    category : Text;
+    characteristicsEn : Text;
+    characteristicsHi : Text;
+    createdAt : Int;
+    descriptionEn : Text;
+    descriptionHi : Text;
+    id : Text;
+    lineOrPalmType : Text;
+    locationOnPalm : Text;
+    title : Text;
+    titleHi : Text;
+    updatedAt : Int
+  };
+type PalmistryReading__845030135 =
+  {
+    fateLine : Text;
+    headLine : Text;
+    heartLine : Text;
+    id : Text;
+    imageUrl : Text;
+    lifeLine : Text;
+    readingDate : Int;
+    summary : Text;
+    traits : [Text];
+    userId : Principal
+  };
+type PathshalaLesson__340250413 =
+  {
+    chapterNumber : Nat;
+    chapterTitle : Text;
+    chapterTitleHi : Text;
+    content : Text;
+    contentHi : Text;
+    createdAt : Int;
+    id : Text;
+    isPublished : Bool;
+    moralLesson : Text;
+    moralLessonHi : Text;
+    part : Text;
+    summary : Text;
+    summaryHi : Text;
+    tags : [Text];
+    titleEn : Text;
+    titleHi : Text;
+    updatedAt : Int
+  };
+type PrasadDeliveryRequest__346386837 =
+  {
+    address : Text;
+    createdAt : Time__900049286;
+    id : Text;
+    mobileNumber : Text;
+    status : Text;
+    templeId : Text;
+    userId : Principal
+  };
+type ProductVariant__478289016 =
+  {price : Float; stock : Nat; variantName : Text};
+type Product__853085059 =
+  {
+    astrologicalPurpose : Text;
+    benefits : Text;
+    category : Text;
+    createdAt : Time__900049286;
+    description : Text;
+    discount : ?Nat;
+    id : Text;
+    mrp : ?Float;
+    name : Text;
+    price : Float;
+    sku : ?Text;
+    stock : Nat;
+    variantLabel : ?Text;
+    variants : ?[ProductVariant__478289016]
+  };
+type PujaBooking__361576401 =
+  {
+    createdAt : Time__900049286;
+    devoteeName : Text;
+    gotra : Text;
+    id : Text;
+    preferredDate : Text;
+    pujaType : Text;
+    specialWishes : Text;
+    status : Text;
+    templeId : Text;
+    userId : Principal
+  };
+type PujaReport__568267304 =
+  {
+    bookingId : Text;
+    completionNotes : Text;
+    daanItems : [DaanItem__169032537];
+    deity : Text;
+    durationMins : Int;
+    id : Text;
+    intention : Text;
+    performedDate : Int;
+    priestName : Text;
+    pujaType : Text;
+    reportStatus : Text;
+    sankalp : Text;
+    userId : Principal
+  };
+type PujaType__604880237 =
+  {
+    benefits : Text;
+    benefitsHindi : Text;
+    category : Text;
+    deity : Text;
+    description : Text;
+    descriptionHindi : Text;
+    duration : Text;
+    id : Text;
+    imageUrl : Text;
+    name : Text;
+    nameHindi : Text;
+    samagri : [Text];
+    samagriHindi : [Text];
+    vidhi : Text;
+    vidhiHindi : Text;
+    when : Text;
+    whenHindi : Text
+  };
+type ReportRequest__871286806 =
+  {
+    content : Text;
+    createdAt : Time__900049286;
+    dob : Text;
+    id : Text;
+    name : Text;
+    pob : Text;
+    reportType : Text;
+    status : Text;
+    tob : Text;
+    userId : Principal
+  };
+type ServiceBooking__1054723649 =
+  {
+    createdAt : Int;
+    devoteeName : Text;
+    email : Text;
+    id : Text;
+    location : Text;
+    phone : Text;
+    preferredDate : Text;
+    pricing : Float;
+    serviceName : Text;
+    serviceType : Text;
+    specialRequests : Text;
+    status : Text;
+    userId : Principal
+  };
+type StorySlide__10834718 =
+  {description : Text; id : Text; imageUrl : Text; order : Nat; title : Text};
+type StripeConfiguration__551841935 =
+  {allowedCountries : [Text]; secretKey : Text};
+type SuktamEntry__980290658 =
+  {
+    benefits : Text;
+    benefitsHindi : Text;
+    deity : Text;
+    deityHindi : Text;
+    englishMeaning : Text;
+    hindiMeaning : Text;
+    id : Text;
+    name : Text;
+    nameHindi : Text;
+    recitationInstructions : Text;
+    sanskritText : Text;
+    transliteration : Text;
+    vedaSource : Text
+  };
+type Temple__709100095 =
+  {
+    createdAt : Time__900049286;
+    deity : Text;
+    description : Text;
+    id : Text;
+    location : Text;
+    name : Text
+  };
+type Time__796480547 = Int__270357528;
+type Time__900049286 = Time__796480547;
+type UserProfile__491224006 =
+  {
+    birthDate : Text;
+    birthPlace : Text;
+    birthTime : Text;
+    createdAt : Time__900049286;
+    email : Text;
+    gotra : Text;
+    name : Text
+  };
+type UserRole__1054455867 = {#admin; #guest; #user};
+type VastuContent__263016746 =
+  {
+    category : Text;
+    createdAt : Int;
+    directionOrRoom : Text;
+    doshaEn : Text;
+    doshaHi : Text;
+    effectsEn : Text;
+    effectsHi : Text;
+    elementsInvolved : Text;
+    id : Text;
+    planetaryRuler : Text;
+    planetaryRulerHi : Text;
+    remediesEn : Text;
+    remediesHi : Text;
+    tipsEn : Text;
+    tipsHi : Text;
+    title : Text;
+    titleHi : Text;
+    updatedAt : Int;
+    yantra : Text
+  };
+type VastuRoomCheck__22362384 =
+  {
+    complianceScore : Nat;
+    createdAt : Int;
+    elementBalance : Text;
+    entranceDirection : Text;
+    floorPlanUrl : Text;
+    id : Text;
+    issuesJson : Text;
+    remediesJson : Text;
+    roomDimensions : Text;
+    roomType : Text;
+    userId : Principal
+  };
+type VirtualTempleConfig__1041850924 =
+  {
+    background : Text;
+    decorStyle : Text;
+    deity : Text;
+    items : [Text];
+    updatedAt : Time__900049286;
+    userId : Principal
+  };
+type VratKathaEntry__45099806 =
+  {
+    audioBase64 : Text;
+    createdAt : Time__900049286;
+    festivalName : Text;
+    id : Text;
+    storyText : Text;
+    title : Text
+  };
+type WalletTransaction__95917618 =
+  {
+    amount : Float;
+    createdAt : Time__900049286;
+    description : Text;
+    id : Text;
+    transactionType : Text;
+    userId : Principal
+  };
+type WebStory__515786195 =
+  {
+    category : Text;
+    createdAt : Int;
+    id : Text;
+    isPublished : Bool;
+    slides : [StorySlide__10834718];
+    title : Text
+  };
+actor {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1054455867>
+    };
+  stable astroCharts :
+    {
+      var root : Node__46230540<Text, AstroChart__1004299018>;
+      var size : Nat__490723111
+    };
+  stable astrologerProfiles :
+    {
+      var root : Node__46230540<Text, AstrologerProfile__48942498>;
+      var size : Nat__490723111
+    };
+  stable bhajanEntries :
+    {
+      var root : Node__46230540<Text, BhajanEntry__1018555507>;
+      var size : Nat__490723111
+    };
+  stable blogArticles :
+    {
+      var root : Node__46230540<Text, BlogArticle__1056944285>;
+      var size : Nat__490723111
+    };
+  stable businessNameRecords :
+    {
+      var root : Node__46230540<Text, BusinessNameRecord__486464837>;
+      var size : Nat__490723111
+    };
+  stable calculatorFAQs :
+    {
+      var root : Node__46230540<Text, CalculatorFAQ__844554142>;
+      var size : Nat__490723111
+    };
+  stable chadhavaOfferings :
+    {
+      var root : Node__46230540<Text, ChadhavaOffering__290594421>;
+      var size : Nat__490723111
+    };
+  stable combinedVedicReadings :
+    {
+      var root : Node__46230540<Text, CombinedVedicReading__733492072>;
+      var size : Nat__490723111
+    };
+  stable consultationAppointments :
+    {
+      var root : Node__46230540<Text, ConsultationAppointment__977767237>;
+      var size : Nat__490723111
+    };
+  stable devotionalContents :
+    {
+      var root : Node__46230540<Text, DevotionalContent__1049272943>;
+      var size : Nat__490723111
+    };
+  stable festivalEvents :
+    {
+      var root : Node__46230540<Text, FestivalEvent__257208547>;
+      var size : Nat__490723111
+    };
+  stable holyBookEntries :
+    {
+      var root : Node__46230540<Text, HolyBookEntry__686870446>;
+      var size : Nat__490723111
+    };
+  stable jainEncyclopediaArticles :
+    {
+      var root : Node__46230540<Text, JainEncyclopediaArticle__896657966>;
+      var size : Nat__490723111
+    };
+  stable jainKathas :
+    {
+      var root : Node__46230540<Text, JainKatha__19404201>;
+      var size : Nat__490723111
+    };
+  stable jainPathshalaEntries :
+    {
+      var root : Node__46230540<Text, JainPathshalaEntry__207617770>;
+      var size : Nat__490723111
+    };
+  stable kundaliMatches :
+    {
+      var root : Node__46230540<Text, KundaliMatch__534664220>;
+      var size : Nat__490723111
+    };
+  stable mediaPlayerItems :
+    {
+      var root : Node__46230540<Text, MediaPlayerItem__1017825262>;
+      var size : Nat__490723111
+    };
+  stable numerologyRecords :
+    {
+      var root : Node__46230540<Text, NumerologyRecord__496779578>;
+      var size : Nat__490723111
+    };
+  stable orders :
+    {
+      var root : Node__46230540<Text, Order__762448211>;
+      var size : Nat__490723111
+    };
+  stable palmPhotoReadings :
+    {
+      var root : Node__46230540<Text, PalmPhotoReading__207676720>;
+      var size : Nat__490723111
+    };
+  stable palmistryContents :
+    {
+      var root : Node__46230540<Text, PalmistryContent__674633968>;
+      var size : Nat__490723111
+    };
+  stable palmistryReadings :
+    {
+      var root : Node__46230540<Text, PalmistryReading__845030135>;
+      var size : Nat__490723111
+    };
+  stable pathshalaLessons :
+    {
+      var root : Node__46230540<Text, PathshalaLesson__340250413>;
+      var size : Nat__490723111
+    };
+  stable prasadDeliveryRequests :
+    {
+      var root : Node__46230540<Text, PrasadDeliveryRequest__346386837>;
+      var size : Nat__490723111
+    };
+  stable productManagerPrincipals :
+    {var root : Node__92254746<Principal>; var size : Nat__490723111};
+  stable products :
+    {
+      var root : Node__46230540<Text, Product__853085059>;
+      var size : Nat__490723111
+    };
+  stable pujaBookings :
+    {
+      var root : Node__46230540<Text, PujaBooking__361576401>;
+      var size : Nat__490723111
+    };
+  stable pujaReports :
+    {
+      var root : Node__46230540<Text, PujaReport__568267304>;
+      var size : Nat__490723111
+    };
+  stable pujaTypes :
+    {
+      var root : Node__46230540<Text, PujaType__604880237>;
+      var size : Nat__490723111
+    };
+  stable reportRequests :
+    {
+      var root : Node__46230540<Text, ReportRequest__871286806>;
+      var size : Nat__490723111
+    };
+  stable serviceBookings :
+    {
+      var root : Node__46230540<Text, ServiceBooking__1054723649>;
+      var size : Nat__490723111
+    };
+  stable var stripeConfig : ?StripeConfiguration__551841935;
+  stable suktamEntries :
+    {
+      var root : Node__46230540<Text, SuktamEntry__980290658>;
+      var size : Nat__490723111
+    };
+  stable temples :
+    {
+      var root : Node__46230540<Text, Temple__709100095>;
+      var size : Nat__490723111
+    };
+  stable userProfiles :
+    {
+      var root : Node__46230540<Principal, UserProfile__491224006>;
+      var size : Nat__490723111
+    };
+  stable vastuContents :
+    {
+      var root : Node__46230540<Text, VastuContent__263016746>;
+      var size : Nat__490723111
+    };
+  stable vastuRoomChecks :
+    {
+      var root : Node__46230540<Text, VastuRoomCheck__22362384>;
+      var size : Nat__490723111
+    };
+  stable virtualTempleConfigs :
+    {
+      var root : Node__46230540<Principal, VirtualTempleConfig__1041850924>;
+      var size : Nat__490723111
+    };
+  stable vratKathaEntries :
+    {
+      var root : Node__46230540<Text, VratKathaEntry__45099806>;
+      var size : Nat__490723111
+    };
+  stable walletBalances :
+    {var root : Node__46230540<Principal, Float>; var size : Nat__490723111};
+  stable walletTransactions :
+    {
+      var root : Node__46230540<Text, WalletTransaction__95917618>;
+      var size : Nat__490723111
+    };
+  stable webStories :
+    {
+      var root : Node__46230540<Text, WebStory__515786195>;
+      var size : Nat__490723111
+    }
+};

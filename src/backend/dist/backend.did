@@ -1,0 +1,1087 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type WebStory = 
+ record {
+   category: text;
+   createdAt: int;
+   id: text;
+   isPublished: bool;
+   slides: vec StorySlide;
+   title: text;
+ };
+type WalletTransaction = 
+ record {
+   amount: float64;
+   createdAt: Time;
+   description: text;
+   id: text;
+   transactionType: text;
+   userId: principal;
+ };
+type VratKathaEntry = 
+ record {
+   audioBase64: text;
+   createdAt: Time;
+   festivalName: text;
+   id: text;
+   storyText: text;
+   title: text;
+ };
+type VirtualTempleConfig = 
+ record {
+   background: text;
+   decorStyle: text;
+   deity: text;
+   items: vec text;
+   updatedAt: Time;
+   userId: principal;
+ };
+type VastuRoomCheck = 
+ record {
+   complianceScore: nat;
+   createdAt: int;
+   elementBalance: text;
+   entranceDirection: text;
+   floorPlanUrl: text;
+   id: text;
+   issuesJson: text;
+   remediesJson: text;
+   roomDimensions: text;
+   roomType: text;
+   userId: principal;
+ };
+type VastuContent = 
+ record {
+   category: text;
+   createdAt: int;
+   directionOrRoom: text;
+   doshaEn: text;
+   doshaHi: text;
+   effectsEn: text;
+   effectsHi: text;
+   elementsInvolved: text;
+   id: text;
+   planetaryRuler: text;
+   planetaryRulerHi: text;
+   remediesEn: text;
+   remediesHi: text;
+   tipsEn: text;
+   tipsHi: text;
+   title: text;
+   titleHi: text;
+   updatedAt: int;
+   yantra: text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = 
+ record {
+   birthDate: text;
+   birthPlace: text;
+   birthTime: text;
+   createdAt: Time;
+   email: text;
+   gotra: text;
+   name: text;
+ };
+type TransformationOutput = record {response: HttpResponse;};
+type TransformationInput = 
+ record {
+   context: vec nat8;
+   response: HttpResponse;
+ };
+type Time = int;
+type Temple = 
+ record {
+   createdAt: Time;
+   deity: text;
+   description: text;
+   id: text;
+   location: text;
+   name: text;
+ };
+type SuktamEntry = 
+ record {
+   benefits: text;
+   benefitsHindi: text;
+   deity: text;
+   deityHindi: text;
+   englishMeaning: text;
+   hindiMeaning: text;
+   id: text;
+   name: text;
+   nameHindi: text;
+   recitationInstructions: text;
+   sanskritText: text;
+   transliteration: text;
+   vedaSource: text;
+ };
+type StripeSessionStatus = 
+ record {
+   customerEmail: text;
+   paymentStatus: text;
+   status: text;
+ };
+type StripeConfiguration = 
+ record {
+   allowedCountries: vec text;
+   secretKey: text;
+ };
+type StorySlide = 
+ record {
+   description: text;
+   id: text;
+   imageUrl: text;
+   order: nat;
+   title: text;
+ };
+type ShoppingItem = 
+ record {
+   name: text;
+   price: float64;
+   quantity: nat;
+ };
+type ServiceBooking = 
+ record {
+   createdAt: int;
+   devoteeName: text;
+   email: text;
+   id: text;
+   location: text;
+   phone: text;
+   preferredDate: text;
+   pricing: float64;
+   serviceName: text;
+   serviceType: text;
+   specialRequests: text;
+   status: text;
+   userId: principal;
+ };
+type ReportRequest = 
+ record {
+   content: text;
+   createdAt: Time;
+   dob: text;
+   id: text;
+   name: text;
+   pob: text;
+   reportType: text;
+   status: text;
+   tob: text;
+   userId: principal;
+ };
+type PujaType = 
+ record {
+   benefits: text;
+   benefitsHindi: text;
+   category: text;
+   deity: text;
+   description: text;
+   descriptionHindi: text;
+   duration: text;
+   id: text;
+   imageUrl: text;
+   name: text;
+   nameHindi: text;
+   samagri: vec text;
+   samagriHindi: vec text;
+   vidhi: text;
+   vidhiHindi: text;
+   when: text;
+   whenHindi: text;
+ };
+type PujaReport = 
+ record {
+   bookingId: text;
+   completionNotes: text;
+   daanItems: vec DaanItem;
+   deity: text;
+   durationMins: int;
+   id: text;
+   intention: text;
+   performedDate: int;
+   priestName: text;
+   pujaType: text;
+   reportStatus: text;
+   sankalp: text;
+   userId: principal;
+ };
+type PujaBooking = 
+ record {
+   createdAt: Time;
+   devoteeName: text;
+   gotra: text;
+   id: text;
+   preferredDate: text;
+   pujaType: text;
+   specialWishes: text;
+   status: text;
+   templeId: text;
+   userId: principal;
+ };
+type ProductVariant = 
+ record {
+   price: float64;
+   stock: nat;
+   variantName: text;
+ };
+type ProductUpdateRequest = 
+ record {
+   astrologicalPurpose: opt text;
+   benefits: opt text;
+   category: opt text;
+   description: opt text;
+   discount: opt nat;
+   mrp: opt float64;
+   name: opt text;
+   price: opt float64;
+   sku: opt text;
+   stock: opt nat;
+   variantLabel: opt text;
+   variants: opt vec ProductVariant;
+ };
+type Product = 
+ record {
+   astrologicalPurpose: text;
+   benefits: text;
+   category: text;
+   createdAt: Time;
+   description: text;
+   discount: opt nat;
+   id: text;
+   mrp: opt float64;
+   name: text;
+   price: float64;
+   sku: opt text;
+   stock: nat;
+   variantLabel: opt text;
+   variants: opt vec ProductVariant;
+ };
+type PrasadDeliveryRequest = 
+ record {
+   address: text;
+   createdAt: Time;
+   id: text;
+   mobileNumber: text;
+   status: text;
+   templeId: text;
+   userId: principal;
+ };
+type PathshalaLesson = 
+ record {
+   chapterNumber: nat;
+   chapterTitle: text;
+   chapterTitleHi: text;
+   content: text;
+   contentHi: text;
+   createdAt: int;
+   id: text;
+   isPublished: bool;
+   moralLesson: text;
+   moralLessonHi: text;
+   part: text;
+   summary: text;
+   summaryHi: text;
+   tags: vec text;
+   titleEn: text;
+   titleHi: text;
+   updatedAt: int;
+ };
+type PalmistryReading = 
+ record {
+   fateLine: text;
+   headLine: text;
+   heartLine: text;
+   id: text;
+   imageUrl: text;
+   lifeLine: text;
+   readingDate: int;
+   summary: text;
+   traits: vec text;
+   userId: principal;
+ };
+type PalmistryContent = 
+ record {
+   benefitsEn: text;
+   benefitsHi: text;
+   category: text;
+   characteristicsEn: text;
+   characteristicsHi: text;
+   createdAt: int;
+   descriptionEn: text;
+   descriptionHi: text;
+   id: text;
+   lineOrPalmType: text;
+   locationOnPalm: text;
+   title: text;
+   titleHi: text;
+   updatedAt: int;
+ };
+type PalmPhotoReading = 
+ record {
+   createdAt: int;
+   dominantLine: text;
+   handType: text;
+   id: text;
+   lineAnnotations: text;
+   luckySigns: text;
+   palmShape: text;
+   photoUrl: text;
+   readingText: text;
+   userId: principal;
+ };
+type OrderItem = 
+ record {
+   productId: text;
+   quantity: nat;
+   unitPrice: float64;
+ };
+type Order = 
+ record {
+   createdAt: Time;
+   id: text;
+   items: vec OrderItem;
+   paymentStatus: text;
+   stripePaymentIntentId: text;
+   total: float64;
+   userId: principal;
+ };
+type NumerologyRecord = 
+ record {
+   createdAt: Time;
+   dob: text;
+   id: text;
+   name: text;
+   result: text;
+   userId: principal;
+ };
+type MediaPlayerItem = 
+ record {
+   audioUrl: text;
+   contentType: text;
+   deity: text;
+   duration: int;
+   faith: text;
+   id: text;
+   title: text;
+ };
+type KundaliMatchInput = 
+ record {
+   bhakootDosha: bool;
+   bhakootScore: nat;
+   compatibilityPercent: nat;
+   doshaRemedies: text;
+   ganaScore: nat;
+   grahaMaitriScore: nat;
+   manglikDoshaA: bool;
+   manglikDoshaB: bool;
+   nadiDosha: bool;
+   nadiScore: nat;
+   personAAscendant: text;
+   personADob: text;
+   personAMarsSign: text;
+   personAMoonSign: text;
+   personANakshatra: text;
+   personAName: text;
+   personAPlace: text;
+   personARashi: text;
+   personASunSign: text;
+   personATime: text;
+   personBAscendant: text;
+   personBDob: text;
+   personBMarsSign: text;
+   personBMoonSign: text;
+   personBNakshatra: text;
+   personBName: text;
+   personBPlace: text;
+   personBRashi: text;
+   personBSunSign: text;
+   personBTime: text;
+   taraScore: nat;
+   totalScore: nat;
+   varnaScore: nat;
+   vasyaScore: nat;
+   yoniScore: nat;
+ };
+type KundaliMatch = 
+ record {
+   bhakootDosha: bool;
+   bhakootScore: nat;
+   compatibilityPercent: nat;
+   createdAt: int;
+   doshaRemedies: text;
+   ganaScore: nat;
+   grahaMaitriScore: nat;
+   id: text;
+   manglikDoshaA: bool;
+   manglikDoshaB: bool;
+   nadiDosha: bool;
+   nadiScore: nat;
+   personAAscendant: text;
+   personADob: text;
+   personAMarsSign: text;
+   personAMoonSign: text;
+   personANakshatra: text;
+   personAName: text;
+   personAPlace: text;
+   personARashi: text;
+   personASunSign: text;
+   personATime: text;
+   personBAscendant: text;
+   personBDob: text;
+   personBMarsSign: text;
+   personBMoonSign: text;
+   personBNakshatra: text;
+   personBName: text;
+   personBPlace: text;
+   personBRashi: text;
+   personBSunSign: text;
+   personBTime: text;
+   taraScore: nat;
+   totalScore: nat;
+   userId: principal;
+   varnaScore: nat;
+   vasyaScore: nat;
+   yoniScore: nat;
+ };
+type JainQAPair = 
+ record {
+   answer: text;
+   answerHindi: text;
+   question: text;
+   questionHindi: text;
+ };
+type JainPathshalaEntry = 
+ record {
+   category: text;
+   chapter: text;
+   content: text;
+   createdAt: int;
+   id: text;
+   part: text;
+   title: text;
+ };
+type JainKatha = 
+ record {
+   createdAt: int;
+   fullText: text;
+   id: text;
+   occasion: text;
+   parv: text;
+   significance: text;
+   title: text;
+ };
+type JainGlossaryTerm = 
+ record {
+   definition: text;
+   term: text;
+ };
+type JainEncyclopediaArticle = 
+ record {
+   articleTitle: text;
+   articleTitleHindi: text;
+   content: text;
+   contentHindi: text;
+   crossLinks: vec text;
+   glossaryTerms: vec JainGlossaryTerm;
+   id: text;
+   qaPairs: vec JainQAPair;
+   volumeNumber: int;
+   volumeTitle: text;
+ };
+type HttpResponse = 
+ record {
+   body: vec nat8;
+   headers: vec record {
+                  text;
+                  text;
+                };
+   status: nat;
+ };
+type HolyBookEntry = 
+ record {
+   audioBase64: text;
+   bookCategory: text;
+   bookTitle: text;
+   chapterTitle: text;
+   createdAt: Time;
+   id: text;
+   shlokaText: text;
+   trackNumber: nat;
+ };
+type FestivalEvent = 
+ record {
+   date: text;
+   deity: text;
+   description: text;
+   eventType: text;
+   faith: text;
+   id: text;
+   significance: text;
+   title: text;
+   titleHindi: text;
+ };
+type DevotionalContent = 
+ record {
+   contentType: text;
+   createdAt: Time;
+   deity: text;
+   id: text;
+   language: text;
+   lyrics: text;
+   title: text;
+ };
+type DaanItem = 
+ record {
+   item: text;
+   quantity: text;
+   value: float64;
+ };
+type ConsultationAppointment = 
+ record {
+   astrologerId: text;
+   createdAt: Time;
+   id: text;
+   notes: text;
+   preferredDateTime: text;
+   specialQuestions: text;
+   status: text;
+   topic: text;
+   userId: principal;
+ };
+type CombinedVedicReading = 
+ record {
+   activeDasha: text;
+   birthDate: text;
+   birthPlace: text;
+   birthTime: text;
+   combinedInsightsText: text;
+   createdAt: int;
+   doshasJson: text;
+   id: text;
+   lagnaSign: text;
+   moonSign: text;
+   palmInsightsJson: text;
+   palmReadingId: text;
+   remediesText: text;
+   sunSign: text;
+   userId: principal;
+ };
+type ChadhavaOffering = 
+ record {
+   createdAt: Time;
+   id: text;
+   items: vec text;
+   status: text;
+   templeId: text;
+   userId: principal;
+ };
+type CalculatorQAPair = 
+ record {
+   answer: text;
+   answerHindi: text;
+   category: text;
+   question: text;
+   questionHindi: text;
+ };
+type CalculatorFAQ = 
+ record {
+   calculatorId: text;
+   calculatorName: text;
+   id: text;
+   qaPairs: vec CalculatorQAPair;
+ };
+type BusinessNameRecord = 
+ record {
+   businessName: text;
+   createdAt: Time;
+   id: text;
+   result: text;
+   userId: principal;
+ };
+type BlogArticle = 
+ record {
+   author: text;
+   category: text;
+   content: text;
+   createdAt: int;
+   featuredImageUrl: text;
+   id: text;
+   isPublished: bool;
+   publishDate: int;
+   slug: text;
+   tags: vec text;
+   title: text;
+   updatedAt: int;
+ };
+type BhajanEntry = 
+ record {
+   artist: text;
+   audioBase64: text;
+   createdAt: Time;
+   deity: text;
+   id: text;
+   lyricsText: text;
+   title: text;
+ };
+type AstrologerProfile = 
+ record {
+   bio: text;
+   createdAt: Time;
+   experienceYears: nat;
+   id: text;
+   languages: vec text;
+   name: text;
+   perMinuteRate: float64;
+   rating: float64;
+   specializations: vec text;
+ };
+type AstroChart = 
+ record {
+   ashtakvargaData: text;
+   astroScore: int;
+   birthDate: text;
+   birthPlace: text;
+   birthTime: text;
+   chartData: text;
+   chartType: text;
+   createdAt: int;
+   dashaInfo: text;
+   id: text;
+   shadbalaData: text;
+   userId: text;
+   yogas: vec text;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initializeAccessControl: () -> ();
+  /// Admin-only: add a new bhajan entry.
+  addBhajan: (entry: BhajanEntry) -> ();
+  /// Admin-only: add a festival event.
+  addFestivalEvent: (event: FestivalEvent) -> ();
+  /// Admin-only: add a new holy book entry.
+  addHolyBookEntry: (entry: HolyBookEntry) -> ();
+  /// Admin-only: add a new Jain encyclopedia article.
+  addJainArticle: (article: JainEncyclopediaArticle) -> ();
+  /// Admin-only: add a Jain Katha.
+  addJainKatha: (katha: JainKatha) -> ();
+  /// Admin-only: add a Jain Pathshala entry.
+  addJainPathshalaEntry: (entry: JainPathshalaEntry) -> ();
+  /// Admin-only: add a media player item.
+  addMediaPlayerItem: (item: MediaPlayerItem) -> ();
+  /// Admin-only: add a new Pathshala lesson.
+  addPathshalaLesson: (lesson: PathshalaLesson) -> ();
+  /// Admin-only: add a new suktam entry.
+  addSuktam: (entry: SuktamEntry) -> ();
+  /// Authenticated users can submit a prasad delivery request for themselves.
+  addUserPrasadDeliveryRequest: (request: PrasadDeliveryRequest) -> ();
+  /// Admin-only: add a new vrat katha entry.
+  addVratKatha: (entry: VratKathaEntry) -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  /// Admin-only: create an astrologer profile.
+  createAstrologerProfile: (profile: AstrologerProfile) -> ();
+  /// Admin-only: create a blog article.
+  createBlogArticle: (article: BlogArticle) -> ();
+  /// Authenticated users can create a business name analysis for themselves.
+  createBusinessNameRecord: ("record": BusinessNameRecord) -> ();
+  /// Authenticated users can submit a chadhava offering for themselves.
+  createChadhavaOffering: (offering: ChadhavaOffering) -> ();
+  /// Authenticated users can create a Stripe checkout session (e.g. for payment).
+  createCheckoutSession: (items: vec ShoppingItem, successUrl: text,
+   cancelUrl: text) -> (text);
+  /// Authenticated user: create a combined vedic reading. Returns the created entry.
+  createCombinedVedicReading: (palmReadingId: text, birthDate: text,
+   birthTime: text, birthPlace: text, lagnaSign: text, moonSign: text,
+   sunSign: text, activeDasha: text, doshasJson: text, palmInsightsJson:
+   text, combinedInsightsText: text, remediesText: text) ->
+   (CombinedVedicReading);
+  /// Authenticated users can book a consultation appointment for themselves.
+  createConsultationAppointment: (appointment: ConsultationAppointment) -> ();
+  /// Admin-only: create a devotional content entry.
+  createDevotionalContent: (content: DevotionalContent) -> ();
+  /// Authenticated users can create a numerology analysis for themselves.
+  createNumerologyRecord: ("record": NumerologyRecord) -> ();
+  /// Authenticated users can place an order for themselves.
+  createOrder: (order: Order) -> ();
+  /// Authenticated user: create a palm photo reading. Returns the created entry.
+  createPalmPhotoReading: (photoUrl: text, handType: text, palmShape: 
+   text, lineAnnotations: text, readingText: text, dominantLine: text,
+   luckySigns: text) -> (PalmPhotoReading);
+  /// Admin-only: create a new palmistry content entry. Returns the created entry.
+  createPalmistryContent: (title: text, titleHi: text, category: text,
+   lineOrPalmType: text, descriptionEn: text, descriptionHi: text,
+   characteristicsEn: text, characteristicsHi: text, locationOnPalm: 
+   text, benefitsEn: text, benefitsHi: text) -> (PalmistryContent);
+  /// Admin or productManager: create a product.
+  createProduct: (product: Product) -> ();
+  /// Authenticated users can create a puja booking for themselves.
+  createPujaBooking: (booking: PujaBooking) -> ();
+  /// Admin-only: create a puja report for a completed booking.
+  createPujaReport: (report: PujaReport) -> ();
+  /// Admin-only: create a puja type.
+  createPujaType: (pujaType: PujaType) -> ();
+  /// Authenticated users can request a report for themselves.
+  createReportRequest: (request: ReportRequest) -> ();
+  /// Authenticated users can create a service booking for themselves. Returns the booking id.
+  createServiceBooking: (booking: ServiceBooking) -> (text);
+  /// Admin-only: create a temple entry.
+  createTemple: (temple: Temple) -> ();
+  /// Admin-only: create a new vastu content entry. Returns the created entry.
+  createVastuContent: (title: text, titleHi: text, category: text,
+   directionOrRoom: text, planetaryRuler: text, planetaryRulerHi: text,
+   effectsEn: text, effectsHi: text, doshaEn: text, doshaHi: text,
+   remediesEn: text, remediesHi: text, yantra: text, elementsInvolved: 
+   text, tipsEn: text, tipsHi: text) -> (VastuContent);
+  /// Authenticated user: create a vastu room check. Returns the created entry.
+  createVastuRoomCheck: (floorPlanUrl: text, roomType: text, roomDimensions:
+   text, entranceDirection: text, complianceScore: nat, issuesJson: text,
+   remediesJson: text, elementBalance: text) -> (VastuRoomCheck);
+  /// Admin-only: create a web story.
+  createWebStory: (story: WebStory) -> ();
+  /// Authenticated users can delete their own astro chart.
+  deleteAstroChart: (id: text) -> (bool);
+  /// Admin-only: delete a bhajan entry.
+  deleteBhajan: (id: text) -> ();
+  /// Admin-only: delete a blog article.
+  deleteBlogArticle: (id: text) -> ();
+  /// Authenticated user: delete a combined vedic reading they own. Returns true if deleted.
+  deleteCombinedVedicReading: (id: text) -> (bool);
+  /// Admin-only: delete a devotional content entry.
+  deleteDevotionalContent: (id: text) -> ();
+  /// Admin-only: delete a festival event.
+  deleteFestivalEvent: (id: text) -> ();
+  /// Admin-only: delete a holy book entry.
+  deleteHolyBookEntry: (id: text) -> ();
+  /// Admin-only: delete a Jain encyclopedia article.
+  deleteJainArticle: (id: text) -> ();
+  /// Admin-only: delete a Jain Katha.
+  deleteJainKatha: (id: text) -> ();
+  /// Admin-only: delete a Jain Pathshala entry.
+  deleteJainPathshalaEntry: (id: text) -> ();
+  /// Authenticated users can delete their own kundali match. Returns true if deleted.
+  deleteKundaliMatch: (id: text) -> (bool);
+  /// Authenticated user: delete a palm photo reading they own. Returns true if deleted.
+  deletePalmPhotoReading: (id: text) -> (bool);
+  /// Admin-only: delete a palmistry content entry. Returns true if deleted, false if not found.
+  deletePalmistryContent: (id: text) -> (bool);
+  /// Admin-only: delete a Pathshala lesson.
+  deletePathshalaLesson: (id: text) -> ();
+  /// Admin-only: delete a product.
+  deleteProduct: (id: text) -> ();
+  /// Admin-only: delete a puja type.
+  deletePujaType: (id: text) -> ();
+  /// Admin-only: delete a suktam entry.
+  deleteSuktam: (id: text) -> ();
+  /// Admin-only: delete a vastu content entry. Returns true if deleted, false if not found.
+  deleteVastuContent: (id: text) -> (bool);
+  /// Authenticated user: delete a vastu room check they own. Returns true if deleted.
+  deleteVastuRoomCheck: (id: text) -> (bool);
+  /// Admin-only: delete a vrat katha entry.
+  deleteVratKatha: (id: text) -> ();
+  /// Admin-only: delete a web story.
+  deleteWebStory: (id: text) -> ();
+  /// Public: anyone may browse astrologer profiles.
+  getAllAstrologerProfiles: () -> (vec AstrologerProfile) query;
+  /// Public: get all blog articles (admin may see unpublished; public sees all).
+  getAllBlogArticles: () -> (vec BlogArticle) query;
+  /// Public: get all calculator FAQs.
+  getAllCalculatorFAQs: () -> (vec CalculatorFAQ) query;
+  /// Admin-only: list all appointments (for astrologer/admin dashboard).
+  getAllConsultationAppointments: () -> (vec ConsultationAppointment) query;
+  /// Admin-only: get all delivery requests and puja bookings.
+  getAllDeliveryRequests: () -> (vec record {
+                                       text;
+                                       PrasadDeliveryRequest;
+                                     }, vec record {
+                                              text;
+                                              PujaBooking;
+                                            }) query;
+  /// Public: anyone may browse devotional content.
+  getAllDevotionalContents: () -> (vec DevotionalContent) query;
+  /// Public: get all festival events.
+  getAllFestivalEvents: () -> (vec FestivalEvent) query;
+  /// Public: get all Jain encyclopedia articles.
+  getAllJainArticles: () -> (vec JainEncyclopediaArticle) query;
+  /// Public: get all Jain Kathas.
+  getAllJainKathas: () -> (vec JainKatha) query;
+  /// Public: get all Jain Pathshala entries.
+  getAllJainPathshalaEntries: () -> (vec JainPathshalaEntry) query;
+  /// Admin-only: get all Pathshala lessons (published and unpublished).
+  getAllPathshalaLessons: () -> (vec PathshalaLesson) query;
+  /// Admin-only: list all product manager principals.
+  getAllProductManagers: () -> (vec principal) query;
+  /// Public: anyone may browse products.
+  getAllProducts: () -> (vec Product) query;
+  /// Admin-only: get all puja reports.
+  getAllPujaReports: () -> (vec PujaReport) query;
+  /// Public: anyone may browse puja types.
+  getAllPujaTypes: () -> (vec PujaType) query;
+  /// Public: anyone may browse temples.
+  getAllTemples: () -> (vec Temple) query;
+  /// Admin-only: list all user profiles.
+  getAllUserProfiles: () -> (vec record {
+                                   principal;
+                                   UserProfile;
+                                 }) query;
+  /// Public: get all web stories.
+  getAllWebStories: () -> (vec WebStory) query;
+  /// Authenticated users can get a single astro chart by id (only their own).
+  getAstroChart: (id: text) -> (opt AstroChart) query;
+  /// Public: get a single astrologer profile by id.
+  getAstrologerProfile: (id: text) -> (opt AstrologerProfile) query;
+  /// Public: get a single bhajan entry by id.
+  getBhajanById: (id: text) -> (opt BhajanEntry) query;
+  /// Public: anyone may browse bhajan entries.
+  getBhajans: () -> (vec BhajanEntry) query;
+  /// Public: get a blog article by its slug.
+  getBlogArticleBySlug: (slug: text) -> (opt BlogArticle) query;
+  /// Public: get the FAQ for a specific calculator by calculatorId.
+  getCalculatorFAQ: (calculatorId: text) -> (opt CalculatorFAQ) query;
+  /// Get the calling user's own profile.
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  /// Get a single combined vedic reading by id (owner or admin).
+  getCombinedVedicReading: (id: text) -> (opt CombinedVedicReading) query;
+  /// Public: get a single devotional content entry.
+  getDevotionalContent: (id: text) -> (opt DevotionalContent) query;
+  /// Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
+  getFestivalEventsByFaith: (faith: text) -> (vec FestivalEvent) query;
+  /// Public: anyone may browse holy book entries, optionally filtered by bookTitle.
+  getHolyBookEntries: (bookTitle: text) -> (vec HolyBookEntry) query;
+  /// Public: get a single holy book entry by id.
+  getHolyBookEntryById: (id: text) -> (opt HolyBookEntry) query;
+  /// Public: get a single Jain encyclopedia article by id.
+  getJainArticleById: (id: text) -> (opt JainEncyclopediaArticle) query;
+  /// Public: get all Jain encyclopedia articles for a given volume number.
+  getJainArticlesByVolume: (volumeNumber: int) ->
+   (vec JainEncyclopediaArticle) query;
+  /// Public: get Jain Kathas filtered by parv (occasion/festival).
+  getJainKathasByParv: (parv: text) -> (vec JainKatha) query;
+  /// Public: get Jain Pathshala entries filtered by category.
+  getJainPathshalaEntriesByCategory: (category: text) ->
+   (vec JainPathshalaEntry) query;
+  /// Authenticated users can retrieve a single kundali match by id (only their own).
+  getKundaliMatchById: (id: text) -> (opt KundaliMatch) query;
+  /// Authenticated users can retrieve all their own kundali match results, sorted newest first.
+  getKundaliMatches: () -> (vec KundaliMatch) query;
+  /// Public: get all media player items.
+  getMediaPlayerItems: () -> (vec MediaPlayerItem) query;
+  /// Public: get media player items filtered by contentType (aarti/chalisa/mantra/bhajan/katha).
+  getMediaPlayerItemsByType: (contentType: text) ->
+   (vec MediaPlayerItem) query;
+  /// Authenticated user: get all their own combined vedic readings.
+  getMyCombinedVedicReadings: () -> (vec CombinedVedicReading) query;
+  /// Authenticated user: get all their own palm photo readings.
+  getMyPalmPhotoReadings: () -> (vec PalmPhotoReading) query;
+  /// Authenticated user: get all their own vastu room checks.
+  getMyVastuRoomChecks: () -> (vec VastuRoomCheck) query;
+  /// Get a single palm photo reading by id (owner or admin).
+  getPalmPhotoReading: (id: text) -> (opt PalmPhotoReading) query;
+  /// Public: get a single palmistry content entry by id.
+  getPalmistryContent: (id: text) -> (opt PalmistryContent) query;
+  /// Public: anyone may browse all palmistry content entries.
+  getPalmistryContents: () -> (vec PalmistryContent) query;
+  /// Public: get a single Pathshala lesson by id.
+  getPathshalaLesson: (id: text) -> (opt PathshalaLesson) query;
+  /// Public: get published Pathshala lessons filtered by part (Bhag-1 or Bhag-2).
+  getPathshalaLessonsByPart: (part: text) -> (vec PathshalaLesson) query;
+  /// Admin-only: list all pending prasad deliveries.
+  getPendingPrasadDeliveries: () -> (vec PrasadDeliveryRequest) query;
+  /// Public: get a single product.
+  getProduct: (id: text) -> (opt Product) query;
+  /// Public: get products filtered by category.
+  getProductsByCategory: (category: text) -> (vec Product) query;
+  /// Public: get only published blog articles.
+  getPublishedBlogArticles: () -> (vec BlogArticle) query;
+  /// Public: get only published Pathshala lessons.
+  getPublishedPathshalaLessons: () -> (vec PathshalaLesson) query;
+  /// Public: get only published web stories.
+  getPublishedWebStories: () -> (vec WebStory) query;
+  /// Public: get a single puja type by id.
+  getPujaTypeById: (id: text) -> (opt PujaType) query;
+  /// Admin-only: get all service bookings for review.
+  getServiceBookings: () -> (vec ServiceBooking) query;
+  /// Authenticated users can check a Stripe session status (e.g. after checkout).
+  getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
+  /// Public: get a single suktam entry by id.
+  getSuktamById: (id: text) -> (opt SuktamEntry) query;
+  /// Public: anyone may browse suktam entries.
+  getSuktams: () -> (vec SuktamEntry) query;
+  /// Authenticated users can retrieve their own astro charts.
+  getUserAstroCharts: () -> (vec AstroChart) query;
+  /// Users may only fetch their own business name records; admins may fetch any.
+  getUserBusinessNameRecords: (userId: principal) ->
+   (vec BusinessNameRecord) query;
+  /// Users may only fetch their own offerings; admins may fetch any user's offerings.
+  getUserChadhavaOfferings: (userId: principal) ->
+   (vec ChadhavaOffering) query;
+  /// Users may only fetch their own appointments; admins may fetch any user's.
+  getUserConsultationAppointments: (userId: principal) ->
+   (vec ConsultationAppointment) query;
+  /// Users may only fetch their own numerology records; admins may fetch any.
+  getUserNumerologyRecords: (userId: principal) ->
+   (vec NumerologyRecord) query;
+  /// Users may only fetch their own orders; admins may fetch any user's.
+  getUserOrders: (userId: principal) -> (vec Order) query;
+  /// Authenticated users can retrieve their own palmistry readings.
+  getUserPalmistryReadings: () -> (vec PalmistryReading) query;
+  /// Users may only fetch their own delivery requests; admins may fetch any.
+  getUserPrasadDeliveryRequests: (userId: principal) ->
+   (vec PrasadDeliveryRequest) query;
+  /// Fetch another user's profile. Users may only fetch their own; admins may fetch any.
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  /// Users may only fetch their own bookings; admins may fetch any user's bookings.
+  getUserPujaBookings: (userId: principal) -> (vec PujaBooking) query;
+  /// Authenticated users can retrieve their own puja reports.
+  getUserPujaReports: () -> (vec PujaReport) query;
+  /// Users may only fetch their own report requests; admins may fetch any user's.
+  getUserReportRequests: (userId: principal) -> (vec ReportRequest) query;
+  /// Authenticated users can retrieve their own service bookings.
+  getUserServiceBookings: () -> (vec ServiceBooking) query;
+  /// Public: get a single vastu content entry by id.
+  getVastuContent: (id: text) -> (opt VastuContent) query;
+  /// Public: anyone may browse all vastu content entries.
+  getVastuContents: () -> (vec VastuContent) query;
+  /// Get a single vastu room check by id (owner or admin).
+  getVastuRoomCheck: (id: text) -> (opt VastuRoomCheck) query;
+  /// Users may only fetch their own temple config; admins may fetch any.
+  getVirtualTempleConfig: (userId: principal) ->
+   (opt VirtualTempleConfig) query;
+  /// Public: get a single vrat katha entry by id.
+  getVratKathaById: (id: text) -> (opt VratKathaEntry) query;
+  /// Public: anyone may browse vrat katha entries.
+  getVratKathas: () -> (vec VratKathaEntry) query;
+  /// Authenticated users can get their own wallet balance; admins can get any.
+  getWalletBalance: (userId: principal) -> (float64) query;
+  /// Authenticated users can get their own transaction history; admins can get any.
+  getWalletTransactions: (userId: principal) -> (vec WalletTransaction) query;
+  /// Admin-only: update the status of a puja booking.
+  handlePujaBooking: (bookingId: text, status: text) -> ();
+  isCallerAdmin: () -> (bool) query;
+  /// Returns true if the caller has productManager role.
+  isProductManager: () -> (bool) query;
+  /// Public: check whether Stripe has been configured.
+  isStripeConfigured: () -> (bool) query;
+  /// Authenticated users can add funds to their own wallet (recharge).
+  rechargeWallet: (userId: principal, amount: float64, transaction:
+   WalletTransaction) -> ();
+  /// Admin-only: remove a media player item.
+  removeMediaPlayerItem: (id: text) -> ();
+  /// Admin-only: revoke productManager role from a user.
+  revokeProductManagerRole: (userId: principal) -> ();
+  /// Authenticated users can save an astrology chart for themselves.
+  saveAstroChart: (chart: AstroChart) -> ();
+  /// Admin-only: save (create or replace) a calculator FAQ.
+  saveCalculatorFAQ: (faq: CalculatorFAQ) -> ();
+  /// Save / update the calling user's own profile.
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  /// Authenticated users can save a kundali match result for themselves.
+  saveKundaliMatch: (match: KundaliMatchInput) -> (text);
+  /// Authenticated users can save a palmistry reading for themselves.
+  savePalmistryReading: (reading: PalmistryReading) -> ();
+  /// Authenticated users can save their own virtual temple configuration.
+  saveVirtualTempleConfig: (config: VirtualTempleConfig) -> ();
+  /// Admin-only: grant productManager role to a user.
+  setProductManagerRole: (userId: principal) -> ();
+  /// Admin-only: set the Stripe configuration.
+  setStripeConfiguration: (config: StripeConfiguration) -> ();
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  /// Admin-only: update an existing bhajan entry.
+  updateBhajan: (entry: BhajanEntry) -> ();
+  /// Admin-only: update an existing blog article.
+  updateBlogArticle: (article: BlogArticle) -> ();
+  /// Admin-only: update an existing calculator FAQ by id.
+  updateCalculatorFAQ: (id: text, faq: CalculatorFAQ) -> ();
+  /// Authenticated user: update an existing combined vedic reading they own. Returns updated entry or null.
+  updateCombinedVedicReading: (id: text, palmReadingId: text, birthDate:
+   text, birthTime: text, birthPlace: text, lagnaSign: text, moonSign: 
+   text, sunSign: text, activeDasha: text, doshasJson: text,
+   palmInsightsJson: text, combinedInsightsText: text, remediesText: 
+   text) -> (opt CombinedVedicReading);
+  /// Admin-only: update appointment status and notes.
+  updateConsultationAppointment: (id: text, status: text, notes: text) -> ();
+  /// Admin-only: update an existing devotional content entry.
+  updateDevotionalContent: (content: DevotionalContent) -> ();
+  /// Admin-only: update an existing festival event.
+  updateFestivalEvent: (event: FestivalEvent) -> ();
+  /// Admin-only: update an existing holy book entry.
+  updateHolyBookEntry: (entry: HolyBookEntry) -> ();
+  /// Admin-only: update an existing Jain encyclopedia article.
+  updateJainArticle: (article: JainEncyclopediaArticle) -> ();
+  /// Admin-only: update an existing Jain Katha.
+  updateJainKatha: (katha: JainKatha) -> ();
+  /// Admin-only: update an existing Jain Pathshala entry.
+  updateJainPathshalaEntry: (entry: JainPathshalaEntry) -> ();
+  /// Admin-only: update order payment status.
+  updateOrderPaymentStatus: (id: text, paymentStatus: text,
+   stripePaymentIntentId: text) -> ();
+  /// Authenticated user: update an existing palm photo reading they own. Returns updated entry or null.
+  updatePalmPhotoReading: (id: text, photoUrl: text, handType: text,
+   palmShape: text, lineAnnotations: text, readingText: text, dominantLine:
+   text, luckySigns: text) -> (opt PalmPhotoReading);
+  /// Admin-only: update an existing palmistry content entry. Returns the updated entry or null if not found.
+  updatePalmistryContent: (id: text, title: text, titleHi: text, category:
+   text, lineOrPalmType: text, descriptionEn: text, descriptionHi: text,
+   characteristicsEn: text, characteristicsHi: text, locationOnPalm: 
+   text, benefitsEn: text, benefitsHi: text) -> (opt PalmistryContent);
+  /// Admin-only: update an existing Pathshala lesson.
+  updatePathshalaLesson: (id: text, lesson: PathshalaLesson) -> ();
+  /// Admin-only: update the status of a prasad delivery request.
+  updatePrasadDeliveryStatus: (id: text, status: text) -> ();
+  /// Admin or productManager: replace a product entirely (backward-compatible full update).
+  updateProduct: (product: Product) -> ();
+  /// Admin or productManager: partial update — only supplied fields are changed.
+  updateProductFields: (id: text, updates: ProductUpdateRequest) -> ();
+  /// Admin or productManager: update stock for a product.
+  updateProductStock: (id: text, stock: nat) -> ();
+  /// Admin or productManager: update only the variants array for a product (gemstone weight variants).
+  updateProductVariants: (id: text, variants: vec ProductVariant) -> ();
+  /// Admin-only: update an existing puja report.
+  updatePujaReport: (id: text, report: PujaReport) -> ();
+  /// Admin-only: update an existing puja type.
+  updatePujaType: (pujaType: PujaType) -> ();
+  /// Admin-only: update report status and content.
+  updateReportRequest: (id: text, status: text, content: text) -> ();
+  /// Admin-only: update the status of a service booking.
+  updateServiceBookingStatus: (id: text, status: text) -> ();
+  /// Admin-only: update an existing suktam entry.
+  updateSuktam: (entry: SuktamEntry) -> ();
+  /// Admin-only: update an existing vastu content entry. Returns the updated entry or null if not found.
+  updateVastuContent: (id: text, title: text, titleHi: text, category: 
+   text, directionOrRoom: text, planetaryRuler: text, planetaryRulerHi: 
+   text, effectsEn: text, effectsHi: text, doshaEn: text, doshaHi: text,
+   remediesEn: text, remediesHi: text, yantra: text, elementsInvolved: 
+   text, tipsEn: text, tipsHi: text) -> (opt VastuContent);
+  /// Authenticated user: update an existing vastu room check they own. Returns updated entry or null.
+  updateVastuRoomCheck: (id: text, floorPlanUrl: text, roomType: text,
+   roomDimensions: text, entranceDirection: text, complianceScore: nat,
+   issuesJson: text, remediesJson: text, elementBalance: text) ->
+   (opt VastuRoomCheck);
+  /// Admin-only: update an existing vrat katha entry.
+  updateVratKatha: (entry: VratKathaEntry) -> ();
+  /// Admin-only: update an existing web story.
+  updateWebStory: (story: WebStory) -> ();
+}

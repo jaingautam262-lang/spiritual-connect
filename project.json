@@ -1,0 +1,26 @@
+{
+  "overview": "Spiritual Connect is a comprehensive devotional platform for Hindu, Jain, and Sikh traditions. It features Aarti, Chalisa, Mantra, and Stotra libraries, a temple directory, puja booking, a Chadhava/Bhet section for sacred offerings, and a spiritual shop.",
+  "features": [
+    "Aarti, Chalisa, Mantra, and Stotra libraries with 200+ entries",
+    "Chadhava/Bhet page with 40+ temple offering cards grouped by date and occasion",
+    "Spiritual shop with 18 product categories (Rudraksha, Gemstones, Yantras, etc.)",
+    "Searchable temple directory with 50+ Hindu/Jain/Sikh temples",
+    "Puja booking with Sankalp, date picker, and confirmation",
+    "Admin CMS for managing all content",
+    "Saffron/gold spiritual theme with Hindi and English support"
+  ],
+  "category": "spiritual-religion",
+  "tags": [
+    "spiritual",
+    "hindu",
+    "jain",
+    "sikh",
+    "aarti",
+    "chalisa",
+    "puja",
+    "temple",
+    "mantra",
+    "devotional"
+  ],
+  "last_updated": "2026-04-17T04:43:49.705Z"
+}

@@ -1,11 +1,67 @@
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useGetVirtualTempleConfig,
   useSaveVirtualTempleConfig,
 } from "../hooks/useQueries";
+
+// ── Bhakti score persisted to localStorage ──────────────────────────────────
+const BHAKTI_KEY = "sc_bhakti_score";
+function loadBhakti(): number {
+  try {
+    return Number.parseInt(localStorage.getItem(BHAKTI_KEY) ?? "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+function saveBhakti(n: number) {
+  try {
+    localStorage.setItem(BHAKTI_KEY, String(n));
+  } catch {
+    // ignore
+  }
+}
+
+// ── Web Audio bell ────────────────────────────────────────────────────────────
+function playBell() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    gain.gain.setValueAtTime(0.6, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+  } catch {
+    // ignore — user may not have interacted yet
+  }
+}
+
+const OFFERINGS = [
+  { id: "flowers", emoji: "🌸", label: "Phool", hindi: "फूल" },
+  { id: "diya", emoji: "🪔", label: "Deepak", hindi: "दीपक" },
+  { id: "prasad", emoji: "🍚", label: "Prasad", hindi: "प्रसाद" },
+  { id: "incense", emoji: "🪄", label: "Dhoop", hindi: "धूप" },
+  { id: "coconut", emoji: "🥥", label: "Nariyal", hindi: "नारियल" },
+] as const;
+
+const DEITY_SELECTOR = [
+  { name: "Shiva", emoji: "🔱" },
+  { name: "Vishnu", emoji: "🪷" },
+  { name: "Durga", emoji: "⚔️" },
+  { name: "Ganesha", emoji: "🐘" },
+  { name: "Krishna", emoji: "🪈" },
+  { name: "Ram", emoji: "🏹" },
+  { name: "Hanuman", emoji: "🐒" },
+  { name: "Mahavir", emoji: "🏅" },
+  { name: "Guru Nanak", emoji: "✨" },
+] as const;
 
 const DEITIES = [
   "Ganesha",
@@ -63,6 +119,21 @@ export default function VirtualTemple() {
     "Diya",
     "Flowers",
   ]);
+
+  // ── NEW: bhakti & interactive state ─────────────────────────────────────
+  const [bhakti, setBhakti] = useState<number>(loadBhakti);
+  const [selectedDeity, setSelectedDeity] = useState("Shiva");
+  const [animating, setAnimating] = useState<string | null>(null);
+
+  const addBhakti = (points: number, id: string) => {
+    setBhakti((prev) => {
+      const next = prev + points;
+      saveBhakti(next);
+      return next;
+    });
+    setAnimating(id);
+    setTimeout(() => setAnimating(null), 600);
+  };
 
   useEffect(() => {
     if (savedConfig) {
@@ -368,6 +439,234 @@ export default function VirtualTemple() {
               <Save className="h-4 w-4" />
               {saveConfig.isPending ? "Saving..." : "Save My Temple"}
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          NEW SECTION 1 — Deity Selector (9 circular buttons)
+      ══════════════════════════════════════════════════════════════════ */}
+      <div
+        className="py-10"
+        style={{ background: "oklch(0.97 0.01 75)" }}
+        data-ocid="deity-selector-section"
+      >
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-6">
+            <h2
+              className="font-decorative text-2xl font-bold"
+              style={{ color: "oklch(0.42 0.14 30)" }}
+            >
+              देवता चुनें — Choose Your Deity
+            </h2>
+            <p
+              className="font-body text-sm mt-1"
+              style={{ color: "oklch(0.55 0.08 40)" }}
+            >
+              Selected deity:{" "}
+              <span style={{ color: "oklch(0.68 0.20 48)", fontWeight: 700 }}>
+                {selectedDeity}
+              </span>
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
+            {DEITY_SELECTOR.map((d) => {
+              const active = selectedDeity === d.name;
+              return (
+                <button
+                  type="button"
+                  key={d.name}
+                  onClick={() => setSelectedDeity(d.name)}
+                  data-ocid={`deity-btn-${d.name.toLowerCase().replace(" ", "-")}`}
+                  className="flex flex-col items-center gap-1 transition-all duration-200"
+                  style={{ outline: "none" }}
+                >
+                  <span
+                    className="flex items-center justify-center rounded-full text-2xl transition-all duration-200"
+                    style={{
+                      width: 60,
+                      height: 60,
+                      border: active
+                        ? "3px solid oklch(0.68 0.20 48)"
+                        : "2px solid oklch(0.78 0.14 75 / 0.3)",
+                      background: active
+                        ? "linear-gradient(135deg, oklch(0.68 0.20 48 / 0.18), oklch(0.78 0.14 75 / 0.12))"
+                        : "oklch(0.99 0.008 80)",
+                      boxShadow: active
+                        ? "0 0 0 4px oklch(0.68 0.20 48 / 0.15)"
+                        : "none",
+                      transform: active ? "scale(1.12)" : "scale(1)",
+                    }}
+                  >
+                    {d.emoji}
+                  </span>
+                  <span
+                    className="font-heading text-xs font-semibold"
+                    style={{
+                      color: active
+                        ? "oklch(0.58 0.18 40)"
+                        : "oklch(0.45 0.10 30)",
+                    }}
+                  >
+                    {d.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          NEW SECTION 2 — Bhakti Score + Bell
+      ══════════════════════════════════════════════════════════════════ */}
+      <div
+        className="py-8"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.18 0.08 22), oklch(0.26 0.10 30))",
+        }}
+        data-ocid="bhakti-score-section"
+      >
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-8">
+          {/* Score display */}
+          <div className="text-center">
+            <p
+              className="font-body text-sm mb-1 tracking-widest uppercase"
+              style={{ color: "oklch(0.78 0.14 75 / 0.7)" }}
+            >
+              भक्ति अंक
+            </p>
+            <p
+              className="font-decorative text-6xl font-bold"
+              style={{
+                color: "oklch(0.78 0.14 75)",
+                textShadow: "0 0 24px oklch(0.68 0.20 48 / 0.6)",
+              }}
+              data-ocid="bhakti-score-display"
+            >
+              {bhakti}
+            </p>
+            <p
+              className="font-body text-xs mt-1"
+              style={{ color: "oklch(0.78 0.14 75 / 0.5)" }}
+            >
+              Bhakti Score
+            </p>
+          </div>
+
+          {/* Bell */}
+          <button
+            type="button"
+            data-ocid="bell-button"
+            onClick={() => {
+              playBell();
+              addBhakti(5, "bell");
+            }}
+            className="flex flex-col items-center gap-2 transition-transform duration-150 active:scale-90"
+            style={{
+              transform:
+                animating === "bell"
+                  ? "scale(1.25) rotate(-15deg)"
+                  : "scale(1)",
+              outline: "none",
+            }}
+          >
+            <span
+              className="flex items-center justify-center rounded-full text-4xl"
+              style={{
+                width: 80,
+                height: 80,
+                background:
+                  "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+                boxShadow: "0 4px 20px oklch(0.68 0.20 48 / 0.4)",
+              }}
+            >
+              🔔
+            </span>
+            <span
+              className="font-heading text-xs font-bold tracking-wide"
+              style={{ color: "oklch(0.78 0.14 75)" }}
+            >
+              घंटी बजाएं +5
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          NEW SECTION 3 — Virtual Offerings Panel
+      ══════════════════════════════════════════════════════════════════ */}
+      <div
+        className="py-10"
+        style={{ background: "oklch(0.98 0.012 75)" }}
+        data-ocid="virtual-offerings-section"
+      >
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-6">
+            <h2
+              className="font-decorative text-2xl font-bold"
+              style={{ color: "oklch(0.42 0.14 30)" }}
+            >
+              🙏 Virtual Offerings — आभासी चढ़ावा
+            </h2>
+            <p
+              className="font-body text-sm mt-1"
+              style={{ color: "oklch(0.55 0.08 40)" }}
+            >
+              Offer to {selectedDeity} and earn bhakti points
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto">
+            {OFFERINGS.map((o) => {
+              const isAnim = animating === o.id;
+              return (
+                <button
+                  type="button"
+                  key={o.id}
+                  data-ocid={`offering-btn-${o.id}`}
+                  onClick={() => addBhakti(10, o.id)}
+                  className="flex flex-col items-center gap-2 rounded-2xl px-5 py-4 border transition-all duration-200"
+                  style={{
+                    borderColor: isAnim
+                      ? "oklch(0.68 0.20 48)"
+                      : "oklch(0.78 0.14 75 / 0.25)",
+                    background: isAnim
+                      ? "oklch(0.68 0.20 48 / 0.12)"
+                      : "oklch(0.99 0.008 80)",
+                    transform: isAnim ? "scale(1.18)" : "scale(1)",
+                    boxShadow: isAnim
+                      ? "0 4px 20px oklch(0.68 0.20 48 / 0.35)"
+                      : "0 1px 4px oklch(0 0 0 / 0.06)",
+                    opacity: isAnim ? 0.85 : 1,
+                  }}
+                >
+                  <span
+                    className="text-4xl"
+                    style={{
+                      filter: isAnim
+                        ? "drop-shadow(0 0 8px oklch(0.68 0.20 48))"
+                        : "none",
+                    }}
+                  >
+                    {o.emoji}
+                  </span>
+                  <span
+                    className="font-heading text-sm font-bold"
+                    style={{ color: "oklch(0.35 0.12 25)" }}
+                  >
+                    {o.hindi}
+                  </span>
+                  <span
+                    className="font-body text-xs"
+                    style={{ color: "oklch(0.55 0.08 40)" }}
+                  >
+                    {o.label} +10
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

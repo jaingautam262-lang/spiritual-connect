@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useCreateCheckoutSession,
   useGetUserAppointments,
@@ -79,11 +79,9 @@ export default function Dashboard() {
       const session = await checkoutMutation.mutateAsync({
         items: [
           {
-            productName: "Wallet Recharge",
-            productDescription: `Add ₹${amount} to your SpiritualConnect wallet`,
+            name: "Wallet Recharge",
+            price: amount,
             quantity: BigInt(1),
-            priceInCents: BigInt(amount * 100),
-            currency: "inr",
           },
         ],
         successUrl: `${baseUrl}/payment-success`,
@@ -167,7 +165,7 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {pujaBookings.map((b) => (
+                  {pujaBookings.slice(0, 5).map((b) => (
                     <div
                       key={b.id}
                       className="ornamental-border rounded-xl p-4 bg-card flex items-center justify-between gap-4"
@@ -189,6 +187,18 @@ export default function Dashboard() {
                       <StatusBadge status={b.status} />
                     </div>
                   ))}
+                  <div className="pt-2 text-center">
+                    <Link
+                      to="/booking-history"
+                      className="inline-flex items-center gap-1.5 text-sm font-heading font-semibold px-5 py-2 rounded-full border transition-all hover:opacity-80"
+                      style={{
+                        borderColor: "oklch(0.68 0.20 48 / 0.4)",
+                        color: "oklch(0.68 0.20 48)",
+                      }}
+                    >
+                      🕰️ View Full Booking History →
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

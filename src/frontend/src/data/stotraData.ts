@@ -1,14 +1,14 @@
-import { part12Stotras } from "./part12Stotras";
-import { part13Stotras } from "./part13Stotras";
-import { part14Stotras } from "./part14Stotras";
 export interface Stotra {
   id: string;
   title: string;
   deity: string;
   faith: string;
   type: string;
-  description: string;
+  description?: string;
   fullText: string;
+  meaning?: string;
+  benefits?: string;
+  language?: string;
 }
 
 export const stotraData: Stotra[] = [
@@ -52,6 +52,10 @@ export const stotraData: Stotra[] = [
 दिवा वा यदि वा रात्रौ विघ्नशान्तिर्भविष्यति॥
 नरनारीनृपाणां च भवेद् दुःस्वप्ननाशनम्।
 ऐश्वर्यमतुलं तेषामारोग्यं पुष्टिवर्धनम्॥`,
+    meaning:
+      "This stotra praises each of the nine planets — Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, and Ketu — with a verse each, describing their appearance and divine qualities.",
+    benefits:
+      "Removes planetary obstacles, destroys nightmares, bestows unparalleled wealth and good health. Regular recitation pacifies all nine planetary doshas.",
   },
   {
     id: "shiva-ashtakam",
@@ -60,53 +64,58 @@ export const stotraData: Stotra[] = [
     faith: "Hindu",
     type: "Ashtakam",
     description:
-      "Eight-verse hymn glorifying Lord Shiva as the supreme lord of the universe, adorned with the crescent moon and Ganga in his matted locks. Reading this daily grants liberation from sin.",
+      "Eight-verse hymn in praise of Lord Shiva composed by Adi Shankaracharya. Each verse describes a different aspect of Shiva's divine glory.",
     fullText: `॥ शिव अष्टकम् ॥
 प्रभुं प्राणनाथं विभुं विश्वनाथं जगन्नाथनाथं सदानन्दभाजम्।
 भवद्भव्यभूतेश्वरं भूतनाथं शिवं शङ्करं शम्भुमीशानमीडे॥१॥
 
-गले रुण्डमालं तनौ सर्पजालं महाकालकालं गणेशाधिपालम्।
-जटाजूटगङ्गोत्तरङ्गैर्विशालं शिवं शङ्करं शम्भुमीशानमीडे॥२॥
+गले रुण्डमालं तनौ सर्पजालं महाकालकालं गणेशादिपालम्।
+जटाजूटगङ्गोत्तरंगैर्विशालं शिवं शङ्करं शम्भुमीशानमीडे॥२॥
 
-मुदामाकरं मण्डनं मण्डयन्तं महामण्डलं भस्मभूषाधरन्तम्।
-अनाद्यन्तमाप्यं महेशं महेशं शिवं शङ्करं शम्भुमीशानमीडे॥३॥
+मुदामाकरं मण्डनं मण्डयन्तं महामण्डलं भस्मभूषाधरं तम्।
+अनादिह्यपारं महामोहमारं शिवं शङ्करं शम्भुमीशानमीडे॥३॥
 
-वटाधोनिवासं महाट्टाट्टहासं महापापनाशं सदासुप्रकाशम्।
+वटाधोनिवासं महाट्टाट्टहासं महापापनाशं सदा सुप्रकाशम्।
 गिरीशं गणेशं सुरेशं महेशं शिवं शङ्करं शम्भुमीशानमीडे॥४॥
 
 गिरीन्द्रात्मजासंगृहीतार्धदेहं गिरौ संस्थितं सर्वदापन्नगेहम्।
-परब्रह्मब्रह्मादिभिर्वन्द्यमानं शिवं शङ्करं शम्भुमीशानमीडे॥५॥
+परब्रह्मब्रह्माधिपं मुक्तिदेहं शिवं शङ्करं शम्भुमीशानमीडे॥५॥
 
-कपालं त्रिशूलं करे धारयन्तं पदाम्भोजनम्रां च कुर्वन्तमन्तम्।
-सुरालीगणैर्मानवैर्वन्द्यमानं शिवं शङ्करं शम्भुमीशानमीडे॥६॥
+कपालं त्रिशूलं कराभ्यां दधानं पदाम्भोजनम्राय कामं ददानम्।
+बलीवर्दयानं सुराणां प्रधानं शिवं शङ्करं शम्भुमीशानमीडे॥६॥
 
-अहर्गीतवाद्यप्रिया भूतसंघाः परानन्दनृत्यप्रियाः शम्भुभक्ताः।
-मनोवाञ्छितार्थं दिशन्तु प्रसन्नाः शिवं शङ्करं शम्भुमीशानमीडे॥७॥
+शरच्चन्द्रगात्रं गुणानन्दपात्रं त्रिनेत्रं पवित्रं धनेशस्य मित्रम्।
+अपर्णाकलत्रं सदा सच्चरित्रं शिवं शङ्करं शम्भुमीशानमीडे॥७॥
 
-यदा पूजयेत् पूजयेच्छङ्करं तं त्रिसन्ध्यं नरो वा सुरो वा मुनींद्रः।
-स मुच्येत पापात् समस्तात् प्रयाणे शिवं शङ्करं शम्भुमीशानमीडे॥८॥
+हरं सर्पहारं चिताभस्मसारं भवं भव्यभूतं भवानीश्वरं तम्।
+भवाब्धावजं भावनाभव्यरूपं शिवं शङ्करं शम्भुमीशानमीडे॥८॥
 
-फलश्रुति: इमं स्तोत्रं पठेत् यो वै नित्यं शिवसमाहितः।
-सर्वपापविनिर्मुक्तः शिवलोकं स गच्छति॥`,
+इदमाष्टकं श्री शिवस्याभिरामं पठेद्यः प्रभाते नरः शुद्धचित्तः।
+स सर्वात्मना योगसिद्धिं प्रयाति स पूजार्हभाजां वरं वेद तत्त्वम्॥`,
+    meaning:
+      "Each of the 8 verses praises Shiva with divine epithets — Lord of life, the cosmos-illuminating one, destroyer of great sins, who dwells under the banyan tree, half of whose form is Parvati.",
+    benefits:
+      "One who recites these 8 verses daily with a pure mind attains Yoga-siddhi, spiritual perfection, and liberation from the cycle of birth and death.",
   },
   {
     id: "ram-raksha-stotra",
     title: "Ram Raksha Stotra",
-    deity: "Rama",
+    deity: "Ram",
     faith: "Hindu",
     type: "Stotra",
     description:
-      "A powerful protective hymn received by sage Budhakaushika in a dream from Lord Shiva. It shields the devotee from all directions and bestows long life, happiness, and victory.",
+      "Ram Raksha Stotra is a powerful protection hymn in praise of Lord Rama, composed by Sage Budhakaushika. It provides divine protection to the devotee from all forms of evil.",
     fullText: `॥ श्री राम रक्षा स्तोत्रम् ॥
-अस्य श्री रामरक्षास्तोत्रमन्त्रस्य। बुधकौशिक ऋषिः।
-श्री सीताराम चन्द्रो देवता। अनुष्टुप् छन्दः।
-सीता शक्तिः। श्रीमद् हनुमान् कीलकम्।
-श्री रामचन्द्रप्रीत्यर्थे जपे विनियोगः॥
+अस्य श्रीरामरक्षास्तोत्रमन्त्रस्य।
+बुधकौशिक ऋषिः। श्री सीतारामचन्द्रो देवता।
+अनुष्टुप् छन्दः। सीता शक्तिः।
+श्रीमानहनुमान् कीलकम्।
+श्री सीतारामचन्द्रप्रीत्यर्थे जपे विनियोगः॥
 
-ध्यानम्:
-ध्यायेदाजानुबाहुं धृतशरधनुषं बद्धपद्मासनस्थं।
-पीतं वासो वसानं नवकमलदलस्पर्धिनेत्रं प्रसन्नम्॥
-वामाङ्कारूढसीतामुखकमलमिलल्लोचनं नीरदाभं।
+ध्यानम्
+ध्यायेदाजानुबाहुं धृतशरधनुषं बद्धपद्मासनस्थं
+पीतं वासो वसानं नवकमलदलस्पर्धिनेत्रं प्रसन्नम्।
+वामाङ्कारूढसीतामुखकमलमिलल्लोचनं नीरदाभं
 नानालङ्कारदीप्तं दधतमुरुजटामण्डलं रामचन्द्रम्॥
 
 चरितं रघुनाथस्य शतकोटिप्रविस्तरम्।
@@ -115,10 +124,10 @@ export const stotraData: Stotra[] = [
 ध्यात्वा नीलोत्पलश्यामं रामं राजीवलोचनम्।
 जानकीलक्ष्मणोपेतं जटामुकुटमण्डितम्॥२॥
 
-सासितूणधनुर्बाणपाणिं नक्तं चरान्तकम्।
+सासितूणधनुर्बाणपाणिं नक्तञ्चरान्तकम्।
 स्वलीलया जगत्त्रातुमाविर्भूतमजं विभुम्॥३॥
 
-रामरक्षां पठेत् प्राज्ञः पापघ्नीं सर्वकामदाम्।
+रामरक्षां पठेत्प्राज्ञः पापघ्नीं सर्वकामदाम्।
 शिरो मे राघवः पातु भालं दशरथात्मजः॥४॥
 
 कौसल्येयो दृशौ पातु विश्वामित्रप्रियः श्रुती।
@@ -133,7 +142,7 @@ export const stotraData: Stotra[] = [
 सुग्रीवेशः कटी पातु सक्थिनी हनुमत्प्रभुः।
 ऊरू रघूत्तमः पातु रक्षःकुलविनाशकृत्॥८॥
 
-जानुनी सेतुकृत् पातु जङ्घे दशमुखान्तकः।
+जानुनी सेतुकृत्पातु जङ्घे दशमुखान्तकः।
 पादौ बिभीषणश्रेष्ठः पातु रामोऽखिलं वपुः॥९॥
 
 एतां रामबलोपेतां रक्षां यः सुकृती पठेत्।
@@ -145,17 +154,17 @@ export const stotraData: Stotra[] = [
 रामेति रामभद्रेति रामचन्द्रेति वा स्मरन्।
 नरो न लिप्यते पापैर्भुक्तिं मुक्तिं च विन्दति॥१२॥
 
-जगज्जैत्रैकमन्त्रेण रामनाम्नाभिरक्षितम्।
-यः कण्ठे धारयेत् तस्य करस्थाः सर्वसिद्धयः॥१३॥
+जगज्जेत्रैकमन्त्रेण रामनाम्नाभिरक्षितम्।
+यः कण्ठे धारयेत्तस्य करस्थाः सर्वसिद्धयः॥१३॥
 
 वज्रपञ्जरनामेदं यो रामकवचं स्मरेत्।
 अव्याहताज्ञः सर्वत्र लभते जयमङ्गलम्॥१४॥
 
-आदिष्टवान् यथा स्वप्ने रामरक्षामिमां हरः।
+आदिष्टवान्यथा स्वप्ने रामरक्षामिमां हरः।
 तथा लिखितवान् प्रातः प्रबुद्धो बुधकौशिकः॥१५॥
 
 आरामः कल्पवृक्षाणां विरामः सकलापदाम्।
-अभिरामस्त्रिलोकानां रामः श्रीमान् स नः प्रभुः॥१६॥
+अभिरामस्त्रिलोकानां रामः श्रीमानसः स नः॥१६॥
 
 तरुणौ रूपसम्पन्नौ सुकुमारौ महाबलौ।
 पुण्डरीकविशालाक्षौ चीरकृष्णाजिनाम्बरौ॥१७॥
@@ -170,10 +179,52 @@ export const stotraData: Stotra[] = [
 रक्षणाय मम रामलक्ष्मणावग्रतः पथि सदैव गच्छताम्॥२०॥
 
 सन्नद्धः कवची खड्गी चापबाणधरो युवा।
-गच्छन् मनोरथानाशु रामः पातु सलक्ष्मणः॥२१॥
+गच्छन् मनोरथान्नश्येद् दृष्ट्वा रामः सरावणः॥२१॥
 
-रामदाशरथे स्मर्तुः सर्वदा कल्याणमस्तु।
-इत्येवमभिधाने श्री रामरक्षास्तोत्रं सम्पूर्णम्॥`,
+रामाय रामभद्राय रामचन्द्राय वेधसे।
+रघुनाथाय नाथाय सीतायाः पतये नमः॥२२॥
+
+श्री राम राम रघुनन्दन राम राम
+श्री राम राम भरताग्रज राम राम।
+श्री राम राम रणकर्कश राम राम
+श्री राम राम शरणं भव राम राम॥२३॥
+
+श्री रामचन्द्रचरणौ मनसा स्मरामि
+श्री रामचन्द्रचरणौ वचसा गृणामि।
+श्री रामचन्द्रचरणौ शिरसा नमामि
+श्री रामचन्द्रचरणौ शरणं प्रपद्ये॥२४॥
+
+माता रामो मत्पिता रामचन्द्रः
+स्वामी रामो मत्सखा रामचन्द्रः।
+सर्वस्वं मे रामचन्द्रो दयालु
+र्नान्यं जाने नैव जाने न जाने॥२५॥
+
+दक्षिणे लक्ष्मणो यस्य वामे तु जनकात्मजा।
+पुरतो मारुतिर्यस्य तं वन्दे रघुनन्दनम्॥२६॥
+
+लोकाभिरामं रणरङ्गधीरं राजीवनेत्रं रघुवंशनाथम्।
+कारुण्यरूपं करुणाकरं तं श्रीरामचन्द्रं शरणं प्रपद्ये॥२७॥
+
+मनोजवं मारुततुल्यवेगं जितेन्द्रियं बुद्धिमतां वरिष्ठम्।
+वातात्मजं वानरयूथमुख्यं श्रीरामदूतं शरणं प्रपद्ये॥२८॥
+
+कूजन्तं राम रामेति मधुरं मधुराक्षरम्।
+आरुह्य कविताशाखां वन्दे वाल्मीकिकोकिलम्॥२९॥
+
+आपदामपहर्तारं दातारं सर्वसम्पदाम्।
+लोकाभिरामं श्री रामं भूयो भूयो नमाम्यहम्॥३०॥
+
+भर्जनं भवबीजानामर्जनं सुखसम्पदाम्।
+तर्जनं यमदूतानां राम रामेति गर्जनम्॥३१॥
+
+रामो राजमणिः सदा विजयते रामं रमेशं भजे
+रामेणाभिहता निशाचरचमू रामाय तस्मै नमः।
+रामान्नास्ति परायणं परतरं रामस्य दासोऽस्म्यहं
+रामे चित्तलयः सदा भवतु मे भो राम मामुद्धर॥३२॥`,
+    meaning:
+      "Ram Raksha Stotra is a complete kavach (armor) of protection. Each verse asks a different form of Lord Rama to protect a specific part of the body, from head to foot.",
+    benefits:
+      "Provides complete divine protection from all evil forces, negative energies, and dangers. Regular recitation brings long life, happiness, victory, and liberation.",
   },
   {
     id: "mahalakshmi-ashtakam",
@@ -182,7 +233,7 @@ export const stotraData: Stotra[] = [
     faith: "Hindu",
     type: "Ashtakam",
     description:
-      "Eight-verse hymn from the Padma Purana dedicated to Goddess Mahalakshmi. One who reads this with devotion attains all success, wealth, and kingdom. Chanting thrice daily destroys great enemies.",
+      "Eight-verse hymn in praise of Goddess Mahalakshmi, composed by Indra. This stotra is recited for prosperity, wealth, and divine blessings.",
     fullText: `॥ महालक्ष्मी अष्टकम् ॥
 नमस्तेऽस्तु महामाये श्रीपीठे सुरपूजिते।
 शङ्खचक्रगदाहस्ते महालक्ष्मि नमोऽस्तु ते॥१॥
@@ -203,17 +254,21 @@ export const stotraData: Stotra[] = [
 महापापहरे देवि महालक्ष्मि नमोऽस्तु ते॥६॥
 
 पद्मासनस्थिते देवि परब्रह्मस्वरूपिणि।
-परमेशि जगन्मातर् महालक्ष्मि नमोऽस्तु ते॥७॥
+परमेशि जगन्माते महालक्ष्मि नमोऽस्तु ते॥७॥
 
-श्वेताम्बरधरे देवि नानालङ्काभूषिते।
-जगत्स्थिते जगन्मातर् महालक्ष्मि नमोऽस्तु ते॥८॥
+श्वेताम्बरधरे देवि नानालङ्कारभूषिते।
+जगत्स्थिते जगन्माते महालक्ष्मि नमोऽस्तु ते॥८॥
 
-महालक्ष्म्यष्टकं स्तोत्रं यः पठेद् भक्तिमान् नरः।
+महालक्ष्म्यष्टकं स्तोत्रं यः पठेद्भक्तिमान्नरः।
 सर्वसिद्धिमवाप्नोति राज्यं प्राप्नोति सर्वदा॥
 एककाले पठेन्नित्यं महापापविनाशनम्।
 द्विकालं यः पठेन्नित्यं धनधान्यसमन्वितः॥
 त्रिकालं यः पठेन्नित्यं महाशत्रुविनाशनम्।
-महालक्ष्मीर्भवेद् दिव्या प्रसन्ना वरदा शुभा॥`,
+महालक्ष्मीर्भवेन्नित्यं प्रसन्ना वरदा शुभा॥`,
+    meaning:
+      "The eight verses describe Mahalakshmi as seated on Garuda, holding conch-wheel-mace, destroyer of Kola demon, the all-knowing giver of liberation, the primal Shakti seated on a lotus throne.",
+    benefits:
+      "Reciting once daily destroys great sins. Twice daily brings wealth and grain. Three times daily destroys great enemies. Mahalakshmi herself becomes pleased and grants blessings.",
   },
   {
     id: "rudra-ashtakam",
@@ -222,46 +277,53 @@ export const stotraData: Stotra[] = [
     faith: "Hindu",
     type: "Ashtakam",
     description:
-      "Eight-verse hymn from Ramcharitmanas by Goswami Tulsidas, sung in praise of Lord Shiva (Rudra). It is said that Lord Shambhu himself is pleased with the devotee who recites this with devotion.",
+      "Eight-verse hymn composed by Goswami Tulsidas in praise of Lord Rudra (Shiva). From the Ramcharitmanas, this stotra describes Shiva as the supreme protector and destroyer of evils.",
     fullText: `॥ रुद्राष्टकम् ॥
+(तुलसीदास कृत)
+
 नमामीशमीशान निर्वाणरूपं विभुं व्यापकं ब्रह्मवेदस्वरूपम्।
 निजं निर्गुणं निर्विकल्पं निरीहं चिदाकाशमाकाशवासं भजेऽहम्॥१॥
 
-निराकारमोङ्करमूलं तुरीयं गिराज्ञानगोतीतमीशं गिरीशम्।
-करालं महाकालकालं कृपालं गुणागारसंसारपारं नतोऽहम्॥२॥
+निराकारमोंकारमूलं तुरीयं गिराज्ञानगोतीतमीशं गिरीशम्।
+करालं महाकालकालं कृपालुं गुणागारसंसारसारं नतोऽहम्॥२॥
 
-तुषाराद्रिसङ्काशगौरं गभीरं मनोभूतकोटिप्रभाश्री शरीरम्।
-स्फुरन्मौलिकल्लोलिनी चारुगङ्गा लसद्भालबालेन्दु कण्ठे भुजङ्गा॥३॥
+तुषाराद्रिसंकाशगौरं गभीरं मनोभूतकोटिप्रभाश्री शरीरम्।
+स्फुरन्मौलिकल्लोलिनी चारुगंगा लसद्भालबालेन्दु कण्ठे भुजंगा॥३॥
 
-चलत्कुण्डलं शुभ्रनेत्रं विशालं प्रसन्नाननं नीलकण्ठं दयालम्।
-मृगाधीशचर्माम्बरं मुण्डमालं प्रियं शङ्करं सर्वनाथं भजामि॥४॥
+चलत्कुण्डलं भ्रूसुनेत्रं विशालं प्रसन्नाननं नीलकण्ठं दयालम्।
+मृगाधीशचर्माम्बरं मुण्डमालं प्रियं शंकरं सर्वनाथं भजामि॥४॥
 
 प्रचण्डं प्रकृष्टं प्रगल्भं परेशं अखण्डं अजं भानुकोटिप्रकाशम्।
 त्रयः शूलनिर्मूलनं शूलपाणिं भजेऽहं भवानीपतिं भावगम्यम्॥५॥
 
-कलातीतकल्याण कल्पान्तकारी सदा सज्जनानन्ददाता पुरारी।
-चिदानन्दसन्दोह मोहापहारी प्रसीद प्रसीद प्रभो मन्मथारी॥६॥
+कलातीतकल्याण कल्पान्तकारी सदा सज्जनानंददाता पुरारी।
+चिदानंदसंदोह मोहापहारी प्रसीद प्रसीद प्रभो मन्मथारी॥६॥
 
-न यावद् उमानाथपादारविन्दं भजन्तीह लोके परे वा नराणाम्।
-न तावत् सुखं शान्तिसन्तापनाशं प्रसीद प्रभो सर्वभूताधिवासम्॥७॥
+न यावद् उमानाथपादारविन्दं भजंतीह लोके परे वा नराणाम्।
+न तावत्सुखं शान्ति सन्तापनाशं प्रसीद प्रभो सर्वभूताधिवासम्॥७॥
 
-न जानामि योगं जपं नैव पूजां नतोऽहं सदा सर्वदा शम्भु तुभ्यम्।
+न जानामि योगं जपं नैव पूजां नतोऽहं सदा सर्वदा शम्भुतुभ्यम्।
 जरा जन्म दुःखौघ तातप्यमानं प्रभो पाहि आपन्नमामीश शम्भो॥८॥
 
 रुद्राष्टकमिदं प्रोक्तं विप्रेण हरतोषये।
 ये पठन्ति नरा भक्त्या तेषां शम्भुः प्रसीदति॥`,
+    meaning:
+      "Tulsidas glorifies Rudra as the formless absolute (brahman), the root of Om, beyond speech and mind, snow-white like Himalaya, adorned with Ganga, crescent moon and serpents, the destroyer of three types of suffering.",
+    benefits:
+      "Those who recite Rudrashtakam with devotion receive the grace of Lord Shambhu. Destroys fears, sorrows, poverty, and all afflictions. Grants liberation.",
   },
+  // ====== PART 5 — BATCH 2 ======
   {
     id: "durga-saptashloki",
     title: "Durga Saptashloki",
-    deity: "Devi",
+    deity: "Durga",
     faith: "Hindu",
-    type: "Stotram",
+    type: "Stotra",
     description:
-      "Seven powerful shlokas capturing the essence of the entire Durga Saptashati (700 verses). Reciting these seven verses daily grants the same merit as reading all 700 verses of the Devi Mahatmya.",
+      "Seven essential shlokas from Devi Mahatmyam (Durga Saptashati), composed by Sage Markandeya. These seven verses are the essence of the entire Saptashati and are considered extremely powerful for protection and blessings.",
     fullText: `॥ दुर्गा सप्तश्लोकी ॥
 
-ज्ञानिनामपि चेतांसि देवी भगवती हि सा।
+ॐ ज्ञानिनामपि चेतांसि देवी भगवती हि सा।
 बलादाकृष्य मोहाय महामाया प्रयच्छति॥१॥
 
 दुर्गे स्मृता हरसि भीतिमशेषजन्तोः
@@ -278,27 +340,25 @@ export const stotraData: Stotra[] = [
 सर्वस्वरूपे सर्वेशे सर्वशक्तिसमन्विते।
 भयेभ्यस्त्राहि नो देवि दुर्गे देवि नमोऽस्तु ते॥५॥
 
-रोगानशेषानपहंसि तुष्टा
-रुष्टा तु कामान् सकलानभीष्टान्।
-त्वामाश्रितानां न विपन्नराणां
-त्वामाश्रिता ह्याश्रयतां प्रयान्ति॥६॥
+रोगानशेषानपहंसि तुष्टा रुष्टा तु कामान् सकलानभीष्टान्।
+त्वामाश्रितानां न विपन्नराणां त्वामाश्रिता ह्याश्रयतां प्रयान्ति॥६॥
 
 सर्वाबाधाप्रशमनं त्रैलोक्यस्याखिलेश्वरि।
-एवमेव त्वया कार्यमस्मद्वैरिविनाशनम्॥७॥
-
-॥ इति दुर्गासप्तश्लोकी सम्पूर्णम् ॥`,
+एवमेव त्वया कार्यमस्मद्वैरिविनाशनम्॥७॥`,
+    meaning:
+      "These seven verses from Devi Mahatmyam describe Durga as the supreme Mahamaya who controls even the minds of the wise, the remover of all fears and poverty, the all-auspicious Narayani, protector of the surrendered, and destroyer of all obstacles.",
+    benefits:
+      "Reciting these 7 shlokas is equivalent to reading the entire Durga Saptashati (700 verses). Provides divine protection, removes diseases, destroys enemies, and grants all auspicious blessings.",
   },
   {
     id: "kaal-bhairav-ashtak",
     title: "Kaal Bhairav Ashtak",
-    deity: "Bhairav",
+    deity: "Kaal Bhairav",
     faith: "Hindu",
     type: "Ashtakam",
     description:
-      "Eight-verse hymn by Adi Shankaracharya glorifying Kaal Bhairav, the fierce form of Lord Shiva and protector of Kashi. Reading this destroys all sins and grants liberation.",
+      "Eight-verse hymn in praise of Kaal Bhairav, the fierce form of Lord Shiva who is the Lord of Time and the guardian of Kashi (Varanasi). Composed by Adi Shankaracharya.",
     fullText: `॥ काल भैरव अष्टकम् ॥
-श्री आदि शंकराचार्य विरचितम्
-
 देवराजसेव्यमानपावनाङ्घ्रिपङ्कजं
 व्यालयज्ञसूत्रमिन्दुशेखरं कृपाकरम्।
 नारदादियोगिवृन्दवन्दितं दिगम्बरं
@@ -314,37 +374,39 @@ export const stotraData: Stotra[] = [
 भीमविक्रमं प्रभुं विचित्रताण्डवप्रियं
 काशिकापुराधिनाथकालभैरवं भजे॥३॥
 
-भुक्तिमुक्तिदायकं प्रशस्तचारुविग्रहं
-भक्तवत्सलं स्थिरं समस्तलोकविग्रहम्।
-विनिक्वणन्मनोज्ञहेमकिङ्किणीलसत्कटिं
+भुक्तिमुक्तिदायिनं विशालनेत्रमावना।
+त्रिभुवनस्य पालनं क्षमावता परं गुरुं
+भक्तवत्सलं स्थिरं समस्तलोकविग्रहं
 काशिकापुराधिनाथकालभैरवं भजे॥४॥
 
-धर्मसेतुपालकं त्वधर्ममार्गनाशकं
-कर्मपाशमोचकं सुशर्मदायकं विभुम्।
-स्वर्णवर्णशेषपाशशोभिताङ्गमण्डलं
+दर्शनात् भवाब्धिपारदर्शनं सुरेश्वरं
+कर्मनाशनं प्रभुं कलादिपुण्यवर्धनं।
+योगिनां च योगसिद्धिदायकं स्वभावतः
 काशिकापुराधिनाथकालभैरवं भजे॥५॥
 
-रत्नपादुकाप्रभाभिरामपादयुग्मकं
+राजराजसेवनीयमक्षराधिपं सुरं
 नित्यमद्वितीयमिष्टदैवतं निरञ्जनम्।
-मृत्युदर्पनाशनं करालदंष्ट्रमोक्षणं
+मृत्युदर्पनाशनं करालदंष्ट्रमोक्षदं
 काशिकापुराधिनाथकालभैरवं भजे॥६॥
 
-अट्टहासभिन्नपद्मजाण्डकोशसन्ततिं
+अट्टहासभिन्नपद्मजाण्डकोशसंस्थितं
 दृष्टिपातनष्टपापजालमुग्रशासनम्।
 अष्टसिद्धिदायकं कपालमालिकाधरं
 काशिकापुराधिनाथकालभैरवं भजे॥७॥
 
-भूतसंघनायकं विशालकीर्तिदायकं
+भूतसङ्घनायकं विशालकीर्तिदायकं
 काशिवासलोकपुण्यपापशोधकं विभुम्।
 नीतिमार्गकोविदं पुरातनं जगत्पतिं
 काशिकापुराधिनाथकालभैरवं भजे॥८॥
 
-कालभैरवाष्टकं पठन्ति ये मनोहरं
-ज्ञानमुक्तिसाधकं विचित्रपुण्यवर्धनम्।
-शोकमोहदैन्यलोभकोपतापनाशनं
-ते प्रयान्ति कालभैरवाङ्घ्रिसन्निधिं ध्रुवम्॥
-
-॥ इति श्री कालभैरवाष्टकम् सम्पूर्णम् ॥`,
+कालभैरवाष्टकं पठन्ति येऽत्र मानवाः
+विभक्तकामसम्पदः सुभक्तिसिद्धिसाधकाः।
+ते निरन्तरं सुखी भवन्ति मुक्तभागिनो
+ज्ञाननिष्ठसर्वलोकभावनस्य पाश्वतः॥`,
+    meaning:
+      "Shankaracharya glorifies Kaal Bhairav as the Lord of Kashi, worshipped by Indra himself, whose lotus feet purify all; who shines like crores of suns, who conquers even Kaal (death), who dissolves the universe at the end of time.",
+    benefits:
+      "Those who recite Kaal Bhairav Ashtakam are freed from the bondage of karma, attain devotion and liberation, and live in continuous happiness. Destroys all sins merely by sight.",
   },
   {
     id: "dwadash-jyotirlinga-stotram",
@@ -353,369 +415,153 @@ export const stotraData: Stotra[] = [
     faith: "Hindu",
     type: "Stotram",
     description:
-      "Hymn naming all twelve Jyotirlingas — the most sacred abodes of Lord Shiva across India. Reciting this grants the merit of visiting all twelve Jyotirlinga pilgrimage sites.",
+      "This stotra names and glorifies all twelve Jyotirlinga shrines of Lord Shiva — the most sacred abodes of the divine light of Shiva. Reciting this stotra is equivalent to visiting all 12 Jyotirlinga pilgrimage sites.",
     fullText: `॥ द्वादश ज्योतिर्लिंग स्तोत्रम् ॥
 
 सौराष्ट्रे सोमनाथं च श्रीशैले मल्लिकार्जुनम्।
-उज्जयिन्यां महाकालमोङ्कारममलेश्वरम्॥१॥
+उज्जयिन्यां महाकालमोंकारममलेश्वरम्॥१॥
 
-परल्यां वैद्यनाथं च डाकिन्यां भीमशङ्करम्।
+परल्यां वैजनाथं च डाकिन्यां भीमशंकरम्।
 सेतुबन्धे तु रामेशं नागेशं दारुकावने॥२॥
 
 वाराणस्यां तु विश्वेशं त्र्यम्बकं गौतमीतटे।
-हिमालये तु केदारं घृष्णेशं च शिवालये॥३॥
+हिमालये तु केदारं घुश्मेशं च शिवालये॥३॥
 
 एतानि ज्योतिर्लिङ्गानि सायं प्रातः पठेन्नरः।
 सप्तजन्मकृतं पापं स्मरणेन विनश्यति॥४॥
 
-एतेशां दर्शनादेव पातकं नैव तिष्ठति।
-कर्मक्षयो भवेत् तस्य यस्य तुष्टो महेश्वरः॥५॥
-
-॥ विस्तृत स्तोत्रम् ॥
-
-सोमनाथ — सौराष्ट्रप्रदेशे विराजमानं
-सोमस्य मुक्तिप्रदमादिलिङ्गम्।
-भक्त्या नमामः शिवमेकमीशं
-सोमेश्वरं तं वरदं नमामः॥
-
-मल्लिकार्जुन — श्रीशैलशिखरे विभुं
-मल्लिकार्जुनमीश्वरम्।
-नमामि शङ्करं देवं
-ब्रह्माण्डनायकं शिवम्॥
-
-महाकाल — उज्जयिन्यां महाकालं
-कालकालमनन्तरम्।
-विश्वाधिपं महादेवं
-नमामि परमेश्वरम्॥
-
-ओंकारेश्वर — ओंकारपर्वते रम्ये
-ओंकारेश्वरमव्ययम्।
-नमामि परमानन्दं
-शिवमोंकारसम्भवम्॥
-
-केदारनाथ — हिमाचलस्य शिखरे
-केदारं लोकपावनम्।
-नमामि गिरिशं देवं
-शम्भुं भवभयापहम्॥
-
-भीमाशङ्कर — डाकिन्यां भीमशङ्करं
-भीमरूपं महेश्वरम्।
-भक्तिप्रदं मोक्षदं देवं
-नमामि परमेश्वरम्॥
-
-विश्वनाथ — वाराणस्यां विश्वनाथं
-विश्वेशं विश्वपालकम्।
-नमामि काशिनाथं तं
-शिवमानन्दकारकम्॥
-
-त्र्यम्बकेश्वर — गोदावरीतटे पुण्ये
-त्र्यम्बकेशं त्रिलोचनम्।
-नमामि त्रिपुरारिं तं
-महादेवं सनातनम्॥
-
-वैद्यनाथ — परल्यां वैद्यनाथं तं
-रोगनाशकरं शिवम्।
-भक्तानां वरदं देवं
-नमामि करुणाकरम्॥
-
-नागेश्वर — दारुकावनमध्यस्थं
-नागेशं नागभूषणम्।
-नमामि नागनाथं तं
-शिवं भवभयापहम्॥
-
-रामेश्वर — सेतुबन्धे रमेशानं
-रामप्रतिष्ठितं शिवम्।
-नमामि रामनाथं तं
-मोक्षदं भक्तवत्सलम्॥
-
-घृष्णेश्वर — शिवालये घृष्णेशं
-देवदेवं महेश्वरम्।
-नमामि घृष्णनाथं तं
-शिवं सर्वेश्वरं प्रभुम्॥
-
-॥ इति द्वादशज्योतिर्लिङ्गस्तोत्रं सम्पूर्णम् ॥`,
+एतेशां दर्शनादेव पातकं नाशमेष्यति।
+पुनर्जन्म न चैवास्ति पुनर्जन्म न चैवास्ति॥५॥`,
+    meaning:
+      "The stotra names the 12 sacred Jyotirlingas: Somnath (Saurashtra), Mallikarjuna (Srishaila), Mahakaal (Ujjain), Omkareshwar, Vaidyanath (Parali), Bhimashankar (Dakini), Rameswaram, Nageshwar (Darukavan), Vishweshwar (Varanasi), Trimbak (Godavari), Kedarnath (Himalaya), and Grishneshwar (Shivalaya).",
+    benefits:
+      "Reciting this morning and evening destroys sins of seven lifetimes. Seeing or remembering these shrines destroys all sins and ends the cycle of rebirth.",
   },
   {
     id: "sankat-nashak-ganesh-stotra",
     title: "Sankat Nashak Ganesh Stotra",
-    deity: "Ganesha",
+    deity: "Ganesh",
     faith: "Hindu",
     type: "Stotra",
     description:
-      "Powerful hymn to Lord Ganesha for removal of all obstacles and troubles. Reciting this stotra with devotion removes all difficulties, bestows success, and fulfills all desires.",
+      "This powerful stotra is dedicated to Lord Ganesha as the destroyer of all obstacles and distress (Sankat = distress, Nashak = destroyer). Reciting it removes all difficulties and sorrows from life.",
     fullText: `॥ संकट नाशक गणेश स्तोत्र ॥
 
-नारायण उवाच —
+नारद उवाच:
 प्रणम्य शिरसा देवं गौरीपुत्रं विनायकम्।
-भक्तावासं स्मरेन्नित्यमायुःकामार्थसिद्धये॥
+भक्तावासं स्मरेन्नित्यमायुःकामार्थसिद्धये॥१॥
 
 प्रथमं वक्रतुण्डं च एकदन्तं द्वितीयकम्।
-तृतीयं कृष्णपिङ्गाक्षं गजवक्त्रं चतुर्थकम्॥
+तृतीयं कृष्णपिङ्गाक्षं गजवक्त्रं चतुर्थकम्॥२॥
 
 लम्बोदरं पञ्चमं च षष्ठं विकटमेव च।
-सप्तमं विघ्नराजेन्द्रं धूम्रवर्णं तथाष्टमम्॥
+सप्तमं विघ्नराजेन्द्रं धूम्रवर्णं तथाष्टमम्॥३॥
 
 नवमं भालचन्द्रं च दशमं तु विनायकम्।
-एकादशं गणपतिं द्वादशं तु गजाननम्॥
+एकादशं गणपतिं द्वादशं तु गजाननम्॥४॥
 
 द्वादशैतानि नामानि त्रिसन्ध्यं यः पठेन्नरः।
-न च विघ्नभयं तस्य सर्वसिद्धिकरः प्रभुः॥
+न च विघ्नभयं तस्य सर्वसिद्धिर्भवेत् तदा॥५॥
 
 विद्यार्थी लभते विद्यां धनार्थी लभते धनम्।
-पुत्रार्थी लभते पुत्रान् मोक्षार्थी लभते गतिम्॥
+पुत्रार्थी लभते पुत्रान् मोक्षार्थी लभते गतिम्॥६॥
 
-जपेद् गणपतिस्तोत्रं षड्भिर्मासैः फलं लभेत्।
-संवत्सरेण सिद्धिं च लभते नात्र संशयः॥
+जपेद्गणपतिस्तोत्रं षड्भिर्मासैः फलं लभेत्।
+संवत्सरेण सिद्धिं च लभते नात्र संशयः॥७॥
 
 अष्टभ्यो ब्राह्मणेभ्यश्च लिखित्वा यः समर्पयेत्।
-तस्य विद्या भवेत् सर्वा गणेशस्य प्रसादतः॥
-
-॥ गणेश मङ्गलाष्टकम् ॥
-
-गणानां त्वा गणपतिं हवामहे कविं कवीनामुपमश्रवस्तमम्।
-ज्येष्ठराजं ब्रह्मणां ब्रह्मणस्पत आ नः शृण्वन्नूतिभिः सीद सादनम्॥
-
-नमो गणेभ्यो गणपतिभ्यश्च नमो नमः।
-नमो विघ्नेश्वराय नमो नमः॥
-
-संकटनाशनाय नमः। विघ्ननाशनाय नमः।
-सर्वसिद्धिप्रदाय नमः। ॐ गं गणपतये नमः॥
-
-॥ इति संकटनाशक गणेश स्तोत्रं सम्पूर्णम् ॥`,
+तस्य विद्या भवेत् सर्वा गणेशस्य प्रसादतः॥८॥`,
+    meaning:
+      "Narada recites the twelve names of Ganesha: Vakratunda, Ekadanta, Krishnapingaksha, Gajavaktra, Lambodara, Vikata, Vighnarajendra, Dhumravarna, Bhalchandra, Vinayaka, Ganapati, Gajanana — each a different divine form.",
+    benefits:
+      "Reciting these 12 names thrice daily removes all obstacles. Students get education, the poor get wealth, the childless get children, seekers get liberation. Six months of recitation grants fruit; one year brings Siddhi.",
   },
   {
     id: "laxmi-narayan-stotra",
     title: "Laxmi Narayan Stotra",
     deity: "Vishnu",
     faith: "Hindu",
-    type: "Stotram",
+    type: "Stotra",
     description:
-      "A devotional hymn praising the divine couple Lakshmi and Narayan together. Reciting this brings prosperity, peace, marital harmony, and liberation from worldly suffering.",
-    fullText: `॥ लक्ष्मी नारायण स्तोत्रम् ॥
+      "A devotional hymn praising the divine couple Lakshmi and Narayana together. This stotra invokes both the goddess of wealth (Lakshmi) and the lord of preservation (Vishnu/Narayana) for prosperity, protection, and liberation.",
+    fullText: `॥ लक्ष्मी नारायण स्तोत्र ॥
 
-ॐ नमो भगवते वासुदेवाय
-लक्ष्मीपते नमस्तुभ्यं विश्वम्भर जगत्पते।
-श्रीनिवास हृषीकेश नमो नारायणाय ते॥१॥
+नमः कमलनाभाय नमस्ते जलशायिने।
+नमस्ते केशवानन्त वासुदेव नमोऽस्तु ते॥१॥
 
-कमलाकान्त लोकेश देवदेव जनार्दन।
-श्रीधर श्रीपते विष्णो नमो नारायणाय ते॥२॥
+त्वमेव माता च पिता त्वमेव त्वमेव बन्धुश्च सखा त्वमेव।
+त्वमेव विद्या द्रविणं त्वमेव त्वमेव सर्वं मम देवदेव॥२॥
 
-लक्ष्मीश लक्ष्मीवल्लभ लक्ष्मीनारायण प्रभो।
-भक्तानुग्रहकर्त्रे ते नमो नारायणाय ते॥३॥
+शान्ताकारं भुजगशयनं पद्मनाभं सुरेशम्
+विश्वाधारं गगनसदृशं मेघवर्णं शुभाङ्गम्।
+लक्ष्मीकान्तं कमलनयनं योगिभिर्ध्यानगम्यं
+वन्दे विष्णुं भवभयहरं सर्वलोकैकनाथम्॥३॥
 
-शङ्खचक्रगदापद्मधरं चतुर्भुजं विभुम्।
-पीताम्बरधरं विष्णुं नमो नारायणाय ते॥४॥
+क्षीरसागरसम्भूते लक्ष्मि देवि नमोऽस्तु ते।
+पद्मपत्रविशालाक्षि विष्णुवक्षस्थले स्थिते॥४॥
 
-रमावल्लभ रमेशान रामकृष्ण नमोऽस्तु ते।
-त्रिलोकनाथ सर्वेश नमो नारायणाय ते॥५॥
+यस्याः कटाक्षसमुपासनाविधिं सेवन्ते सर्वसुरपुङ्गवाः।
+सा माश्रयेत् करुणया भगवती भार्गवी भवतु मे वरदा॥५॥
 
-लक्ष्म्या सह समासीनं पीताम्बरविभूषितम्।
-स्मरामि हृदये नित्यं लक्ष्मीनारायणं हरिम्॥६॥
+श्रियः कान्तं श्रीमतां वन्दनीयं श्रियमात्राप्यनुगतं नमामि।
+श्रियो देवीं श्री नारायणं तं नमामि देवं परमेश्वरं तम्॥६॥
 
-गरुडारूढ देवेश कारुण्यामृतसागर।
-भक्तवत्सल भगवन् नमो नारायणाय ते॥७॥
+सर्वमङ्गलमाङ्गल्ये विष्णुवक्षस्थलस्थिते।
+सर्वदुःखप्रशमनी महालक्ष्मि नमोऽस्तु ते॥७॥
 
-॥ लक्ष्मी नारायण मंत्र ॥
-
-ॐ श्रीं ह्रीं क्लीं त्रिभुवनमहालक्ष्म्यै नमः।
-ॐ नमो भगवते श्रीलक्ष्मीनारायणाय नमः॥
-
-क्षीराब्धिशायिनं देवं सर्वलोकपितामहम्।
-वरदं भक्तभक्तं तं नमामि लक्ष्मीकेशवम्॥
-
-स्तोत्रमिदं पठेद् भक्त्या यः प्रातःकाले नरोत्तमः।
-लक्ष्मीकटाक्षमाप्नोति धनधान्यसमृद्धिमान्॥
-
-॥ इति लक्ष्मीनारायणस्तोत्रं सम्पूर्णम् ॥`,
+लक्ष्मीनारायणाभ्यां च नमः श्रीपतये नमः।
+सर्वपापहराभ्यां च नमस्त्रैलोक्यपालने॥८॥`,
+    meaning:
+      "The stotra praises Narayana as the lotus-naveled one resting on the cosmic serpent, the father-mother of all creation; and Lakshmi as born from the ocean of milk, residing on Vishnu's chest, the giver of all auspiciousness.",
+    benefits:
+      "Grants wealth, prosperity, liberation from poverty, removal of all sins, and the combined grace of both Lakshmi and Narayana. Ensures protection across all three worlds.",
   },
   {
     id: "pitru-stotra",
     title: "Pitru Stotra",
-    deity: "Pitru",
+    deity: "Pitru (Ancestors)",
     faith: "Hindu",
-    type: "Stotram",
+    type: "Stotra",
     description:
-      "Hymn in reverence of the ancestors (Pitrus). Reciting this during Shraddha or any day appeases the ancestors, brings their blessings, removes Pitru Dosha, and grants peace to departed souls.",
-    fullText: `॥ पितृ स्तोत्रम् ॥
+      "A sacred stotra recited to honor and appease the ancestral souls (Pitrus). Reciting this stotra during Pitru Paksha, Shraddha ceremonies, or any auspicious occasion ensures the peace and liberation of departed ancestors.",
+    fullText: `॥ पितृ स्तोत्र ॥
 
-नमस्तेऽस्तु पितरः सर्वे पितामहाश्च ये।
-प्रपितामहाश्च ते सर्वे नमो वः पितृदेवताः॥१॥
+अर्चितानाममूर्तानां पितृणां दीप्ततेजसाम्।
+नमस्याम्यहमेकाग्रो नित्यमेव सदा च तान्॥१॥
 
-अर्चितास्तर्पितास्तृप्ताः प्रसन्ना भवत सदा।
-दत्तेनानेन हर्षेण प्रीतिं कुरुत सर्वदा॥२॥
+अभ्यतीतांस्तु ये पूर्वे तांश्च योऽभ्येत्य यास्यति।
+तेषां नमस्करोम्यग्रे पश्चाच्च मुनिपुङ्गवाः॥२॥
 
-ये केचिन्मम संसारे भ्रमन्ति पितरः क्वचित्।
-तेभ्यः पिण्डं ददाम्येतत् स्वधा नमो नमः॥३॥
+नमो वः पितरः सोम्या नमो वः पितर उग्राः।
+नमो वः पितरः सूर्याः नमो वः पितर एकेभ्यः॥३॥
 
-श्राद्धेन तृप्ता ये पितरस्तेऽपि मां प्रति।
-सर्वकामप्रदाः सन्तु भवन्तु मयि तुष्टयः॥४॥
+नमो वः पितरः प्राच्यो नमो वः पितर उदीच्याः।
+नमो वः पितरः प्रतीच्यो नमो वः पितर दक्षिणाः॥४॥
 
-पितरो यत्र तिष्ठन्ति पूजिताः पितृकाननम्।
-तत्र मे वसतु लक्ष्मीः पितृभक्तिप्रभावतः॥५॥
+ये वो देवाः ये च पितरः परेषां श्रेयसि स्थिताः।
+तेभ्यो नमस्करोम्यग्रे तान् विप्रान् श्रद्धया नमे॥५॥
 
-॥ पितृ तर्पण मन्त्रः ॥
+आयान्तु पितरः सर्वे देवाश्च भुवि संस्थिताः।
+इमं श्राद्धं मया दत्तमन्नं तृप्ताः पिबन्तु ते॥६॥
 
-ॐ पितृभ्यः स्वधायिभ्यः स्वधा नमः।
-पितामहेभ्यः स्वधायिभ्यः स्वधा नमः।
-प्रपितामहेभ्यः स्वधायिभ्यः स्वधा नमः॥
+पितृभ्यः स्वधा नमः पितामहेभ्यः स्वधा नमः।
+प्रपितामहेभ्यः स्वधा नमः अक्षय्यं स्वधास्तु वः॥७॥
 
-देवाश्च पितरो गावो भ्रातरश्च प्रियाः सखाः।
-भवन्ति श्राद्धकाले तु तृप्ताः श्राद्धेन सर्वदा॥
+पितृन् अर्चयत उद्दिश्य यः स्वधावान् कृतकृत्यवान्।
+मोदमानानां पितृणां प्रीतस्ते प्रीतिमावहेत्॥८॥
 
-॥ पितृ गायत्री ॥
+देवाश्च पितरः सर्वे यान् पश्याम्यहमन्तरा।
+तेभ्यः श्रद्धाप्रयुक्ताय सर्वस्मै वः प्रतिष्ठितम्॥९॥
 
-ॐ पितृदेवाय विद्महे जगत्धारिणे धीमहि।
-तन्नः पितरः प्रचोदयात्॥
-
-पितृभ्यो नमः। मातामहेभ्यो नमः। मातृभ्यो नमः।
-सर्वेभ्यः पूर्वजेभ्यो नमः॥
-
-अस्मत् पितृभ्यः शान्तिरस्तु। ओं शान्तिः शान्तिः शान्तिः॥
-
-॥ इति पितृस्तोत्रं सम्पूर्णम् ॥`,
-  },
-  {
-    id: "surya-raksha-ashtakam",
-    title: "Surya Raksha Ashtakam",
-    deity: "Surya",
-    faith: "Hindu",
-    type: "Ashtakam",
-    description:
-      "Eight-verse protective hymn to Sun God Surya. Reciting this ashtakam provides divine protection, removes disease, blesses with health, vitality, and radiant energy.",
-    fullText: `॥ सूर्य रक्षा अष्टकम् ॥
-
-ॐ जपाकुसुमसङ्काशं काश्यपेयं महाद्युतिम्।
-तमोऽरिं सर्वपापघ्नं प्रणतोऽस्मि दिवाकरम्॥१॥
-
-सप्ताश्वरथमारूढं प्रचण्डं कश्यपात्मजम्।
-श्वेतपद्मधरं देवं तं सूर्यं प्रणमाम्यहम्॥२॥
-
-लोहितं रथमारूढं सर्वलोकपितामहम्।
-महापापहरं देवं तं सूर्यं प्रणमाम्यहम्॥३॥
-
-त्रिगुणं च त्रिशक्तिं च त्रिनेत्रं च त्रिलोचनम्।
-त्रिलोकनाथं सूर्यं तं नमामि सततं हरिम्॥४॥
-
-बृहत्सामा तथा साम्नां गायत्री छन्दसामहम्।
-मासानां मार्गशीर्षोऽहमृतूनां कुसुमाकरः॥५॥
-
-आदित्यहृदयं पुण्यं सर्वशत्रुविनाशनम्।
-जयावहं जपेन्नित्यमक्षय्यं परमं शिवम्॥६॥
-
-रोगानशेषानपहंसि तुष्टो
-रुष्टा तु कामान् सकलानभीष्टान्।
-आरोग्यं भास्करादिच्छेत् श्रियमिच्छेच्च जाह्नवीम्॥७॥
-
-सूर्यरक्षाष्टकं पुण्यं पठेद् यः प्रयतः सदा।
-रोगी मुच्येत रोगेभ्यः सर्वपापैश्च मुच्यते॥८॥
-
-॥ इति सूर्यरक्षाष्टकं सम्पूर्णम् ॥`,
-  },
-  {
-    id: "annapurna-ashtakam",
-    title: "Annapurna Ashtakam",
-    deity: "Annapurna",
-    faith: "Hindu",
-    type: "Ashtakam",
-    description:
-      "Eight-verse hymn by Adi Shankaracharya to Goddess Annapurna, the divine bestower of food and nourishment. Reciting this removes hunger, poverty, and blesses the devotee with abundance.",
-    fullText: `॥ अन्नपूर्णाष्टकम् ॥
-श्री आदि शंकराचार्य विरचितम्
-
-नित्यानन्दकरी वराभयकरी सौन्दर्यरत्नाकरी
-निर्धूताखिलघोरपावनकरी प्रत्यक्षमाहेश्वरी।
-प्रालेयाचलवंशपावनकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥१॥
-
-नानारत्नविचित्रभूषणकरी हेमाम्बराडम्बरी
-मुक्ताहारविलम्बमानविलसद्वक्षोजकुम्भान्तरी।
-कश्मीरागरुवासिताऽरुणकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥२॥
-
-योगानन्दकरी रिपुक्षयकरी धर्मैकनिष्ठाकरी
-चन्द्रार्काग्नि-समप्रभाशमयिका काशीपुराधीश्वरी।
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥३॥
-
-कैलासाचलकन्दरालयकरी गौरी उमा शंकरी
-कौमारी निगमार्थगोचरकरी ओंकारबीजाक्षरी।
-मोक्षद्वारकपाटपाटनकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥४॥
-
-दृश्यादृश्यविभूतिवाहनकरी ब्रह्माण्डभाण्डोदरी
-लीलानाटकसूत्रखेलनकरी विज्ञानदीपाङ्कुरी।
-श्रीविश्वेशमनःप्रसादनकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥५॥
-
-उर्वीसर्वजनेश्वरी भगवती माताऽन्नपूर्णेश्वरी
-वेणीनीलसमानकुन्तलधरी नित्यान्नदानेश्वरी।
-सर्वानन्दकरी सदाशिवकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥६॥
-
-आदिक्षान्तसमस्तवर्णनकरी शम्भोस्त्रिभावाकरी
-काश्मीरत्रिपुरेश्वरी त्रिनयनी विश्वेश्वरीशांकरी।
-स्वर्गद्वारकवाटपाटनकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥७॥
-
-देवी सर्वविचित्ररत्नरचिता दाक्षायणी सुन्दरी
-वामे स्वादुपयोधरा प्रियकरी सौभाग्यमाहेश्वरी।
-भक्ताभीष्टकरी सदा शुभकरी काशीपुराधीश्वरी
-भिक्षां देहि कृपावलम्बनकरी माताऽन्नपूर्णेश्वरी॥८॥
-
-अन्नपूर्णे सदापूर्णे शंकरप्राणवल्लभे।
-ज्ञानवैराग्यसिद्ध्यर्थं भिक्षां देहि च पार्वति॥
-
-माता च पार्वती देवी पिता देवो महेश्वरः।
-बान्धवाः शिवभक्ताश्च स्वदेशो भुवनत्रयम्॥
-
-॥ इति अन्नपूर्णाष्टकं सम्पूर्णम् ॥`,
-  },
-  {
-    id: "kalika-ashtakam",
-    title: "Kalika Ashtakam",
-    deity: "Kali",
-    faith: "Hindu",
-    type: "Ashtakam",
-    description:
-      "Eight-verse hymn in praise of Goddess Kalika (Kali), the fierce form of Devi who destroys evil and grants fearlessness. Reciting this removes enemies, protects from dark forces, and bestows liberation.",
-    fullText: `॥ कालिका अष्टकम् ॥
-
-क्रीं क्रीं क्रीं किलिकिले हुं हुं कालि महाकालि।
-खड्गं खट्वाङ्गं मुण्डं त्रिशूलं धारिणीं नमामि॥१॥
-
-श्मशानवासिनीं देवीं महाकालस्वरूपिणीम्।
-चण्डमुण्डहरां शक्तिं कालिकां प्रणमाम्यहम्॥२॥
-
-महादेवप्रियां देवीं नीलवर्णां दिगम्बरीम्।
-मुण्डमालाधरां भद्रां कालिकां प्रणमाम्यहम्॥३॥
-
-चतुर्भुजां महादेवीं खड्गखट्वाङ्गधारिणीम्।
-नरमुण्डधरां देवीं कालिकां प्रणमाम्यहम्॥४॥
-
-विकृतास्यां महोग्रां च ललज्जिह्वां वरप्रदाम्।
-सर्वदेवस्तुतां देवीं कालिकां प्रणमाम्यहम्॥५॥
-
-दक्षिणे खड्गिनीं देवीं वामहस्ते कपालिनीम्।
-नरमुण्डधरां देवीं कालिकां प्रणमाम्यहम्॥६॥
-
-शत्रुनाशकरीं देवीं भक्तानां वरदायिनीम्।
-सर्वसम्पत्प्रदां काली कालिकां प्रणमाम्यहम्॥७॥
-
-कालिकाष्टकमिदं पुण्यं सर्वकामफलप्रदम्।
-पठेद् यः प्रयतो भक्त्या सर्वान् कामानवाप्नुयात्॥८॥
-
-ॐ क्रीं कालिकायै नमः।
-ॐ क्रीं क्रीं क्रीं ह्रीं ह्रीं हुं हुं दक्षिणे कालिके क्रीं क्रीं क्रीं ह्रीं ह्रीं हुं हुं स्वाहा॥
-
-॥ इति कालिकाष्टकं सम्पूर्णम् ॥`,
+ये केचित् पितरः सन्ति अस्माकं कुलगोत्रजाः।
+ते गृह्णन्तु मया दत्तमेतत् श्राद्धमनन्तरम्॥१०॥`,
+    meaning:
+      "The Pitru Stotra offers salutations to all ancestral souls — those who are peaceful (Somya) or fierce (Ugra), those in the sun, those in the east-west-north-south directions. It invites them to accept the Shraddha offering and be satisfied.",
+    benefits:
+      "Reciting this during Pitru Paksha or Shraddha ceremonies ensures complete peace (Shanti) for departed ancestors, frees them from any lingering attachments, and blesses the family with prosperity and freedom from ancestral curses.",
   },
 ];
 
-export const allStotras = [
-  ...stotraData,
-  ...part12Stotras,
-  ...part13Stotras,
-  ...part14Stotras,
-];
 export const stotraTypes = [
   "All",
   "Stotram",
@@ -723,4 +569,6 @@ export const stotraTypes = [
   "Stotra",
   "Kavach",
   "Stuti",
+  "Sahasranama",
+  "Sahasranam",
 ];
