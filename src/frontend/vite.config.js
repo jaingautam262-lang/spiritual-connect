@@ -129,7 +129,15 @@ export default defineConfig({
             ) {
               return "dfinity-vendor";
             }
-            if (id.includes("react") || id.includes("tanstack") || id.includes("lucide")) {
+            // Keep react/react-dom isolated to ensure scheduler initializes first
+            if (
+              id.includes("/react-dom/") ||
+              id.includes("/react/") ||
+              id.includes("scheduler")
+            ) {
+              return "react-core";
+            }
+            if (id.includes("tanstack") || id.includes("lucide")) {
               return "react-vendor";
             }
             return "vendor";
@@ -142,6 +150,7 @@ export default defineConfig({
     postcss: "./postcss.config.js",
   },
   optimizeDeps: {
+    include: ["react", "react-dom", "react-dom/client", "scheduler"],
     esbuildOptions: {
       define: {
         global: "globalThis",

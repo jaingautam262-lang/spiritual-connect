@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/stores/cartStore";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Brain,
   Briefcase,
@@ -666,6 +667,7 @@ export default function EmeraldStonePage() {
   const cartToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { addItem, setCartOpen } = useCartStore();
+  const navigate = useNavigate();
 
   function handleAddToCart(product: EmeraldProduct) {
     addItem({
@@ -1137,6 +1139,15 @@ export default function EmeraldStonePage() {
               data-ocid="emerald.consultation.cta_button"
               className="font-semibold shrink-0"
               style={{ background: "oklch(0.62 0.18 48)", color: "white" }}
+              onClick={() =>
+                navigate({
+                  to: "/book-consultation",
+                  search: {
+                    topic:
+                      "I want to know if Emerald (Panna) is right for my birth chart",
+                  },
+                })
+              }
             >
               Consult an Astrologer
             </Button>

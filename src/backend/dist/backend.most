@@ -114,6 +114,22 @@ type ConsultationAppointment__977767237 =
     topic : Text;
     userId : Principal
   };
+type ConsultationBookingRequest__1022668557 =
+  {
+    birthDate : Text;
+    birthLocation : Text;
+    birthTime : Text;
+    consultationMode : Text;
+    createdAt : Int;
+    email : Text;
+    fullName : Text;
+    id : Text;
+    phone : Text;
+    preferredDateTime : Text;
+    specialQuestions : Text;
+    status : Text;
+    topic : Text
+  };
 type DaanItem__169032537 = {item : Text; quantity : Text; value : Float};
 type Data__159895909<T> = {var count : Nat__490723111; elements : [var ?T]};
 type Data__791452850<K, V> =
@@ -252,6 +268,15 @@ type MediaPlayerItem__1017825262 =
   };
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
+type NewsletterSubscription__993782396 =
+  {
+    email : Text;
+    id : Text;
+    isActive : Bool;
+    name : ?Text;
+    source : Text;
+    subscribedAt : Int
+  };
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
 type Node__92254746<T> =
@@ -612,6 +637,12 @@ actor {
       var root : Node__46230540<Text, ConsultationAppointment__977767237>;
       var size : Nat__490723111
     };
+  stable var consultationBookingCounter : Nat;
+  stable consultationBookingRequests :
+    {
+      var root : Node__46230540<Text, ConsultationBookingRequest__1022668557>;
+      var size : Nat__490723111
+    };
   stable devotionalContents :
     {
       var root : Node__46230540<Text, DevotionalContent__1049272943>;
@@ -650,6 +681,11 @@ actor {
   stable mediaPlayerItems :
     {
       var root : Node__46230540<Text, MediaPlayerItem__1017825262>;
+      var size : Nat__490723111
+    };
+  stable newsletterSubscriptions :
+    {
+      var root : Node__46230540<Text, NewsletterSubscription__993782396>;
       var size : Nat__490723111
     };
   stable numerologyRecords :

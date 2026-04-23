@@ -115,6 +115,21 @@ export interface ConsultationAppointment {
   'notes' : string,
   'specialQuestions' : string,
 }
+export interface ConsultationBookingRequest {
+  'id' : string,
+  'status' : string,
+  'topic' : string,
+  'birthDate' : string,
+  'birthTime' : string,
+  'createdAt' : bigint,
+  'fullName' : string,
+  'email' : string,
+  'preferredDateTime' : string,
+  'birthLocation' : string,
+  'specialQuestions' : string,
+  'phone' : string,
+  'consultationMode' : string,
+}
 export interface DaanItem {
   'value' : number,
   'item' : string,
@@ -277,6 +292,14 @@ export interface MediaPlayerItem {
   'audioUrl' : string,
   'deity' : string,
   'faith' : string,
+}
+export interface NewsletterSubscription {
+  'id' : string,
+  'subscribedAt' : bigint,
+  'source' : string,
+  'name' : [] | [string],
+  'isActive' : boolean,
+  'email' : string,
 }
 export interface NumerologyRecord {
   'id' : string,
@@ -664,6 +687,14 @@ export interface _SERVICE {
    */
   'addMediaPlayerItem' : ActorMethod<[MediaPlayerItem], undefined>,
   /**
+   * / Public: subscribe to the newsletter. Returns error if email is empty or already subscribed.
+   */
+  'addNewsletterSubscription' : ActorMethod<
+    [string, [] | [string], string],
+    { 'ok' : NewsletterSubscription } |
+      { 'err' : string }
+  >,
+  /**
    * / Admin-only: add a new Pathshala lesson.
    */
   'addPathshalaLesson' : ActorMethod<[PathshalaLesson], undefined>,
@@ -691,6 +722,25 @@ export interface _SERVICE {
    * / Admin-only: create a blog article.
    */
   'createBlogArticle' : ActorMethod<[BlogArticle], undefined>,
+  /**
+   * / Public: anyone can submit a consultation booking request (no login required).
+   * / Returns the auto-generated booking reference ID.
+   */
+  'createBookingRequest' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ],
+    string
+  >,
   /**
    * / Authenticated users can create a business name analysis for themselves.
    */
@@ -879,6 +929,14 @@ export interface _SERVICE {
    */
   'deleteKundaliMatch' : ActorMethod<[string], boolean>,
   /**
+   * / Admin-only: delete a newsletter subscription by email.
+   */
+  'deleteNewsletterSubscription' : ActorMethod<
+    [string],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  /**
    * / Authenticated user: delete a palm photo reading they own. Returns true if deleted.
    */
   'deletePalmPhotoReading' : ActorMethod<[string], boolean>,
@@ -926,6 +984,10 @@ export interface _SERVICE {
    * / Public: get all blog articles (admin may see unpublished; public sees all).
    */
   'getAllBlogArticles' : ActorMethod<[], Array<BlogArticle>>,
+  /**
+   * / Admin-only: list all consultation booking requests.
+   */
+  'getAllBookingRequests' : ActorMethod<[], Array<ConsultationBookingRequest>>,
   /**
    * / Public: get all calculator FAQs.
    */
@@ -1017,6 +1079,13 @@ export interface _SERVICE {
    */
   'getBlogArticleBySlug' : ActorMethod<[string], [] | [BlogArticle]>,
   /**
+   * / Public: look up a booking by its reference ID (for confirmation page).
+   */
+  'getBookingRequest' : ActorMethod<
+    [string],
+    [] | [ConsultationBookingRequest]
+  >,
+  /**
    * / Public: get the FAQ for a specific calculator by calculatorId.
    */
   'getCalculatorFAQ' : ActorMethod<[string], [] | [CalculatorFAQ]>,
@@ -1098,6 +1167,10 @@ export interface _SERVICE {
    * / Authenticated user: get all their own vastu room checks.
    */
   'getMyVastuRoomChecks' : ActorMethod<[], Array<VastuRoomCheck>>,
+  /**
+   * / Admin-only: get all newsletter subscriptions.
+   */
+  'getNewsletterSubscriptions' : ActorMethod<[], Array<NewsletterSubscription>>,
   /**
    * / Get a single palm photo reading by id (owner or admin).
    */
@@ -1326,6 +1399,14 @@ export interface _SERVICE {
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
   'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
   /**
+   * / Public: unsubscribe from the newsletter (sets isActive = false).
+   */
+  'unsubscribeNewsletter' : ActorMethod<
+    [string],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  /**
    * / Admin-only: update an existing bhajan entry.
    */
   'updateBhajan' : ActorMethod<[BhajanEntry], undefined>,
@@ -1333,6 +1414,10 @@ export interface _SERVICE {
    * / Admin-only: update an existing blog article.
    */
   'updateBlogArticle' : ActorMethod<[BlogArticle], undefined>,
+  /**
+   * / Admin-only: update the status of a booking request.
+   */
+  'updateBookingRequestStatus' : ActorMethod<[string, string], undefined>,
   /**
    * / Admin-only: update an existing calculator FAQ by id.
    */

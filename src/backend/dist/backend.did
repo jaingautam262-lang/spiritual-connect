@@ -370,6 +370,15 @@ type NumerologyRecord =
    result: text;
    userId: principal;
  };
+type NewsletterSubscription = 
+ record {
+   email: text;
+   id: text;
+   isActive: bool;
+   name: opt text;
+   source: text;
+   subscribedAt: int;
+ };
 type MediaPlayerItem = 
  record {
    audioUrl: text;
@@ -552,6 +561,22 @@ type DaanItem =
    quantity: text;
    value: float64;
  };
+type ConsultationBookingRequest = 
+ record {
+   birthDate: text;
+   birthLocation: text;
+   birthTime: text;
+   consultationMode: text;
+   createdAt: int;
+   email: text;
+   fullName: text;
+   id: text;
+   phone: text;
+   preferredDateTime: text;
+   specialQuestions: text;
+   status: text;
+   topic: text;
+ };
 type ConsultationAppointment = 
  record {
    astrologerId: text;
@@ -692,6 +717,12 @@ service : {
   addJainPathshalaEntry: (entry: JainPathshalaEntry) -> ();
   /// Admin-only: add a media player item.
   addMediaPlayerItem: (item: MediaPlayerItem) -> ();
+  /// Public: subscribe to the newsletter. Returns error if email is empty or already subscribed.
+  addNewsletterSubscription: (email: text, name: opt text, source: text) ->
+   (variant {
+      err: text;
+      ok: NewsletterSubscription;
+    });
   /// Admin-only: add a new Pathshala lesson.
   addPathshalaLesson: (lesson: PathshalaLesson) -> ();
   /// Admin-only: add a new suktam entry.
@@ -705,6 +736,11 @@ service : {
   createAstrologerProfile: (profile: AstrologerProfile) -> ();
   /// Admin-only: create a blog article.
   createBlogArticle: (article: BlogArticle) -> ();
+  /// Public: anyone can submit a consultation booking request (no login required).
+  /// Returns the auto-generated booking reference ID.
+  createBookingRequest: (fullName: text, email: text, phone: text, birthDate:
+   text, birthTime: text, birthLocation: text, preferredDateTime: text,
+   consultationMode: text, topic: text, specialQuestions: text) -> (text);
   /// Authenticated users can create a business name analysis for themselves.
   createBusinessNameRecord: ("record": BusinessNameRecord) -> ();
   /// Authenticated users can submit a chadhava offering for themselves.
@@ -783,6 +819,11 @@ service : {
   deleteJainPathshalaEntry: (id: text) -> ();
   /// Authenticated users can delete their own kundali match. Returns true if deleted.
   deleteKundaliMatch: (id: text) -> (bool);
+  /// Admin-only: delete a newsletter subscription by email.
+  deleteNewsletterSubscription: (email: text) -> (variant {
+                                                    err: text;
+                                                    ok;
+                                                  });
   /// Authenticated user: delete a palm photo reading they own. Returns true if deleted.
   deletePalmPhotoReading: (id: text) -> (bool);
   /// Admin-only: delete a palmistry content entry. Returns true if deleted, false if not found.
@@ -807,6 +848,8 @@ service : {
   getAllAstrologerProfiles: () -> (vec AstrologerProfile) query;
   /// Public: get all blog articles (admin may see unpublished; public sees all).
   getAllBlogArticles: () -> (vec BlogArticle) query;
+  /// Admin-only: list all consultation booking requests.
+  getAllBookingRequests: () -> (vec ConsultationBookingRequest) query;
   /// Public: get all calculator FAQs.
   getAllCalculatorFAQs: () -> (vec CalculatorFAQ) query;
   /// Admin-only: list all appointments (for astrologer/admin dashboard).
@@ -858,6 +901,8 @@ service : {
   getBhajans: () -> (vec BhajanEntry) query;
   /// Public: get a blog article by its slug.
   getBlogArticleBySlug: (slug: text) -> (opt BlogArticle) query;
+  /// Public: look up a booking by its reference ID (for confirmation page).
+  getBookingRequest: (refId: text) -> (opt ConsultationBookingRequest) query;
   /// Public: get the FAQ for a specific calculator by calculatorId.
   getCalculatorFAQ: (calculatorId: text) -> (opt CalculatorFAQ) query;
   /// Get the calling user's own profile.
@@ -898,6 +943,8 @@ service : {
   getMyPalmPhotoReadings: () -> (vec PalmPhotoReading) query;
   /// Authenticated user: get all their own vastu room checks.
   getMyVastuRoomChecks: () -> (vec VastuRoomCheck) query;
+  /// Admin-only: get all newsletter subscriptions.
+  getNewsletterSubscriptions: () -> (vec NewsletterSubscription) query;
   /// Get a single palm photo reading by id (owner or admin).
   getPalmPhotoReading: (id: text) -> (opt PalmPhotoReading) query;
   /// Public: get a single palmistry content entry by id.
@@ -1009,10 +1056,17 @@ service : {
   /// Admin-only: set the Stripe configuration.
   setStripeConfiguration: (config: StripeConfiguration) -> ();
   transform: (input: TransformationInput) -> (TransformationOutput) query;
+  /// Public: unsubscribe from the newsletter (sets isActive = false).
+  unsubscribeNewsletter: (email: text) -> (variant {
+                                             err: text;
+                                             ok;
+                                           });
   /// Admin-only: update an existing bhajan entry.
   updateBhajan: (entry: BhajanEntry) -> ();
   /// Admin-only: update an existing blog article.
   updateBlogArticle: (article: BlogArticle) -> ();
+  /// Admin-only: update the status of a booking request.
+  updateBookingRequestStatus: (refId: text, status: text) -> ();
   /// Admin-only: update an existing calculator FAQ by id.
   updateCalculatorFAQ: (id: text, faq: CalculatorFAQ) -> ();
   /// Authenticated user: update an existing combined vedic reading they own. Returns updated entry or null.

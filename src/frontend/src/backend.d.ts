@@ -49,6 +49,14 @@ export interface PrasadDeliveryRequest {
     address: string;
     templeId: string;
 }
+export interface NewsletterSubscription {
+    id: string;
+    subscribedAt: bigint;
+    source: string;
+    name?: string;
+    isActive: boolean;
+    email: string;
+}
 export interface BusinessNameRecord {
     id: string;
     result: string;
@@ -86,6 +94,21 @@ export interface StripeSessionStatus {
 export interface StripeConfiguration {
     allowedCountries: Array<string>;
     secretKey: string;
+}
+export interface ConsultationBookingRequest {
+    id: string;
+    status: string;
+    topic: string;
+    birthDate: string;
+    birthTime: string;
+    createdAt: bigint;
+    fullName: string;
+    email: string;
+    preferredDateTime: string;
+    birthLocation: string;
+    specialQuestions: string;
+    phone: string;
+    consultationMode: string;
 }
 export interface PujaType {
     id: string;
@@ -638,6 +661,16 @@ export interface backendInterface {
      */
     addMediaPlayerItem(item: MediaPlayerItem): Promise<void>;
     /**
+     * / Public: subscribe to the newsletter. Returns error if email is empty or already subscribed.
+     */
+    addNewsletterSubscription(email: string, name: string | null, source: string): Promise<{
+        __kind__: "ok";
+        ok: NewsletterSubscription;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    /**
      * / Admin-only: add a new Pathshala lesson.
      */
     addPathshalaLesson(lesson: PathshalaLesson): Promise<void>;
@@ -662,6 +695,11 @@ export interface backendInterface {
      * / Admin-only: create a blog article.
      */
     createBlogArticle(article: BlogArticle): Promise<void>;
+    /**
+     * / Public: anyone can submit a consultation booking request (no login required).
+     * / Returns the auto-generated booking reference ID.
+     */
+    createBookingRequest(fullName: string, email: string, phone: string, birthDate: string, birthTime: string, birthLocation: string, preferredDateTime: string, consultationMode: string, topic: string, specialQuestions: string): Promise<string>;
     /**
      * / Authenticated users can create a business name analysis for themselves.
      */
@@ -787,6 +825,16 @@ export interface backendInterface {
      */
     deleteKundaliMatch(id: string): Promise<boolean>;
     /**
+     * / Admin-only: delete a newsletter subscription by email.
+     */
+    deleteNewsletterSubscription(email: string): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    /**
      * / Authenticated user: delete a palm photo reading they own. Returns true if deleted.
      */
     deletePalmPhotoReading(id: string): Promise<boolean>;
@@ -834,6 +882,10 @@ export interface backendInterface {
      * / Public: get all blog articles (admin may see unpublished; public sees all).
      */
     getAllBlogArticles(): Promise<Array<BlogArticle>>;
+    /**
+     * / Admin-only: list all consultation booking requests.
+     */
+    getAllBookingRequests(): Promise<Array<ConsultationBookingRequest>>;
     /**
      * / Public: get all calculator FAQs.
      */
@@ -919,6 +971,10 @@ export interface backendInterface {
      */
     getBlogArticleBySlug(slug: string): Promise<BlogArticle | null>;
     /**
+     * / Public: look up a booking by its reference ID (for confirmation page).
+     */
+    getBookingRequest(refId: string): Promise<ConsultationBookingRequest | null>;
+    /**
      * / Public: get the FAQ for a specific calculator by calculatorId.
      */
     getCalculatorFAQ(calculatorId: string): Promise<CalculatorFAQ | null>;
@@ -991,6 +1047,10 @@ export interface backendInterface {
      * / Authenticated user: get all their own vastu room checks.
      */
     getMyVastuRoomChecks(): Promise<Array<VastuRoomCheck>>;
+    /**
+     * / Admin-only: get all newsletter subscriptions.
+     */
+    getNewsletterSubscriptions(): Promise<Array<NewsletterSubscription>>;
     /**
      * / Get a single palm photo reading by id (owner or admin).
      */
@@ -1198,6 +1258,16 @@ export interface backendInterface {
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;
     /**
+     * / Public: unsubscribe from the newsletter (sets isActive = false).
+     */
+    unsubscribeNewsletter(email: string): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    /**
      * / Admin-only: update an existing bhajan entry.
      */
     updateBhajan(entry: BhajanEntry): Promise<void>;
@@ -1205,6 +1275,10 @@ export interface backendInterface {
      * / Admin-only: update an existing blog article.
      */
     updateBlogArticle(article: BlogArticle): Promise<void>;
+    /**
+     * / Admin-only: update the status of a booking request.
+     */
+    updateBookingRequestStatus(refId: string, status: string): Promise<void>;
     /**
      * / Admin-only: update an existing calculator FAQ by id.
      */

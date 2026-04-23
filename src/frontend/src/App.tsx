@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
 import Layout from "./components/Layout";
+import NewsletterPopup from "./components/NewsletterPopup";
 
 import AdminCMS from "./pages/AdminCMS";
 import Dashboard from "./pages/Dashboard";
@@ -56,6 +57,9 @@ const VirtualTemple = lazy(() => import("./pages/VirtualTemple"));
 const VratKatha = lazy(() => import("./pages/VratKatha"));
 const SikhKirtans = lazy(() => import("./pages/SikhKirtans"));
 const JainVratKathas = lazy(() => import("./pages/JainVratKathas"));
+const JainVratKathaDetail = lazy(() => import("./pages/JainVratKathaDetail"));
+const JainVrat144List = lazy(() => import("./pages/JainVrat144List"));
+const PadmavatiVratKatha = lazy(() => import("./pages/PadmavatiVratKatha"));
 const PalmistryReading = lazy(() => import("./pages/PalmistryReading"));
 const PalmPhotoReading = lazy(() => import("./pages/PalmPhotoReading"));
 const VastuShastra = lazy(() => import("./pages/VastuShastra"));
@@ -102,6 +106,31 @@ const EnergizedProductDetail = lazy(
 );
 const PujaBookingPage = lazy(() => import("./pages/PujaBookingPage"));
 const BookingHistoryPage = lazy(() => import("./pages/BookingHistoryPage"));
+const CareerPathCalculator = lazy(() => import("./pages/CareerPathCalculator"));
+const Newsletter = lazy(() => import("./pages/Newsletter"));
+const YantraShop = lazy(() => import("./pages/YantraShop"));
+const YantraInfo = lazy(() => import("./pages/YantraInfo"));
+const YantraInfoDetail = lazy(() => import("./pages/YantraInfoDetail"));
+
+// New Jain pages
+const JainStavan = lazy(() => import("./pages/JainStavan"));
+const JainContentIndex = lazy(() => import("./pages/JainContentIndex"));
+const TattvarthaSutra = lazy(() => import("./pages/TattvarthaSutra"));
+const JainNewStotraDetail = lazy(() => import("./pages/JainNewStotraDetail"));
+const JainMeriBhavna = lazy(() => import("./pages/JainMeriBhavna"));
+const JainStoriesLibrary = lazy(() => import("./pages/JainStoriesLibrary"));
+const JainVichaar = lazy(() => import("./pages/JainVichaar"));
+const JainBooksLibrary = lazy(() => import("./pages/JainBooksLibrary"));
+const JainPoojasSangreh = lazy(() => import("./pages/JainPoojasSangreh"));
+const JainBalVikas = lazy(() => import("./pages/JainBalVikas"));
+const JainBhajanDetail = lazy(() => import("./pages/JainBhajanDetail"));
+const JainKnowledgeBase = lazy(() => import("./pages/JainKnowledgeBase"));
+const JainDevShastraGuruPuja = lazy(
+  () => import("./pages/JainDevShastraGuruPuja"),
+);
+const JainVicharQuoteDetail = lazy(
+  () => import("./pages/JainVicharQuoteDetail"),
+);
 
 function PageLoader() {
   return (
@@ -125,6 +154,7 @@ const rootRoute = createRootRoute({
   component: () => (
     <Layout>
       <Outlet />
+      <NewsletterPopup />
     </Layout>
   ),
 });
@@ -344,6 +374,24 @@ const jainVratKathasRoute = createRoute({
   component: withSuspense(JainVratKathas),
 });
 
+const jainVratKathaDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-vrat-katha-detail/$id",
+  component: withSuspense(JainVratKathaDetail),
+});
+
+const jainVrat144ListRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-vrat-144-list",
+  component: withSuspense(JainVrat144List),
+});
+
+const padmavatiVratKathaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/padmavati-vrat-katha",
+  component: withSuspense(PadmavatiVratKatha),
+});
+
 const holyBooksReaderRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/holy-books-reader",
@@ -540,6 +588,9 @@ const AuspiciousTimes = lazy(() => import("./pages/AuspiciousTimes"));
 const AstrologerBookingPage = lazy(
   () => import("./pages/AstrologerBookingPage"),
 );
+const BookingConfirmationPage = lazy(
+  () => import("./pages/BookingConfirmationPage"),
+);
 const LivePanchang = lazy(() => import("./pages/LivePanchang"));
 const CurrentTransits = lazy(() => import("./pages/CurrentTransits"));
 
@@ -553,6 +604,12 @@ const bookConsultationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/book-consultation",
   component: withSuspense(AstrologerBookingPage),
+});
+
+const bookingConfirmationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/booking-confirmation",
+  component: withSuspense(BookingConfirmationPage),
 });
 
 const livePanchangRoute = createRoute({
@@ -920,6 +977,96 @@ const bookingHistoryRoute = createRoute({
   component: withSuspense(BookingHistoryPage),
 });
 
+const careerPathRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/career-path",
+  component: withSuspense(CareerPathCalculator),
+});
+
+const newsletterRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/newsletter",
+  component: withSuspense(Newsletter),
+});
+
+const yantraShopRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/yantra-shop",
+  component: withSuspense(YantraShop),
+});
+
+const yantraInfoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/yantra-info",
+  component: withSuspense(YantraInfo),
+});
+
+const yantraInfoDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/yantra-info/$category",
+  component: withSuspense(YantraInfoDetail),
+});
+
+const jainStavanRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-stavan",
+  component: withSuspense(JainStavan),
+});
+
+const jainContentIndexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-content-index",
+  component: withSuspense(JainContentIndex),
+});
+
+const tattvarthaSutraRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tattvartha-sutra",
+  component: withSuspense(TattvarthaSutra),
+});
+
+const jainNewStotraDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-new-stotra/$id",
+  component: withSuspense(JainNewStotraDetail),
+});
+
+const jainMeriBhavnaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-meri-bhavna",
+  component: withSuspense(JainMeriBhavna),
+});
+
+const jainStoriesLibraryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-stories",
+  component: withSuspense(JainStoriesLibrary),
+});
+
+const jainVichaarRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-vichaar",
+  component: withSuspense(JainVichaar),
+});
+
+const jainBooksLibraryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-books",
+  component: withSuspense(JainBooksLibrary),
+});
+
+const jainPoojasSangrehRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-poojas-sangreh",
+  component: withSuspense(JainPoojasSangreh),
+});
+
+const jainBalVikasRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-bal-vikas",
+  component: withSuspense(JainBalVikas),
+});
+
 const EmeraldStonePage = lazy(() => import("./pages/EmeraldStonePage"));
 const CaratRattiCalculator = lazy(() => import("./pages/CaratRattiCalculator"));
 const RubyStonePage = lazy(() => import("./pages/RubyStonePage"));
@@ -958,6 +1105,30 @@ const yellowSapphireStoneRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/gemstones/yellow-sapphire",
   component: withSuspense(YellowSapphireStonePage),
+});
+
+const jainBhajanDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-bhajan/$id",
+  component: withSuspense(JainBhajanDetail),
+});
+
+const jainKnowledgeBaseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-knowledge-base",
+  component: withSuspense(JainKnowledgeBase),
+});
+
+const jainDevShastraGuruPujaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-dev-shastra-guru-puja",
+  component: withSuspense(JainDevShastraGuruPuja),
+});
+
+const jainVicharQuoteDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-vichaar/$person",
+  component: withSuspense(JainVicharQuoteDetail),
 });
 
 const routeTree = rootRoute.addChildren([
@@ -1003,6 +1174,8 @@ const routeTree = rootRoute.addChildren([
   jainipediaRoute,
   sikhKirtansRoute,
   jainVratKathasRoute,
+  jainVratKathaDetailRoute,
+  jainVrat144ListRoute,
   holyBooksReaderRoute,
   palmistryRoute,
   palmPhotoRoute,
@@ -1037,6 +1210,7 @@ const routeTree = rootRoute.addChildren([
   jainParvCalendarRoute,
   auspiciousTimesRoute,
   bookConsultationRoute,
+  bookingConfirmationRoute,
   livePanchangRoute,
   currentTransitsRoute,
   shadowPlanetsRoute,
@@ -1085,11 +1259,31 @@ const routeTree = rootRoute.addChildren([
   combinedVedicReadingRoute,
   pujaBookingRoute,
   bookingHistoryRoute,
+  careerPathRoute,
   emeraldStoneRoute,
   caratRattiCalculatorRoute,
   rubyStoneRoute,
   blueSapphireStoneRoute,
   yellowSapphireStoneRoute,
+  newsletterRoute,
+  yantraShopRoute,
+  yantraInfoRoute,
+  yantraInfoDetailRoute,
+  jainStavanRoute,
+  jainContentIndexRoute,
+  tattvarthaSutraRoute,
+  jainNewStotraDetailRoute,
+  jainMeriBhavnaRoute,
+  jainStoriesLibraryRoute,
+  jainVichaarRoute,
+  jainBooksLibraryRoute,
+  jainPoojasSangrehRoute,
+  jainBalVikasRoute,
+  jainBhajanDetailRoute,
+  jainKnowledgeBaseRoute,
+  jainDevShastraGuruPujaRoute,
+  jainVicharQuoteDetailRoute,
+  padmavatiVratKathaRoute,
 ]);
 
 const router = createRouter({ routeTree });

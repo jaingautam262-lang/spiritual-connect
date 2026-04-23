@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/stores/cartStore";
+import { useNavigate } from "@tanstack/react-router";
 import {
   AlertTriangle,
   Brain,
@@ -397,6 +398,7 @@ export default function BlueSapphireStonePage() {
   );
   const [activeTab, setActiveTab] = useState("about");
   const tabsRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Cycle highlights
   useEffect(() => {
@@ -872,6 +874,15 @@ export default function BlueSapphireStonePage() {
               data-ocid="blue_sapphire.consultation.cta_button"
               className="font-semibold shrink-0"
               style={{ background: "oklch(0.62 0.18 48)", color: "white" }}
+              onClick={() =>
+                navigate({
+                  to: "/book-consultation",
+                  search: {
+                    topic:
+                      "I want to know if Blue Sapphire (Neelam) is right for my birth chart",
+                  },
+                })
+              }
             >
               Consult an Astrologer
             </Button>

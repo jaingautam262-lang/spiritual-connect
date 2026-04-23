@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,13 +7,21 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Flame,
   Search,
   Tag,
   User,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { type BlogArticle, blogArticles } from "../data/blog-data";
+import {
+  type BlogArticle as Article12,
+  BLOG_ARTICLES_12,
+} from "../data/blog-articles-12";
+import {
+  type BlogArticle as LegacyBlogArticle,
+  blogArticles,
+} from "../data/blog-data";
 import {
   type BlogArticleNew,
   NEW_CATEGORY_META,
@@ -70,26 +77,21 @@ const LEGACY_CATEGORIES: {
   },
 ];
 
-const ALL_CATEGORIES: {
-  value: string;
-  label: string;
-  labelHindi: string;
-  emoji: string;
-}[] = [
-  { value: "all", label: "All Articles", labelHindi: "सभी लेख", emoji: "📖" },
-  ...LEGACY_CATEGORIES,
-  ...(
-    Object.entries(NEW_CATEGORY_META) as [
-      NewCategory,
-      (typeof NEW_CATEGORY_META)[NewCategory],
-    ][]
-  ).map(([id, meta]) => ({
-    value: id,
-    label: meta.nameEn,
-    labelHindi: meta.nameHi,
-    emoji: meta.emoji,
-  })),
-];
+const NEW12_CATEGORIES = [
+  { value: "gemstones", label: "Gemstones", labelHindi: "रत्न", emoji: "💎" },
+  { value: "mantras", label: "Mantras", labelHindi: "मंत्र", emoji: "🪐" },
+  { value: "astrology", label: "Astrology", labelHindi: "ज्योतिष", emoji: "⭐" },
+  { value: "festivals", label: "Festivals", labelHindi: "त्योहार", emoji: "🎉" },
+  { value: "rituals", label: "Rituals", labelHindi: "अनुष्ठान", emoji: "🪔" },
+  {
+    value: "numerology",
+    label: "Numerology",
+    labelHindi: "अंकशास्त्र",
+    emoji: "🔢",
+  },
+] as const;
+
+type New12Category = (typeof NEW12_CATEGORIES)[number]["value"];
 
 const LEGACY_COLORS: Record<string, string> = {
   "spiritual-articles": "oklch(0.68 0.18 48)",
@@ -115,10 +117,20 @@ const NEW_CATEGORY_COLORS: Record<NewCategory, string> = {
   bracelets: "oklch(0.58 0.16 60)",
 };
 
+const NEW12_COLORS: Record<New12Category, string> = {
+  gemstones: "oklch(0.55 0.16 195)",
+  mantras: "oklch(0.55 0.14 240)",
+  astrology: "oklch(0.52 0.14 240)",
+  festivals: "oklch(0.55 0.16 145)",
+  rituals: "oklch(0.58 0.16 30)",
+  numerology: "oklch(0.62 0.18 50)",
+};
+
 function getCategoryColor(category: string): string {
   return (
     LEGACY_COLORS[category] ??
     NEW_CATEGORY_COLORS[category as NewCategory] ??
+    NEW12_COLORS[category as New12Category] ??
     "oklch(0.68 0.18 48)"
   );
 }
@@ -128,12 +140,16 @@ function getCategoryLabel(category: string, lang: "en" | "hi"): string {
   if (legacy) return lang === "hi" ? legacy.labelHindi : legacy.label;
   const newMeta = NEW_CATEGORY_META[category as NewCategory];
   if (newMeta) return lang === "hi" ? newMeta.nameHi : newMeta.nameEn;
+  const new12 = NEW12_CATEGORIES.find((c) => c.value === category);
+  if (new12) return lang === "hi" ? new12.labelHindi : new12.label;
   return category;
 }
 
 function getCategoryEmoji(category: string): string {
   const legacy = LEGACY_CATEGORIES.find((c) => c.value === category);
   if (legacy) return legacy.emoji;
+  const new12 = NEW12_CATEGORIES.find((c) => c.value === category);
+  if (new12) return new12.emoji;
   return NEW_CATEGORY_META[category as NewCategory]?.emoji ?? "📄";
 }
 
@@ -149,25 +165,28 @@ interface DisplayArticle {
   tags: string[];
   publishDate: string;
   isPopular?: boolean;
+  featuredEmoji?: string;
+  readTime?: number;
+  source: "legacy" | "new" | "new12";
 }
 
-function toDisplay(a: BlogArticle | BlogArticleNew): DisplayArticle {
-  if ("titleHindi" in a) {
-    // Legacy BlogArticle
-    return {
-      id: a.id,
-      slug: a.slug,
-      title: a.title,
-      titleHi: a.titleHindi,
-      excerpt: a.excerpt,
-      category: a.category,
-      author: a.author,
-      tags: a.tags,
-      publishDate: a.publishDate,
-      isPopular: false,
-    };
-  }
-  // BlogArticleNew
+function toLegacyDisplay(a: LegacyBlogArticle): DisplayArticle {
+  return {
+    id: a.id,
+    slug: a.slug,
+    title: a.title,
+    titleHi: a.titleHindi,
+    excerpt: a.excerpt,
+    category: a.category,
+    author: a.author,
+    tags: a.tags,
+    publishDate: a.publishDate,
+    isPopular: false,
+    source: "legacy",
+  };
+}
+
+function toNewDisplay(a: BlogArticleNew): DisplayArticle {
   return {
     id: a.id,
     slug: a.slug,
@@ -179,6 +198,24 @@ function toDisplay(a: BlogArticle | BlogArticleNew): DisplayArticle {
     tags: a.tags,
     publishDate: a.publishDate,
     isPopular: a.isPopular,
+    source: "new",
+  };
+}
+
+function toNew12Display(a: Article12): DisplayArticle {
+  return {
+    id: a.id,
+    slug: a.slug,
+    title: a.title,
+    excerpt: a.excerpt,
+    category: a.category,
+    author: a.author,
+    tags: a.tags,
+    publishDate: a.publishDate,
+    isPopular: false,
+    featuredEmoji: a.featuredEmoji,
+    readTime: a.readTime,
+    source: "new12",
   };
 }
 
@@ -190,6 +227,7 @@ function ArticleCard({
   const color = getCategoryColor(article.category);
   const displayTitle =
     lang === "hi" && article.titleHi ? article.titleHi : article.title;
+  const emoji = article.featuredEmoji ?? getCategoryEmoji(article.category);
 
   return (
     <article
@@ -200,7 +238,7 @@ function ArticleCard({
       }}
       data-ocid="blog.article_card"
     >
-      {/* Image area */}
+      {/* Image / Emoji area */}
       <div
         className={`relative overflow-hidden flex items-center justify-center text-5xl ${compact ? "h-36" : "h-44"}`}
         style={{
@@ -208,7 +246,7 @@ function ArticleCard({
         }}
       >
         <span className="opacity-60 group-hover:scale-110 transition-transform duration-500">
-          {getCategoryEmoji(article.category)}
+          {emoji}
         </span>
         <div
           className="absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-semibold"
@@ -219,10 +257,7 @@ function ArticleCard({
         {article.isPopular && (
           <div
             className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold"
-            style={{
-              background: "oklch(0.68 0.18 48)",
-              color: "white",
-            }}
+            style={{ background: "oklch(0.68 0.18 48)", color: "white" }}
           >
             <Flame className="h-3 w-3" />
             {lang === "hi" ? "लोकप्रिय" : "Popular"}
@@ -245,7 +280,7 @@ function ArticleCard({
         </p>
 
         <div
-          className="flex items-center gap-3 text-xs"
+          className="flex items-center gap-3 text-xs flex-wrap"
           style={{ color: "oklch(0.55 0.04 50)" }}
         >
           <span className="flex items-center gap-1">
@@ -260,6 +295,12 @@ function ArticleCard({
               year: "numeric",
             })}
           </span>
+          {article.readTime && (
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {article.readTime} min read
+            </span>
+          )}
         </div>
 
         {article.tags.length > 0 && (
@@ -311,7 +352,6 @@ function PopularArticlesSection({
   return (
     <section className="px-4 py-10" data-ocid="blog.popular_section">
       <div className="container mx-auto max-w-6xl">
-        {/* Section header */}
         <div className="flex items-center gap-3 mb-6">
           <div
             className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
@@ -333,7 +373,6 @@ function PopularArticlesSection({
           </span>
         </div>
 
-        {/* Horizontal scroll on mobile, grid on desktop */}
         <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
           {popular.map((article) => (
             <ArticleCard
@@ -374,6 +413,33 @@ function LoadingSkeleton() {
   );
 }
 
+// Deduplicated list of ALL categories (including new12 without duplicating existing)
+const DISPLAY_CATEGORIES: {
+  value: string;
+  label: string;
+  labelHindi: string;
+  emoji: string;
+}[] = [
+  { value: "all", label: "All Articles", labelHindi: "सभी लेख", emoji: "📖" },
+  ...LEGACY_CATEGORIES,
+  ...(
+    Object.entries(NEW_CATEGORY_META) as [
+      NewCategory,
+      (typeof NEW_CATEGORY_META)[NewCategory],
+    ][]
+  ).map(([id, meta]) => ({
+    value: id,
+    label: meta.nameEn,
+    labelHindi: meta.nameHi,
+    emoji: meta.emoji,
+  })),
+  ...NEW12_CATEGORIES.filter(
+    (c) =>
+      !LEGACY_CATEGORIES.some((l) => (l.value as string) === c.value) &&
+      !Object.keys(NEW_CATEGORY_META).includes(c.value),
+  ),
+];
+
 export default function BlogSection() {
   const [lang, setLang] = useState<"en" | "hi">("en");
   const [search, setSearch] = useState("");
@@ -384,13 +450,14 @@ export default function BlogSection() {
 
   // Merge all articles into unified display format
   const allArticles: DisplayArticle[] = useMemo(() => {
-    const legacySource: BlogArticle[] =
+    const legacySource: LegacyBlogArticle[] =
       backendArticles && backendArticles.length > 0
         ? backendArticles
         : blogArticles;
-    const legacy = legacySource.map(toDisplay);
-    const newArts = blogArticlesNew.map(toDisplay);
-    return [...legacy, ...newArts];
+    const legacy = legacySource.map(toLegacyDisplay);
+    const newArts = blogArticlesNew.map(toNewDisplay);
+    const new12Arts = BLOG_ARTICLES_12.map(toNew12Display);
+    return [...legacy, ...newArts, ...new12Arts];
   }, [backendArticles]);
 
   const filtered = useMemo(() => {
@@ -428,7 +495,6 @@ export default function BlogSection() {
     setPage(1);
   };
 
-  // Show popular section only on "All" with no search active
   const showPopular = activeCategory === "all" && !search;
 
   return (
@@ -513,7 +579,7 @@ export default function BlogSection() {
       >
         <div className="container mx-auto max-w-6xl">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {ALL_CATEGORIES.map((cat) => (
+            {DISPLAY_CATEGORIES.map((cat) => (
               <button
                 key={cat.value}
                 type="button"
@@ -539,12 +605,11 @@ export default function BlogSection() {
         </div>
       </section>
 
-      {/* Popular Articles (shown only on "all" view with no search) */}
+      {/* Popular Articles */}
       {!isLoading && showPopular && (
         <PopularArticlesSection articles={allArticles} lang={lang} />
       )}
 
-      {/* Divider before main grid when popular section shown */}
       {showPopular && !isLoading && (
         <div
           className="mx-4 mb-2"
@@ -558,7 +623,7 @@ export default function BlogSection() {
           {isLoading ? (
             <LoadingSkeleton />
           ) : paginated.length === 0 ? (
-            <div className="text-center py-20">
+            <div className="text-center py-20" data-ocid="blog.empty_state">
               <BookOpen
                 className="h-12 w-12 mx-auto mb-4 opacity-30"
                 style={{ color: "oklch(0.78 0.14 75)" }}
@@ -577,6 +642,7 @@ export default function BlogSection() {
                 }}
                 className="mt-4 text-sm underline"
                 style={{ color: "oklch(0.78 0.14 75)" }}
+                data-ocid="blog.clear_filters_button"
               >
                 {lang === "hi" ? "फ़िल्टर हटाएं" : "Clear filters"}
               </button>
@@ -592,8 +658,10 @@ export default function BlogSection() {
                   : `${filtered.length} article${filtered.length !== 1 ? "s" : ""} found`}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginated.map((article) => (
-                  <ArticleCard key={article.id} article={article} lang={lang} />
+                {paginated.map((article, idx) => (
+                  <div key={article.id} data-ocid={`blog.item.${idx + 1}`}>
+                    <ArticleCard article={article} lang={lang} />
+                  </div>
                 ))}
               </div>
 
@@ -609,7 +677,7 @@ export default function BlogSection() {
                       borderColor: "oklch(0.78 0.14 75 / 0.3)",
                       color: "oklch(0.78 0.14 75)",
                     }}
-                    data-ocid="blog.prev_page"
+                    data-ocid="blog.pagination_prev"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -644,7 +712,7 @@ export default function BlogSection() {
                       borderColor: "oklch(0.78 0.14 75 / 0.3)",
                       color: "oklch(0.78 0.14 75)",
                     }}
-                    data-ocid="blog.next_page"
+                    data-ocid="blog.pagination_next"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>

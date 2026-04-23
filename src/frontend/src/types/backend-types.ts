@@ -413,6 +413,17 @@ export interface WebStory {
   updatedAt: number;
 }
 
+// ── Newsletter Subscription Type ─────────────────────────────────────────────
+
+export interface NewsletterSubscription {
+  id: string;
+  email: string;
+  name: string | null;
+  subscribedAt: bigint;
+  source: string;
+  isActive: boolean;
+}
+
 // ── Vastu Room Check Type (localStorage-backed) ───────────────────────────────
 
 export interface VastuRoomCheck {

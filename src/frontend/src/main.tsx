@@ -1,8 +1,9 @@
-import { InternetIdentityProvider } from "@caffeineai/core-infrastructure";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense } from "react";
+// CRITICAL: React and ReactDOM must be imported first before any other modules
+// to ensure the scheduler (unstable_scheduleCallback) is initialized.
+import React from "react";
+import { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import AppLoadingScreen from "./components/AppLoadingScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -27,16 +28,34 @@ const queryClient = new QueryClient({
   },
 });
 
+// Lazily import App to ensure React is fully initialized before
+// any @caffeineai/core-infrastructure modules load (fixes createContext crash)
+const App = lazy(() => import("./App"));
+
+// Lazily import InternetIdentityProvider to defer its initialization after React
+// is available in the module scope — avoids "Cannot read createContext of undefined"
+const InternetIdentityProviderLazy = lazy(() =>
+  import("@caffeineai/core-infrastructure").then((mod) => ({
+    default: mod.InternetIdentityProvider,
+  })),
+);
+
+function Root() {
+  return (
+    <Suspense fallback={<AppLoadingScreen />}>
+      <InternetIdentityProviderLazy>
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
+      </InternetIdentityProviderLazy>
+    </Suspense>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
-    <Suspense fallback={<AppLoadingScreen />}>
-      <QueryClientProvider client={queryClient}>
-        <InternetIdentityProvider>
-          <LanguageProvider>
-            <App />
-          </LanguageProvider>
-        </InternetIdentityProvider>
-      </QueryClientProvider>
-    </Suspense>
+    <QueryClientProvider client={queryClient}>
+      <Root />
+    </QueryClientProvider>
   </ErrorBoundary>,
 );

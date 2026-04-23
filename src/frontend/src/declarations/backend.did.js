@@ -99,6 +99,14 @@ export const MediaPlayerItem = IDL.Record({
   'deity' : IDL.Text,
   'faith' : IDL.Text,
 });
+export const NewsletterSubscription = IDL.Record({
+  'id' : IDL.Text,
+  'subscribedAt' : IDL.Int,
+  'source' : IDL.Text,
+  'name' : IDL.Opt(IDL.Text),
+  'isActive' : IDL.Bool,
+  'email' : IDL.Text,
+});
 export const PathshalaLesson = IDL.Record({
   'id' : IDL.Text,
   'contentHi' : IDL.Text,
@@ -443,6 +451,21 @@ export const WebStory = IDL.Record({
   'slides' : IDL.Vec(StorySlide),
   'category' : IDL.Text,
 });
+export const ConsultationBookingRequest = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'topic' : IDL.Text,
+  'birthDate' : IDL.Text,
+  'birthTime' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'fullName' : IDL.Text,
+  'email' : IDL.Text,
+  'preferredDateTime' : IDL.Text,
+  'birthLocation' : IDL.Text,
+  'specialQuestions' : IDL.Text,
+  'phone' : IDL.Text,
+  'consultationMode' : IDL.Text,
+});
 export const CalculatorQAPair = IDL.Record({
   'question' : IDL.Text,
   'answer' : IDL.Text,
@@ -654,6 +677,11 @@ export const idlService = IDL.Service({
   'addJainKatha' : IDL.Func([JainKatha], [], []),
   'addJainPathshalaEntry' : IDL.Func([JainPathshalaEntry], [], []),
   'addMediaPlayerItem' : IDL.Func([MediaPlayerItem], [], []),
+  'addNewsletterSubscription' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text), IDL.Text],
+      [IDL.Variant({ 'ok' : NewsletterSubscription, 'err' : IDL.Text })],
+      [],
+    ),
   'addPathshalaLesson' : IDL.Func([PathshalaLesson], [], []),
   'addSuktam' : IDL.Func([SuktamEntry], [], []),
   'addUserPrasadDeliveryRequest' : IDL.Func([PrasadDeliveryRequest], [], []),
@@ -661,6 +689,22 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createAstrologerProfile' : IDL.Func([AstrologerProfile], [], []),
   'createBlogArticle' : IDL.Func([BlogArticle], [], []),
+  'createBookingRequest' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+      ],
+      [IDL.Text],
+      [],
+    ),
   'createBusinessNameRecord' : IDL.Func([BusinessNameRecord], [], []),
   'createChadhavaOffering' : IDL.Func([ChadhavaOffering], [], []),
   'createCheckoutSession' : IDL.Func(
@@ -767,6 +811,11 @@ export const idlService = IDL.Service({
   'deleteJainKatha' : IDL.Func([IDL.Text], [], []),
   'deleteJainPathshalaEntry' : IDL.Func([IDL.Text], [], []),
   'deleteKundaliMatch' : IDL.Func([IDL.Text], [IDL.Bool], []),
+  'deleteNewsletterSubscription' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
   'deletePalmPhotoReading' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deletePalmistryContent' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deletePathshalaLesson' : IDL.Func([IDL.Text], [], []),
@@ -783,6 +832,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getAllBlogArticles' : IDL.Func([], [IDL.Vec(BlogArticle)], ['query']),
+  'getAllBookingRequests' : IDL.Func(
+      [],
+      [IDL.Vec(ConsultationBookingRequest)],
+      ['query'],
+    ),
   'getAllCalculatorFAQs' : IDL.Func([], [IDL.Vec(CalculatorFAQ)], ['query']),
   'getAllConsultationAppointments' : IDL.Func(
       [],
@@ -841,6 +895,11 @@ export const idlService = IDL.Service({
   'getBlogArticleBySlug' : IDL.Func(
       [IDL.Text],
       [IDL.Opt(BlogArticle)],
+      ['query'],
+    ),
+  'getBookingRequest' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(ConsultationBookingRequest)],
       ['query'],
     ),
   'getCalculatorFAQ' : IDL.Func(
@@ -914,6 +973,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getMyVastuRoomChecks' : IDL.Func([], [IDL.Vec(VastuRoomCheck)], ['query']),
+  'getNewsletterSubscriptions' : IDL.Func(
+      [],
+      [IDL.Vec(NewsletterSubscription)],
+      ['query'],
+    ),
   'getPalmPhotoReading' : IDL.Func(
       [IDL.Text],
       [IDL.Opt(PalmPhotoReading)],
@@ -1051,8 +1115,14 @@ export const idlService = IDL.Service({
       [TransformationOutput],
       ['query'],
     ),
+  'unsubscribeNewsletter' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
   'updateBhajan' : IDL.Func([BhajanEntry], [], []),
   'updateBlogArticle' : IDL.Func([BlogArticle], [], []),
+  'updateBookingRequestStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'updateCalculatorFAQ' : IDL.Func([IDL.Text, CalculatorFAQ], [], []),
   'updateCombinedVedicReading' : IDL.Func(
       [
@@ -1267,6 +1337,14 @@ export const idlFactory = ({ IDL }) => {
     'audioUrl' : IDL.Text,
     'deity' : IDL.Text,
     'faith' : IDL.Text,
+  });
+  const NewsletterSubscription = IDL.Record({
+    'id' : IDL.Text,
+    'subscribedAt' : IDL.Int,
+    'source' : IDL.Text,
+    'name' : IDL.Opt(IDL.Text),
+    'isActive' : IDL.Bool,
+    'email' : IDL.Text,
   });
   const PathshalaLesson = IDL.Record({
     'id' : IDL.Text,
@@ -1612,6 +1690,21 @@ export const idlFactory = ({ IDL }) => {
     'slides' : IDL.Vec(StorySlide),
     'category' : IDL.Text,
   });
+  const ConsultationBookingRequest = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'topic' : IDL.Text,
+    'birthDate' : IDL.Text,
+    'birthTime' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'fullName' : IDL.Text,
+    'email' : IDL.Text,
+    'preferredDateTime' : IDL.Text,
+    'birthLocation' : IDL.Text,
+    'specialQuestions' : IDL.Text,
+    'phone' : IDL.Text,
+    'consultationMode' : IDL.Text,
+  });
   const CalculatorQAPair = IDL.Record({
     'question' : IDL.Text,
     'answer' : IDL.Text,
@@ -1823,6 +1916,11 @@ export const idlFactory = ({ IDL }) => {
     'addJainKatha' : IDL.Func([JainKatha], [], []),
     'addJainPathshalaEntry' : IDL.Func([JainPathshalaEntry], [], []),
     'addMediaPlayerItem' : IDL.Func([MediaPlayerItem], [], []),
+    'addNewsletterSubscription' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text), IDL.Text],
+        [IDL.Variant({ 'ok' : NewsletterSubscription, 'err' : IDL.Text })],
+        [],
+      ),
     'addPathshalaLesson' : IDL.Func([PathshalaLesson], [], []),
     'addSuktam' : IDL.Func([SuktamEntry], [], []),
     'addUserPrasadDeliveryRequest' : IDL.Func([PrasadDeliveryRequest], [], []),
@@ -1830,6 +1928,22 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createAstrologerProfile' : IDL.Func([AstrologerProfile], [], []),
     'createBlogArticle' : IDL.Func([BlogArticle], [], []),
+    'createBookingRequest' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+        ],
+        [IDL.Text],
+        [],
+      ),
     'createBusinessNameRecord' : IDL.Func([BusinessNameRecord], [], []),
     'createChadhavaOffering' : IDL.Func([ChadhavaOffering], [], []),
     'createCheckoutSession' : IDL.Func(
@@ -1940,6 +2054,11 @@ export const idlFactory = ({ IDL }) => {
     'deleteJainKatha' : IDL.Func([IDL.Text], [], []),
     'deleteJainPathshalaEntry' : IDL.Func([IDL.Text], [], []),
     'deleteKundaliMatch' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'deleteNewsletterSubscription' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
     'deletePalmPhotoReading' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deletePalmistryContent' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deletePathshalaLesson' : IDL.Func([IDL.Text], [], []),
@@ -1956,6 +2075,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getAllBlogArticles' : IDL.Func([], [IDL.Vec(BlogArticle)], ['query']),
+    'getAllBookingRequests' : IDL.Func(
+        [],
+        [IDL.Vec(ConsultationBookingRequest)],
+        ['query'],
+      ),
     'getAllCalculatorFAQs' : IDL.Func([], [IDL.Vec(CalculatorFAQ)], ['query']),
     'getAllConsultationAppointments' : IDL.Func(
         [],
@@ -2014,6 +2138,11 @@ export const idlFactory = ({ IDL }) => {
     'getBlogArticleBySlug' : IDL.Func(
         [IDL.Text],
         [IDL.Opt(BlogArticle)],
+        ['query'],
+      ),
+    'getBookingRequest' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(ConsultationBookingRequest)],
         ['query'],
       ),
     'getCalculatorFAQ' : IDL.Func(
@@ -2091,6 +2220,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getMyVastuRoomChecks' : IDL.Func([], [IDL.Vec(VastuRoomCheck)], ['query']),
+    'getNewsletterSubscriptions' : IDL.Func(
+        [],
+        [IDL.Vec(NewsletterSubscription)],
+        ['query'],
+      ),
     'getPalmPhotoReading' : IDL.Func(
         [IDL.Text],
         [IDL.Opt(PalmPhotoReading)],
@@ -2248,8 +2382,14 @@ export const idlFactory = ({ IDL }) => {
         [TransformationOutput],
         ['query'],
       ),
+    'unsubscribeNewsletter' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
     'updateBhajan' : IDL.Func([BhajanEntry], [], []),
     'updateBlogArticle' : IDL.Func([BlogArticle], [], []),
+    'updateBookingRequestStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'updateCalculatorFAQ' : IDL.Func([IDL.Text, CalculatorFAQ], [], []),
     'updateCombinedVedicReading' : IDL.Func(
         [

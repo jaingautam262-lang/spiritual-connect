@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/stores/cartStore";
+import { useNavigate } from "@tanstack/react-router";
 import {
   BookOpen,
   CheckCircle2,
@@ -390,6 +391,7 @@ export default function YellowSapphireStonePage() {
   );
   const [activeTab, setActiveTab] = useState("about");
   const tabsRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Cycle highlights
   useEffect(() => {
@@ -859,6 +861,15 @@ export default function YellowSapphireStonePage() {
               data-ocid="yellow-sapphire.consultation.cta_button"
               className="font-semibold shrink-0"
               style={{ background: "oklch(0.62 0.18 48)", color: "white" }}
+              onClick={() =>
+                navigate({
+                  to: "/book-consultation",
+                  search: {
+                    topic:
+                      "I want to know if Yellow Sapphire (Pukhraj) is right for my birth chart",
+                  },
+                })
+              }
             >
               Consult an Astrologer
             </Button>

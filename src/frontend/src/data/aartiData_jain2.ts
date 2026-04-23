@@ -1239,6 +1239,214 @@ Gommateshvara of Shravanabelagola fills the mind with heroic courage.`,
 Pālīṭāṇā Giranāra mein, sādhaka pāte nirvāṇa.`,
   },
   {
+    id: "jain-chandraprabhu-jinvani-aarti",
+    titleEn: "Chandraprabhu Jinvani Aarti",
+    titleHi: "चन्द्रप्रभु जिनवाणी आरती",
+    deity: "Chandraprabhu",
+    faith: "Jain",
+    description:
+      "जिनवाणी शैली में चन्द्रप्रभु की आरती — आठवें तीर्थंकर, जो चंद्रमा के समान शीतल और पाप-हारक हैं।",
+    lyricsHi: `चन्द्रप्रभु जिनवाणी, सुन लो हमारी बानी।
+आठवें तीर्थंकर प्रभु, जग के रखवाले।
+चन्द्र सम शीतल काया, पाप हरण वाले।
+जय जय चन्द्रप्रभु स्वामी, जय जय जग के ज्ञानी।
+चन्द्रप्रभु जिनवाणी, सुन लो हमारी बानी।।
+शुक्ल ध्यान में लीन, जगत के हितकारी।
+मोक्ष मार्ग दिखलाया, भव भय से तारी।
+जय जय चन्द्रप्रभु स्वामी, जय जय जग के ज्ञानी।।`,
+    lyricsEn: `Chandraprabhu Jinvani, hear our prayer.
+O eighth Tirthankar Lord, protector of the world.
+Your form is cool like the moon, destroyer of sins.
+Glory, glory to Chandraprabhu Swami, glory to the wise one of the world.
+Chandraprabhu Jinvani, hear our prayer.
+Absorbed in pure meditation, benefactor of the universe.
+You showed the path of liberation, and rescued us from the fear of worldly existence.
+Glory, glory to Chandraprabhu Swami, glory to the wise one of the world.`,
+    originalTranslit: `Chandraprabhu Jinavānī, suna lo hamārī bānī.
+Āthaven Tīrthankaraprabhū, jaga ke rakhavāle.`,
+  },
+  {
+    id: "jain-aadinath-jay-jay-aarti",
+    titleEn: "Jay Jay Aarti Aadi Jinada",
+    titleHi: "जय जय आरती आदि जिनदा",
+    deity: "Aadinath (Rishabhnath)",
+    faith: "Jain",
+    description:
+      "प्रथम तीर्थंकर आदिनाथ / ऋषभदेव की 'जय जय आरती आदि जिनदा' शैली में भक्ति-गीत।",
+    lyricsHi: `जय जय आरती आदि जिनदा, जय जय आरती।
+आदि नाथ प्रभु नाम तेरो, आदि जिनेश्वर देव।
+ऋषभ देव प्रभु तुम जग स्वामी, करूँ तुम्हारी सेव।
+जय जय आरती आदि जिनदा, जय जय आरती।।
+कैलाश पर्वत पर बिराजो, शिव सुख के दातार।
+मुक्ति पंथ तुमने दिखाया, भव सागर से पार।
+जय जय आरती आदि जिनदा, जय जय आरती।।`,
+    lyricsEn: `Glory, glory aarti to the first Jina, glory glory aarti.
+O Lord Adinath, your name is first, O first Jineshvara Deva.
+O Rishabhdeva Lord, you are the master of the world, I serve at your feet.
+Glory, glory aarti to the first Jina, glory glory aarti.
+You reside on Mount Kailash, giver of divine bliss.
+You showed the path of liberation, crossing over the ocean of existence.
+Glory, glory aarti to the first Jina, glory glory aarti.`,
+    originalTranslit: `Jay jay āratī ādi jinada, jay jay āratī.
+Ādi Nātha Prabhu nāma tero, ādi Jineshvara Deva.`,
+  },
+  {
+    id: "jain-mahavir-jay-prabhu-aarti",
+    titleEn: "Jay Mahavir Prabhu Aarti",
+    titleHi: "जय महावीर प्रभू आरती",
+    deity: "Mahavir Swami",
+    faith: "Jain",
+    description:
+      "चौबीसवें तीर्थंकर महावीर स्वामी की 'जय महावीर प्रभू' भजन-शैली में आरती।",
+    lyricsHi: `जय महावीर प्रभू, जय महावीर।
+चौबीसवें तीर्थंकर स्वामी, जग के हो रणधीर।
+वर्धमान से महावीर बने, जिन केवल ज्ञान धारी।
+मोक्ष लोक में विराजे, जग के हो हितकारी।
+जय महावीर प्रभू, जय महावीर।।
+अहिंसा का पाठ पढ़ाया, सत्य का मार्ग दिखाया।
+पंच महाव्रत की शिक्षा, जग को जीवन दिखाया।
+जय महावीर प्रभू, जय महावीर।।`,
+    lyricsEn: `Glory to Mahavir Prabhu, glory to Mahavir.
+O twenty-fourth Tirthankar Swami, the brave hero of the world.
+From Vardhamana you became Mahavira, the Jina who holds omniscient knowledge.
+Residing in the world of liberation, you are the benefactor of the world.
+Glory to Mahavir Prabhu, glory to Mahavir.
+You taught the lesson of non-violence, showed the path of truth.
+The teaching of the five great vows showed the world the way to live.
+Glory to Mahavir Prabhu, glory to Mahavir.`,
+    originalTranslit: `Jay Mahāvīra Prabhu, jay Mahāvīra.
+Chaubisvem Tīrthankarasvāmī, jaga ke ho raṇadhīra.`,
+  },
+  {
+    id: "jain-sanmati-deva-aarti",
+    titleEn: "Jay Sanmati Deva Aarti",
+    titleHi: "जय सन्मति देवा आरती",
+    deity: "Sumatinath",
+    faith: "Jain",
+    description:
+      "पंचम तीर्थंकर सुमतिनाथ की 'जय सन्मति देवा' शैली में आरती — जो सम्यक् बुद्धि प्रदान करते हैं।",
+    lyricsHi: `जय सन्मति देवा, जय सन्मति देवा।
+पंचम तीर्थंकर स्वामी, सुमतिनाथ भगवान।
+सन्मति बुद्धि दो प्रभु, हम सबको वरदान।
+जय सन्मति देवा, जय सन्मति देवा।।
+हंस लांछन धारी प्रभु, चंपा नगरी वासी।
+ज्ञान ध्यान में लीन तुम, मोक्ष पंथ के प्रकाशी।
+जय सन्मति देवा, जय सन्मति देवा।।`,
+    lyricsEn: `Glory to Sanmati Deva, glory to Sanmati Deva.
+O fifth Tirthankar Swami, Lord Sumatinath.
+O Lord, grant us all the boon of right wisdom and intellect.
+Glory to Sanmati Deva, glory to Sanmati Deva.
+O Lord bearing the swan emblem, resident of Champa city.
+Absorbed in knowledge and meditation, you are the illuminator of the path of liberation.
+Glory to Sanmati Deva, glory to Sanmati Deva.`,
+    originalTranslit: `Jay sanmati devā, jay sanmati devā.
+Pancama Tīrthankarasvāmī, Sumatinātha Bhagavāna.`,
+  },
+  {
+    id: "jain-vardhamana-aarti",
+    titleEn: "Karun Aarti Vardhamana Ki",
+    titleHi: "करूँ आरती वर्धमान की",
+    deity: "Vardhamana (Mahavir)",
+    faith: "Jain",
+    description:
+      "महावीर स्वामी की वर्धमान नाम से 'करूँ आरती वर्धमान की' — उनके जन्म, तपस्या और मोक्ष की गाथा।",
+    lyricsHi: `करूँ आरती वर्धमान की, महावीर भगवान की।
+वैशाली कुण्डग्राम जन्मे, क्षत्रिय कुल के लाल।
+तीस वर्ष के बाद संयम धारे, किया भव का जंजाल।
+करूँ आरती वर्धमान की, महावीर भगवान की।।
+बारह वर्ष की तपस्या करके, केवलज्ञान पाया।
+पावापुरी से मोक्ष गए, जग को राह दिखाया।
+करूँ आरती वर्धमान की, महावीर भगवान की।।`,
+    lyricsEn: `I perform the aarti of Vardhamana, of Mahavir Bhagavan.
+Born in Vaishali Kundagram, the jewel of the Kshatriya lineage.
+After thirty years he took on restraint, he severed the web of worldly life.
+I perform the aarti of Vardhamana, of Mahavir Bhagavan.
+After twelve years of austerity, he attained omniscient knowledge.
+From Pavapuri he attained liberation and showed the world the way.
+I perform the aarti of Vardhamana, of Mahavir Bhagavan.`,
+    originalTranslit: `Karum āratī Vardhamāna kī, Mahāvīra Bhagavāna kī.
+Vaishālī Kuṇḍagrāma janme, kṣatriya kula ke lāla.`,
+  },
+  {
+    id: "jain-mahavir-chandanpur-aarti",
+    titleEn: "Mahavir Swami Chandanpur Aarti",
+    titleHi: "महावीर स्वामी चांदनपुर आरती",
+    deity: "Mahavir Swami (Chandanpur)",
+    faith: "Jain",
+    description:
+      "चांदनपुर के महावीर स्वामी की विशेष आरती — चांदनपुर का पावन जैन तीर्थ स्थल।",
+    lyricsHi: `जय महावीर स्वामी चांदनपुर वाले, दर्शन दो दर्शन दो।
+चांदनपुर की धरती पावन, मंदिर है यह महान।
+महावीर प्रभु के दर्शन से, होता मन कल्याण।
+जय महावीर स्वामी चांदनपुर वाले, दर्शन दो दर्शन दो।।
+भक्तजनों की सुनो पुकारा, कष्ट हरो भगवान।
+जन्म जन्म के पाप मिटाओ, दो मुक्ति का ज्ञान।
+जय महावीर स्वामी चांदनपुर वाले, दर्शन दो दर्शन दो।।`,
+    lyricsEn: `Glory to Mahavir Swami of Chandanpur, grant us your darshan.
+The land of Chandanpur is holy, this temple is great.
+By having darshan of Mahavir Prabhu, the mind attains well-being.
+Glory to Mahavir Swami of Chandanpur, grant us your darshan.
+Hear the cry of your devotees, O God, remove all hardships.
+Erase the sins of birth after birth, give us the knowledge of liberation.
+Glory to Mahavir Swami of Chandanpur, grant us your darshan.`,
+    originalTranslit: `Jay Mahāvīra Svāmī Cāndanapura vāle, darshana do darshana do.
+Cāndanapura kī dharatī pāvana, mandira hai yaha mahāna.`,
+  },
+  {
+    id: "jain-munisuvrata-jinvani-aarti",
+    titleEn: "Munisuvratnath Jinvani Aarti",
+    titleHi: "मुनिसुव्रतनाथ जिनवाणी",
+    deity: "Munisuvratnath",
+    faith: "Jain",
+    description:
+      "बीसवें तीर्थंकर मुनिसुव्रतनाथ की जिनवाणी — उनकी अहिंसा-शिक्षा और निर्वाण की गाथा।",
+    lyricsHi: `मुनिसुव्रत जिनवाणी, जग की कल्याणी।
+बीसवें तीर्थंकर प्रभु, शरण में लेलो ज्ञानी।
+राजगृह नगरी जन्मे, कछुआ है लांछन।
+मुनिसुव्रतनाथ प्रभु का, करो भक्ति वंदन।
+मुनिसुव्रत जिनवाणी, जग की कल्याणी।।
+अहिंसा परमो धर्म की, दी शिक्षा महान।
+सम्मेद शिखर से मुक्त हुए, पाया निर्वाण।
+मुनिसुव्रत जिनवाणी, जग की कल्याणी।।`,
+    lyricsEn: `Munisuvrata Jinvani, the benefactor of the world.
+O twentieth Tirthankar Lord, accept us in your shelter, O wise one.
+Born in Rajgriha city, the tortoise is the emblem.
+Offer devotion and reverence to Lord Munisuvratnath.
+Munisuvrata Jinvani, the benefactor of the world.
+You gave the great teaching of non-violence as the supreme dharma.
+You were liberated from Sammed Shikhar and attained nirvana.
+Munisuvrata Jinvani, the benefactor of the world.`,
+    originalTranslit: `Munisuvrata Jinavānī, jaga kī kalyānī.
+Bīsvem Tīrthankaraprabhū, sharaṇa mem lelo jñānī.`,
+  },
+  {
+    id: "jain-paras-prabhu-thari-aarti",
+    titleEn: "Paras Prabhu Thari Aarti (Rajasthani)",
+    titleHi: "पारस प्रभु थारी आरती",
+    deity: "Parshvanath (Pars Prabhu)",
+    faith: "Jain",
+    description:
+      "राजस्थानी भाषा में पार्श्वनाथ प्रभु की 'पारस प्रभु थारी आरती' — पारस की परस से पापी भी पावन बनता है।",
+    lyricsHi: `पारस प्रभु थारी आरती, करता थाँ भगवान।
+तेईसवाँ तीर्थंकर तू, जग का है कल्याण।
+पारस की परस से, लोह भी सोना बने।
+पारसनाथ के दर्शन से, पापी भी पावन बने।
+पारस प्रभु थारी आरती, करता थाँ भगवान।।
+सम्मेद शिखर थारी तपोभूमि, पावन धरती।
+पारस प्रभु रे चरणाँ में, भक्ति भाव से आरती।
+पारस प्रभु थारी आरती, करता थाँ भगवान।।`,
+    lyricsEn: `O Paras Prabhu, I perform your aarti, O God.
+You are the twenty-third Tirthankar, the well-wisher of the world.
+By the touch of the philosopher's stone, even iron becomes gold.
+By the darshan of Parsvanath, even the sinner becomes pure.
+O Paras Prabhu, I perform your aarti, O God.
+Sammed Shikhar is your austerity ground, the holy land.
+At the feet of Paras Prabhu, this aarti with devotion.
+O Paras Prabhu, I perform your aarti, O God.`,
+    originalTranslit: `Pāras Prabhu thārī āratī, karatā thāṃ Bhagavāna.
+Teīsvāṃ Tīrthankaratū, jaga kā hai kalyāṇa.`,
+  },
+  {
     id: "jain-siddha-chakra-aarti",
     titleEn: "Siddha Chakra Aarti",
     titleHi: "सिद्ध चक्र आरती",

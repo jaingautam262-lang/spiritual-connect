@@ -29,16 +29,59 @@ const navLinks = [
   { to: "/energized-products", label: "🌰 Energized Products" },
 ];
 
+const jainDepartmentSection = {
+  title: "🛕 जैन विभाग",
+  isJain: true,
+  groups: [
+    {
+      heading: "📚 ज्ञान",
+      links: [
+        { to: "/jain-pujan", label: "जैन पूजन" },
+        { to: "/tirthankars", label: "24 तीर्थंकर" },
+        { to: "/jain-encyclopedia", label: "जैन विश्वकोश" },
+        { to: "/jain-knowledge-base", label: "जैन ज्ञान आधार" },
+        { to: "/jainipedia", label: "Jainipedia" },
+        { to: "/jain-books", label: "जैन ग्रन्थ भंडार" },
+        { to: "/tattvartha-sutra", label: "तत्त्वार्थसूत्र" },
+        { to: "/jain-content-index", label: "जैन सामग्री सूचकांक" },
+        { to: "/jain-vrat-144-list", label: "144 जैन व्रत सूची" },
+      ],
+    },
+    {
+      heading: "🙏 भक्ति",
+      links: [
+        { to: "/jain-vrat-kathas", label: "जैन व्रत कथाएँ" },
+        { to: "/padmavati-vrat-katha", label: "पद्मावती व्रत कथा" },
+        { to: "/jain-kathayen", label: "जैन कथाएँ" },
+        { to: "/jain-stories", label: "जैन कथा संग्रह" },
+        { to: "/jain-stotra-sangrah", label: "जैन स्तोत्र संग्रह" },
+        { to: "/jain-stuti-sangrah", label: "जैन स्तुति संग्रह" },
+        { to: "/jain-poojas-sangreh", label: "जैन पूजा संग्रह" },
+        { to: "/jain-stavan", label: "जैन स्तवन" },
+        { to: "/jain-meri-bhavna", label: "मेरी भावना" },
+        { to: "/jain-dev-shastra-guru-puja", label: "देव शास्त्र गुरु पूजा" },
+      ],
+    },
+    {
+      heading: "💬 विचार एवं उपदेश",
+      links: [{ to: "/jain-vichaar", label: "जैन विचार" }],
+    },
+    {
+      heading: "🧒 बाल विकास",
+      links: [
+        { to: "/jain-pathshala", label: "बाल विकास" },
+        { to: "/jain-bal-vikas", label: "जैन बाल विकास केंद्र" },
+        { to: "/jain-parv-calendar", label: "जैन धर्म पर्व कैलेंडर" },
+      ],
+    },
+  ],
+};
+
 const megaMenuSections = [
   {
     title: "🛕 जैन विभाग",
-    links: [
-      { to: "/jain-pujan", label: "जैन पूजन" },
-      { to: "/tirthankars", label: "24 तीर्थंकर" },
-      { to: "/jain-encyclopedia", label: "📚 जैन विश्वकोश" },
-      { to: "/jainipedia", label: "📖 Jainipedia" },
-      { to: "/jain-vrat-kathas", label: "🙏 जैन व्रत कथाएं" },
-    ],
+    links: [] as { to: string; label: string }[],
+    isJain: true as const,
   },
   {
     title: "🔮 ज्योतिष विभाग",
@@ -100,6 +143,8 @@ const megaMenuSections = [
       { to: "/puja-reports", label: "🗒️ Puja Reports" },
       { to: "/energized-products", label: "🌰 Energized Products" },
       { to: "/shop", label: "Shop" },
+      { to: "/yantra-shop", label: "🔯 यंत्र शॉप / Yantra Shop" },
+      { to: "/yantra-info", label: "📖 यंत्र जानकारी / Yantra Info" },
       { to: "/gemstones/emerald", label: "💚 Emerald (Panna) Stone" },
     ],
   },
@@ -166,9 +211,31 @@ const megaMenuSections = [
 const allMobileLinks = [
   ...navLinks,
   { to: "/chadhava", label: "🪔 Chadhava & Sacred Bhet" },
+  // Jain — Knowledge
   { to: "/jain-pujan", label: "🛕 जैन पूजन" },
   { to: "/tirthankars", label: "24 तीर्थंकर" },
   { to: "/jain-encyclopedia", label: "📚 जैन विश्वकोश" },
+  { to: "/jain-knowledge-base", label: "जैन ज्ञान आधार" },
+  { to: "/jainipedia", label: "Jainipedia" },
+  { to: "/jain-books", label: "जैन ग्रन्थ भंडार" },
+  { to: "/tattvartha-sutra", label: "तत्त्वार्थसूत्र" },
+  { to: "/jain-content-index", label: "जैन सामग्री सूचकांक" },
+  { to: "/jain-vrat-144-list", label: "📋 144 जैन व्रत सूची" },
+  // Jain — Bhakti
+  { to: "/jain-vrat-kathas", label: "🙏 जैन व्रत कथाएँ" },
+  { to: "/jain-kathayen", label: "जैन कथाएँ" },
+  { to: "/jain-stories", label: "जैन कथा संग्रह" },
+  { to: "/jain-stotra-sangrah", label: "जैन स्तोत्र संग्रह" },
+  { to: "/jain-stuti-sangrah", label: "जैन स्तुति संग्रह" },
+  { to: "/jain-poojas-sangreh", label: "जैन पूजा संग्रह" },
+  { to: "/jain-stavan", label: "जैन स्तवन" },
+  { to: "/jain-meri-bhavna", label: "मेरी भावना" },
+  { to: "/jain-dev-shastra-guru-puja", label: "देव शास्त्र गुरु पूजा" },
+  // Jain — Vichaar & Bal Vikas
+  { to: "/jain-vichaar", label: "जैन विचार" },
+  { to: "/jain-pathshala", label: "🏫 बाल विकास" },
+  { to: "/jain-bal-vikas", label: "जैन बाल विकास केंद्र" },
+  { to: "/jain-parv-calendar", label: "जैन धर्म पर्व कैलेंडर" },
   { to: "/horoscope", label: "🔮 राशिफल" },
   { to: "/horoscope-comparison", label: "🌐 Tri-System Comparison" },
   { to: "/auspicious-times", label: "🌟 शुभ मुहूर्त" },
@@ -192,7 +259,6 @@ const allMobileLinks = [
   { to: "/festival-calendar", label: "📅 Festival Calendar" },
   { to: "/vrat-katha", label: "व्रत कथा" },
   { to: "/sikh-kirtans", label: "🕌 Sikh Kirtans & Nitnem" },
-  { to: "/jain-vrat-kathas", label: "🙏 जैन व्रत कथाएं" },
   { to: "/holy-books-reader", label: "📖 Holy Books Reader" },
   { to: "/holy-books-overview", label: "Holy Books Overview" },
   { to: "/vedas-suktam", label: "🕉️ Vedas & Suktam" },
@@ -208,6 +274,8 @@ const allMobileLinks = [
   { to: "/puja-types", label: "📋 Puja Types" },
   { to: "/puja-reports", label: "🗒️ Puja Reports" },
   { to: "/shop", label: "Shop" },
+  { to: "/yantra-shop", label: "🔯 यंत्र शॉप / Yantra Shop" },
+  { to: "/yantra-info", label: "📖 यंत्र जानकारी / Yantra Info" },
   { to: "/gemstones/emerald", label: "💚 Emerald (Panna) Stone" },
   { to: "/energized-products", label: "🌰 Energized Products" },
   { to: "/numerology", label: "🔢 Numerology" },
@@ -339,11 +407,16 @@ const footerSections = [
       { to: "/vastu", label: "Vastu Shastra" },
       { to: "/blog", label: "Spiritual Blog" },
       { to: "/calculator-index", label: "All Calculators" },
+      { to: "/newsletter", label: "📧 न्यूज़लेटर / Newsletter" },
     ],
   },
   {
     title: "Shop Products",
     links: [
+      { to: "/yantra-shop", label: "🔯 Puja Yantras" },
+      { to: "/yantra-shop", label: "🪬 Hanging Yantras" },
+      { to: "/yantra-shop", label: "🏺 Chowki Yantras" },
+      { to: "/yantra-info", label: "📖 Yantra Info" },
       { to: "/shop?category=evil-eye", label: "Evil Eye" },
       { to: "/shop?category=rudraksha", label: "Rudraksha" },
       { to: "/shop?category=karungali", label: "Karungali" },
@@ -493,13 +566,53 @@ export default function Layout({ children }: LayoutProps) {
                     style={{
                       background: "oklch(0.20 0.08 22)",
                       borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                      maxHeight: "80vh",
-                      width: "640px",
+                      maxHeight: "82vh",
+                      width: "760px",
                     }}
                     data-ocid="nav.dropdown_menu"
                   >
+                    {/* Jain Department — full-width grouped section */}
+                    <div
+                      className="p-4 border-b"
+                      style={{ borderColor: "oklch(0.78 0.14 75 / 0.15)" }}
+                    >
+                      <p
+                        className="text-xs font-bold uppercase tracking-wider mb-3"
+                        style={{ color: "oklch(0.78 0.14 75)" }}
+                      >
+                        {jainDepartmentSection.title}
+                      </p>
+                      <div className="grid grid-cols-4 gap-4">
+                        {jainDepartmentSection.groups.map((group) => (
+                          <div key={group.heading}>
+                            <p
+                              className="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
+                              style={{ color: "oklch(0.68 0.12 65)" }}
+                            >
+                              {group.heading}
+                            </p>
+                            <div className="space-y-0.5">
+                              {group.links.map((link) => (
+                                <Link
+                                  key={link.to + link.label}
+                                  to={link.to}
+                                  onClick={() => setMegaMenuOpen(false)}
+                                  className="flex items-center px-2 py-1 text-xs rounded-lg transition-colors hover:bg-white/10"
+                                  style={{ color: "oklch(0.88 0.06 75)" }}
+                                  data-ocid="nav.link"
+                                >
+                                  {link.label}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Other sections — 2-column grid */}
                     <div className="grid grid-cols-2 gap-0">
-                      {megaMenuSections.map((section, sIdx) => (
+                      {megaMenuSections.slice(1).map((section, sIdx) => (
                         <div
                           key={section.title}
                           className="p-4 border-b"

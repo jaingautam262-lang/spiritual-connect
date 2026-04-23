@@ -27,6 +27,23 @@ import {
   type BhajanRich,
   RICH_BHAJANS,
 } from "../data/bhajanData";
+import { JAIN_BHAJANS, type JainBhajanRich } from "../data/bhajanData_jain";
+
+type AnyBhajan = BhajanRich | JainBhajanRich;
+
+const ALL_BHAJANS: AnyBhajan[] = [...RICH_BHAJANS, ...JAIN_BHAJANS];
+
+const JAIN_CATEGORIES = [
+  { id: "jain", label: "Jain", labelHi: "जैन", emoji: "🕊️" },
+  {
+    id: "jain-chalisa",
+    label: "Jain Chalisa",
+    labelHi: "जैन चालीसा",
+    emoji: "📿",
+  },
+] as const;
+
+const ALL_CATEGORIES = [...BHAJAN_CATEGORIES, ...JAIN_CATEGORIES];
 
 // ── Speech Recognition helper ─────────────────────────────────────────────────
 type SpeechRecognitionInstance = {
@@ -59,6 +76,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   devi: "bg-pink-100 text-pink-800 border-pink-200",
   ganesh: "bg-yellow-100 text-yellow-800 border-yellow-200",
   satsang: "bg-teal-100 text-teal-800 border-teal-200",
+  jain: "bg-amber-100 text-amber-800 border-amber-200",
+  "jain-chalisa": "bg-orange-100 text-orange-900 border-orange-300",
 };
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -69,6 +88,8 @@ const CATEGORY_EMOJI: Record<string, string> = {
   devi: "🌸",
   ganesh: "🐘",
   satsang: "🙏",
+  jain: "🕊️",
+  "jain-chalisa": "📿",
 };
 
 const PAGE_SIZE = 12;
@@ -78,8 +99,8 @@ function FeaturedCarousel({
   featured,
   onSelect,
 }: {
-  featured: BhajanRich[];
-  onSelect: (b: BhajanRich) => void;
+  featured: AnyBhajan[];
+  onSelect: (b: AnyBhajan) => void;
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
 
@@ -119,10 +140,10 @@ function FeaturedCarousel({
             <p className="text-base text-muted-foreground mb-3">{b.titleEn}</p>
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${CATEGORY_COLORS[b.category]}`}
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${CATEGORY_COLORS[b.category] ?? ""}`}
               >
-                {CATEGORY_EMOJI[b.category]}{" "}
-                {BHAJAN_CATEGORIES.find((c) => c.id === b.category)?.label}
+                {CATEGORY_EMOJI[b.category] ?? "🕉️"}{" "}
+                {ALL_CATEGORIES.find((c) => c.id === b.category)?.label}
               </span>
               <span className="text-xs text-muted-foreground">
                 🎵 {b.artist}
@@ -185,7 +206,7 @@ function FeaturedCarousel({
 function LyricsPanel({
   bhajan,
   onClose,
-}: { bhajan: BhajanRich; onClose: () => void }) {
+}: { bhajan: AnyBhajan; onClose: () => void }) {
   const [tab, setTab] = useState<"hindi" | "transliteration" | "english">(
     "hindi",
   );
@@ -204,10 +225,10 @@ function LyricsPanel({
             </p>
           </div>
           <span
-            className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${CATEGORY_COLORS[bhajan.category]}`}
+            className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${CATEGORY_COLORS[bhajan.category] ?? ""}`}
           >
-            {CATEGORY_EMOJI[bhajan.category]}{" "}
-            {BHAJAN_CATEGORIES.find((c) => c.id === bhajan.category)?.label}
+            {CATEGORY_EMOJI[bhajan.category] ?? "🕉️"}{" "}
+            {ALL_CATEGORIES.find((c) => c.id === bhajan.category)?.label}
           </span>
           <button
             type="button"
@@ -283,16 +304,14 @@ export default function BhajanLibrary() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [isListening, setIsListening] = useState(false);
-  const [currentBhajan, setCurrentBhajan] = useState<BhajanRich>(
-    RICH_BHAJANS[0],
-  );
+  const [currentBhajan, setCurrentBhajan] = useState<AnyBhajan>(ALL_BHAJANS[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
   const [progress, setProgress] = useState(0);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [playerTab, setPlayerTab] = useState<"playlist" | "lyrics">("playlist");
-  const [detailBhajan, setDetailBhajan] = useState<BhajanRich | null>(null);
+  const [detailBhajan, setDetailBhajan] = useState<AnyBhajan | null>(null);
   const [page, setPage] = useState(1);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -301,7 +320,7 @@ export default function BhajanLibrary() {
   const filterKeyRef = useRef(`${search}|${activeCategory}`);
 
   // ── Filtering ──────────────────────────────────────────────────────────────
-  const filtered = RICH_BHAJANS.filter((b) => {
+  const filtered = ALL_BHAJANS.filter((b) => {
     const matchCat = activeCategory === "all" || b.category === activeCategory;
     const q = search.toLowerCase();
     const matchSearch =
@@ -313,7 +332,7 @@ export default function BhajanLibrary() {
     return matchCat && matchSearch;
   });
 
-  const featured = RICH_BHAJANS.filter((b) => b.isFeatured);
+  const featured = ALL_BHAJANS.filter((b) => b.isFeatured);
 
   // ── Pagination ─────────────────────────────────────────────────────────────
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -378,7 +397,7 @@ export default function BhajanLibrary() {
     );
   };
 
-  const handleSelectTrack = (b: BhajanRich) => {
+  const handleSelectTrack = (b: AnyBhajan) => {
     setCurrentBhajan(b);
     setProgress(0);
     setIsPlaying(true);
@@ -446,10 +465,10 @@ export default function BhajanLibrary() {
           </p>
           <div className="flex gap-3 mt-3 text-xs text-white/70">
             <span className="flex items-center gap-1">
-              <Music className="w-3 h-3" /> {RICH_BHAJANS.length}+ Bhajans
+              <Music className="w-3 h-3" /> {ALL_BHAJANS.length}+ Bhajans
             </span>
             <span>•</span>
-            <span>7 Categories</span>
+            <span>9 Categories</span>
             <span>•</span>
             <span>Hindi + English</span>
           </div>
@@ -504,7 +523,7 @@ export default function BhajanLibrary() {
           className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none"
           data-ocid="category-tabs"
         >
-          {BHAJAN_CATEGORIES.map((cat) => (
+          {ALL_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               type="button"
@@ -535,7 +554,7 @@ export default function BhajanLibrary() {
                   </div>
                   <p className="text-xs text-amber-700 font-semibold tracking-wide">
                     {
-                      BHAJAN_CATEGORIES.find(
+                      ALL_CATEGORIES.find(
                         (c) => c.id === currentBhajan.category,
                       )?.label
                     }
@@ -719,7 +738,7 @@ export default function BhajanLibrary() {
                 <span>
                   {activeCategory === "all"
                     ? "सभी भजन"
-                    : BHAJAN_CATEGORIES.find((c) => c.id === activeCategory)
+                    : ALL_CATEGORIES.find((c) => c.id === activeCategory)
                         ?.labelHi}
                 </span>
                 <span className="text-sm text-muted-foreground font-normal">
@@ -769,7 +788,7 @@ export default function BhajanLibrary() {
                       {isActive && isPlaying ? (
                         <span className="animate-pulse">▶</span>
                       ) : (
-                        CATEGORY_EMOJI[b.category]
+                        (CATEGORY_EMOJI[b.category] ?? "🕉️")
                       )}
                     </div>
 
@@ -788,12 +807,9 @@ export default function BhajanLibrary() {
                     {/* Right side actions */}
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <span
-                        className={`hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-medium border ${CATEGORY_COLORS[b.category]}`}
+                        className={`hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-medium border ${CATEGORY_COLORS[b.category] ?? ""}`}
                       >
-                        {
-                          BHAJAN_CATEGORIES.find((c) => c.id === b.category)
-                            ?.label
-                        }
+                        {ALL_CATEGORIES.find((c) => c.id === b.category)?.label}
                       </span>
                       {/* Lyrics button */}
                       <button

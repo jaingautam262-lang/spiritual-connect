@@ -12,6 +12,7 @@ import type {
   HolyBookEntry,
   KundaliMatch,
   KundaliMatchInput,
+  NewsletterSubscription,
   NumerologyRecord,
   Order,
   PalmistryContent,
@@ -195,6 +196,16 @@ interface BackendActor {
     id: string,
   ): Promise<CombinedVedicReadingRecord | null>;
   deleteCombinedVedicReading(id: string): Promise<boolean>;
+  addNewsletterSubscription(
+    email: string,
+    name: [] | [string],
+    source: string,
+  ): Promise<{ ok: NewsletterSubscription } | { err: string }>;
+  getNewsletterSubscriptions(): Promise<NewsletterSubscription[]>;
+  unsubscribeNewsletter(email: string): Promise<{ ok: null } | { err: string }>;
+  deleteNewsletterSubscription(
+    email: string,
+  ): Promise<{ ok: null } | { err: string }>;
 }
 
 // ─── Combined Vedic Reading type ─────────────────────────────────────────────
@@ -2054,5 +2065,58 @@ export function useDeleteVastuContent() {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["vastuContents"] }),
+  });
+}
+
+// ─── Newsletter ───────────────────────────────────────────────────────────────
+
+export function useAddNewsletterSubscription() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (args: {
+      email: string;
+      name?: string;
+      source: string;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      const nameOpt: [] | [string] = args.name ? [args.name] : [];
+      const result = await actor.addNewsletterSubscription(
+        args.email,
+        nameOpt,
+        args.source,
+      );
+      if ("err" in result) throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["newsletterSubscriptions"] }),
+  });
+}
+
+export function useUnsubscribeNewsletter() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (email: string) => {
+      if (!actor) throw new Error("Actor not available");
+      const result = await actor.unsubscribeNewsletter(email);
+      if ("err" in result) throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["newsletterSubscriptions"] }),
+  });
+}
+
+export function useGetNewsletterSubscriptions() {
+  const { actor, isFetching } = useBackendActor();
+  return useQuery<NewsletterSubscription[]>({
+    queryKey: ["newsletterSubscriptions"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getNewsletterSubscriptions();
+    },
+    enabled: !!actor && !isFetching,
   });
 }

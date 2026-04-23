@@ -10,7 +10,13 @@ import {
   Volume2,
 } from "lucide-react";
 import { useRef, useState } from "react";
+import { sikhKirtanNewBatch } from "../data/sikhKirtanData";
 import { type SikhKirtanEntry, sikhKirtansData } from "../data/sikhKirtansData";
+
+const allSikhKirtans: SikhKirtanEntry[] = [
+  ...sikhKirtansData,
+  ...sikhKirtanNewBatch,
+];
 
 type Section = "gurmukhi" | "roman" | "english";
 
@@ -230,8 +236,8 @@ function KirtanCard({ entry }: { entry: SikhKirtanEntry }) {
 }
 
 export default function SikhKirtans() {
-  const kirtans = sikhKirtansData.filter((e) => e.type === "kirtan");
-  const nitnem = sikhKirtansData.filter((e) => e.type === "nitnem");
+  const kirtans = allSikhKirtans.filter((e) => e.type === "kirtan");
+  const nitnem = allSikhKirtans.filter((e) => e.type === "nitnem");
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,15 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useParams } from "@tanstack/react-router";
-import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  ExternalLink,
+  Tag,
+  User,
+} from "lucide-react";
 import { useMemo, useState } from "react";
-import { type BlogArticle, blogArticles } from "../data/blog-data";
+import {
+  type BlogArticle as Article12,
+  BLOG_ARTICLES_12,
+} from "../data/blog-articles-12";
+import {
+  type BlogArticle as LegacyBlogArticle,
+  blogArticles,
+} from "../data/blog-data";
+import {
+  type BlogArticleNew,
+  NEW_CATEGORY_META,
+  type NewCategory,
+  blogArticlesNew,
+} from "../data/blog-data-new";
 import {
   useBlogArticleBySlug,
   usePublishedBlogArticles,
 } from "../hooks/useQueries";
 
-const CATEGORY_META: Record<
+// ─── Category metadata ────────────────────────────────────────────────────────
+
+const LEGACY_CATEGORY_META: Record<
   string,
   { emoji: string; label: string; labelHindi: string }
 > = {
@@ -36,11 +58,116 @@ const CATEGORY_META: Record<
   },
 };
 
+const NEW12_CATEGORY_META: Record<
+  string,
+  { emoji: string; label: string; labelHindi: string }
+> = {
+  gemstones: { emoji: "💎", label: "Gemstones", labelHindi: "रत्न" },
+  mantras: { emoji: "🪐", label: "Mantras", labelHindi: "मंत्र" },
+  astrology: { emoji: "⭐", label: "Astrology", labelHindi: "ज्योतिष" },
+  festivals: { emoji: "🎉", label: "Festivals", labelHindi: "त्योहार" },
+  rituals: { emoji: "🪔", label: "Rituals", labelHindi: "अनुष्ठान" },
+  numerology: { emoji: "🔢", label: "Numerology", labelHindi: "अंकशास्त्र" },
+};
+
+function getCategoryMeta(category: string): {
+  emoji: string;
+  label: string;
+  labelHindi: string;
+} {
+  return (
+    LEGACY_CATEGORY_META[category] ??
+    NEW12_CATEGORY_META[category] ??
+    (NEW_CATEGORY_META[category as NewCategory]
+      ? {
+          emoji: NEW_CATEGORY_META[category as NewCategory].emoji,
+          label: NEW_CATEGORY_META[category as NewCategory].nameEn,
+          labelHindi: NEW_CATEGORY_META[category as NewCategory].nameHi,
+        }
+      : { emoji: "📄", label: category, labelHindi: category })
+  );
+}
+
+// ─── Unified article type for display ────────────────────────────────────────
+
+interface UnifiedArticle {
+  id: string;
+  slug: string;
+  title: string;
+  titleHi?: string;
+  excerpt: string;
+  content: string;
+  contentHi?: string;
+  author: string;
+  publishDate: string;
+  category: string;
+  tags: string[];
+  readTime?: number;
+  featuredEmoji?: string;
+}
+
+function fromLegacy(a: LegacyBlogArticle): UnifiedArticle {
+  return {
+    id: a.id,
+    slug: a.slug,
+    title: a.title,
+    titleHi: a.titleHindi,
+    excerpt: a.excerpt,
+    content: a.content,
+    contentHi: a.contentHindi,
+    author: a.author,
+    publishDate: a.publishDate,
+    category: a.category,
+    tags: a.tags,
+  };
+}
+
+function fromNew(a: BlogArticleNew): UnifiedArticle {
+  return {
+    id: a.id,
+    slug: a.slug,
+    title: a.title,
+    titleHi: a.titleHi,
+    excerpt: a.excerpt,
+    content: a.content ?? "",
+    author: a.author,
+    publishDate: a.publishDate,
+    category: a.category,
+    tags: a.tags,
+  };
+}
+
+function fromNew12(a: Article12): UnifiedArticle {
+  return {
+    id: a.id,
+    slug: a.slug,
+    title: a.title,
+    excerpt: a.excerpt,
+    content: a.content,
+    author: a.author,
+    publishDate: a.publishDate,
+    category: a.category,
+    tags: a.tags,
+    readTime: a.readTime,
+    featuredEmoji: a.featuredEmoji,
+  };
+}
+
+// Build a combined pool of all static articles
+const ALL_STATIC: UnifiedArticle[] = [
+  ...blogArticles.map(fromLegacy),
+  ...blogArticlesNew.map(fromNew),
+  ...BLOG_ARTICLES_12.map(fromNew12),
+];
+
+// ─── Related card ─────────────────────────────────────────────────────────────
+
 function RelatedCard({
   article,
   lang,
-}: { article: BlogArticle; lang: "en" | "hi" }) {
-  const meta = CATEGORY_META[article.category];
+}: { article: UnifiedArticle; lang: "en" | "hi" }) {
+  const meta = getCategoryMeta(article.category);
+  const emoji = article.featuredEmoji ?? meta.emoji;
   return (
     <Link
       to="/blog/$slug"
@@ -56,14 +183,14 @@ function RelatedCard({
         className="h-14 w-14 shrink-0 rounded-lg flex items-center justify-center text-2xl"
         style={{ background: "oklch(0.68 0.18 48 / 0.15)" }}
       >
-        {meta?.emoji ?? "📖"}
+        {emoji}
       </div>
       <div className="min-w-0">
         <p
           className="text-sm font-semibold line-clamp-2 group-hover:text-amber-300 transition-colors"
           style={{ color: "oklch(0.85 0.06 75)" }}
         >
-          {lang === "hi" ? article.titleHindi : article.title}
+          {lang === "hi" && article.titleHi ? article.titleHi : article.title}
         </p>
         <p className="text-xs mt-1" style={{ color: "oklch(0.55 0.04 50)" }}>
           {article.author}
@@ -73,6 +200,8 @@ function RelatedCard({
   );
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function BlogDetail() {
   const { slug } = useParams({ from: "/blog/$slug" });
   const [lang, setLang] = useState<"en" | "hi">("en");
@@ -80,24 +209,31 @@ export default function BlogDetail() {
   const { data: backendArticle, isLoading } = useBlogArticleBySlug(slug);
   const { data: allBackendArticles } = usePublishedBlogArticles();
 
-  const article = useMemo<BlogArticle | null>(() => {
-    if (backendArticle) return backendArticle;
-    return blogArticles.find((a) => a.slug === slug) ?? null;
+  // Resolve the current article: backend → static pool
+  const article = useMemo<UnifiedArticle | null>(() => {
+    if (backendArticle) return fromLegacy(backendArticle);
+    return ALL_STATIC.find((a) => a.slug === slug) ?? null;
   }, [backendArticle, slug]);
 
-  const allArticles = useMemo<BlogArticle[]>(() => {
-    if (allBackendArticles && allBackendArticles.length > 0)
-      return allBackendArticles;
-    return blogArticles;
+  // Resolve the full article pool for related articles
+  const allArticles = useMemo<UnifiedArticle[]>(() => {
+    if (allBackendArticles && allBackendArticles.length > 0) {
+      const legacyMapped = allBackendArticles.map(fromLegacy);
+      const newArts = blogArticlesNew.map(fromNew);
+      const new12Arts = BLOG_ARTICLES_12.map(fromNew12);
+      return [...legacyMapped, ...newArts, ...new12Arts];
+    }
+    return ALL_STATIC;
   }, [allBackendArticles]);
 
-  const related = useMemo<BlogArticle[]>(() => {
+  const related = useMemo<UnifiedArticle[]>(() => {
     if (!article) return [];
     return allArticles
       .filter((a) => a.id !== article.id && a.category === article.category)
       .slice(0, 3);
   }, [article, allArticles]);
 
+  // ── Loading state ──
   if (isLoading) {
     return (
       <div
@@ -118,19 +254,27 @@ export default function BlogDetail() {
     );
   }
 
+  // ── Not found state ──
   if (!article) {
     return (
       <div
         className="min-h-screen flex flex-col items-center justify-center gap-4"
         style={{ background: "oklch(0.13 0.05 25)" }}
+        data-ocid="blog_detail.error_state"
       >
-        <span className="text-4xl">📭</span>
+        <span className="text-5xl">📭</span>
         <h1
           className="text-xl font-heading"
           style={{ color: "oklch(0.85 0.06 75)" }}
         >
           Article not found
         </h1>
+        <p
+          className="text-sm text-center max-w-xs"
+          style={{ color: "oklch(0.60 0.04 55)" }}
+        >
+          The article you're looking for doesn't exist or may have been moved.
+        </p>
         <Link to="/blog">
           <Button
             variant="outline"
@@ -138,6 +282,7 @@ export default function BlogDetail() {
               borderColor: "oklch(0.78 0.14 75 / 0.4)",
               color: "oklch(0.78 0.14 75)",
             }}
+            data-ocid="blog_detail.back_link"
           >
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Blog
           </Button>
@@ -146,13 +291,17 @@ export default function BlogDetail() {
     );
   }
 
-  const meta = CATEGORY_META[article.category];
-  const displayTitle = lang === "hi" ? article.titleHindi : article.title;
-  const displayContent = lang === "hi" ? article.contentHindi : article.content;
+  const meta = getCategoryMeta(article.category);
+  const emoji = article.featuredEmoji ?? meta.emoji;
+  const displayTitle =
+    lang === "hi" && article.titleHi ? article.titleHi : article.title;
+  const displayContent =
+    lang === "hi" && article.contentHi ? article.contentHi : article.content;
+  const categoryLabel = lang === "hi" ? meta.labelHindi : meta.label;
 
   return (
     <div className="min-h-screen" style={{ background: "oklch(0.13 0.05 25)" }}>
-      {/* Hero */}
+      {/* ── Hero ── */}
       <section
         className="py-12 px-4"
         style={{
@@ -163,8 +312,8 @@ export default function BlogDetail() {
       >
         <div className="container mx-auto max-w-4xl">
           {/* Back + Lang */}
-          <div className="flex items-center justify-between mb-6">
-            <Link to="/blog" data-ocid="blog.back_link">
+          <div className="flex items-center justify-between mb-8">
+            <Link to="/blog" data-ocid="blog_detail.back_link">
               <Button
                 variant="outline"
                 size="sm"
@@ -193,16 +342,29 @@ export default function BlogDetail() {
             </button>
           </div>
 
+          {/* Emoji header */}
+          <div
+            className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-6 mx-auto md:mx-0"
+            style={{
+              background:
+                "linear-gradient(140deg, oklch(0.68 0.18 48 / 0.25), oklch(0.72 0.20 55 / 0.40))",
+              border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+            }}
+          >
+            {emoji}
+          </div>
+
           {/* Category badge */}
           <div
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-4"
             style={{
               background: "oklch(0.68 0.18 48 / 0.2)",
               color: "oklch(0.78 0.14 75)",
+              border: "1px solid oklch(0.78 0.14 75 / 0.2)",
             }}
           >
-            <span>{meta?.emoji}</span>
-            <span>{lang === "hi" ? meta?.labelHindi : meta?.label}</span>
+            <span>{meta.emoji}</span>
+            <span>{categoryLabel}</span>
           </div>
 
           {/* Title */}
@@ -220,7 +382,7 @@ export default function BlogDetail() {
           >
             <span className="flex items-center gap-1.5">
               <User className="h-3.5 w-3.5" />
-              {article.author}
+              By {article.author}
             </span>
             <span className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
@@ -230,11 +392,17 @@ export default function BlogDetail() {
                 year: "numeric",
               })}
             </span>
+            {article.readTime && (
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
+                {article.readTime} min read
+              </span>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Content */}
+      {/* ── Content + Sidebar ── */}
       <section className="px-4 py-10">
         <div className="container mx-auto max-w-4xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -249,7 +417,7 @@ export default function BlogDetail() {
                     "--tw-prose-strong": "oklch(0.78 0.14 75)",
                   } as React.CSSProperties
                 }
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: controlled internal content
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: controlled static content
                 dangerouslySetInnerHTML={{ __html: displayContent }}
               />
 
@@ -282,10 +450,57 @@ export default function BlogDetail() {
                   </div>
                 </div>
               )}
+
+              {/* CTA — Consult an Astrologer */}
+              <div
+                className="mt-10 rounded-2xl p-6 border flex flex-col sm:flex-row items-center gap-5"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.22 0.08 30 / 0.9), oklch(0.28 0.12 40 / 0.8))",
+                  borderColor: "oklch(0.68 0.18 48 / 0.4)",
+                }}
+              >
+                <div className="text-4xl">🔭</div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3
+                    className="font-heading font-bold text-base mb-1"
+                    style={{ color: "oklch(0.88 0.06 75)" }}
+                  >
+                    {lang === "hi"
+                      ? "ज्योतिषी से परामर्श करें"
+                      : "Consult an Astrologer"}
+                  </h3>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: "oklch(0.65 0.04 60)" }}
+                  >
+                    {lang === "hi"
+                      ? "अपनी जन्म कुंडली के आधार पर व्यक्तिगत ज्योतिष मार्गदर्शन प्राप्त करें।"
+                      : "Get personalised astrological guidance based on your birth chart from our expert astrologers."}
+                  </p>
+                </div>
+                <Link to="/book-consultation">
+                  <Button
+                    size="sm"
+                    className="whitespace-nowrap gap-1.5 font-semibold"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, oklch(0.68 0.18 48), oklch(0.72 0.20 55))",
+                      color: "white",
+                      border: "none",
+                    }}
+                    data-ocid="blog_detail.consult_astrologer_button"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    {lang === "hi" ? "अभी परामर्श करें" : "Book Consultation"}
+                  </Button>
+                </Link>
+              </div>
             </div>
 
-            {/* Sidebar — Related */}
-            <aside className="lg:col-span-1">
+            {/* Sidebar */}
+            <aside className="lg:col-span-1 space-y-5">
+              {/* Related Articles */}
               {related.length > 0 && (
                 <div
                   className="rounded-2xl p-5 border sticky top-24"
@@ -309,6 +524,7 @@ export default function BlogDetail() {
                     to="/blog"
                     className="block mt-5 text-center text-xs underline"
                     style={{ color: "oklch(0.68 0.18 48)" }}
+                    data-ocid="blog_detail.view_all_link"
                   >
                     {lang === "hi" ? "सभी लेख देखें →" : "View all articles →"}
                   </Link>

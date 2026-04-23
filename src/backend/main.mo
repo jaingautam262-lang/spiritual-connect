@@ -313,6 +313,89 @@ actor {
     (prasadDeliveryRequests.toArray(), pujaBookings.toArray());
   };
 
+  // ─── Consultation Booking Requests (public, no auth required) ───────────────
+
+  public type ConsultationBookingRequest = {
+    id : Text;              // auto-generated booking reference
+    fullName : Text;
+    email : Text;
+    phone : Text;
+    birthDate : Text;
+    birthTime : Text;       // empty string if not provided
+    birthLocation : Text;
+    preferredDateTime : Text;
+    consultationMode : Text; // call | chat | video
+    topic : Text;            // may be pre-filled with gemstone name
+    specialQuestions : Text;
+    status : Text;           // pending | confirmed | cancelled
+    createdAt : Int;
+  };
+
+  let consultationBookingRequests = Map.empty<Text, ConsultationBookingRequest>();
+  var consultationBookingCounter : Nat = 0;
+
+  /// Public: anyone can submit a consultation booking request (no login required).
+  /// Returns the auto-generated booking reference ID.
+  public shared func createBookingRequest(
+    fullName : Text,
+    email : Text,
+    phone : Text,
+    birthDate : Text,
+    birthTime : Text,
+    birthLocation : Text,
+    preferredDateTime : Text,
+    consultationMode : Text,
+    topic : Text,
+    specialQuestions : Text
+  ) : async Text {
+    let now = Time.now();
+    consultationBookingCounter += 1;
+    let refId = "SC-" # now.toText() # "-" # consultationBookingCounter.toText();
+    let request : ConsultationBookingRequest = {
+      id = refId;
+      fullName;
+      email;
+      phone;
+      birthDate;
+      birthTime;
+      birthLocation;
+      preferredDateTime;
+      consultationMode;
+      topic;
+      specialQuestions;
+      status = "pending";
+      createdAt = now;
+    };
+    consultationBookingRequests.add(refId, request);
+    refId;
+  };
+
+  /// Public: look up a booking by its reference ID (for confirmation page).
+  public query func getBookingRequest(refId : Text) : async ?ConsultationBookingRequest {
+    consultationBookingRequests.get(refId);
+  };
+
+  /// Admin-only: list all consultation booking requests.
+  public query ({ caller }) func getAllBookingRequests() : async [ConsultationBookingRequest] {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can view all booking requests");
+    };
+    consultationBookingRequests.values().toArray();
+  };
+
+  /// Admin-only: update the status of a booking request.
+  public shared ({ caller }) func updateBookingRequestStatus(refId : Text, status : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can update booking request status");
+    };
+    switch (consultationBookingRequests.get(refId)) {
+      case (null) { Runtime.trap("Booking request not found with id: " # refId) };
+      case (?existing) {
+        consultationBookingRequests.add(refId, { existing with status });
+      };
+    };
+  };
+
   // ─── Astrologer Profiles ─────────────────────────────────────────────────────
 
   public type AstrologerProfile = {
@@ -3158,6 +3241,82 @@ actor {
         } else {
           Runtime.trap("Unauthorized: You can only view your own combined vedic readings");
         };
+      };
+    };
+  };
+
+  // ─── Newsletter Subscriptions ─────────────────────────────────────────────────
+
+  public type NewsletterSubscription = {
+    id : Text;
+    email : Text;
+    name : ?Text;
+    subscribedAt : Int;
+    source : Text; // "popup-load" | "popup-scroll" | "blog-inline" | "newsletter-page"
+    isActive : Bool;
+  };
+
+  // Keyed by email for fast duplicate detection.
+  let newsletterSubscriptions = Map.empty<Text, NewsletterSubscription>();
+
+  /// Public: subscribe to the newsletter. Returns error if email is empty or already subscribed.
+  public shared func addNewsletterSubscription(email : Text, name : ?Text, source : Text) : async { #ok : NewsletterSubscription; #err : Text } {
+    if (email == "") {
+      return #err("Email address cannot be empty");
+    };
+    switch (newsletterSubscriptions.get(email)) {
+      case (?existing) {
+        if (existing.isActive) {
+          return #err("This email is already subscribed");
+        };
+        // Re-activate a previously unsubscribed email
+        let reactivated : NewsletterSubscription = { existing with isActive = true; subscribedAt = Time.now(); source };
+        newsletterSubscriptions.add(email, reactivated);
+        return #ok(reactivated);
+      };
+      case (null) {};
+    };
+    let sub : NewsletterSubscription = {
+      id = email # "-" # Time.now().toText();
+      email;
+      name;
+      subscribedAt = Time.now();
+      source;
+      isActive = true;
+    };
+    newsletterSubscriptions.add(email, sub);
+    #ok(sub);
+  };
+
+  /// Admin-only: get all newsletter subscriptions.
+  public query ({ caller }) func getNewsletterSubscriptions() : async [NewsletterSubscription] {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can view newsletter subscriptions");
+    };
+    newsletterSubscriptions.values().toArray();
+  };
+
+  /// Admin-only: delete a newsletter subscription by email.
+  public shared ({ caller }) func deleteNewsletterSubscription(email : Text) : async { #ok; #err : Text } {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can delete newsletter subscriptions");
+    };
+    switch (newsletterSubscriptions.get(email)) {
+      case (null) { #err("Subscription not found for email: " # email) };
+      case (?_) {
+        newsletterSubscriptions.remove(email);
+        #ok;
+      };
+    };
+  };
+
+  /// Public: unsubscribe from the newsletter (sets isActive = false).
+  public shared func unsubscribeNewsletter(email : Text) : async { #ok; #err : Text } {
+    switch (newsletterSubscriptions.get(email)) {
+      case (null) { #err("Subscription not found for email: " # email) };
+      case (?existing) {
+        newsletterSubscriptions.add(email, { existing with isActive = false });
+        #ok;
       };
     };
   };

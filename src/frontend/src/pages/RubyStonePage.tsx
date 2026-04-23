@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircle2,
   ChevronDown,
@@ -391,6 +392,7 @@ export default function RubyStonePage() {
   );
   const [activeTab, setActiveTab] = useState("about");
   const tabsRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Cycle highlights
   useEffect(() => {
@@ -829,6 +831,15 @@ export default function RubyStonePage() {
               data-ocid="ruby.consultation.cta_button"
               className="font-semibold shrink-0"
               style={{ background: "oklch(0.62 0.18 48)", color: "white" }}
+              onClick={() =>
+                navigate({
+                  to: "/book-consultation",
+                  search: {
+                    topic:
+                      "I want to know if Ruby (Manik) is right for my birth chart",
+                  },
+                })
+              }
             >
               Consult an Astrologer
             </Button>

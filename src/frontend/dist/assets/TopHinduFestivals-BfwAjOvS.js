@@ -1,0 +1,1 @@
+import{j as t}from"./react-core-Dgsx6RQ3.js";import{T as o,a as s}from"./TopHinduFestivalsLayout-BlX_2wdV.js";import"./react-vendor-Dm2HKMEx.js";import"./vendor-CA8yo01s.js";import"./dfinity-vendor-DAKLqgIH.js";function u(){return t.jsx(o,{count:25,festivals:s})}export{u as default};
