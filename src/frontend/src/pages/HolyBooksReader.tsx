@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  BHAGAVAD_GITA_CHAPTERS,
   type GitaChapter,
   type GitaVerse,
-  gitaChapters,
   gitaOverview,
 } from "@/data/bhagavadGitaData";
 import {
@@ -767,7 +767,7 @@ export default function HolyBooksReader() {
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  {gitaChapters.map((chapter) => (
+                  {BHAGAVAD_GITA_CHAPTERS.map((chapter) => (
                     <ChapterAccordion
                       key={chapter.chapterNumber}
                       chapter={chapter}

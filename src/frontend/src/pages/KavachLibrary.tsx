@@ -2,13 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { type Kavach, kavachDataA } from "@/data/kavachDataA";
 import { kavachDataB } from "@/data/kavachDataB";
+import { kavachData_C } from "@/data/kavachData_C";
 import { ArrowLeft, Search, Shield, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import BenefitsSection from "../components/BenefitsSection";
 import { findBenefitsByTitle } from "../data/content-benefits-data";
 
-const kavachs: Kavach[] = [...kavachDataA, ...kavachDataB];
+const kavachs: Kavach[] = [...kavachDataA, ...kavachDataB, ...kavachData_C];
 
 const faithColors: Record<string, string> = {
   हिंदू: "oklch(0.55 0.20 48)",

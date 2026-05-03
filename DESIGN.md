@@ -101,5 +101,17 @@ Backgrounds darker by ~30L (0.97 → 0.14, 0.99 → 0.18). Text lightened (0.18 
 - ✓ Audio speaker buttons loop until explicit stop; no auto-play.
 - ✓ Hindi/English toggle persists in localStorage.
 
+## Panchang Feature (Comprehensive Calendar)
+**Layout:** Full-page sacred calendar with 5 key zones: (1) Controls bar — city/date/region selectors with map/calendar/globe icons, (2) Daily summary card showing 20+ data points (sunrise/sunset/moonrise/moonset/nakshatra/tithi/yoga/karana/moon phase/muhurat), (3) Monthly calendar grid (7×6 clickable days), (4) 8 collapsible subsections (Choghadiya/Hora/Lagna/Abhijit/Do Ghati/Panchaka Rahita/Jain Pachchakkhaan/Pancha Pakshi), (5) Festival events strip.
+**Cities:** 5 pre-computed datasets (Delhi, Mumbai, Bangalore, Varanasi, Kolkata) with static astronomical data for current period.
+**Regional Tabs:** 11 terminologies (North/South/East/West India, Tamil/Telugu/Kannada/Malayalam/Punjabi/Marathi/Gujarati, International) with localized labels for all Panchang terms.
+**Color Coding:** Choghadiya periods color-coded (green=auspicious, yellow=mixed, red=inauspicious). Hora rulers cycled through planet colors. Lagna displayed in rasi-specific shades.
+**Data Points:** Daily summary displays 20+ fields: sunrise/sunset times, moonrise/moonset, nakshatra (27), tithi (15), yoga (22), karana (14), rasi, moon day/phase, sun sign, muhurat quality, Abhijit window, Rahu Kalam, Panchaka status.
+**Collapsibles:** Each subsection (Choghadiya, Hora Chakra, Lagna, etc.) with ChevronDown toggle, live countdown timers for active slot, glossary tooltips on hover for unfamiliar terms.
+**Monthly Calendar:** Grid layout with previous/next navigation, day headers (Sun–Sat), festival highlights (saffron marker dot), clickable cells update daily summary above.
+**Festival Events:** Inline strip showing 6 upcoming festivals (date + name), clickable to jump to calendar date.
+**Glossary:** Bottom section with table: Term | Definition (Tithi, Nakshatra, Yoga, Karana, Choghadiya, Muhurat — left border saffron).
+**Mobile Responsiveness:** Stack controls vertically, hide day names on calendar, collapse monthly calendar to sidebar on < 768px, make collapsible sections full-width.
+
 ## Signature Detail
 **Ornamental borders** on all cards and elevated surfaces — gold inner shadow + border combo creates a "framed sacred object" feel. Echoes temple architecture and manuscript illumination. Differentiates from flat modern design and reinforces spiritual aesthetic.

@@ -5,6 +5,7 @@ import { ashtakamData_A4 } from "./ashtakamData_A4";
 import { ashtakamData_A5 } from "./ashtakamData_A5";
 import { ashtakamData_A6 } from "./ashtakamData_A6";
 import { ashtakamData_A7 } from "./ashtakamData_A7";
+import { ashtakamData_A8 } from "./ashtakamData_A8";
 
 export interface Ashtakam {
   id: string;
@@ -24,4 +25,5 @@ export const ashtakamDataA: Ashtakam[] = [
   ...ashtakamData_A5,
   ...ashtakamData_A6,
   ...ashtakamData_A7,
+  ...ashtakamData_A8,
 ];

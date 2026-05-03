@@ -4,15 +4,18 @@ import type { Product } from "../types/backend-types";
 export interface ProductWithMRP extends Product {
   mrp?: number;
   sku?: string;
+  nameHindi?: string;
+  hasVariants?: boolean;
   variantLabel?: string;
   variants?: ProductVariant[];
 }
 
 export interface ProductVariant {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
+  label?: string;
   price: number;
-  stock: number;
+  stock?: number;
 }
 
 // ─── Puja Samagri (28 products) ──────────────────────────────────────────────

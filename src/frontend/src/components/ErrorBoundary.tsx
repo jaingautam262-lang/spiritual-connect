@@ -32,37 +32,93 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
 
+      // Use inline styles as fallback in case CSS tokens haven't loaded yet.
+      // This prevents a fully white / unstyled error screen.
       return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-6">
-          <div className="max-w-md w-full text-center space-y-6">
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px",
+            background: "var(--background, #1a0f00)",
+            color: "var(--foreground, #f5c842)",
+            fontFamily: "sans-serif",
+          }}
+        >
+          <div
+            style={{
+              maxWidth: "440px",
+              width: "100%",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "20px",
+            }}
+          >
             {/* Om symbol */}
-            <div
-              className="text-6xl text-primary select-none"
-              aria-hidden="true"
-            >
+            <div style={{ fontSize: "56px", lineHeight: 1 }} aria-hidden="true">
               ॐ
             </div>
 
-            <div className="space-y-2">
-              <h1 className="font-display text-2xl font-semibold text-foreground">
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
+              <h1
+                style={{ fontSize: "22px", fontWeight: 600, margin: 0 }}
+                className="font-display text-foreground"
+              >
                 Spiritual Connect
               </h1>
-              <p className="text-muted-foreground text-sm">
+              <p
+                style={{ fontSize: "14px", opacity: 0.7, margin: 0 }}
+                className="text-muted-foreground"
+              >
                 Something went wrong while loading the app.
               </p>
               {this.state.error && (
-                <p className="text-xs text-muted-foreground/70 font-mono bg-muted rounded px-3 py-2 mt-2 break-all">
+                <p
+                  style={{
+                    fontSize: "11px",
+                    opacity: 0.55,
+                    fontFamily: "monospace",
+                    background: "rgba(255,255,255,0.07)",
+                    borderRadius: "6px",
+                    padding: "8px 12px",
+                    margin: 0,
+                    wordBreak: "break-all",
+                  }}
+                  className="text-muted-foreground bg-muted rounded"
+                >
                   {this.state.error.message}
                 </p>
               )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
               <button
                 type="button"
                 data-ocid="error_boundary.retry_button"
                 onClick={this.handleRetry}
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                style={{
+                  background: "#b45309",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "10px 20px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                }}
               >
                 Try Again
               </button>
@@ -70,7 +126,16 @@ export class ErrorBoundary extends Component<Props, State> {
                 type="button"
                 data-ocid="error_boundary.reload_button"
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                style={{
+                  background: "transparent",
+                  color: "inherit",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: "6px",
+                  padding: "10px 20px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                }}
               >
                 Reload Page
               </button>

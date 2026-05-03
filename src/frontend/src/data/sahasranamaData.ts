@@ -1,3 +1,4 @@
+import { sahasranamaData_2 } from "./sahasranamaData_2";
 import { sahasranamaData_a } from "./sahasranamaData_a";
 import { sahasranamaData_b } from "./sahasranamaData_b";
 import { SAHASRANAMA_C } from "./sahasranamaData_c";
@@ -110,6 +111,7 @@ const lalitaSahasranama: Stotra = {
 export const sahasranamaData: Stotra[] = [
   ...sahasranamaData_a,
   ...sahasranamaData_b,
+  ...sahasranamaData_2,
   ...SAHASRANAMA_C,
   ...SAHASRANAMA_D,
   ...SAHASRANAMA_E,

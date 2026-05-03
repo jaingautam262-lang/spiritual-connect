@@ -10,9 +10,59 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Loading screen: pure CSS only, no inline scripts (CSP-safe) -->
+    <style>
+      #loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, #2d0f0f 0%, #1a0a00 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+      #loading-overlay .lo-om {
+        font-size: 4rem;
+        color: #FF6B00;
+        margin-bottom: 1rem;
+        animation: lo-pulse 2s ease-in-out infinite;
+      }
+      #loading-overlay .lo-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: #FFD700;
+      }
+      #loading-overlay .lo-sub {
+        font-size: 0.9rem;
+        color: #cc8800;
+        margin-top: 0.5rem;
+        opacity: 0.85;
+      }
+      @keyframes lo-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.55; transform: scale(0.93); }
+      }
+    </style>
   </head>
   <body>
+    <div id="loading-overlay">
+      <div class="lo-om">ॐ</div>
+      <div class="lo-title">Spiritual Connect</div>
+      <div class="lo-sub">Loading…</div>
+    </div>
+    <noscript>
+      <div style="background:#1a0a00;color:#FFD700;padding:2rem;text-align:center;font-family:sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-size:3rem;margin-bottom:1rem;">ॐ</div>
+        <h2 style="margin-bottom:0.5rem;">Spiritual Connect</h2>
+        <p>Please enable JavaScript to use this app.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

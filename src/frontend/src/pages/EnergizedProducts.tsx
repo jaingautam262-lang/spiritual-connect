@@ -139,6 +139,26 @@ function RudrakshaCard({
               Java: ₹{product.prices.java}
             </span>
           </div>
+          {product.prices.nepal >= 500 && (
+            <span
+              className="inline-block text-[10px] font-heading font-bold px-1.5 py-0.5 rounded-full"
+              style={{
+                background: "oklch(0.68 0.20 48 / 0.12)",
+                color: "oklch(0.48 0.18 42)",
+                border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+              }}
+            >
+              💰 100% Cashback
+            </span>
+          )}
+          {product.prices.nepal >= 1000 && (
+            <p
+              className="text-[10px] font-body"
+              style={{ color: "oklch(0.45 0.14 145)" }}
+            >
+              EMI ₹{Math.ceil(product.prices.nepal / 3).toLocaleString()}/mo
+            </p>
+          )}
         </div>
         <div className="flex gap-2 mt-2">
           <Link
@@ -248,6 +268,26 @@ function YantraCard({
         >
           ₹{product.price.toLocaleString()}
         </p>
+        {product.price >= 500 && (
+          <span
+            className="text-[10px] font-heading font-bold px-1.5 py-0.5 rounded-full self-start"
+            style={{
+              background: "oklch(0.68 0.20 48 / 0.12)",
+              color: "oklch(0.48 0.18 42)",
+              border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+            }}
+          >
+            💰 100% Cashback
+          </span>
+        )}
+        {product.price >= 1000 && (
+          <p
+            className="text-[10px] font-body"
+            style={{ color: "oklch(0.45 0.14 145)" }}
+          >
+            EMI ₹{Math.ceil(product.price / 3).toLocaleString()}/mo
+          </p>
+        )}
         <div className="flex gap-2">
           <Link
             to="/energized-products/$productId"
@@ -354,6 +394,26 @@ function MalaCard({
         >
           ₹{product.price.toLocaleString()}
         </p>
+        {product.price >= 500 && (
+          <span
+            className="text-[10px] font-heading font-bold px-1.5 py-0.5 rounded-full self-start"
+            style={{
+              background: "oklch(0.68 0.20 48 / 0.12)",
+              color: "oklch(0.48 0.18 42)",
+              border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+            }}
+          >
+            💰 100% Cashback
+          </span>
+        )}
+        {product.price >= 1000 && (
+          <p
+            className="text-[10px] font-body"
+            style={{ color: "oklch(0.45 0.14 145)" }}
+          >
+            EMI ₹{Math.ceil(product.price / 3).toLocaleString()}/mo
+          </p>
+        )}
         <button
           type="button"
           onClick={() =>
@@ -533,6 +593,26 @@ function MahaMeruCard({
         >
           ₹{product.price.toLocaleString()}
         </p>
+        {product.price >= 500 && (
+          <span
+            className="text-[10px] font-heading font-bold px-1.5 py-0.5 rounded-full self-start"
+            style={{
+              background: "oklch(0.68 0.20 48 / 0.12)",
+              color: "oklch(0.48 0.18 42)",
+              border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+            }}
+          >
+            💰 100% Cashback
+          </span>
+        )}
+        {product.price >= 1000 && (
+          <p
+            className="text-[10px] font-body"
+            style={{ color: "oklch(0.45 0.14 145)" }}
+          >
+            EMI ₹{Math.ceil(product.price / 3).toLocaleString()}/mo
+          </p>
+        )}
         <button
           type="button"
           onClick={() =>

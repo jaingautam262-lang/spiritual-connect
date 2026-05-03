@@ -17,6 +17,7 @@ import { stutiData_5 } from "./stutiData_5";
 import { stutiData_6 } from "./stutiData_6";
 import { stutiData_7 } from "./stutiData_7";
 import { stutiData_8 } from "./stutiData_8";
+import { stutiData_9 } from "./stutiData_9";
 
 export const stutiData: Stuti[] = [
   ...stutiData_1,
@@ -27,4 +28,5 @@ export const stutiData: Stuti[] = [
   ...stutiData_6,
   ...stutiData_7,
   ...stutiData_8,
+  ...stutiData_9,
 ];

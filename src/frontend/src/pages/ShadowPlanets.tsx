@@ -1,201 +1,169 @@
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-
-// ─── Data ────────────────────────────────────────────────────────────────────
-
-const aprakashaGrahas = [
-  {
-    id: "dhuma",
-    name: "Dhuma",
-    meaning: "Smoke",
-    description:
-      "Represents confusion, illusions, and hidden enemies. Can indicate areas where clarity is needed.",
-    calculation: "13°20' + Sun's longitude",
-    symbol: "☁",
-  },
-  {
-    id: "vyatipata",
-    name: "Vyatipata",
-    meaning: "Calamity",
-    description:
-      "Indicates potential difficulties, obstacles, and areas requiring extra caution.",
-    calculation: "360° − Dhuma's longitude",
-    symbol: "⚡",
-  },
-  {
-    id: "parivesha",
-    name: "Parivesha",
-    meaning: "Halo",
-    description:
-      "Represents protection, divine grace, and positive influences that surround difficulties.",
-    calculation: "180° + Vyatipata's longitude",
-    symbol: "◎",
-  },
-  {
-    id: "indrachapa",
-    name: "Indrachapa",
-    meaning: "Rainbow",
-    description:
-      "Indicates hope, promise, and positive outcomes after challenges.",
-    calculation: "180° + Parivesha's longitude",
-    symbol: "🌈",
-  },
-  {
-    id: "upaketu",
-    name: "Upaketu",
-    meaning: "Sub-Ketu",
-    description:
-      "A secondary Ketu-like influence, often indicating spiritual insights and detachment.",
-    calculation: "16°40' + Rahu's longitude",
-    symbol: "☋",
-  },
-];
-
-const upagrahas = [
-  {
-    name: "Kala",
-    description:
-      "Represents time, death, and transformation. Influences timing of events.",
-    rules: "Time consciousness, deadlines, transformative periods",
-    color: "from-amber-900/40 to-amber-800/20",
-  },
-  {
-    name: "Mrityu",
-    description:
-      "Indicates areas of potential danger or endings that lead to new beginnings.",
-    rules: "Transformation, endings, rebirth, caution areas",
-    color: "from-red-900/40 to-red-800/20",
-  },
-  {
-    name: "Artha",
-    description: "Related to wealth, resources, and material pursuits.",
-    rules: "Financial matters, resources, material success",
-    color: "from-yellow-900/40 to-yellow-800/20",
-  },
-  {
-    name: "Yama",
-    description: "Represents discipline, restrictions, and moral boundaries.",
-    rules: "Self-discipline, moral choices, restrictions",
-    color: "from-slate-800/60 to-slate-700/30",
-  },
-  {
-    name: "Gulika",
-    description:
-      "A malefic influence that can indicate areas of challenge or delay.",
-    rules: "Obstacles, delays, areas requiring extra effort",
-    color: "from-purple-900/40 to-purple-800/20",
-  },
-  {
-    name: "Mandi",
-    description:
-      "Represents sluggishness, delays, and areas where progress is slow.",
-    rules: "Slow progress, patience required, steady work",
-    color: "from-indigo-900/40 to-indigo-800/20",
-  },
-];
-
-const shadowPositions = [
-  { symbol: "Dh", name: "Dhoom", zodiac: "Aquarius", degree: "28° 45' 12\"" },
-  { symbol: "Vy", name: "Vyatipata", zodiac: "Taurus", degree: "01° 14' 48\"" },
-  {
-    symbol: "Pv",
-    name: "Parivesha",
-    zodiac: "Scorpio",
-    degree: "01° 14' 48\"",
-  },
-  { symbol: "In", name: "Indrachapa", zodiac: "Leo", degree: "28° 45' 12\"" },
-  { symbol: "Up", name: "Upaketu", zodiac: "Virgo", degree: "15° 25' 12\"" },
-  { symbol: "Ka", name: "Kala", zodiac: "Libra", degree: "14° 34' 48\"" },
-  { symbol: "Mr", name: "Mrityu", zodiac: "Scorpio", degree: "19° 44' 24\"" },
-  {
-    symbol: "Ar",
-    name: "Ardhaprahara",
-    zodiac: "Sagittarius",
-    degree: "08° 03' 36\"",
-  },
-  {
-    symbol: "Ya",
-    name: "Yamaghantaka",
-    zodiac: "Sagittarius",
-    degree: "28° 30' 36\"",
-  },
-  { symbol: "Gu", name: "Gulika", zodiac: "Aquarius", degree: "19° 38' 24\"" },
-  { symbol: "Ma", name: "Mandi", zodiac: "Aquarius", degree: "19° 38' 24\"" },
-];
-
-// Map zodiac sign → house index (0-based, starting from Aries = house 0)
-const zodiacHouseMap: Record<string, number> = {
-  Aries: 0,
-  Taurus: 1,
-  Gemini: 2,
-  Cancer: 3,
-  Leo: 4,
-  Virgo: 5,
-  Libra: 6,
-  Scorpio: 7,
-  Sagittarius: 8,
-  Capricorn: 9,
-  Aquarius: 10,
-  Pisces: 11,
-};
-
-const keyPrinciples = [
-  "Shadow planets amplify the houses they occupy",
-  "They create karmic lessons and spiritual growth opportunities",
-  "Rahu brings material desires and worldly focus",
-  "Ketu brings detachment and spiritual wisdom",
-  "Other shadows influence specific life areas subtly",
-  "Their effects are often felt during their transits and periods",
-];
-
-const analysisApproach = [
-  "Study the Rahu-Ketu axis first (houses and signs)",
-  "Look for conjunctions with natal planets",
-  "Consider aspects from other planets",
-  "Analyze the house lords where shadows are placed",
-  "Study their relationship with Lagna and Moon",
-  "Consider current transits for timing predictions",
-];
-
-type Tab = "overview" | "aprakasha" | "upagrahas" | "charts";
+import {
+  axisEffects,
+  ketuHouseEffects,
+  ketuMahadasha,
+  ketuRemedies,
+  ketuSignEffects,
+  rahuHouseEffects,
+  rahuMahadasha,
+  rahuRemedies,
+  rahuSignEffects,
+  sadeSatiVsRahuKetu,
+} from "../data/shadowPlanetsData";
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function InterpretationGuidelines() {
+function HouseEffectsGrid({
+  effects,
+  color,
+}: { effects: typeof rahuHouseEffects; color: string }) {
+  const [openHouse, setOpenHouse] = useState<number | null>(null);
   return (
-    <div className="mt-8 rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-muted/20 p-6">
-      <h3 className="font-display text-lg font-semibold text-primary mb-4">
-        Interpretation Guidelines
-      </h3>
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <p className="font-semibold text-foreground mb-3 text-sm uppercase tracking-wide">
-            Key Principles
+    <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
+      {effects.map((item) => (
+        <button
+          type="button"
+          key={item.house}
+          onClick={() =>
+            setOpenHouse(openHouse === item.house ? null : item.house)
+          }
+          data-ocid={`shadow-house-${item.house}-btn`}
+          className="text-left rounded-xl border p-4 transition-all hover:brightness-110"
+          style={{
+            background:
+              openHouse === item.house ? `${color}18` : "oklch(0.18 0.05 22)",
+            borderColor:
+              openHouse === item.house ? `${color}66` : "oklch(0.28 0.06 28)",
+          }}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              style={{ background: `${color}30`, color }}
+            >
+              {item.house}
+            </span>
+            <span className="text-sm font-semibold text-foreground truncate">
+              {item.title}
+            </span>
+          </div>
+          {openHouse === item.house && (
+            <p className="text-xs text-muted-foreground leading-relaxed mt-2">
+              {item.effect}
+            </p>
+          )}
+          {openHouse !== item.house && (
+            <p className="text-xs text-muted-foreground line-clamp-1">
+              {item.effect}
+            </p>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function SignEffectsGrid({
+  effects,
+  color,
+}: { effects: typeof rahuSignEffects; color: string }) {
+  return (
+    <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
+      {effects.map((item) => (
+        <div
+          key={item.sign}
+          className="rounded-xl border p-4"
+          style={{
+            background: "oklch(0.18 0.05 22)",
+            borderColor: "oklch(0.28 0.06 28)",
+          }}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">{item.symbol}</span>
+            <span className="font-semibold text-sm" style={{ color }}>
+              {item.sign}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {item.effect}
           </p>
-          <ul className="space-y-2">
-            {keyPrinciples.map((p) => (
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MahadashCard({
+  data,
+  color,
+}: { data: typeof rahuMahadasha; color: string }) {
+  return (
+    <div className="space-y-4">
+      <div
+        className="rounded-xl p-5 border"
+        style={{ background: `${color}10`, borderColor: `${color}40` }}
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-2xl font-bold" style={{ color }}>
+            {data.duration}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Mahadasha Period
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {data.nature}
+        </p>
+      </div>
+      <div className="grid sm:grid-cols-3 gap-3">
+        {data.phases.map((phase) => (
+          <div
+            key={phase.phase}
+            className="rounded-lg p-3 border"
+            style={{
+              background: "oklch(0.17 0.05 22)",
+              borderColor: "oklch(0.26 0.06 26)",
+            }}
+          >
+            <p className="text-xs font-bold mb-1" style={{ color }}>
+              {phase.phase}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {phase.effect}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <p className="text-xs font-semibold text-emerald-400 mb-2 uppercase tracking-wide">
+            Positive Effects
+          </p>
+          <ul className="space-y-1">
+            {data.positiveEffects.map((e) => (
               <li
-                key={p}
-                className="flex items-start gap-2 text-sm text-muted-foreground"
+                key={e}
+                className="flex items-start gap-2 text-xs text-muted-foreground"
               >
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
-                {p}
+                <span className="mt-1 text-emerald-500 flex-shrink-0">✓</span>{" "}
+                {e}
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <p className="font-semibold text-foreground mb-3 text-sm uppercase tracking-wide">
-            Analysis Approach
+          <p className="text-xs font-semibold text-rose-400 mb-2 uppercase tracking-wide">
+            Challenges
           </p>
-          <ul className="space-y-2">
-            {analysisApproach.map((p) => (
+          <ul className="space-y-1">
+            {data.challenges.map((c) => (
               <li
-                key={p}
-                className="flex items-start gap-2 text-sm text-muted-foreground"
+                key={c}
+                className="flex items-start gap-2 text-xs text-muted-foreground"
               >
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-accent flex-shrink-0" />
-                {p}
+                <span className="mt-1 text-rose-500 flex-shrink-0">!</span> {c}
               </li>
             ))}
           </ul>
@@ -205,554 +173,442 @@ function InterpretationGuidelines() {
   );
 }
 
-// South Indian Kundali grid (pure CSS 4×4 grid)
-function SouthIndianChart({
-  planetsInHouses,
-}: { planetsInHouses: Record<number, string[]> }) {
-  // 16 cells: indices 0-15
-  // Outer 12 houses, inner 4 cells = center (unused)
-  // Cell index → house number (1-12):
-  // 0=H12, 1=H1, 2=H2, 3=H3
-  // 4=H11, 5=center, 6=center, 7=H4
-  // 8=H10, 9=center, 10=center, 11=H5
-  // 12=H9, 13=H8, 14=H7, 15=H6
-  const cellRows: Array<{ key: string; house: number | null }> = [
-    { key: "c0", house: 12 },
-    { key: "c1", house: 1 },
-    { key: "c2", house: 2 },
-    { key: "c3", house: 3 },
-    { key: "c4", house: 11 },
-    { key: "c5", house: null },
-    { key: "c6", house: null },
-    { key: "c7", house: 4 },
-    { key: "c8", house: 10 },
-    { key: "c9", house: null },
-    { key: "c10", house: null },
-    { key: "c11", house: 5 },
-    { key: "c12", house: 9 },
-    { key: "c13", house: 8 },
-    { key: "c14", house: 7 },
-    { key: "c15", house: 6 },
+function RemediesSection({
+  remedies,
+  color,
+}: { remedies: typeof rahuRemedies; color: string; planet?: string }) {
+  return (
+    <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      {remedies.map((remedy) => (
+        <div
+          key={remedy.id}
+          className="rounded-xl p-4 border"
+          style={{
+            background: "oklch(0.18 0.05 22)",
+            borderColor: `${color}30`,
+          }}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <span
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              style={{ background: `${color}25`, color }}
+            >
+              {remedy.id}
+            </span>
+            <h4 className="text-sm font-semibold text-foreground leading-tight">
+              {remedy.title}
+            </h4>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {remedy.description}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Planet Section ───────────────────────────────────────────────────────────
+
+function PlanetSection({
+  planet,
+  color,
+  symbol,
+  badge,
+  nature,
+  significations,
+  houseEffects,
+  signEffects,
+  mahadasha,
+  remedies,
+}: {
+  planet: string;
+  color: string;
+  symbol: string;
+  badge: string;
+  nature: string;
+  significations: string[];
+  houseEffects: typeof rahuHouseEffects;
+  signEffects: typeof rahuSignEffects;
+  mahadasha: typeof rahuMahadasha;
+  remedies: typeof rahuRemedies;
+}) {
+  const [section, setSection] = useState<
+    "houses" | "signs" | "mahadasha" | "remedies"
+  >("houses");
+  const sections = [
+    { id: "houses" as const, label: "12 Houses" },
+    { id: "signs" as const, label: "12 Signs" },
+    { id: "mahadasha" as const, label: "Mahadasha" },
+    { id: "remedies" as const, label: "Remedies" },
   ];
 
   return (
-    <div className="w-full aspect-square grid grid-cols-4 grid-rows-4 border border-primary/30 rounded-lg overflow-hidden">
-      {cellRows.map(({ key, house }) => {
-        const isCenter = house === null;
-        const planets = house ? (planetsInHouses[house] ?? []) : [];
-        return (
+    <div
+      className="rounded-2xl border overflow-hidden"
+      style={{ borderColor: `${color}44` }}
+      data-ocid={`shadow-${planet.toLowerCase()}-section`}
+    >
+      {/* Header */}
+      <div
+        className="px-6 py-5"
+        style={{
+          background: `linear-gradient(135deg, ${color}18, oklch(0.16 0.06 22))`,
+        }}
+      >
+        <div className="flex items-center gap-4 mb-3">
           <div
-            key={key}
-            className={`border border-primary/20 flex flex-col items-center justify-center p-1 min-h-0 ${
-              isCenter
-                ? "bg-gradient-to-br from-primary/10 to-accent/5"
-                : "bg-card/80 hover:bg-primary/5 transition-colors"
-            }`}
+            className="w-14 h-14 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg flex-shrink-0"
+            style={{
+              background: `${color}30`,
+              border: `2px solid ${color}60`,
+              color,
+            }}
           >
-            {!isCenter && (
-              <>
-                <span className="text-[9px] text-muted-foreground font-mono leading-none">
-                  {house}
-                </span>
-                <div className="flex flex-wrap justify-center gap-0.5 mt-0.5">
-                  {planets.map((p) => (
-                    <span
-                      key={p}
-                      className="text-[8px] font-bold text-primary leading-tight"
-                    >
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
-            {isCenter && (
-              <span className="text-[8px] text-primary/40 font-display">॥</span>
-            )}
+            {symbol}
           </div>
-        );
-      })}
-    </div>
-  );
-}
-
-// Build house→planets map for S1 chart (Scorpio ascendant = house 1 = sign index 7)
-function buildS1HousePlanets(): Record<number, string[]> {
-  const ascendantSign = 7; // Scorpio
-  const map: Record<number, string[]> = {};
-  for (const pos of shadowPositions) {
-    const signIndex = zodiacHouseMap[pos.zodiac] ?? 0;
-    const house = ((signIndex - ascendantSign + 12) % 12) + 1;
-    if (!map[house]) map[house] = [];
-    map[house].push(pos.symbol);
-  }
-  return map;
-}
-
-// ─── Tab Content Components ────────────────────────────────────────────────────
-
-function TabOverview() {
-  return (
-    <div className="space-y-8">
-      {/* Primary Shadow Planets */}
-      <section>
-        <h2 className="font-display text-xl font-semibold text-foreground mb-4">
-          Primary Shadow Planets
-        </h2>
-        <div className="grid md:grid-cols-2 gap-5">
-          {/* Rahu */}
-          <div
-            data-ocid="shadow-rahu-card"
-            className="relative rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-900/20 via-card to-card p-6 overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-amber-500/5 -translate-y-8 translate-x-8" />
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-primary flex items-center justify-center text-xl shadow-lg">
-                ☊
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-display text-lg font-bold text-foreground">
-                    Rahu
-                  </h3>
-                  <Badge
-                    variant="outline"
-                    className="text-xs border-amber-500/40 text-amber-600"
-                  >
-                    North Node
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Represents desires, obsessions, worldly achievements, and
-                  material pursuits. Shows where you need to develop and grow in
-                  this lifetime.
-                </p>
-              </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                {planet}
+              </h2>
+              <Badge
+                variant="outline"
+                style={{ borderColor: `${color}50`, color }}
+                className="text-xs"
+              >
+                {badge}
+              </Badge>
             </div>
-          </div>
-
-          {/* Ketu */}
-          <div
-            data-ocid="shadow-ketu-card"
-            className="relative rounded-2xl border border-slate-500/30 bg-gradient-to-br from-slate-800/30 via-card to-card p-6 overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-slate-500/5 -translate-y-8 translate-x-8" />
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-xl shadow-lg">
-                ☋
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-display text-lg font-bold text-foreground">
-                    Ketu
-                  </h3>
-                  <Badge
-                    variant="outline"
-                    className="text-xs border-slate-400/40 text-slate-400"
-                  >
-                    South Node
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Represents past life karma, spiritual insights, detachment,
-                  and moksha. Shows talents you already possess and areas to
-                  release.
-                </p>
-              </div>
-            </div>
+            <p className="text-xs text-muted-foreground">{nature}</p>
           </div>
         </div>
-      </section>
-
-      {/* Subtle Influence Points */}
-      <section>
-        <h2 className="font-display text-xl font-semibold text-foreground mb-4">
-          Subtle Influence Points
-        </h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {[
-            {
-              title: "Lunar Nodes",
-              desc: "Rahu (North Node) and Ketu (South Node) — primary karmic indicators",
-              icon: "⊕",
-            },
-            {
-              title: "Aprakasha Grahas",
-              desc: "Invisible planets like Dhuma, Vyatipata, Parivesha, etc.",
-              icon: "◉",
-            },
-            {
-              title: "Upagrahas",
-              desc: "Sub-planets like Dhuma, Vyatipata, Chandra-Ketu, etc.",
-              icon: "◎",
-            },
-            {
-              title: "Sensitive Points",
-              desc: "Calculated points that influence timing and events",
-              icon: "✦",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="flex items-start gap-3 rounded-xl border border-primary/15 bg-gradient-to-br from-card to-muted/20 p-4 hover:border-primary/30 transition-colors"
+        <div className="flex flex-wrap gap-2">
+          {significations.map((s) => (
+            <span
+              key={s}
+              className="text-xs px-2 py-1 rounded-full"
+              style={{ background: `${color}20`, color }}
             >
-              <span className="mt-0.5 text-lg text-primary flex-shrink-0">
-                {item.icon}
-              </span>
-              <div className="min-w-0">
-                <p className="font-semibold text-sm text-foreground mb-1">
-                  {item.title}
-                </p>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            </div>
+              {s}
+            </span>
           ))}
         </div>
-      </section>
-
-      <InterpretationGuidelines />
-    </div>
-  );
-}
-
-function TabAprakasha() {
-  return (
-    <div className="space-y-6">
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5 p-5">
-        <h2 className="font-display text-xl font-semibold text-foreground mb-1">
-          Aprakasha Grahas (Invisible Planets)
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          These are mathematical points calculated from the positions of visible
-          planets, representing hidden influences and karmic patterns.
-        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {aprakashaGrahas.map((graha) => (
-          <div
-            key={graha.id}
-            data-ocid={`aprakasha-${graha.id}`}
-            className="rounded-2xl border border-primary/20 bg-gradient-to-br from-card via-card to-muted/20 p-5 flex flex-col gap-3 hover:border-primary/40 transition-colors"
+      {/* Section Tabs */}
+      <div
+        className="flex border-b overflow-x-auto"
+        style={{
+          background: "oklch(0.17 0.05 22)",
+          borderColor: "oklch(0.25 0.06 26)",
+        }}
+      >
+        {sections.map((s) => (
+          <button
+            type="button"
+            key={s.id}
+            onClick={() => setSection(s.id)}
+            data-ocid={`${planet.toLowerCase()}-${s.id}-tab`}
+            className="px-4 py-3 text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 relative"
+            style={{
+              color: section === s.id ? color : "oklch(0.60 0.04 55)",
+              borderBottom:
+                section === s.id
+                  ? `2px solid ${color}`
+                  : "2px solid transparent",
+            }}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30 flex items-center justify-center text-lg flex-shrink-0">
-                {graha.symbol}
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-display font-bold text-foreground">
-                  {graha.name}
-                </h3>
-                <p className="text-xs text-primary font-medium">
-                  {graha.meaning}
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-              {graha.description}
-            </p>
-            <div className="rounded-lg bg-primary/8 border border-primary/20 px-3 py-2">
-              <p className="text-xs font-mono text-accent">
-                <span className="text-muted-foreground mr-1">Calculation:</span>
-                {graha.calculation}
-              </p>
-            </div>
-          </div>
+            {s.label}
+          </button>
         ))}
       </div>
 
-      <InterpretationGuidelines />
+      {/* Section Content */}
+      <div className="p-5">
+        {section === "houses" && (
+          <HouseEffectsGrid effects={houseEffects} color={color} />
+        )}
+        {section === "signs" && (
+          <SignEffectsGrid effects={signEffects} color={color} />
+        )}
+        {section === "mahadasha" && (
+          <MahadashCard data={mahadasha} color={color} />
+        )}
+        {section === "remedies" && (
+          <RemediesSection remedies={remedies} color={color} planet={planet} />
+        )}
+      </div>
     </div>
   );
 }
 
-function TabUpagrahas() {
+// ─── Axis Effects ─────────────────────────────────────────────────────────────
+
+function AxisSection() {
   return (
-    <div className="space-y-6">
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5 p-5">
-        <h2 className="font-display text-xl font-semibold text-foreground mb-1">
-          Upagrahas (Sub-planets)
+    <section>
+      <div className="mb-4">
+        <h2 className="font-display text-xl font-bold text-foreground mb-1">
+          Rahu-Ketu Axis Effects
         </h2>
         <p className="text-sm text-muted-foreground">
-          Minor planets calculated from the Sun and other celestial factors,
-          influencing specific areas of life and timing.
+          The nodal axis always spans two opposite houses, creating a tension
+          between material desires (Rahu) and spiritual release (Ketu).
         </p>
       </div>
-
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {upagrahas.map((u) => (
+        {axisEffects.map((axis) => (
           <div
-            key={u.name}
-            data-ocid={`upagraha-${u.name.toLowerCase()}`}
-            className={`rounded-2xl border border-primary/20 bg-gradient-to-br ${u.color} p-5 hover:border-primary/40 transition-colors`}
+            key={axis.axis}
+            className="rounded-xl border p-4"
+            style={{
+              background: "oklch(0.17 0.05 22)",
+              borderColor: "oklch(0.28 0.06 28)",
+            }}
+            data-ocid={`axis-${axis.rahuHouse}-${axis.ketuHouse}`}
           >
-            <h3 className="font-display font-bold text-foreground mb-2">
-              {u.name}
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              {u.description}
-            </p>
-            <div className="flex items-start gap-2">
-              <span className="text-primary text-xs font-semibold flex-shrink-0 mt-0.5">
-                Rules:
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-1">
+                <span
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{
+                    background: "oklch(0.55 0.20 45 / 0.3)",
+                    color: "oklch(0.75 0.20 55)",
+                  }}
+                >
+                  {axis.rahuHouse}
+                </span>
+                <span className="text-muted-foreground text-xs">↔</span>
+                <span
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{
+                    background: "oklch(0.40 0.15 5 / 0.3)",
+                    color: "oklch(0.70 0.18 10)",
+                  }}
+                >
+                  {axis.ketuHouse}
+                </span>
+              </div>
+              <span className="font-semibold text-sm text-foreground">
+                {axis.axis}
               </span>
-              <p className="text-xs text-muted-foreground">{u.rules}</p>
             </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {axis.effect}
+            </p>
           </div>
         ))}
       </div>
-
-      {/* Shadow Planet Positions Table */}
-      <div className="rounded-2xl border border-primary/20 bg-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
-          <h3 className="font-display text-lg font-semibold text-foreground">
-            Shadow Planet Positions
-          </h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm" data-ocid="shadow-positions-table">
-            <thead>
-              <tr className="border-b border-primary/10 bg-muted/30">
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wide w-16">
-                  Symbol
-                </th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
-                  Shadow
-                </th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
-                  Zodiac
-                </th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
-                  Degree
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {shadowPositions.map((row, i) => (
-                <tr
-                  key={row.symbol}
-                  className={`border-b border-primary/5 hover:bg-primary/5 transition-colors ${i % 2 === 0 ? "bg-card" : "bg-muted/10"}`}
-                >
-                  <td className="py-3 px-4">
-                    <span className="inline-flex items-center justify-center w-7 h-7 rounded bg-primary/15 text-primary text-xs font-bold font-mono">
-                      {row.symbol}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-medium text-foreground">
-                    {row.name}
-                  </td>
-                  <td className="py-3 px-4 text-muted-foreground">
-                    {row.zodiac}
-                  </td>
-                  <td className="py-3 px-4 text-right font-mono text-accent text-xs">
-                    {row.degree}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    </section>
   );
 }
 
-function TabCharts() {
-  const [s1Style, setS1Style] = useState<"north" | "south">("south");
-  const [d1Style, setD1Style] = useState<"north" | "south">("south");
-  const s1HousePlanets = buildS1HousePlanets();
+// ─── Sade Sati Comparison ────────────────────────────────────────────────────
 
+function SadeSatiComparison() {
   return (
-    <div className="space-y-6">
-      {/* Chart Panels */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* S1 — Shadow Planets Chart */}
-        <div
-          className="rounded-2xl border border-primary/20 bg-card overflow-hidden"
-          data-ocid="s1-chart-panel"
-        >
-          <div className="flex items-center justify-between px-5 py-3 border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
-            <div>
-              <p className="font-display font-semibold text-foreground text-sm">
-                Shadow Planets Chart (S1)
-              </p>
-              <p className="text-xs text-primary mt-0.5">
-                {s1Style === "north" ? "North Indian" : "South Indian"}
-              </p>
-            </div>
-            <div className="flex rounded-lg border border-primary/20 overflow-hidden">
-              {(["north", "south"] as const).map((style) => (
-                <button
-                  type="button"
-                  key={style}
-                  onClick={() => setS1Style(style)}
-                  className={`px-3 py-1 text-xs font-medium transition-colors ${
-                    s1Style === style
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                  data-ocid={`s1-style-${style}`}
-                >
-                  {style.charAt(0).toUpperCase() + style.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="p-4">
-            <SouthIndianChart planetsInHouses={s1HousePlanets} />
-            <p className="text-center text-xs text-primary mt-2 font-semibold">
-              Live Positions
-            </p>
-          </div>
-        </div>
-
-        {/* D1 — Birth Chart */}
-        <div
-          className="rounded-2xl border border-primary/20 bg-card overflow-hidden"
-          data-ocid="d1-chart-panel"
-        >
-          <div className="flex items-center justify-between px-5 py-3 border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
-            <div>
-              <p className="font-display font-semibold text-foreground text-sm">
-                Birth Chart (D1)
-              </p>
-              <p className="text-xs text-primary mt-0.5">
-                {d1Style === "north" ? "North Indian" : "South Indian"}
-              </p>
-            </div>
-            <div className="flex rounded-lg border border-primary/20 overflow-hidden">
-              {(["north", "south"] as const).map((style) => (
-                <button
-                  type="button"
-                  key={style}
-                  onClick={() => setD1Style(style)}
-                  className={`px-3 py-1 text-xs font-medium transition-colors ${
-                    d1Style === style
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                  data-ocid={`d1-style-${style}`}
-                >
-                  {style.charAt(0).toUpperCase() + style.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="p-4">
-            <SouthIndianChart
-              planetsInHouses={{
-                1: ["As", "Ve"],
-                10: ["Su", "Me", "Ke"],
-                3: ["Mo"],
-                5: ["Ma"],
-                9: ["Ju"],
-                8: ["℞Sa"],
-                7: ["Ra"],
-              }}
-            />
-            <p className="text-center text-xs text-muted-foreground mt-2">
-              Static Positions
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart Interpretation */}
-      <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-muted/20 p-6">
-        <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-          Chart Interpretation
-        </h3>
-        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-          The S1 chart shows the positions of all shadow planets and sensitive
-          points alongside the D1 birth chart for comparison. Pay special
-          attention to:
+    <section>
+      <div className="mb-4">
+        <h2 className="font-display text-xl font-bold text-foreground mb-1">
+          Sade Sati vs Rahu-Ketu
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Two of the most commonly confused planetary periods — here's how they
+          differ.
         </p>
-        <ul className="space-y-2">
-          {[
-            "Houses occupied by Rahu and Ketu",
-            "Aspects to/from shadow planets",
-            "Conjunctions with visible planets",
-            "Nodal axis across houses",
-            "Clusters of shadow planets",
-          ].map((item) => (
-            <li
-              key={item}
-              className="flex items-start gap-2 text-sm text-muted-foreground"
-            >
-              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
-              {item}
-            </li>
-          ))}
-        </ul>
       </div>
-
-      {/* Shadow Planet Positions Legend */}
-      <div className="rounded-2xl border border-primary/15 bg-card p-5">
-        <h3 className="font-display text-sm font-semibold text-foreground mb-3">
-          Position Reference
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-          {shadowPositions.map((p) => (
-            <div key={p.symbol} className="flex items-center gap-2 text-xs">
-              <span className="w-6 h-6 rounded bg-primary/15 text-primary font-bold font-mono flex items-center justify-center flex-shrink-0 text-[10px]">
-                {p.symbol}
-              </span>
-              <span className="text-muted-foreground truncate">{p.name}</span>
-            </div>
-          ))}
+      <div
+        className="rounded-xl border overflow-hidden"
+        style={{ borderColor: "oklch(0.28 0.06 28)" }}
+      >
+        {/* Header */}
+        <div
+          className="grid grid-cols-3 text-xs font-semibold uppercase tracking-wide px-4 py-3"
+          style={{
+            background: "oklch(0.20 0.06 24)",
+            color: "oklch(0.60 0.04 55)",
+          }}
+        >
+          <span>Aspect</span>
+          <span style={{ color: "oklch(0.68 0.12 240)" }}>
+            Sade Sati (Saturn)
+          </span>
+          <span style={{ color: "oklch(0.75 0.20 55)" }}>Rahu / Ketu</span>
         </div>
+        {sadeSatiVsRahuKetu.map((row, i) => (
+          <div
+            key={row.aspect}
+            className="grid grid-cols-3 px-4 py-3 border-t text-xs"
+            style={{
+              background:
+                i % 2 === 0 ? "oklch(0.17 0.05 22)" : "oklch(0.15 0.04 20)",
+              borderColor: "oklch(0.23 0.05 24)",
+            }}
+            data-ocid={`sade-sati-row-${i + 1}`}
+          >
+            <span className="font-semibold text-foreground">{row.aspect}</span>
+            <span className="text-muted-foreground pr-2">{row.sadeSati}</span>
+            <span className="text-muted-foreground">{row.rahuKetu}</span>
+          </div>
+        ))}
       </div>
-    </div>
+    </section>
+  );
+}
+
+// ─── FAQ Accordion ────────────────────────────────────────────────────────────
+
+const faqs = [
+  {
+    q: "What is Rahu and why is it called a shadow planet?",
+    a: "Rahu is the North Lunar Node — the point where the Moon's orbit crosses the Sun's ecliptic plane going northward. It has no physical body and is visible only as a mathematical point, hence 'shadow planet'. In Vedic astrology, it represents karmic desires, illusions, and worldly ambitions.",
+  },
+  {
+    q: "How does Ketu differ from Rahu in terms of effects?",
+    a: "While Rahu represents future karma and unfulfilled desires pulling us toward the material world, Ketu represents past-life mastery and spiritual release. Rahu creates obsessive craving; Ketu creates detachment and liberation. Together they form the soul's evolutionary axis.",
+  },
+  {
+    q: "Are Rahu and Ketu always in opposite houses?",
+    a: "Yes, Rahu and Ketu are always exactly 180° apart in a birth chart. If Rahu is in the 1st house, Ketu will always be in the 7th. This nodal axis reveals the soul's karmic direction — the tension between what must be developed (Rahu) and what must be released (Ketu).",
+  },
+  {
+    q: "Which gemstone is worn for Rahu and Ketu?",
+    a: "For Rahu, Hessonite Garnet (Gomed) set in silver is worn on the middle finger. For Ketu, Cat's Eye (Vaiduryam/Lahsuniya) set in gold or panchdhatu is worn on the middle finger. Both should be worn after consulting a qualified Vedic astrologer.",
+  },
+  {
+    q: "What is the difference between Rahu transit and Rahu Mahadasha?",
+    a: "Rahu transit refers to Rahu's movement through signs in the sky (~1.5 years per sign), affecting everyone collectively. Rahu Mahadasha is an 18-year personal period activated based on your birth Nakshatra in the Vimshottari Dasha system — it produces much stronger and more personal effects than transit.",
+  },
+];
+
+function FAQSection() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <section>
+      <h2 className="font-display text-xl font-bold text-foreground mb-4">
+        Frequently Asked Questions
+      </h2>
+      <div className="space-y-2">
+        {faqs.map((faq, i) => (
+          <div
+            key={faq.q}
+            className="rounded-xl border overflow-hidden"
+            style={{
+              borderColor:
+                open === i
+                  ? "oklch(0.60 0.18 55 / 0.5)"
+                  : "oklch(0.26 0.06 26)",
+            }}
+            data-ocid={`shadow-faq-${i + 1}`}
+          >
+            <button
+              type="button"
+              onClick={() => setOpen(open === i ? null : i)}
+              className="w-full text-left px-5 py-4 flex items-center justify-between gap-3"
+              style={{
+                background:
+                  open === i ? "oklch(0.19 0.07 24)" : "oklch(0.17 0.05 22)",
+              }}
+            >
+              <span className="text-sm font-semibold text-foreground">
+                {faq.q}
+              </span>
+              <span className="text-primary text-lg flex-shrink-0">
+                {open === i ? "−" : "+"}
+              </span>
+            </button>
+            {open === i && (
+              <div
+                className="px-5 pb-4"
+                style={{ background: "oklch(0.16 0.05 22)" }}
+              >
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {faq.a}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
+type Tab = "rahu-ketu" | "axis" | "sade-sati" | "faq";
+
 const tabs: { id: Tab; label: string }[] = [
-  { id: "overview", label: "Overview" },
-  { id: "aprakasha", label: "Aprakasha Grahas" },
-  { id: "upagrahas", label: "Upagrahas" },
-  { id: "charts", label: "Charts" },
+  { id: "rahu-ketu", label: "☊ Rahu & Ketu" },
+  { id: "axis", label: "⟷ Nodal Axis" },
+  { id: "sade-sati", label: "⚖ Sade Sati vs Rahu-Ketu" },
+  { id: "faq", label: "❓ FAQ" },
 ];
 
 export default function ShadowPlanets() {
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [activeTab, setActiveTab] = useState<Tab>("rahu-ketu");
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-b from-card via-card to-background border-b border-primary/10">
+      <div
+        className="border-b"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.16 0.07 22), oklch(0.12 0.04 20))",
+          borderColor: "oklch(0.25 0.06 26)",
+        }}
+      >
         <div className="max-w-5xl mx-auto px-4 py-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xl shadow-md">
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center text-2xl shadow-lg flex-shrink-0"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.55 0.20 45), oklch(0.40 0.15 5))",
+              }}
+            >
               ☊
             </div>
             <Badge
               variant="outline"
-              className="border-primary/30 text-primary text-xs"
+              className="text-xs"
+              style={{
+                borderColor: "oklch(0.55 0.15 45 / 0.5)",
+                color: "oklch(0.75 0.18 55)",
+              }}
             >
-              Vedic Astrology
+              Vedic Astrology — Shadow Planets
             </Badge>
           </div>
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-            Shadow Planets
+            Rahu & Ketu — Shadow Planets
           </h1>
-          <p className="text-base font-medium text-primary mb-2">
-            Aprakasha &amp; Upagraha
+          <p
+            className="font-medium mb-2"
+            style={{ color: "oklch(0.72 0.18 55)" }}
+          >
+            राहु और केतु — छाया ग्रह
           </p>
           <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
-            Shadow planets are mathematical calculations that represent hidden
-            or subtle influences in Vedic astrology. They include Rahu, Ketu,
-            and other sensitive points that reveal karmic patterns and spiritual
-            lessons.
+            Rahu and Ketu are the lunar nodes — mathematical points that reveal
+            your soul's karmic journey. Study their effects in all 12 houses and
+            signs, understand the nodal axis, and explore Mahadasha periods and
+            remedies.
           </p>
         </div>
       </div>
 
       {/* Tab Bar */}
-      <div className="sticky top-0 z-10 bg-card/90 backdrop-blur border-b border-primary/10 shadow-sm">
+      <div
+        className="sticky top-0 z-10 border-b shadow-sm"
+        style={{
+          background: "oklch(0.16 0.05 22 / 0.95)",
+          backdropFilter: "blur(8px)",
+          borderColor: "oklch(0.24 0.06 26)",
+        }}
+      >
         <div className="max-w-5xl mx-auto px-4">
           <div
             className="flex gap-0 overflow-x-auto"
@@ -766,16 +622,21 @@ export default function ShadowPlanets() {
                 role="tab"
                 aria-selected={activeTab === tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                data-ocid={`tab-${tab.id}`}
-                className={`relative px-5 py-4 text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
-                  activeTab === tab.id
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                data-ocid={`shadow-tab-${tab.id}`}
+                className="relative px-5 py-4 text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0"
+                style={{
+                  color:
+                    activeTab === tab.id
+                      ? "oklch(0.75 0.20 55)"
+                      : "oklch(0.55 0.04 55)",
+                }}
               >
                 {tab.label}
                 {activeTab === tab.id && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
+                  <span
+                    className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full"
+                    style={{ background: "oklch(0.72 0.18 55)" }}
+                  />
                 )}
               </button>
             ))}
@@ -783,12 +644,53 @@ export default function ShadowPlanets() {
         </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        {activeTab === "overview" && <TabOverview />}
-        {activeTab === "aprakasha" && <TabAprakasha />}
-        {activeTab === "upagrahas" && <TabUpagrahas />}
-        {activeTab === "charts" && <TabCharts />}
+      {/* Content */}
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-10">
+        {activeTab === "rahu-ketu" && (
+          <>
+            <PlanetSection
+              planet="Rahu"
+              color="oklch(0.72 0.20 55)"
+              symbol="☊"
+              badge="North Node — राहु"
+              nature="Karmic desires, materialism, foreign connections, technology, illusions, sudden gains"
+              significations={[
+                "Foreign Lands",
+                "Technology",
+                "Illusion/Maya",
+                "Sudden Events",
+                "Karmic Desire",
+                "Taboos",
+              ]}
+              houseEffects={rahuHouseEffects}
+              signEffects={rahuSignEffects}
+              mahadasha={rahuMahadasha}
+              remedies={rahuRemedies}
+            />
+            <PlanetSection
+              planet="Ketu"
+              color="oklch(0.68 0.18 10)"
+              symbol="☋"
+              badge="South Node — केतु"
+              nature="Past karma, spirituality, liberation (moksha), detachment, occult, psychic abilities"
+              significations={[
+                "Spirituality",
+                "Past Life",
+                "Occult",
+                "Liberation",
+                "Isolation",
+                "Intuition",
+              ]}
+              houseEffects={ketuHouseEffects}
+              signEffects={ketuSignEffects}
+              mahadasha={ketuMahadasha}
+              remedies={ketuRemedies}
+            />
+          </>
+        )}
+        {activeTab === "axis" && <AxisSection />}
+        {activeTab === "sade-sati" && <SadeSatiComparison />}
+        {activeTab === "faq" && <FAQSection />}
       </div>
     </div>
   );

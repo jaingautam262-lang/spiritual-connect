@@ -9,6 +9,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { BookOpen, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import AudioPlayer from "../components/AudioPlayer";
+import { useLanguage } from "../contexts/LanguageContext";
 import { SEED_CHALISAS } from "../data/chalisaData";
 import type { ChalisaItem } from "../data/chalisaData";
 import { useGetAllDevotionalContents } from "../hooks/useQueries";
@@ -52,6 +54,7 @@ export default function Chalisa() {
   );
   const [showHindi, setShowHindi] = useState(true);
   const { data: backendContents = [] } = useGetAllDevotionalContents();
+  const { t } = useLanguage();
 
   const backendChalisas: ChalisaItem[] = backendContents
     .filter((c) => c.contentType === "chalisa")
@@ -109,7 +112,7 @@ export default function Chalisa() {
             className="font-decorative text-4xl md:text-5xl font-bold mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            Chalisa Sangrah
+            {t("chalisa")} {t("all") === "सभी" ? "संग्रह" : "Sangrah"}
           </h1>
           <p
             className="font-body text-xl mb-1"
@@ -144,7 +147,7 @@ export default function Chalisa() {
               <Input
                 data-ocid="chalisa.search_input"
                 type="text"
-                placeholder="Search by name, deity..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 border font-body"
@@ -189,7 +192,13 @@ export default function Chalisa() {
                         : "oklch(0.78 0.14 75 / 0.2)",
                   }}
                 >
-                  {cat}
+                  {cat === "All"
+                    ? t("all")
+                    : cat === "Most Popular"
+                      ? t("all") === "सभी"
+                        ? "सबसे लोकप्रिय"
+                        : cat
+                      : cat}
                 </button>
               ))}
             </div>
@@ -207,7 +216,7 @@ export default function Chalisa() {
                 className="font-heading text-lg"
                 style={{ color: "oklch(0.60 0.06 55)" }}
               >
-                No chalisas found for your search.
+                {t("noChalisasFound")}
               </p>
             </div>
           ) : (
@@ -289,9 +298,9 @@ export default function Chalisa() {
                     className="mt-4 text-xs font-heading font-semibold flex items-center gap-1"
                     style={{ color: "oklch(0.78 0.14 75)" }}
                   >
-                    <span>40 Verses</span>
+                    <span>{t("all") === "सभी" ? "40 श्लोक" : "40 Verses"}</span>
                     <span style={{ color: "oklch(0.50 0.04 50)" }}>·</span>
-                    <span>Read Full →</span>
+                    <span>{t("readFullChalisa")}</span>
                   </div>
                 </button>
               ))}
@@ -415,6 +424,12 @@ export default function Chalisa() {
                   {showHindi ? selectedChalisa.textHi : selectedChalisa.textEn}
                 </pre>
               </div>
+
+              {/* Audio Player */}
+              <AudioPlayer
+                title={selectedChalisa?.titleEn ?? ""}
+                youtubeSearchQuery={`${selectedChalisa?.titleEn ?? ""} chalisa bhajan`}
+              />
 
               <div className="flex justify-end mt-4">
                 <Button

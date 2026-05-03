@@ -6,156 +6,203 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import { Suspense, lazy } from "react";
+import { useEffect } from "react";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
 import NewsletterPopup from "./components/NewsletterPopup";
 
+import AIInsights from "./pages/AIInsights";
+import Aarti from "./pages/Aarti";
+// ALL pages are imported EAGERLY — no React.lazy() anywhere.
+// Lazy imports inside Suspense cause the entire app to hang forever
+// if ANY import fails (circular deps, missing exports, etc.)
 import AdminCMS from "./pages/AdminCMS";
+import AshtakamLibrary from "./pages/AshtakamLibrary";
+import AstroScore from "./pages/AstroScore";
+import AstrologerBookingPage from "./pages/AstrologerBookingPage";
+import AstrologerConsultation from "./pages/AstrologerConsultation";
+import AstrologerDashboard from "./pages/AstrologerDashboard";
+import AstrologerProfile from "./pages/AstrologerProfile";
+import AstrologyCalculatorsPage from "./pages/AstrologyCalculatorsPage";
+import AuspiciousTimes from "./pages/AuspiciousTimes";
+import AyurvedaSection from "./pages/AyurvedaSection";
+import BhajanLibrary from "./pages/BhajanLibrary";
+import BirthdayRituals from "./pages/BirthdayRituals";
+import BlogDetail from "./pages/BlogDetail";
+import BlogSection from "./pages/BlogSection";
+import BlueSapphireStonePage from "./pages/BlueSapphireStonePage";
+import BookingConfirmationPage from "./pages/BookingConfirmationPage";
+import BookingHistoryPage from "./pages/BookingHistoryPage";
+import BusinessNumerology from "./pages/BusinessNumerology";
+import CalculatorFAQPage from "./pages/CalculatorFAQPage";
+import CalculatorIndex from "./pages/CalculatorIndex";
+import CaratRattiCalculator from "./pages/CaratRattiCalculator";
+import CareerPathCalculator from "./pages/CareerPathCalculator";
+import ChadhavaPage from "./pages/ChadhavaPage";
+import Chalisa from "./pages/Chalisa";
+import ChartRectification from "./pages/ChartRectification";
+import CombinedVedicReading from "./pages/CombinedVedicReading";
+import CurrentTransits from "./pages/CurrentTransits";
+import DaanSeva from "./pages/DaanSeva";
+import DanSevaPage from "./pages/DanSevaPage";
 import Dashboard from "./pages/Dashboard";
-// Eagerly loaded (lightweight, frequently visited)
+import DevotionalLibrary from "./pages/DevotionalLibrary";
+import DhwaniProductDetail from "./pages/DhwaniProductDetail";
+import DhwaniShop from "./pages/DhwaniShop";
+import DivineInfo from "./pages/DivineInfo";
+import DivisionalCharts from "./pages/DivisionalCharts";
+import DoorstepPandit from "./pages/DoorstepPandit";
+import EmeraldStonePage from "./pages/EmeraldStonePage";
+import EnergizedProductDetail from "./pages/EnergizedProductDetail";
+import EnergizedProducts from "./pages/EnergizedProducts";
+import FestivalCalendar from "./pages/FestivalCalendar";
+import FestivalCalendarPage from "./pages/FestivalCalendarPage";
+import GemstoneLibrary from "./pages/GemstoneLibrary";
+import GrihaPravesh2026Page from "./pages/GrihaPravesh2026Page";
+import GurugDirectory from "./pages/GurugDirectory";
+import HerbDirectoryPage from "./pages/HerbDirectoryPage";
+import HinduCalendar from "./pages/HinduCalendar";
+import HolyBooksAudio from "./pages/HolyBooksAudio";
+import HolyBooksOverview from "./pages/HolyBooksOverview";
+import HolyBooksReader from "./pages/HolyBooksReader";
 import Home from "./pages/Home";
+import HoroscopeComparison from "./pages/HoroscopeComparison";
+import HoroscopePanchang from "./pages/HoroscopePanchang";
+import JainBalVikas from "./pages/JainBalVikas";
+import JainBhajanDetail from "./pages/JainBhajanDetail";
+import JainBooksLibrary from "./pages/JainBooksLibrary";
+import JainContentIndex from "./pages/JainContentIndex";
+import JainDevShastraGuruPuja from "./pages/JainDevShastraGuruPuja";
+import JainDharmaJnana from "./pages/JainDharmaJnana";
+import JainEncyclopedia from "./pages/JainEncyclopediaFull";
+import JainKathayen from "./pages/JainKathayen";
+import JainKnowledgeBase from "./pages/JainKnowledgeBase";
+import JainMeriBhavna from "./pages/JainMeriBhavna";
+import JainNewStotraDetail from "./pages/JainNewStotraDetail";
+import JainParvCalendar from "./pages/JainParvCalendar";
+import JainPathshala from "./pages/JainPathshala";
+import JainPoojasSangreh from "./pages/JainPoojasSangreh";
+import JainPujan from "./pages/JainPujan";
+import JainStavan from "./pages/JainStavan";
+import JainStoriesLibrary from "./pages/JainStoriesLibrary";
+import JainStotraSangrah from "./pages/JainStotraSangrah";
+import JainStutiSangrah from "./pages/JainStutiSangrah";
+import JainVichaar from "./pages/JainVichaar";
+import JainVicharQuoteDetail from "./pages/JainVicharQuoteDetail";
+import JainVrat144List from "./pages/JainVrat144List";
+import JainVratKathaDetail from "./pages/JainVratKathaDetail";
+import JainVratKathas from "./pages/JainVratKathas";
+import Jainipedia from "./pages/Jainipedia";
+import KartikJewelsShop from "./pages/KartikJewelsShop";
+import KartikProductDetail from "./pages/KartikProductDetail";
+import KavachLibrary from "./pages/KavachLibrary";
+import KundaliMatchingPage from "./pages/KundaliMatchingPage";
+import LifeReceipt from "./pages/LifeReceipt";
+import LivePanchang from "./pages/LivePanchang";
+import LoShuGrid from "./pages/LoShuGrid";
+import LogoCreator from "./pages/LogoCreator";
+import Mantra from "./pages/Mantra";
+import MediaPlayerPage from "./pages/MediaPlayerPage";
+import MehndiCollection from "./pages/MehndiCollection";
+import NadiCollection from "./pages/NadiCollection";
+import NadiDetail from "./pages/NadiDetail";
+import NameSelection from "./pages/NameSelection";
+import NavgrahMantraCounter from "./pages/NavgrahMantraCounter";
+import Newsletter from "./pages/Newsletter";
+import Numerology from "./pages/Numerology";
+import NumerologyWatchesPage from "./pages/NumerologyWatchesPage";
+import PadmavatiVratKatha from "./pages/PadmavatiVratKatha";
+import PaintingsGreetings from "./pages/PaintingsGreetings";
+import PalmPhotoReading from "./pages/PalmPhotoReading";
+import PalmistryReading from "./pages/PalmistryReading";
+import PanchangPage from "./pages/PanchangPage";
+import PanchangTimingsPage from "./pages/PanchangTimingsPage";
+import Pathshala from "./pages/Pathshala";
+import PaymentFailure from "./pages/PaymentFailure";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PlanetaryStrength from "./pages/PlanetaryStrength";
+import PredictionServices from "./pages/PredictionServices";
+import ProductDetail from "./pages/ProductDetail";
+import PujaBooking from "./pages/PujaBooking";
+import PujaBookingPage from "./pages/PujaBookingPage";
+import PujaDetail from "./pages/PujaDetail";
+import PujaReports from "./pages/PujaReports";
+import PujaTypesList from "./pages/PujaTypesList";
+import PujasCatalog from "./pages/PujasCatalog";
+import ReportOutput from "./pages/ReportOutput";
+import Reports from "./pages/Reports";
+import RubyStonePage from "./pages/RubyStonePage";
+import SahasranamLibrary from "./pages/SahasranamLibrary";
+import SahasranamSangrah from "./pages/SahasranamSangrah";
+import ShadowPlanets from "./pages/ShadowPlanets";
+import ShopByPurpose from "./pages/ShopByPurpose";
+import ShopSpecialCollections from "./pages/ShopSpecialCollections";
+import SikhKirtans from "./pages/SikhKirtans";
+import SikhNitnemPage from "./pages/SikhNitnemPage";
+import SpiritualShop from "./pages/SpiritualShop";
+import Stotra from "./pages/Stotra";
+import StutiLibrary from "./pages/StutiLibrary";
+import SuktamLibrary from "./pages/SuktamLibrary";
+import SuryaDev from "./pages/SuryaDev";
+import TantraRemedies from "./pages/TantraRemedies";
+import TattvarthaSutra from "./pages/TattvarthaSutra";
+import TempleDirectory from "./pages/TempleDirectory";
+import TempleDirectoryPage from "./pages/TempleDirectoryPage";
+import TempleServices from "./pages/TempleServices";
+import TempleToursYatra from "./pages/TempleToursYatra";
+import Tirthankars from "./pages/Tirthankars";
+import TopHinduFestivals from "./pages/TopHinduFestivals";
+import TopHinduFestivalsTop10 from "./pages/TopHinduFestivalsTop10";
+import TopHinduFestivalsTop20 from "./pages/TopHinduFestivalsTop20";
+import UnifiedSearch from "./pages/UnifiedSearch";
+import VastuRoomChecker from "./pages/VastuRoomChecker";
+import VastuShastra from "./pages/VastuShastra";
+import VedasSuktamLibrary from "./pages/VedasSuktamLibrary";
+import VedicCharts from "./pages/VedicCharts";
+import VedicCompatibility from "./pages/VedicCompatibility";
+import VedicDashboard from "./pages/VedicDashboard";
+import VedicRemedies from "./pages/VedicRemedies";
+import VirtualTemple from "./pages/VirtualTemple";
+import VivahMuhuratPage from "./pages/VivahMuhuratPage";
+import VratKatha from "./pages/VratKatha";
+import WebStoriesPage from "./pages/WebStoriesPage";
+import YantraInfo from "./pages/YantraInfo";
+import YantraInfoDetail from "./pages/YantraInfoDetail";
+import YantraLibrary from "./pages/YantraLibrary";
+import YantraShop from "./pages/YantraShop";
+import YellowSapphireStonePage from "./pages/YellowSapphireStonePage";
+import YogasInChart from "./pages/YogasInChart";
+import AtmakarakaCalculator from "./pages/calculators/AtmakarakaCalculator";
+import BirthChartCalculator from "./pages/calculators/BirthChartCalculator";
+import DashaCalculator from "./pages/calculators/DashaCalculator";
+import FlamesCalculator from "./pages/calculators/FlamesCalculator";
+import FriendshipCalculator from "./pages/calculators/FriendshipCalculator";
+import IshtaDevataCalculator from "./pages/calculators/IshtaDevataCalculator";
+import KaalSarpDoshCalculator from "./pages/calculators/KaalSarpDoshCalculator";
+import LoShuGridCalculator from "./pages/calculators/LoShuGridCalculator";
+import LoveCalculator from "./pages/calculators/LoveCalculator";
+import LuckyVehicleCalculator from "./pages/calculators/LuckyVehicleCalculator";
+import MangalDoshaCalculator from "./pages/calculators/MangalDoshaCalculator";
+import MoonPhaseCalculator from "./pages/calculators/MoonPhaseCalculator";
+import NakshatraFinderCalculator from "./pages/calculators/NakshatraFinderCalculator";
+import NameNumerologyCalculator from "./pages/calculators/NameNumerologyCalculator";
+import RashiCalculator from "./pages/calculators/RashiCalculator";
+import RisingAscendantCalculator from "./pages/calculators/RisingAscendantCalculator";
+import SadeSatiCalculator from "./pages/calculators/SadeSatiCalculator";
+import SunSignCalculator from "./pages/calculators/SunSignCalculator";
+import TransitChartCalculator from "./pages/calculators/TransitChartCalculator";
 
-// Lazily loaded (heavy data pages)
-const Aarti = lazy(() => import("./pages/Aarti"));
-const AshtakamLibrary = lazy(() => import("./pages/AshtakamLibrary"));
-const AstrologerConsultation = lazy(
-  () => import("./pages/AstrologerConsultation"),
-);
-const AstrologerDashboard = lazy(() => import("./pages/AstrologerDashboard"));
-const AstrologerProfile = lazy(() => import("./pages/AstrologerProfile"));
-const AyurvedaSection = lazy(() => import("./pages/AyurvedaSection"));
-const BhajanLibrary = lazy(() => import("./pages/BhajanLibrary"));
-const BusinessNumerology = lazy(() => import("./pages/BusinessNumerology"));
-const Chalisa = lazy(() => import("./pages/Chalisa"));
-const DevotionalLibrary = lazy(() => import("./pages/DevotionalLibrary"));
-const DivineInfo = lazy(() => import("./pages/DivineInfo"));
-const HolyBooksAudio = lazy(() => import("./pages/HolyBooksAudio"));
-const HolyBooksOverview = lazy(() => import("./pages/HolyBooksOverview"));
-const HolyBooksReader = lazy(() => import("./pages/HolyBooksReader"));
-const HoroscopePanchang = lazy(() => import("./pages/HoroscopePanchang"));
-const JainEncyclopedia = lazy(() => import("./pages/JainEncyclopediaFull"));
-const Jainipedia = lazy(() => import("./pages/Jainipedia"));
-const JainPujan = lazy(() => import("./pages/JainPujan"));
-const KavachLibrary = lazy(() => import("./pages/KavachLibrary"));
-const KundaliMatchingPage = lazy(() => import("./pages/KundaliMatchingPage"));
-const Mantra = lazy(() => import("./pages/Mantra"));
-const Numerology = lazy(() => import("./pages/Numerology"));
-const PaymentFailure = lazy(() => import("./pages/PaymentFailure"));
-const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const ReportOutput = lazy(() => import("./pages/ReportOutput"));
-const Reports = lazy(() => import("./pages/Reports"));
-const SahasranamLibrary = lazy(() => import("./pages/SahasranamLibrary"));
-const SahasranamSangrah = lazy(() => import("./pages/SahasranamSangrah"));
-const SpiritualShop = lazy(() => import("./pages/SpiritualShop"));
-const Stotra = lazy(() => import("./pages/Stotra"));
-const StutiLibrary = lazy(() => import("./pages/StutiLibrary"));
-const TempleDirectory = lazy(() => import("./pages/TempleDirectory"));
-const TempleServices = lazy(() => import("./pages/TempleServices"));
-const Tirthankars = lazy(() => import("./pages/Tirthankars"));
-const VirtualTemple = lazy(() => import("./pages/VirtualTemple"));
-const VratKatha = lazy(() => import("./pages/VratKatha"));
-const SikhKirtans = lazy(() => import("./pages/SikhKirtans"));
-const JainVratKathas = lazy(() => import("./pages/JainVratKathas"));
-const JainVratKathaDetail = lazy(() => import("./pages/JainVratKathaDetail"));
-const JainVrat144List = lazy(() => import("./pages/JainVrat144List"));
-const PadmavatiVratKatha = lazy(() => import("./pages/PadmavatiVratKatha"));
-const PalmistryReading = lazy(() => import("./pages/PalmistryReading"));
-const PalmPhotoReading = lazy(() => import("./pages/PalmPhotoReading"));
-const VastuShastra = lazy(() => import("./pages/VastuShastra"));
-const VastuRoomChecker = lazy(() => import("./pages/VastuRoomChecker"));
-const HoroscopeComparison = lazy(() => import("./pages/HoroscopeComparison"));
-const CalculatorIndex = lazy(() => import("./pages/CalculatorIndex"));
-const CalculatorFAQPage = lazy(() => import("./pages/CalculatorFAQPage"));
-const PujaTypesList = lazy(() => import("./pages/PujaTypesList"));
-const PujaReports = lazy(() => import("./pages/PujaReports"));
-const VedasSuktamLibrary = lazy(() => import("./pages/VedasSuktamLibrary"));
-const SuktamLibrary = lazy(() => import("./pages/SuktamLibrary"));
-const UnifiedSearch = lazy(() => import("./pages/UnifiedSearch"));
-const FestivalCalendar = lazy(() => import("./pages/FestivalCalendar"));
-const MediaPlayerPage = lazy(() => import("./pages/MediaPlayerPage"));
-const BlogSection = lazy(() => import("./pages/BlogSection"));
-const BlogDetail = lazy(() => import("./pages/BlogDetail"));
-const WebStoriesPage = lazy(() => import("./pages/WebStoriesPage"));
-const DivisionalCharts = lazy(() => import("./pages/DivisionalCharts"));
-const AstroScore = lazy(() => import("./pages/AstroScore"));
-const PlanetaryStrength = lazy(() => import("./pages/PlanetaryStrength"));
-const YogasInChart = lazy(() => import("./pages/YogasInChart"));
-const ChartRectification = lazy(() => import("./pages/ChartRectification"));
-const VedicCompatibility = lazy(() => import("./pages/VedicCompatibility"));
-const ShopByPurpose = lazy(() => import("./pages/ShopByPurpose"));
-const JainPathshala = lazy(() => import("./pages/JainPathshala"));
-const Pathshala = lazy(() => import("./pages/Pathshala"));
-const JainDharmaJnana = lazy(() => import("./pages/JainDharmaJnana"));
-const JainKathayen = lazy(() => import("./pages/JainKathayen"));
-const JainStotraSangrah = lazy(() => import("./pages/JainStotraSangrah"));
-const JainStutiSangrah = lazy(() => import("./pages/JainStutiSangrah"));
-const JainParvCalendar = lazy(() => import("./pages/JainParvCalendar"));
-const PujasCatalog = lazy(() => import("./pages/PujasCatalog"));
-const PujaDetail = lazy(() => import("./pages/PujaDetail"));
-const DoorstepPandit = lazy(() => import("./pages/DoorstepPandit"));
-const TempleToursYatra = lazy(() => import("./pages/TempleToursYatra"));
-const NadiCollection = lazy(() => import("./pages/NadiCollection"));
-const NadiDetail = lazy(() => import("./pages/NadiDetail"));
-const VedicCharts = lazy(() => import("./pages/VedicCharts"));
-const VedicDashboard = lazy(() => import("./pages/VedicDashboard"));
-const ChadhavaPage = lazy(() => import("./pages/ChadhavaPage"));
-const EnergizedProducts = lazy(() => import("./pages/EnergizedProducts"));
-const EnergizedProductDetail = lazy(
-  () => import("./pages/EnergizedProductDetail"),
-);
-const PujaBookingPage = lazy(() => import("./pages/PujaBookingPage"));
-const BookingHistoryPage = lazy(() => import("./pages/BookingHistoryPage"));
-const CareerPathCalculator = lazy(() => import("./pages/CareerPathCalculator"));
-const Newsletter = lazy(() => import("./pages/Newsletter"));
-const YantraShop = lazy(() => import("./pages/YantraShop"));
-const YantraInfo = lazy(() => import("./pages/YantraInfo"));
-const YantraInfoDetail = lazy(() => import("./pages/YantraInfoDetail"));
-
-// New Jain pages
-const JainStavan = lazy(() => import("./pages/JainStavan"));
-const JainContentIndex = lazy(() => import("./pages/JainContentIndex"));
-const TattvarthaSutra = lazy(() => import("./pages/TattvarthaSutra"));
-const JainNewStotraDetail = lazy(() => import("./pages/JainNewStotraDetail"));
-const JainMeriBhavna = lazy(() => import("./pages/JainMeriBhavna"));
-const JainStoriesLibrary = lazy(() => import("./pages/JainStoriesLibrary"));
-const JainVichaar = lazy(() => import("./pages/JainVichaar"));
-const JainBooksLibrary = lazy(() => import("./pages/JainBooksLibrary"));
-const JainPoojasSangreh = lazy(() => import("./pages/JainPoojasSangreh"));
-const JainBalVikas = lazy(() => import("./pages/JainBalVikas"));
-const JainBhajanDetail = lazy(() => import("./pages/JainBhajanDetail"));
-const JainKnowledgeBase = lazy(() => import("./pages/JainKnowledgeBase"));
-const JainDevShastraGuruPuja = lazy(
-  () => import("./pages/JainDevShastraGuruPuja"),
-);
-const JainVicharQuoteDetail = lazy(
-  () => import("./pages/JainVicharQuoteDetail"),
-);
-
-function PageLoader() {
-  return (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-    </div>
-  );
-}
-
-function withSuspense(Component: React.ComponentType) {
-  return function SuspenseWrapper() {
-    return (
-      <Suspense fallback={<PageLoader />}>
-        <Component />
-      </Suspense>
-    );
-  };
-}
+// Remove loading overlay ONLY after React has successfully rendered
+// (useEffect runs after first paint — this is the safe, correct place)
 
 const rootRoute = createRootRoute({
   component: () => (
-    <Layout>
-      <Outlet />
-      <NewsletterPopup />
-    </Layout>
+    <ErrorBoundary>
+      <Layout>
+        <Outlet />
+        <NewsletterPopup />
+      </Layout>
+    </ErrorBoundary>
   ),
 });
 
@@ -167,62 +214,62 @@ const indexRoute = createRoute({
 const templeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/temple-services",
-  component: withSuspense(TempleServices),
+  component: TempleServices,
 });
 const horoscopeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/horoscope",
-  component: withSuspense(HoroscopePanchang),
+  component: HoroscopePanchang,
 });
 const astrologerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/astrologer",
-  component: withSuspense(AstrologerConsultation),
+  component: AstrologerConsultation,
 });
 const astrologerProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/astrologer/$id",
-  component: withSuspense(AstrologerProfile),
+  component: AstrologerProfile,
 });
 const shopRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/shop",
-  component: withSuspense(SpiritualShop),
+  component: SpiritualShop,
 });
 const productDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/shop/$id",
-  component: withSuspense(ProductDetail),
+  component: ProductDetail,
 });
 const reportsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reports",
-  component: withSuspense(Reports),
+  component: Reports,
 });
 const reportOutputRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reports/$id",
-  component: withSuspense(ReportOutput),
+  component: ReportOutput,
 });
 const devotionalRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/devotional",
-  component: withSuspense(DevotionalLibrary),
+  component: DevotionalLibrary,
 });
 const virtualTempleRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/virtual-temple",
-  component: withSuspense(VirtualTemple),
+  component: VirtualTemple,
 });
 const numerologyRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/numerology",
-  component: withSuspense(Numerology),
+  component: Numerology,
 });
 const businessRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/business-tools",
-  component: withSuspense(BusinessNumerology),
+  component: BusinessNumerology,
 });
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -232,32 +279,32 @@ const dashboardRoute = createRoute({
 const astrologerDashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/astrologer-dashboard",
-  component: withSuspense(AstrologerDashboard),
+  component: AstrologerDashboard,
 });
 const paymentSuccessRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/payment-success",
-  component: withSuspense(PaymentSuccess),
+  component: PaymentSuccess,
 });
 const paymentFailureRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/payment-failure",
-  component: withSuspense(PaymentFailure),
+  component: PaymentFailure,
 });
 const bhajanLibraryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/bhajan-library",
-  component: withSuspense(BhajanLibrary),
+  component: BhajanLibrary,
 });
 const vratKathaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vrat-katha",
-  component: withSuspense(VratKatha),
+  component: VratKatha,
 });
 const holyBooksRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/holy-books",
-  component: withSuspense(HolyBooksAudio),
+  component: HolyBooksAudio,
 });
 const adminCMSRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -267,868 +314,788 @@ const adminCMSRoute = createRoute({
 const aartiRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/aarti",
-  component: withSuspense(Aarti),
+  component: Aarti,
 });
 const chalisaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/chalisa",
-  component: withSuspense(Chalisa),
+  component: Chalisa,
 });
 const mantraRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/mantra",
-  component: withSuspense(Mantra),
+  component: Mantra,
 });
 const stotraRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/stotra",
-  component: withSuspense(Stotra),
+  component: Stotra,
 });
 const tirthankarsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/tirthankars",
-  component: withSuspense(Tirthankars),
+  component: Tirthankars,
 });
 const divineInfoRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/divine-info",
-  component: withSuspense(DivineInfo),
+  component: DivineInfo,
 });
 const templeDirectoryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/temples",
-  component: withSuspense(TempleDirectory),
+  component: TempleDirectory,
 });
 const jainPujanRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-pujan",
-  component: withSuspense(JainPujan),
+  component: JainPujan,
 });
 const ashtakamRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ashtakam",
-  component: withSuspense(AshtakamLibrary),
+  component: AshtakamLibrary,
 });
 const stutiRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/stuti",
-  component: withSuspense(StutiLibrary),
+  component: StutiLibrary,
 });
 const sahasranamRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sahasranam",
-  component: withSuspense(SahasranamLibrary),
+  component: SahasranamLibrary,
 });
 const kavachRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/kavach",
-  component: withSuspense(KavachLibrary),
+  component: KavachLibrary,
 });
 const kundaliMatchingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/kundali-matching",
-  component: withSuspense(KundaliMatchingPage),
+  component: KundaliMatchingPage,
+});
+const astrologyCalculatorsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/astrology/calculators",
+  component: AstrologyCalculatorsPage,
 });
 const sahasranamSangrahRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sahasranam-sangrah",
-  component: withSuspense(SahasranamSangrah),
+  component: SahasranamSangrah,
 });
 const ayurvedaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ayurveda",
-  component: withSuspense(AyurvedaSection),
+  component: AyurvedaSection,
 });
-
 const jainEncyclopediaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-encyclopedia",
-  component: withSuspense(JainEncyclopedia),
+  component: JainEncyclopedia,
 });
 const jainEncyclopediaVolumeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-encyclopedia/$volume",
-  component: withSuspense(JainEncyclopedia),
+  component: JainEncyclopedia,
 });
 const holyBooksOverviewRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/holy-books-overview",
-  component: withSuspense(HolyBooksOverview),
+  component: HolyBooksOverview,
 });
-
 const jainipediaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jainipedia",
-  component: withSuspense(Jainipedia),
+  component: Jainipedia,
 });
-
 const sikhKirtansRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sikh-kirtans",
-  component: withSuspense(SikhKirtans),
+  component: SikhKirtans,
 });
-
+const sikhNitnemRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/library/sikh-nitnem",
+  component: SikhNitnemPage,
+});
 const jainVratKathasRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-vrat-kathas",
-  component: withSuspense(JainVratKathas),
+  component: JainVratKathas,
 });
-
 const jainVratKathaDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-vrat-katha-detail/$id",
-  component: withSuspense(JainVratKathaDetail),
+  component: JainVratKathaDetail,
 });
-
 const jainVrat144ListRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-vrat-144-list",
-  component: withSuspense(JainVrat144List),
+  component: JainVrat144List,
 });
-
 const padmavatiVratKathaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/padmavati-vrat-katha",
-  component: withSuspense(PadmavatiVratKatha),
+  component: PadmavatiVratKatha,
 });
-
 const holyBooksReaderRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/holy-books-reader",
-  component: withSuspense(HolyBooksReader),
+  component: HolyBooksReader,
 });
-
 const palmistryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/palmistry",
-  component: withSuspense(PalmistryReading),
+  component: PalmistryReading,
 });
-
 const palmPhotoRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/palm-photo",
-  component: withSuspense(PalmPhotoReading),
+  component: PalmPhotoReading,
 });
-
 const vastuRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vastu",
-  component: withSuspense(VastuShastra),
+  component: VastuShastra,
 });
-
 const vastuRoomCheckerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vastu-checker",
-  component: withSuspense(VastuRoomChecker),
+  component: VastuRoomChecker,
 });
-
 const horoscopeComparisonRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/horoscope-comparison",
-  component: withSuspense(HoroscopeComparison),
+  component: HoroscopeComparison,
 });
-
 const calculatorIndexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator-index",
-  component: withSuspense(CalculatorIndex),
+  component: CalculatorIndex,
 });
-
 const calculatorFAQRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator-faq/$calculatorId",
-  component: withSuspense(CalculatorFAQPage),
+  component: CalculatorFAQPage,
 });
-
 const pujaTypesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/puja-types",
-  component: withSuspense(PujaTypesList),
+  component: PujaTypesList,
 });
-
 const pujaReportsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/puja-reports",
-  component: withSuspense(PujaReports),
+  component: PujaReports,
 });
-
 const vedasSuktamRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vedas-suktam",
-  component: withSuspense(VedasSuktamLibrary),
+  component: VedasSuktamLibrary,
 });
-
 const suktamLibraryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/suktam-library",
-  component: withSuspense(SuktamLibrary),
+  component: SuktamLibrary,
 });
-
 const searchRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/search",
-  component: withSuspense(UnifiedSearch),
+  component: UnifiedSearch,
 });
-
 const festivalCalendarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/festival-calendar",
-  component: withSuspense(FestivalCalendar),
+  component: FestivalCalendar,
 });
-
 const mediaPlayerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/media-player",
-  component: withSuspense(MediaPlayerPage),
+  component: MediaPlayerPage,
 });
-
 const blogRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/blog",
-  component: withSuspense(BlogSection),
+  component: BlogSection,
 });
-
 const blogDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/blog/$slug",
-  component: withSuspense(BlogDetail),
+  component: BlogDetail,
 });
-
 const webStoriesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/web-stories",
-  component: withSuspense(WebStoriesPage),
+  component: WebStoriesPage,
 });
-
 const divisionalChartsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/divisional-charts",
-  component: withSuspense(DivisionalCharts),
+  component: DivisionalCharts,
 });
-
 const astroScoreRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/astro-score",
-  component: withSuspense(AstroScore),
+  component: AstroScore,
 });
-
 const planetaryStrengthRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/planetary-strength",
-  component: withSuspense(PlanetaryStrength),
+  component: PlanetaryStrength,
 });
-
 const yogasInChartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/yogas-in-chart",
-  component: withSuspense(YogasInChart),
+  component: YogasInChart,
 });
-
 const chartRectificationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/chart-rectification",
-  component: withSuspense(ChartRectification),
+  component: ChartRectification,
 });
-
 const vedicCompatibilityRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vedic-compatibility",
-  component: withSuspense(VedicCompatibility),
+  component: VedicCompatibility,
 });
-
 const shopByPurposeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/shop/by-purpose",
-  component: withSuspense(ShopByPurpose),
+  component: ShopByPurpose,
 });
-
+const numerologyWatchesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/shop/numerology-watches",
+  component: NumerologyWatchesPage,
+});
 const jainPathshalaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-pathshala",
-  component: withSuspense(JainPathshala),
+  component: JainPathshala,
 });
-
 const pathshalaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pathshala",
-  component: withSuspense(Pathshala),
+  component: Pathshala,
 });
-
 const jainDharmaJnanaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-dharma-jnana",
-  component: withSuspense(JainDharmaJnana),
+  component: JainDharmaJnana,
 });
-
 const jainKathayenRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-kathayen",
-  component: withSuspense(JainKathayen),
+  component: JainKathayen,
 });
-
 const jainStotraSangrahRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-stotra-sangrah",
-  component: withSuspense(JainStotraSangrah),
+  component: JainStotraSangrah,
 });
-
 const jainStutiSangrahRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-stuti-sangrah",
-  component: withSuspense(JainStutiSangrah),
+  component: JainStutiSangrah,
 });
-
 const jainParvCalendarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-parv-calendar",
-  component: withSuspense(JainParvCalendar),
+  component: JainParvCalendar,
 });
-
-const AuspiciousTimes = lazy(() => import("./pages/AuspiciousTimes"));
-const AstrologerBookingPage = lazy(
-  () => import("./pages/AstrologerBookingPage"),
-);
-const BookingConfirmationPage = lazy(
-  () => import("./pages/BookingConfirmationPage"),
-);
-const LivePanchang = lazy(() => import("./pages/LivePanchang"));
-const CurrentTransits = lazy(() => import("./pages/CurrentTransits"));
-
 const auspiciousTimesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/auspicious-times",
-  component: withSuspense(AuspiciousTimes),
+  component: AuspiciousTimes,
 });
-
 const bookConsultationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/book-consultation",
-  component: withSuspense(AstrologerBookingPage),
+  component: AstrologerBookingPage,
 });
-
 const bookingConfirmationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/booking-confirmation",
-  component: withSuspense(BookingConfirmationPage),
+  component: BookingConfirmationPage,
 });
-
 const livePanchangRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/live-panchang",
-  component: withSuspense(LivePanchang),
+  component: LivePanchang,
 });
-
+const panchangRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/panchang",
+  component: PanchangPage,
+});
+const vivahMuhuratRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/vivah-muhurat",
+  component: VivahMuhuratPage,
+});
+const grihaPravesh2026Route = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/griha-pravesh-muhurat",
+  component: GrihaPravesh2026Page,
+});
+const panchangTimingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/panchang/timings",
+  component: PanchangTimingsPage,
+});
+const panchangFestivalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/panchang/festivals",
+  component: FestivalCalendarPage,
+});
 const currentTransitsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/current-transits",
-  component: withSuspense(CurrentTransits),
+  component: CurrentTransits,
 });
-
-const ShadowPlanets = lazy(() => import("./pages/ShadowPlanets"));
 const shadowPlanetsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/shadow-planets",
-  component: withSuspense(ShadowPlanets),
+  component: ShadowPlanets,
 });
-
 const pujasCatalogRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pujas-catalog",
-  component: withSuspense(PujasCatalog),
+  component: PujasCatalog,
 });
-
 const pujaDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pujas-catalog/$id",
-  component: withSuspense(PujaDetail),
+  component: PujaDetail,
 });
-
 const nadiCollectionRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/nadi-collection",
-  component: withSuspense(NadiCollection),
+  component: NadiCollection,
 });
-
 const nadiDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/nadi/$nadiId",
-  component: withSuspense(NadiDetail),
+  component: NadiDetail,
 });
-
-const LoveCalculator = lazy(() => import("./pages/calculators/LoveCalculator"));
-const NameNumerologyCalculator = lazy(
-  () => import("./pages/calculators/NameNumerologyCalculator"),
-);
-const SunSignCalculator = lazy(
-  () => import("./pages/calculators/SunSignCalculator"),
-);
-const RashiCalculator = lazy(
-  () => import("./pages/calculators/RashiCalculator"),
-);
-const RisingAscendantCalculator = lazy(
-  () => import("./pages/calculators/RisingAscendantCalculator"),
-);
-const BirthChartCalculator = lazy(
-  () => import("./pages/calculators/BirthChartCalculator"),
-);
-const MangalDoshaCalculator = lazy(
-  () => import("./pages/calculators/MangalDoshaCalculator"),
-);
-const SadeSatiCalculator = lazy(
-  () => import("./pages/calculators/SadeSatiCalculator"),
-);
-const IshtaDevataCalculator = lazy(
-  () => import("./pages/calculators/IshtaDevataCalculator"),
-);
-const NakshatraFinderCalculator = lazy(
-  () => import("./pages/calculators/NakshatraFinderCalculator"),
-);
-const FlamesCalculator = lazy(
-  () => import("./pages/calculators/FlamesCalculator"),
-);
-const KaalSarpDoshCalculator = lazy(
-  () => import("./pages/calculators/KaalSarpDoshCalculator"),
-);
-const LoShuGridCalculator = lazy(
-  () => import("./pages/calculators/LoShuGridCalculator"),
-);
-const FriendshipCalculator = lazy(
-  () => import("./pages/calculators/FriendshipCalculator"),
-);
-const TransitChartCalculator = lazy(
-  () => import("./pages/calculators/TransitChartCalculator"),
-);
-const MoonPhaseCalculator = lazy(
-  () => import("./pages/calculators/MoonPhaseCalculator"),
-);
-const AtmakarakaCalculator = lazy(
-  () => import("./pages/calculators/AtmakarakaCalculator"),
-);
-const DashaCalculator = lazy(
-  () => import("./pages/calculators/DashaCalculator"),
-);
-const LuckyVehicleCalculator = lazy(
-  () => import("./pages/calculators/LuckyVehicleCalculator"),
-);
-
 const loveCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/love",
-  component: withSuspense(LoveCalculator),
+  component: LoveCalculator,
 });
-
 const nameNumerologyCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/name-numerology",
-  component: withSuspense(NameNumerologyCalculator),
+  component: NameNumerologyCalculator,
 });
-
 const sunSignCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/sun-sign",
-  component: withSuspense(SunSignCalculator),
+  component: SunSignCalculator,
 });
-
 const rashiCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/rashi",
-  component: withSuspense(RashiCalculator),
+  component: RashiCalculator,
 });
-
 const risingAscendantCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/rising-ascendant",
-  component: withSuspense(RisingAscendantCalculator),
+  component: RisingAscendantCalculator,
 });
-
 const birthChartCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/birth-chart",
-  component: withSuspense(BirthChartCalculator),
+  component: BirthChartCalculator,
 });
-
 const mangalDoshaCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/mangal-dosha",
-  component: withSuspense(MangalDoshaCalculator),
+  component: MangalDoshaCalculator,
 });
-
 const sadeSatiCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/sade-sati",
-  component: withSuspense(SadeSatiCalculator),
+  component: SadeSatiCalculator,
 });
-
 const ishtaDevataCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/ishta-devata",
-  component: withSuspense(IshtaDevataCalculator),
+  component: IshtaDevataCalculator,
 });
-
 const nakshatraFinderCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/nakshatra",
-  component: withSuspense(NakshatraFinderCalculator),
+  component: NakshatraFinderCalculator,
 });
-
 const flamesCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/flames",
-  component: withSuspense(FlamesCalculator),
+  component: FlamesCalculator,
 });
-
 const kaalSarpDoshCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/kaal-sarp-dosh",
-  component: withSuspense(KaalSarpDoshCalculator),
+  component: KaalSarpDoshCalculator,
 });
-
 const loShuGridCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/lo-shu-grid",
-  component: withSuspense(LoShuGridCalculator),
+  component: LoShuGridCalculator,
 });
-
 const friendshipCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/friendship",
-  component: withSuspense(FriendshipCalculator),
+  component: FriendshipCalculator,
 });
-
 const transitChartCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/transit-chart",
-  component: withSuspense(TransitChartCalculator),
+  component: TransitChartCalculator,
 });
-
 const moonPhaseCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/moon-phase",
-  component: withSuspense(MoonPhaseCalculator),
+  component: MoonPhaseCalculator,
 });
-
 const atmakarakaCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/atmakaraka",
-  component: withSuspense(AtmakarakaCalculator),
+  component: AtmakarakaCalculator,
 });
-
 const dashaCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/dasha",
-  component: withSuspense(DashaCalculator),
+  component: DashaCalculator,
 });
-
 const luckyVehicleCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/calculator/lucky-vehicle",
-  component: withSuspense(LuckyVehicleCalculator),
+  component: LuckyVehicleCalculator,
 });
-
-const PredictionServices = lazy(() => import("./pages/PredictionServices"));
-const VedicRemedies = lazy(() => import("./pages/VedicRemedies"));
-const SuryaDev = lazy(() => import("./pages/SuryaDev"));
-const HinduCalendar = lazy(() => import("./pages/HinduCalendar"));
-const TopHinduFestivals = lazy(() => import("./pages/TopHinduFestivals"));
-const TopHinduFestivalsTop20 = lazy(
-  () => import("./pages/TopHinduFestivalsTop20"),
-);
-const TopHinduFestivalsTop10 = lazy(
-  () => import("./pages/TopHinduFestivalsTop10"),
-);
-
 const predictionServicesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/prediction-services",
-  component: withSuspense(PredictionServices),
+  component: PredictionServices,
 });
-
 const vedicRemediesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vedic-remedies",
-  component: withSuspense(VedicRemedies),
+  component: VedicRemedies,
 });
-
 const suryaDevRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/surya-dev",
-  component: withSuspense(SuryaDev),
+  component: SuryaDev,
 });
-
 const hinduCalendarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/hindu-calendar",
-  component: withSuspense(HinduCalendar),
+  component: HinduCalendar,
 });
-
 const topHinduFestivalsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/top-hindu-festivals",
-  component: withSuspense(TopHinduFestivals),
+  component: TopHinduFestivals,
 });
-
 const topHinduFestivalsTop20Route = createRoute({
   getParentRoute: () => rootRoute,
   path: "/top-hindu-festivals-20",
-  component: withSuspense(TopHinduFestivalsTop20),
+  component: TopHinduFestivalsTop20,
 });
-
 const topHinduFestivalsTop10Route = createRoute({
   getParentRoute: () => rootRoute,
   path: "/top-hindu-festivals-10",
-  component: withSuspense(TopHinduFestivalsTop10),
+  component: TopHinduFestivalsTop10,
 });
-
 const doorstepPanditRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/doorstep-pandit",
-  component: withSuspense(DoorstepPandit),
+  component: DoorstepPandit,
 });
-
-const BirthdayRituals = lazy(() => import("./pages/BirthdayRituals"));
-const LoShuGrid = lazy(() => import("./pages/LoShuGrid"));
-
 const birthdayRitualsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/birthday-rituals",
-  component: withSuspense(BirthdayRituals),
+  component: BirthdayRituals,
 });
-
 const loShuGridRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/lo-shu-grid",
-  component: withSuspense(LoShuGrid),
+  component: LoShuGrid,
 });
-
 const templeToursYatraRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/temple-tours-yatra",
-  component: withSuspense(TempleToursYatra),
+  component: TempleToursYatra,
 });
-
 const vedicChartsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vedic-charts",
-  component: withSuspense(VedicCharts),
+  component: VedicCharts,
 });
-
 const energizedProductsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/energized-products",
-  component: withSuspense(EnergizedProducts),
+  component: EnergizedProducts,
 });
-
 const energizedProductDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/energized-products/$productId",
-  component: withSuspense(EnergizedProductDetail),
+  component: EnergizedProductDetail,
 });
-
 const vedicDashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vedic-dashboard",
-  component: withSuspense(VedicDashboard),
+  component: VedicDashboard,
 });
-
 const chadhavaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/chadhava",
-  component: withSuspense(ChadhavaPage),
+  component: ChadhavaPage,
 });
-
-const LogoCreator = lazy(() => import("./pages/LogoCreator"));
-const NameSelection = lazy(() => import("./pages/NameSelection"));
-const AIInsights = lazy(() => import("./pages/AIInsights"));
-const CombinedVedicReading = lazy(() => import("./pages/CombinedVedicReading"));
-
 const logoCreatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/logo-creator",
-  component: withSuspense(LogoCreator),
+  component: LogoCreator,
 });
-
 const nameSelectionRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/name-selection",
-  component: withSuspense(NameSelection),
+  component: NameSelection,
 });
-
 const aiInsightsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ai-insights",
-  component: withSuspense(AIInsights),
+  component: AIInsights,
 });
-
 const combinedVedicReadingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/combined-vedic-reading",
-  component: withSuspense(CombinedVedicReading),
+  component: CombinedVedicReading,
 });
-
 const pujaBookingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/puja-booking",
-  component: withSuspense(PujaBookingPage),
+  component: PujaBookingPage,
 });
-
 const bookingHistoryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/booking-history",
-  component: withSuspense(BookingHistoryPage),
+  component: BookingHistoryPage,
 });
-
 const careerPathRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/career-path",
-  component: withSuspense(CareerPathCalculator),
+  component: CareerPathCalculator,
 });
-
 const newsletterRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/newsletter",
-  component: withSuspense(Newsletter),
+  component: Newsletter,
 });
-
 const yantraShopRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/yantra-shop",
-  component: withSuspense(YantraShop),
+  component: YantraShop,
 });
-
+const lifeReceiptRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/life-receipt",
+  component: LifeReceipt,
+});
 const yantraInfoRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/yantra-info",
-  component: withSuspense(YantraInfo),
+  component: YantraInfo,
 });
-
 const yantraInfoDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/yantra-info/$category",
-  component: withSuspense(YantraInfoDetail),
+  component: YantraInfoDetail,
 });
-
 const jainStavanRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-stavan",
-  component: withSuspense(JainStavan),
+  component: JainStavan,
 });
-
 const jainContentIndexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-content-index",
-  component: withSuspense(JainContentIndex),
+  component: JainContentIndex,
 });
-
 const tattvarthaSutraRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/tattvartha-sutra",
-  component: withSuspense(TattvarthaSutra),
+  component: TattvarthaSutra,
 });
-
 const jainNewStotraDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-new-stotra/$id",
-  component: withSuspense(JainNewStotraDetail),
+  component: JainNewStotraDetail,
 });
-
 const jainMeriBhavnaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-meri-bhavna",
-  component: withSuspense(JainMeriBhavna),
+  component: JainMeriBhavna,
 });
-
 const jainStoriesLibraryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-stories",
-  component: withSuspense(JainStoriesLibrary),
+  component: JainStoriesLibrary,
 });
-
 const jainVichaarRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-vichaar",
-  component: withSuspense(JainVichaar),
+  component: JainVichaar,
 });
-
 const jainBooksLibraryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-books",
-  component: withSuspense(JainBooksLibrary),
+  component: JainBooksLibrary,
 });
-
 const jainPoojasSangrehRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-poojas-sangreh",
-  component: withSuspense(JainPoojasSangreh),
+  component: JainPoojasSangreh,
 });
-
 const jainBalVikasRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-bal-vikas",
-  component: withSuspense(JainBalVikas),
+  component: JainBalVikas,
 });
-
-const EmeraldStonePage = lazy(() => import("./pages/EmeraldStonePage"));
-const CaratRattiCalculator = lazy(() => import("./pages/CaratRattiCalculator"));
-const RubyStonePage = lazy(() => import("./pages/RubyStonePage"));
-const BlueSapphireStonePage = lazy(
-  () => import("./pages/BlueSapphireStonePage"),
-);
-const YellowSapphireStonePage = lazy(
-  () => import("./pages/YellowSapphireStonePage"),
-);
-
 const emeraldStoneRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/gemstones/emerald",
-  component: withSuspense(EmeraldStonePage),
+  component: EmeraldStonePage,
 });
-
 const caratRattiCalculatorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/tools/carat-ratti-calculator",
-  component: withSuspense(CaratRattiCalculator),
+  component: CaratRattiCalculator,
 });
-
 const rubyStoneRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/gemstones/ruby",
-  component: withSuspense(RubyStonePage),
+  component: RubyStonePage,
 });
-
 const blueSapphireStoneRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/gemstones/blue-sapphire",
-  component: withSuspense(BlueSapphireStonePage),
+  component: BlueSapphireStonePage,
 });
-
 const yellowSapphireStoneRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/gemstones/yellow-sapphire",
-  component: withSuspense(YellowSapphireStonePage),
+  component: YellowSapphireStonePage,
 });
-
 const jainBhajanDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-bhajan/$id",
-  component: withSuspense(JainBhajanDetail),
+  component: JainBhajanDetail,
 });
-
 const jainKnowledgeBaseRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-knowledge-base",
-  component: withSuspense(JainKnowledgeBase),
+  component: JainKnowledgeBase,
 });
-
 const jainDevShastraGuruPujaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-dev-shastra-guru-puja",
-  component: withSuspense(JainDevShastraGuruPuja),
+  component: JainDevShastraGuruPuja,
 });
-
 const jainVicharQuoteDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/jain-vichaar/$person",
-  component: withSuspense(JainVicharQuoteDetail),
+  component: JainVicharQuoteDetail,
+});
+const tantraRemediesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tantra-remedies",
+  component: TantraRemedies,
+});
+const gemstoneLibraryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gemstones",
+  component: GemstoneLibrary,
+});
+const yantraLibraryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/yantras",
+  component: YantraLibrary,
+});
+const pujaBookingNewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/puja-booking-new",
+  component: PujaBooking,
+});
+const guruDirectoryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/guru-directory",
+  component: GurugDirectory,
+});
+const herbDirectoryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/herb-directory",
+  component: HerbDirectoryPage,
+});
+const mehndiRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/mehndi",
+  component: MehndiCollection,
+});
+const paintingsGreetingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/paintings-greetings",
+  component: PaintingsGreetings,
+});
+const daanSevaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/daan-seva",
+  component: DaanSeva,
+});
+const danSevaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dan-seva",
+  component: DanSevaPage,
+});
+const templeDirectoryPageRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/temple-directory",
+  component: TempleDirectoryPage,
+});
+const navgrahMantraRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/navgrah-mantra",
+  component: NavgrahMantraCounter,
+});
+const dhwaniShopRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dhwani-shop",
+  component: DhwaniShop,
+});
+const dhwaniProductDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dhwani-shop/$id",
+  component: DhwaniProductDetail,
+});
+const kartikShopRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/kartik-shop",
+  component: KartikJewelsShop,
+});
+const kartikProductDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/kartik-shop/$id",
+  component: KartikProductDetail,
+});
+
+const shopSpecialCollectionsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/shop/special-collections",
+  component: ShopSpecialCollections,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -1163,6 +1130,7 @@ const routeTree = rootRoute.addChildren([
   jainPujanRoute,
   kavachRoute,
   kundaliMatchingRoute,
+  astrologyCalculatorsRoute,
   ashtakamRoute,
   stutiRoute,
   sahasranamRoute,
@@ -1173,6 +1141,7 @@ const routeTree = rootRoute.addChildren([
   jainEncyclopediaVolumeRoute,
   jainipediaRoute,
   sikhKirtansRoute,
+  sikhNitnemRoute,
   jainVratKathasRoute,
   jainVratKathaDetailRoute,
   jainVrat144ListRoute,
@@ -1200,6 +1169,7 @@ const routeTree = rootRoute.addChildren([
   yogasInChartRoute,
   chartRectificationRoute,
   vedicCompatibilityRoute,
+  numerologyWatchesRoute,
   shopByPurposeRoute,
   jainPathshalaRoute,
   pathshalaRoute,
@@ -1212,6 +1182,11 @@ const routeTree = rootRoute.addChildren([
   bookConsultationRoute,
   bookingConfirmationRoute,
   livePanchangRoute,
+  panchangRoute,
+  panchangTimingsRoute,
+  panchangFestivalsRoute,
+  vivahMuhuratRoute,
+  grihaPravesh2026Route,
   currentTransitsRoute,
   shadowPlanetsRoute,
   pujasCatalogRoute,
@@ -1267,6 +1242,7 @@ const routeTree = rootRoute.addChildren([
   yellowSapphireStoneRoute,
   newsletterRoute,
   yantraShopRoute,
+  lifeReceiptRoute,
   yantraInfoRoute,
   yantraInfoDetailRoute,
   jainStavanRoute,
@@ -1284,6 +1260,23 @@ const routeTree = rootRoute.addChildren([
   jainDevShastraGuruPujaRoute,
   jainVicharQuoteDetailRoute,
   padmavatiVratKathaRoute,
+  gemstoneLibraryRoute,
+  yantraLibraryRoute,
+  pujaBookingNewRoute,
+  tantraRemediesRoute,
+  guruDirectoryRoute,
+  herbDirectoryRoute,
+  mehndiRoute,
+  paintingsGreetingsRoute,
+  daanSevaRoute,
+  danSevaRoute,
+  templeDirectoryPageRoute,
+  navgrahMantraRoute,
+  dhwaniShopRoute,
+  dhwaniProductDetailRoute,
+  kartikShopRoute,
+  kartikProductDetailRoute,
+  shopSpecialCollectionsRoute,
 ]);
 
 const router = createRouter({ routeTree });
@@ -1295,6 +1288,19 @@ declare module "@tanstack/react-router" {
 }
 
 export default function App() {
+  // Remove loading overlay AFTER first render — this is the ONLY place it should be removed.
+  // Running it at module-load time (before useEffect) means React hasn't rendered yet.
+  useEffect(() => {
+    const el = document.getElementById("loading-overlay");
+    if (el) {
+      el.style.opacity = "0";
+      el.style.transition = "opacity 0.3s ease";
+      setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 350);
+    }
+  }, []); // empty deps = runs once after first render
+
   return (
     <>
       <RouterProvider router={router} />

@@ -10,6 +10,7 @@ import {
   List,
   Search,
   Sun,
+  X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type {
@@ -512,11 +513,281 @@ function RahuKaalSection() {
   );
 }
 
+// Faith dot colors for calendar grid
+const FAITH_DOT: Record<string, string> = {
+  Hindu: "oklch(0.68 0.20 48)", // saffron/orange
+  Jain: "oklch(0.55 0.18 145)", // green
+  Sikh: "oklch(0.82 0.18 90)", // golden yellow
+  Tamil: "oklch(0.60 0.20 320)", // pink/purple
+  Malayalam: "oklch(0.55 0.18 260)", // blue
+};
+
+interface MonthlyCalendarGridProps {
+  year: number;
+  month: number; // 1-indexed
+  events: FestivalEvent[];
+  selectedDate: string | null;
+  onSelectDate: (date: string | null) => void;
+}
+
+function MonthlyCalendarGrid({
+  year,
+  month,
+  events,
+  selectedDate,
+  onSelectDate,
+}: MonthlyCalendarGridProps) {
+  const firstDay = new Date(year, month - 1, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const today = new Date().toISOString().split("T")[0];
+
+  // Build a map: date string → events
+  const eventsByDay = new Map<string, FestivalEvent[]>();
+  for (const ev of events) {
+    const list = eventsByDay.get(ev.date) ?? [];
+    list.push(ev);
+    eventsByDay.set(ev.date, list);
+  }
+
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  // Build cell entries — null for empty padding cells, number for actual days
+  const emptyCount = firstDay;
+  const dayCells: Array<{ key: string; day: number | null }> = [
+    ...Array.from({ length: emptyCount }, (_, i) => ({
+      key: `pad-${i}`,
+      day: null as null,
+    })),
+    ...Array.from({ length: daysInMonth }, (_, i) => ({
+      key: `day-${i + 1}`,
+      day: i + 1,
+    })),
+  ];
+  while (dayCells.length % 7 !== 0) {
+    dayCells.push({ key: `tail-${dayCells.length}`, day: null });
+  }
+
+  const selectedEvents = selectedDate
+    ? (eventsByDay.get(selectedDate) ?? [])
+    : [];
+
+  return (
+    <div className="mb-6">
+      {/* Weekday headers */}
+      <div className="grid grid-cols-7 gap-0.5 mb-1">
+        {weekDays.map((d) => (
+          <div
+            key={d}
+            className="text-center text-xs font-heading font-semibold py-1"
+            style={{ color: "oklch(0.65 0.04 55)" }}
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+
+      {/* Day cells */}
+      <div className="grid grid-cols-7 gap-0.5">
+        {dayCells.map(({ key, day }) => {
+          if (!day) {
+            return <div key={key} className="h-16 rounded-lg" />;
+          }
+          const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const dayEvents = eventsByDay.get(dateStr) ?? [];
+          const isToday = dateStr === today;
+          const isSelected = dateStr === selectedDate;
+
+          return (
+            <button
+              key={dateStr}
+              type="button"
+              onClick={() => onSelectDate(isSelected ? null : dateStr)}
+              className="h-16 rounded-lg flex flex-col items-center pt-1 transition-all hover:scale-[1.05] relative"
+              style={{
+                background: isSelected
+                  ? "oklch(0.78 0.14 75 / 0.2)"
+                  : isToday
+                    ? "oklch(0.68 0.20 48 / 0.15)"
+                    : "oklch(0.20 0.07 24)",
+                border: isSelected
+                  ? "1px solid oklch(0.78 0.14 75 / 0.6)"
+                  : isToday
+                    ? "1px solid oklch(0.68 0.20 48 / 0.5)"
+                    : "1px solid oklch(0.78 0.14 75 / 0.1)",
+              }}
+              data-ocid={`festival.calendar_day.${dateStr}`}
+              aria-label={`${dateStr}${dayEvents.length > 0 ? ` — ${dayEvents.length} events` : ""}`}
+            >
+              <span
+                className="text-xs font-heading font-bold leading-none"
+                style={{
+                  color: isToday
+                    ? "oklch(0.78 0.14 75)"
+                    : isSelected
+                      ? "oklch(0.90 0.08 75)"
+                      : "oklch(0.80 0.04 65)",
+                }}
+              >
+                {day}
+              </span>
+              {/* Faith dots */}
+              {dayEvents.length > 0 && (
+                <div className="flex flex-wrap gap-0.5 justify-center mt-1 px-1">
+                  {dayEvents.slice(0, 4).map((ev, i) => (
+                    <div
+                      key={`${ev.id}-${i}`}
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{
+                        background:
+                          FAITH_DOT[ev.faith] ?? "oklch(0.60 0.10 60)",
+                      }}
+                      title={ev.title}
+                    />
+                  ))}
+                  {dayEvents.length > 4 && (
+                    <span
+                      className="text-[8px] leading-none"
+                      style={{ color: "oklch(0.65 0.04 55)" }}
+                    >
+                      +{dayEvents.length - 4}
+                    </span>
+                  )}
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Dot legend */}
+      <div className="flex flex-wrap gap-3 mt-3 justify-center">
+        {Object.entries(FAITH_DOT).map(([faith, color]) => (
+          <div key={faith} className="flex items-center gap-1.5">
+            <div
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ background: color }}
+            />
+            <span
+              className="text-xs font-body"
+              style={{ color: "oklch(0.65 0.04 55)" }}
+            >
+              {faith}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Selected day popup */}
+      {selectedDate && selectedEvents.length > 0 && (
+        <div
+          className="mt-4 rounded-xl border p-4"
+          style={{
+            background: "oklch(0.20 0.08 25)",
+            borderColor: "oklch(0.78 0.14 75 / 0.3)",
+          }}
+          data-ocid="festival.day_popup"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <p
+              className="font-heading font-bold text-sm"
+              style={{ color: "oklch(0.78 0.14 75)" }}
+            >
+              📅{" "}
+              {new Date(`${selectedDate}T12:00:00`).toLocaleDateString(
+                "en-IN",
+                {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                },
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={() => onSelectDate(null)}
+              className="p-1 rounded-full hover:bg-white/10 transition-colors"
+              style={{ color: "oklch(0.60 0.04 55)" }}
+              aria-label="Close"
+              data-ocid="festival.day_popup_close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="space-y-2">
+            {selectedEvents.map((ev) => (
+              <div
+                key={ev.id}
+                className="flex items-start gap-2 p-2 rounded-lg"
+                style={{ background: "oklch(0.24 0.08 28)" }}
+              >
+                <div
+                  className="w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0"
+                  style={{
+                    background: FAITH_DOT[ev.faith] ?? "oklch(0.60 0.10 60)",
+                  }}
+                />
+                <div className="min-w-0">
+                  <p
+                    className="font-heading font-semibold text-sm"
+                    style={{ color: "oklch(0.88 0.06 75)" }}
+                  >
+                    {ev.title}
+                  </p>
+                  {ev.titleHindi && (
+                    <p
+                      className="text-xs font-body"
+                      style={{ color: "oklch(0.65 0.04 55)" }}
+                    >
+                      {ev.titleHindi}
+                    </p>
+                  )}
+                  <div className="flex gap-1.5 mt-1 flex-wrap">
+                    <Badge
+                      className="text-xs"
+                      style={{
+                        background: `${FAITH_DOT[ev.faith] ?? "oklch(0.60 0.10 60)"}20`,
+                        color: FAITH_DOT[ev.faith] ?? "oklch(0.80 0.06 65)",
+                        border: `1px solid ${FAITH_DOT[ev.faith] ?? "oklch(0.60 0.10 60)"}40`,
+                      }}
+                    >
+                      {ev.faith}
+                    </Badge>
+                    {ev.tithi && (
+                      <Badge
+                        className="text-xs"
+                        style={{
+                          background: "oklch(0.28 0.06 30)",
+                          color: "oklch(0.70 0.04 60)",
+                          border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+                        }}
+                      >
+                        {ev.tithi}
+                      </Badge>
+                    )}
+                  </div>
+                  <p
+                    className="text-xs mt-1.5 font-body"
+                    style={{ color: "oklch(0.65 0.04 55)" }}
+                  >
+                    {ev.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FestivalCalendar() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedFaith, setSelectedFaith] = useState<FaithType | "All">("All");
   const [search, setSearch] = useState("");
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [viewMode, setViewMode] = useState<"list" | "calendar" | "grid">(
+    "calendar",
+  );
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];
@@ -785,6 +1056,21 @@ export default function FestivalCalendar() {
               >
                 <button
                   type="button"
+                  onClick={() => setViewMode("calendar")}
+                  className={`p-1.5 rounded-md transition-colors ${viewMode === "calendar" ? "bg-white/10" : ""}`}
+                  aria-label="Calendar view"
+                  style={{
+                    color:
+                      viewMode === "calendar"
+                        ? "oklch(0.78 0.14 75)"
+                        : "oklch(0.55 0.04 50)",
+                  }}
+                  data-ocid="festival.view_calendar"
+                >
+                  <Calendar className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
                   onClick={() => setViewMode("list")}
                   className={`p-1.5 rounded-md transition-colors ${viewMode === "list" ? "bg-white/10" : ""}`}
                   aria-label="List view"
@@ -794,25 +1080,38 @@ export default function FestivalCalendar() {
                         ? "oklch(0.78 0.14 75)"
                         : "oklch(0.55 0.04 50)",
                   }}
+                  data-ocid="festival.view_list"
                 >
                   <List className="h-4 w-4" />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("grid")}
-                  className={`p-1.5 rounded-md transition-colors ${viewMode === "grid" ? "bg-white/10" : ""}`}
-                  aria-label="Grid view"
-                  style={{
-                    color:
-                      viewMode === "grid"
-                        ? "oklch(0.78 0.14 75)"
-                        : "oklch(0.55 0.04 50)",
-                  }}
-                >
-                  <Calendar className="h-4 w-4" />
-                </button>
               </div>
             </div>
+
+            {/* Monthly Calendar Grid */}
+            {viewMode === "calendar" && (
+              <div
+                className="rounded-2xl border p-4 mb-6"
+                style={{
+                  background: "oklch(0.18 0.07 22)",
+                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                }}
+              >
+                <MonthlyCalendarGrid
+                  year={2026}
+                  month={selectedMonth}
+                  events={
+                    selectedFaith === "All"
+                      ? getEventsByMonth(allFestivalEvents, selectedMonth)
+                      : getEventsByFaith(
+                          getEventsByMonth(allFestivalEvents, selectedMonth),
+                          selectedFaith,
+                        )
+                  }
+                  selectedDate={selectedDate}
+                  onSelectDate={setSelectedDate}
+                />
+              </div>
+            )}
 
             {/* Results count */}
             <p
@@ -848,13 +1147,7 @@ export default function FestivalCalendar() {
                 </p>
               </div>
             ) : (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 md:grid-cols-2 gap-3"
-                    : "space-y-3"
-                }
-              >
+              <div className="space-y-3">
                 {filteredEvents.map((event) => (
                   <EventCard key={event.id} event={event} />
                 ))}

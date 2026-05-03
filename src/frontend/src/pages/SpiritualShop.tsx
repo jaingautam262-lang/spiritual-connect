@@ -10,9 +10,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
-import { Filter, MessageCircle, ShoppingCart, Star, X } from "lucide-react";
+import {
+  Filter,
+  MessageCircle,
+  ShoppingCart,
+  Star,
+  Watch,
+  X,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import {
+  LUCK_WATCHES,
+  type LuckWatch,
+  WATCH_FILTER_CONFIG,
+} from "../data/luckWatches";
 import {
   ALL_SHOP_PRODUCTS,
   SHOP_BY_TEMPLE,
@@ -32,6 +44,11 @@ import {
   SHOP_PRODUCTS_C,
 } from "../data/shopData_c";
 import { herbCategories, herbsProducts } from "../data/shopData_herbs";
+import {
+  MISSING_PRODUCTS,
+  MISSING_PRODUCT_CATEGORIES,
+  type ProductWithMRP as MissingProductWithMRP,
+} from "../data/shopData_missing_products";
 import { ALL_NEW_PRODUCTS } from "../data/shopData_new";
 import {
   ALL_NEW_CATEGORY_PRODUCTS,
@@ -191,6 +208,598 @@ function getGemstoneKey(name: string): string | null {
     return "Cat's Eye";
   if (lower.includes("lapis lazuli")) return "Lapis Lazuli";
   return null;
+}
+
+// ─── Luck Watch Availability Badge ────────────────────────────────────────────
+
+function AvailabilityBadge({
+  availability,
+}: { availability: LuckWatch["availability"] }) {
+  if (availability === "in-stock")
+    return (
+      <span
+        className="text-xs font-heading font-bold px-2 py-0.5 rounded-full"
+        style={{
+          background: "oklch(0.55 0.18 145 / 0.18)",
+          color: "oklch(0.55 0.18 145)",
+          border: "1px solid oklch(0.55 0.18 145 / 0.3)",
+        }}
+      >
+        ✓ In Stock
+      </span>
+    );
+  if (availability === "pre-order")
+    return (
+      <span
+        className="text-xs font-heading font-bold px-2 py-0.5 rounded-full"
+        style={{
+          background: "oklch(0.72 0.16 75 / 0.18)",
+          color: "oklch(0.68 0.16 68)",
+          border: "1px solid oklch(0.68 0.16 68 / 0.3)",
+        }}
+      >
+        ⏳ Pre-Order
+      </span>
+    );
+  return (
+    <span
+      className="text-xs font-heading font-bold px-2 py-0.5 rounded-full"
+      style={{
+        background: "oklch(0.50 0.05 60 / 0.2)",
+        color: "oklch(0.55 0.05 55)",
+        border: "1px solid oklch(0.50 0.05 55 / 0.3)",
+      }}
+    >
+      Sold Out
+    </span>
+  );
+}
+
+// ─── Luck Watch Card ────────────────────────────────────────────────────────────
+
+function LuckWatchCard({
+  watch,
+  onAddToCart,
+  index,
+}: {
+  watch: LuckWatch;
+  onAddToCart: (w: LuckWatch) => void;
+  index: number;
+}) {
+  const isSoldOut = watch.availability === "sold-out";
+  const isPreOrder = watch.availability === "pre-order";
+
+  // Dial color to gradient mapping
+  const dialGradients: Record<string, string> = {
+    green:
+      "linear-gradient(135deg, oklch(0.82 0.16 145), oklch(0.68 0.18 138))",
+    white: "linear-gradient(135deg, oklch(0.96 0.02 80), oklch(0.90 0.03 75))",
+    silver:
+      "linear-gradient(135deg, oklch(0.88 0.02 200), oklch(0.80 0.03 210))",
+    gold: "linear-gradient(135deg, oklch(0.82 0.18 68), oklch(0.72 0.20 55))",
+  };
+  const gradient =
+    dialGradients[watch.dialColor] ??
+    "linear-gradient(135deg, oklch(0.82 0.10 48), oklch(0.72 0.12 40))";
+
+  return (
+    <div
+      className="rounded-2xl border overflow-hidden flex flex-col transition-all hover:shadow-lg hover:-translate-y-0.5"
+      style={{
+        background: "oklch(0.16 0.05 30)",
+        borderColor: isSoldOut
+          ? "oklch(0.30 0.04 40)"
+          : "oklch(0.32 0.08 42 / 0.7)",
+        opacity: isSoldOut ? 0.75 : 1,
+      }}
+      data-ocid={`shop.luck_watch.item.${index + 1}`}
+    >
+      {/* Watch Image / Dial Visualization */}
+      <div
+        className="relative h-44 flex items-center justify-center"
+        style={{ background: "oklch(0.13 0.04 28)" }}
+      >
+        {/* Decorative watch face */}
+        <div
+          className="w-28 h-28 rounded-full flex items-center justify-center shadow-2xl border-4"
+          style={{
+            background: gradient,
+            borderColor:
+              watch.strapColor === "golden" || watch.strapColor === "gold"
+                ? "oklch(0.72 0.20 55)"
+                : watch.strapColor === "dual-tone"
+                  ? "oklch(0.75 0.08 200)"
+                  : "oklch(0.80 0.04 80)",
+          }}
+        >
+          <Watch
+            className="w-10 h-10"
+            style={{ color: "oklch(0.14 0.04 22 / 0.6)" }}
+          />
+        </div>
+        {/* Badges overlay */}
+        <div className="absolute top-2.5 left-2.5">
+          <AvailabilityBadge availability={watch.availability} />
+        </div>
+        {watch.gender === "female" && (
+          <div className="absolute top-2.5 right-2.5">
+            <span
+              className="text-xs font-heading font-bold px-2 py-0.5 rounded-full"
+              style={{
+                background: "oklch(0.70 0.14 340 / 0.18)",
+                color: "oklch(0.72 0.14 340)",
+                border: "1px solid oklch(0.70 0.14 340 / 0.3)",
+              }}
+            >
+              ♀ Female
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-4 flex flex-col flex-1 gap-3">
+        <div>
+          <h3
+            className="font-heading font-bold text-sm leading-tight mb-1"
+            style={{ color: "oklch(0.84 0.12 72)" }}
+          >
+            {watch.name}
+          </h3>
+          {/* Price row */}
+          <div className="flex items-baseline gap-2">
+            <span
+              className="font-heading font-bold text-base"
+              style={{ color: "oklch(0.72 0.20 52)" }}
+            >
+              ₹{watch.price.toLocaleString()}
+            </span>
+            {watch.originalPrice && (
+              <span
+                className="text-xs font-body line-through"
+                style={{ color: "oklch(0.52 0.05 55)" }}
+              >
+                ₹{watch.originalPrice.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Numerology numbers */}
+        <div>
+          <p
+            className="text-xs font-heading font-semibold mb-1.5"
+            style={{ color: "oklch(0.68 0.10 55)" }}
+          >
+            🔢 Lucky for Moolank:
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {watch.numerologyNumbers.map((num) => (
+              <span
+                key={num}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-heading font-bold"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+                  color: "white",
+                }}
+              >
+                {num}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <p
+          className="text-xs font-body leading-relaxed line-clamp-3 flex-1"
+          style={{ color: "oklch(0.64 0.06 52)" }}
+        >
+          {watch.description}
+        </p>
+
+        {/* Add to cart */}
+        <Button
+          onClick={() => !isSoldOut && onAddToCart(watch)}
+          disabled={isSoldOut}
+          className="w-full font-heading font-semibold text-xs py-2 transition-all"
+          style={
+            isSoldOut
+              ? {
+                  background: "oklch(0.30 0.04 40)",
+                  color: "oklch(0.55 0.04 50)",
+                  cursor: "not-allowed",
+                }
+              : {
+                  background:
+                    "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.56 0.18 40))",
+                  color: "white",
+                }
+          }
+          data-ocid={`shop.luck_watch.add_to_cart.${index + 1}`}
+        >
+          {isSoldOut ? (
+            "Sold Out"
+          ) : isPreOrder ? (
+            <>
+              <ShoppingCart className="w-3 h-3 mr-1" /> Pre-Order Now
+            </>
+          ) : (
+            <>
+              <ShoppingCart className="w-3 h-3 mr-1" /> Add to Cart
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Luck Watches Section ──────────────────────────────────────────────────────
+
+function LuckWatchesSection({
+  onAddToCart,
+}: { onAddToCart: (w: LuckWatch) => void }) {
+  const [availFilter, setAvailFilter] = useState<string[]>([]);
+  const [priceMax, setPriceMax] = useState(24000);
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<
+    "relevance" | "price-asc" | "price-desc"
+  >("relevance");
+
+  const filtered = useMemo(() => {
+    let result = LUCK_WATCHES.filter((w) => {
+      const availMatch =
+        availFilter.length === 0 || availFilter.includes(w.availability);
+      const priceMatch = w.price <= priceMax;
+      const typeMatch =
+        typeFilter.length === 0 ||
+        typeFilter.some((t) => w.productType.includes(t));
+      return availMatch && priceMatch && typeMatch;
+    });
+    if (sortBy === "price-asc")
+      result = [...result].sort((a, b) => a.price - b.price);
+    if (sortBy === "price-desc")
+      result = [...result].sort((a, b) => b.price - a.price);
+    return result;
+  }, [availFilter, priceMax, typeFilter, sortBy]);
+
+  const toggleAvail = (val: string) =>
+    setAvailFilter((prev) =>
+      prev.includes(val) ? prev.filter((x) => x !== val) : [...prev, val],
+    );
+
+  const toggleType = (val: string) =>
+    setTypeFilter((prev) =>
+      prev.includes(val) ? prev.filter((x) => x !== val) : [...prev, val],
+    );
+
+  const inStock = LUCK_WATCHES.filter(
+    (w) => w.availability === "in-stock",
+  ).length;
+  const outOfStock = LUCK_WATCHES.filter(
+    (w) => w.availability === "sold-out",
+  ).length;
+
+  return (
+    <section
+      className="border-b"
+      style={{
+        background:
+          "linear-gradient(180deg, oklch(0.14 0.06 28) 0%, oklch(0.12 0.04 26) 100%)",
+        borderColor: "oklch(0.28 0.08 35)",
+      }}
+      id="luck-watches"
+      data-ocid="shop.luck_watches.section"
+    >
+      <div className="container mx-auto px-4 py-10">
+        {/* Section Header */}
+        <div className="text-center mb-8">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-3"
+            style={{
+              background: "oklch(0.68 0.20 48 / 0.12)",
+              border: "1px solid oklch(0.68 0.20 48 / 0.25)",
+            }}
+          >
+            <span className="text-sm">⌚</span>
+            <span
+              className="text-xs font-heading font-semibold tracking-widest uppercase"
+              style={{ color: "oklch(0.72 0.16 55)" }}
+            >
+              Numerology Exclusive Collection
+            </span>
+          </div>
+          <h2
+            className="font-heading text-3xl md:text-4xl font-bold mb-2"
+            style={{ color: "oklch(0.84 0.16 72)" }}
+          >
+            🔢 Numerology Luck Watches
+          </h2>
+          <p
+            className="font-heading text-base mb-1"
+            style={{ color: "oklch(0.68 0.12 58)" }}
+          >
+            अंकशास्त्र लक घड़ियाँ
+          </p>
+          <p
+            className="text-sm max-w-lg mx-auto"
+            style={{ color: "oklch(0.58 0.06 52)" }}
+          >
+            Each watch is energetically aligned to specific Moolank (birth
+            number) vibrations. Wear your lucky number, amplify your destiny.
+          </p>
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <div
+              className="h-px flex-1 max-w-16"
+              style={{ background: "oklch(0.68 0.20 48 / 0.3)" }}
+            />
+            <span style={{ color: "oklch(0.68 0.20 48)" }}>⌚</span>
+            <div
+              className="h-px flex-1 max-w-16"
+              style={{ background: "oklch(0.68 0.20 48 / 0.3)" }}
+            />
+          </div>
+          <div className="mt-4 flex justify-center">
+            <Link
+              to="/shop/numerology-watches"
+              data-ocid="shop.numerology_watches_link"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-heading font-semibold transition-colors hover:opacity-80"
+              style={{
+                background: "oklch(0.68 0.20 48 / 0.15)",
+                border: "1px solid oklch(0.68 0.20 48 / 0.40)",
+                color: "oklch(0.82 0.16 65)",
+              }}
+            >
+              <Watch className="w-3.5 h-3.5" />
+              Browse All Numerology Timepieces →
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Filters Sidebar */}
+          <aside className="lg:w-52 shrink-0 space-y-5">
+            {/* Availability */}
+            <div
+              className="rounded-xl border p-4 space-y-2.5"
+              style={{
+                background: "oklch(0.16 0.05 28)",
+                borderColor: "oklch(0.28 0.06 32)",
+              }}
+            >
+              <p
+                className="text-xs font-heading font-bold uppercase tracking-wide"
+                style={{ color: "oklch(0.72 0.12 58)" }}
+              >
+                Availability
+              </p>
+              {[
+                { value: "in-stock", label: `In stock (${inStock})` },
+                { value: "sold-out", label: `Out of stock (${outOfStock})` },
+              ].map((opt) => (
+                <label
+                  key={opt.value}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={availFilter.includes(opt.value)}
+                    onChange={() => toggleAvail(opt.value)}
+                    className="rounded"
+                    data-ocid={`shop.luck_watches.avail_filter.${opt.value}`}
+                  />
+                  <span
+                    className="text-xs font-body"
+                    style={{ color: "oklch(0.72 0.06 55)" }}
+                  >
+                    {opt.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            {/* Price Range */}
+            <div
+              className="rounded-xl border p-4 space-y-3"
+              style={{
+                background: "oklch(0.16 0.05 28)",
+                borderColor: "oklch(0.28 0.06 32)",
+              }}
+            >
+              <p
+                className="text-xs font-heading font-bold uppercase tracking-wide"
+                style={{ color: "oklch(0.72 0.12 58)" }}
+              >
+                Price
+              </p>
+              <div
+                className="flex items-center justify-between text-xs font-heading"
+                style={{ color: "oklch(0.62 0.08 55)" }}
+              >
+                <span>₹0</span>
+                <span>₹{priceMax.toLocaleString()}</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={24000}
+                step={1000}
+                value={priceMax}
+                onChange={(e) => setPriceMax(Number(e.target.value))}
+                className="w-full accent-amber-500"
+                data-ocid="shop.luck_watches.price_slider"
+              />
+              <div className="flex gap-2">
+                <div
+                  className="flex-1 text-center text-xs rounded px-2 py-1 font-heading font-semibold"
+                  style={{
+                    background: "oklch(0.20 0.06 30)",
+                    color: "oklch(0.75 0.10 60)",
+                  }}
+                >
+                  From ₹0
+                </div>
+                <div
+                  className="flex-1 text-center text-xs rounded px-2 py-1 font-heading font-semibold"
+                  style={{
+                    background: "oklch(0.20 0.06 30)",
+                    color: "oklch(0.75 0.10 60)",
+                  }}
+                >
+                  To ₹{priceMax.toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            {/* Product Type */}
+            <div
+              className="rounded-xl border p-4 space-y-2.5"
+              style={{
+                background: "oklch(0.16 0.05 28)",
+                borderColor: "oklch(0.28 0.06 32)",
+              }}
+            >
+              <p
+                className="text-xs font-heading font-bold uppercase tracking-wide"
+                style={{ color: "oklch(0.72 0.12 58)" }}
+              >
+                Filter on Product Type
+              </p>
+              {WATCH_FILTER_CONFIG.productTypes.map((pt) => (
+                <label
+                  key={pt.value}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={typeFilter.includes(pt.value)}
+                    onChange={() => toggleType(pt.value)}
+                    className="rounded"
+                    data-ocid={`shop.luck_watches.type_filter.${pt.value.replace(/[^a-z0-9]/gi, "_").toLowerCase()}`}
+                  />
+                  <span
+                    className="text-xs font-body"
+                    style={{ color: "oklch(0.70 0.06 55)" }}
+                  >
+                    {pt.label} ({pt.count})
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            {/* Sort */}
+            <div
+              className="rounded-xl border p-4"
+              style={{
+                background: "oklch(0.16 0.05 28)",
+                borderColor: "oklch(0.28 0.06 32)",
+              }}
+            >
+              <p
+                className="text-xs font-heading font-bold uppercase tracking-wide mb-2.5"
+                style={{ color: "oklch(0.72 0.12 58)" }}
+              >
+                Sort by
+              </p>
+              {[
+                { value: "relevance" as const, label: "Relevance" },
+                { value: "price-asc" as const, label: "Price: Low to High" },
+                { value: "price-desc" as const, label: "Price: High to Low" },
+              ].map((s) => (
+                <label
+                  key={s.value}
+                  className="flex items-center gap-2 cursor-pointer mb-2"
+                >
+                  <input
+                    type="radio"
+                    name="luck-watch-sort"
+                    checked={sortBy === s.value}
+                    onChange={() => setSortBy(s.value)}
+                    data-ocid={`shop.luck_watches.sort.${s.value}`}
+                  />
+                  <span
+                    className="text-xs font-body"
+                    style={{ color: "oklch(0.70 0.06 55)" }}
+                  >
+                    {s.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </aside>
+
+          {/* Watch Grid */}
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-4">
+              <p
+                className="text-xs font-body"
+                style={{ color: "oklch(0.58 0.06 52)" }}
+              >
+                Showing {filtered.length} of {LUCK_WATCHES.length} watches
+              </p>
+              {(availFilter.length > 0 ||
+                typeFilter.length > 0 ||
+                priceMax < 24000) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAvailFilter([]);
+                    setTypeFilter([]);
+                    setPriceMax(24000);
+                    setSortBy("relevance");
+                  }}
+                  className="text-xs font-heading font-semibold"
+                  style={{ color: "oklch(0.68 0.20 48)" }}
+                  data-ocid="shop.luck_watches.clear_filters_button"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
+
+            {filtered.length === 0 ? (
+              <div
+                className="py-16 text-center rounded-xl border"
+                style={{ borderColor: "oklch(0.28 0.06 32)" }}
+                data-ocid="shop.luck_watches.empty_state"
+              >
+                <div className="text-4xl mb-3">⌚</div>
+                <p
+                  className="font-heading text-sm"
+                  style={{ color: "oklch(0.65 0.08 55)" }}
+                >
+                  No watches match your filters
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAvailFilter([]);
+                    setTypeFilter([]);
+                    setPriceMax(24000);
+                  }}
+                  className="mt-3 text-xs font-heading font-semibold"
+                  style={{ color: "oklch(0.68 0.20 48)" }}
+                >
+                  Reset filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filtered.map((watch, i) => (
+                  <LuckWatchCard
+                    key={watch.id}
+                    watch={watch}
+                    onAddToCart={onAddToCart}
+                    index={i}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 // ─── Browse-by-Category Grid (18 featured categories) ─────────────────────────
@@ -696,6 +1305,8 @@ const CATEGORIES = [
   "Nav Grah Murti",
   "Nav Grah Yatra",
   "Devi Devta Yatra",
+  // Missing product categories
+  ...MISSING_PRODUCT_CATEGORIES,
 ];
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -733,6 +1344,16 @@ const CATEGORY_ICONS: Record<string, string> = {
   "Gold Jewellery": "🪙",
   Idols: "🪆",
   Pendants: "💫",
+  // Missing product category icons
+  rings: "💍",
+  "crystal-towers": "🗼",
+  "coin-pendants": "🪙",
+  owls: "🦉",
+  "brass-murti": "🪆",
+  elephants: "🐘",
+  "puja-sets": "🪔",
+  "vastu-frames": "🖼️",
+  "yantra-coins": "🔯",
 };
 
 const MAX_PRICE = Number.POSITIVE_INFINITY;
@@ -776,6 +1397,16 @@ const NEW_CATEGORY_TABS = [
   { id: "Bracelets", label: "Bracelets", emoji: "📿" },
   { id: "Pendants", label: "Pendants", emoji: "💫" },
   { id: "Indian Herbs", label: "Indian Herbs", emoji: "🌿" },
+  // Missing product category tabs
+  { id: "rings", label: "Gemstone Rings", emoji: "💍" },
+  { id: "crystal-towers", label: "Crystal Towers", emoji: "🗼" },
+  { id: "coin-pendants", label: "Coin Pendants", emoji: "🪙" },
+  { id: "owls", label: "Owls & Figurines", emoji: "🦉" },
+  { id: "brass-murti", label: "Brass Murti", emoji: "🪆" },
+  { id: "elephants", label: "Elephants", emoji: "🐘" },
+  { id: "puja-sets", label: "Puja Sets", emoji: "🪔" },
+  { id: "vastu-frames", label: "Vastu Frames", emoji: "🖼️" },
+  { id: "yantra-coins", label: "Yantra Coins", emoji: "🔯" },
 ];
 
 const RINGS_SUB = ["All", "Religious", "Gemstone", "Stylish"];
@@ -987,6 +1618,31 @@ const ORIGINAL_PRODUCTS: Product[] = [
   },
 ];
 
+// Adapt MISSING_PRODUCTS to the Product interface shape
+const MISSING_AS_PRODUCTS: Product[] = (
+  MISSING_PRODUCTS as unknown as MissingProductWithMRP[]
+).map(
+  (p) =>
+    ({
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      price: p.price,
+      description: p.description ?? "",
+      benefits: (p.tags ?? []).join(", "),
+      astrologicalPurpose: "",
+      stock: p.inStock ? BigInt(50) : BigInt(0),
+      createdAt: BigInt(0),
+      // carry over extra fields
+      mrp: p.mrp,
+      discountPercent: p.discountPercent,
+      badge: p.badge,
+      material: p.material,
+      size: p.size,
+      image: p.image,
+    }) as unknown as Product,
+);
+
 const ALL_PLACEHOLDER = [
   ...ORIGINAL_PRODUCTS,
   ...SHOP_PRODUCTS,
@@ -994,6 +1650,7 @@ const ALL_PLACEHOLDER = [
   ...ALL_NEW_PRODUCTS,
   ...ASTROLOGY_SERVICES,
   ...ALL_NEW_CATEGORY_PRODUCTS,
+  ...MISSING_AS_PRODUCTS,
 ];
 
 const MOCK_REVIEWS = [
@@ -2010,6 +2667,28 @@ function NewCategoryCard({
               </span>
             )}
           </div>
+          <div className="flex flex-col items-end gap-0.5">
+            {displayPrice >= 500 && (
+              <span
+                className="text-[10px] font-heading font-bold px-1.5 py-0.5 rounded-full"
+                style={{
+                  background: "oklch(0.68 0.20 48 / 0.12)",
+                  color: "oklch(0.50 0.18 42)",
+                  border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+                }}
+              >
+                💰 Cashback
+              </span>
+            )}
+            {displayPrice >= 1000 && (
+              <span
+                className="text-[10px] font-body"
+                style={{ color: "oklch(0.50 0.14 145)" }}
+              >
+                EMI ₹{Math.ceil(displayPrice / 3)}/mo
+              </span>
+            )}
+          </div>
           <button
             type="button"
             disabled={isOutOfStock}
@@ -2189,6 +2868,8 @@ export default function SpiritualShop() {
 
   // Try to read URL search params for concerns (graceful fallback)
   let initialConcerns: Concern[] = [];
+  let initialCategory = "All";
+  let initialNewTab: string | null = null;
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const concernParam = urlParams.get("concerns");
@@ -2199,17 +2880,28 @@ export default function SpiritualShop() {
           CONCERNS.some((concern) => concern.id === c),
         );
     }
+    const categoryParam = urlParams.get("category");
+    if (categoryParam) {
+      // If the category is one of the missing product categories, use it as a new tab
+      if (MISSING_PRODUCT_CATEGORIES.includes(categoryParam)) {
+        initialNewTab = categoryParam;
+      } else {
+        initialCategory = categoryParam;
+      }
+    }
   } catch {
     // no-op
   }
 
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState(0);
   const [showConsultation, setShowConsultation] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProductTab, setSelectedProductTab] = useState("All");
-  const [activeNewTab, setActiveNewTab] = useState<string | null>(null);
+  const [activeNewTab, setActiveNewTab] = useState<string | null>(
+    initialNewTab,
+  );
   const [silverSub, setSilverSub] = useState("All");
   const [ringsSub, setRingsSub] = useState("All");
   const [braceletsSub, setBraceletsSub] = useState("All");
@@ -2459,6 +3151,65 @@ export default function SpiritualShop() {
         </div>
       </div>
 
+      {/* Cashback Banner */}
+      <div
+        className="border-b"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40), oklch(0.72 0.18 55))",
+          borderColor: "oklch(0.58 0.18 40)",
+        }}
+        data-ocid="shop.cashback_banner"
+      >
+        <div className="container mx-auto px-4 py-3 flex items-center justify-center gap-3">
+          <span className="text-lg">🎉</span>
+          <p className="font-heading font-bold text-sm text-white">
+            100% Cashback on Select Items — Limited Time Offer!
+          </p>
+          <span
+            className="shrink-0 text-xs font-heading font-bold px-2 py-0.5 rounded-full cursor-pointer"
+            style={{
+              background: "oklch(0.99 0.01 80 / 0.25)",
+              color: "white",
+              border: "1px solid oklch(0.99 0.01 80 / 0.4)",
+            }}
+            title="Purchase eligible items and submit proof within 7 days of delivery. Cashback credited within 15 working days."
+          >
+            ℹ️ T&C
+          </span>
+        </div>
+      </div>
+
+      {/* ─── Special Collections Quick Link ─── */}
+      <div
+        className="border-b"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.62 0.18 45), oklch(0.52 0.16 38))",
+          borderColor: "oklch(0.52 0.16 38)",
+        }}
+        data-ocid="shop.special_collections_banner"
+      >
+        <div className="container mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+          <p className="font-heading font-bold text-sm text-white">
+            ✨ NEW: Kaka Items • Karungali • Sacred Frames • Combo Packs •
+            Mother's Day Special
+          </p>
+          <Link
+            to="/shop/special-collections"
+            data-ocid="shop.special_collections_link"
+            className="shrink-0 px-4 py-1.5 rounded-full font-heading font-semibold text-xs whitespace-nowrap transition-all hover:scale-105"
+            style={{
+              background: "oklch(0.99 0.01 80 / 0.25)",
+              color: "white",
+              border: "1px solid oklch(0.99 0.01 80 / 0.4)",
+            }}
+          >
+            View Special Collections →
+          </Link>
+        </div>
+      </div>
+
       {/* ─── Browse by Category Grid ─── */}
       <BrowseByCategorySection
         onSelectCategory={(cat) => {
@@ -2482,6 +3233,19 @@ export default function SpiritualShop() {
             const el = document.getElementById("shop-product-grid");
             if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
           }, 100);
+        }}
+      />
+
+      {/* ─── Numerology Luck Watches ─── */}
+      <LuckWatchesSection
+        onAddToCart={(watch) => {
+          addItem({
+            id: watch.id,
+            name: watch.name,
+            price: watch.price,
+            category: "Luck Watch",
+          });
+          toast.success(`${watch.name} added to cart! ⌚`);
         }}
       />
 
@@ -3145,6 +3909,168 @@ export default function SpiritualShop() {
                   })}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Gemstone Rings Section */}
+          {activeNewTab === "rings" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                💍 Gemstone Rings
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "rings",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Crystal Towers Section */}
+          {activeNewTab === "crystal-towers" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🗼 Crystal Towers
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "crystal-towers",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Coin Pendants Section */}
+          {activeNewTab === "coin-pendants" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🪙 Coin Pendants
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "coin-pendants",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Owls & Figurines Section */}
+          {activeNewTab === "owls" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🦉 Owls & Figurines
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "owls",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Brass Murti Section */}
+          {activeNewTab === "brass-murti" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🪆 Brass Murti
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "brass-murti",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Elephants Section */}
+          {activeNewTab === "elephants" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🐘 Elephants
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "elephants",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Puja Sets Section */}
+          {activeNewTab === "puja-sets" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🪔 Puja Sets
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "puja-sets",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Vastu Frames Section */}
+          {activeNewTab === "vastu-frames" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🖼️ Vastu Frames
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "vastu-frames",
+                )}
+                onAddToCart={handleAddToCart}
+              />
+            </div>
+          )}
+
+          {/* Yantra Coins Section */}
+          {activeNewTab === "yantra-coins" && (
+            <div>
+              <h2
+                className="font-heading font-bold text-lg mb-4"
+                style={{ color: "oklch(0.35 0.12 25)" }}
+              >
+                🔯 Yantra Coins
+              </h2>
+              <NewCategoryGrid
+                products={MISSING_AS_PRODUCTS.filter(
+                  (p) => p.category === "yantra-coins",
+                )}
+                onAddToCart={handleAddToCart}
+              />
             </div>
           )}
         </div>
@@ -3833,6 +4759,28 @@ export default function SpiritualShop() {
                                         ).mrp!.toLocaleString()}
                                       </span>
                                     )}
+                                  {product.price >= 1000 && (
+                                    <span
+                                      className="text-xs font-body"
+                                      style={{ color: "oklch(0.50 0.14 145)" }}
+                                    >
+                                      EMI ₹{Math.ceil(product.price / 3)}/mo
+                                    </span>
+                                  )}
+                                  {product.price >= 500 && (
+                                    <span
+                                      className="text-xs font-heading font-bold px-1.5 py-0.5 rounded-full self-start mt-0.5"
+                                      style={{
+                                        background:
+                                          "linear-gradient(135deg, oklch(0.68 0.20 48 / 0.15), oklch(0.72 0.18 55 / 0.15))",
+                                        color: "oklch(0.50 0.18 42)",
+                                        border:
+                                          "1px solid oklch(0.68 0.20 48 / 0.35)",
+                                      }}
+                                    >
+                                      💰 100% Cashback
+                                    </span>
+                                  )}
                                 </div>
                                 {product.category === "Astrology Services" ? (
                                   <button

@@ -382,7 +382,244 @@
     animation: ripple 1s ease-out forwards;
   }
 
-  /* Calculator Result Card Styles */
+  /* Panchang Calendar Styles */
+  .panchang-calendar {
+    @apply grid grid-cols-7 gap-2 w-full;
+  }
+
+  .panchang-day-header {
+    @apply text-center text-xs font-heading font-bold uppercase text-muted-foreground p-2;
+  }
+
+  .panchang-day-cell {
+    @apply aspect-square rounded-lg p-2 text-sm font-heading font-semibold transition-all cursor-pointer;
+    background: oklch(var(--muted));
+    border: 1px solid oklch(var(--border));
+  }
+
+  .panchang-day-cell:hover {
+    background: oklch(var(--muted) / 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px oklch(var(--saffron) / 0.15);
+  }
+
+  .panchang-day-cell.selected {
+    background: oklch(var(--saffron));
+    color: oklch(0.99 0.005 80);
+    border-color: oklch(var(--gold));
+    box-shadow: 0 0 0 2px oklch(var(--gold) / 0.3);
+  }
+
+  .panchang-day-cell.today {
+    background: oklch(var(--gold) / 0.2);
+    border: 2px solid oklch(var(--gold));
+    color: oklch(var(--saffron));
+  }
+
+  .panchang-day-cell.festival {
+    position: relative;
+  }
+
+  .panchang-day-cell.festival::after {
+    content: "";
+    @apply absolute top-1 right-1 w-2 h-2 rounded-full;
+    background: oklch(var(--saffron));
+  }
+
+  /* Panchang Summary Grid */
+  .panchang-summary {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4;
+  }
+
+  .panchang-data-point {
+    @apply bg-card rounded-lg border border-border p-4 transition-all;
+  }
+
+  .panchang-data-point:hover {
+    background: oklch(var(--muted) / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .panchang-data-label {
+    @apply text-xs uppercase tracking-wider text-muted-foreground font-medium;
+  }
+
+  .panchang-data-value {
+    @apply text-lg md:text-xl font-heading font-bold mt-2;
+    color: oklch(var(--saffron));
+  }
+
+  /* Choghadiya Color Classes */
+  .choghadiya-auspicious {
+    @apply bg-green-500/10 border-green-500/30 border-2;
+  }
+
+  .choghadiya-inauspicious {
+    @apply bg-red-500/10 border-red-500/30 border-2;
+  }
+
+  .choghadiya-mixed {
+    @apply bg-amber-500/10 border-amber-500/30 border-2;
+  }
+
+  .choghadiya-slot {
+    @apply rounded-lg p-3 transition-all;
+  }
+
+  .choghadiya-slot:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px oklch(var(--saffron) / 0.2);
+  }
+
+  /* Muhurat Collapsible Styles */
+  .muhurat-section {
+    @apply border border-border rounded-lg overflow-hidden;
+  }
+
+  .muhurat-section-header {
+    @apply w-full flex items-center justify-between p-4 bg-muted/50 hover:bg-muted/70 transition-colors cursor-pointer;
+  }
+
+  .muhurat-section-title {
+    @apply flex items-center gap-3 font-heading font-bold text-base;
+    color: oklch(var(--maroon));
+  }
+
+  .muhurat-section-content {
+    @apply p-4 bg-card border-t border-border;
+  }
+
+  /* Panchang Regional Tabs */
+  .panchang-region-tabs {
+    @apply flex flex-wrap gap-2 mb-4;
+  }
+
+  .panchang-region-tab {
+    @apply px-4 py-2 rounded-lg font-heading font-semibold text-sm transition-all;
+    background: oklch(var(--muted) / 0.5);
+    color: oklch(var(--foreground));
+  }
+
+  .panchang-region-tab:hover {
+    background: oklch(var(--muted) / 0.8);
+  }
+
+  .panchang-region-tab.active {
+    background: oklch(var(--saffron));
+    color: oklch(0.99 0.005 80);
+    box-shadow: 0 4px 12px oklch(var(--saffron) / 0.3);
+  }
+
+  /* Festival Strip */
+  .panchang-festival-strip {
+    @apply flex flex-wrap gap-4 mb-8;
+  }
+
+  .panchang-festival-item {
+    @apply bg-card rounded-lg border border-border p-4 transition-all flex-1 min-w-fit;
+  }
+
+  .panchang-festival-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px oklch(var(--gold) / 0.2);
+    border-color: oklch(var(--gold));
+  }
+
+  .panchang-festival-date {
+    @apply text-xs uppercase tracking-wider text-muted-foreground font-medium;
+  }
+
+  .panchang-festival-name {
+    @apply font-heading font-bold text-lg mt-2;
+    color: oklch(var(--gold));
+  }
+
+  /* Panchang Glossary */
+  .panchang-glossary {
+    @apply bg-muted/30 rounded-lg border border-border p-6 md:p-8;
+  }
+
+  .panchang-glossary-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  .panchang-glossary-item {
+    @apply border-l-2 pl-4;
+    border-color: oklch(var(--saffron));
+  }
+
+  .panchang-glossary-term {
+    @apply font-heading font-bold text-sm uppercase;
+    color: oklch(var(--maroon));
+  }
+
+  .panchang-glossary-desc {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Countdown Timer Animation */
+  .panchang-countdown {
+    animation: countdown 1s ease-in-out infinite;
+  }
+
+  /* Hora Chakra Grid */
+  .hora-chakra-grid {
+    @apply grid grid-cols-4 gap-2;
+  }
+
+  .hora-chakra-cell {
+    @apply bg-muted/50 rounded-lg p-3 text-center transition-all;
+  }
+
+  .hora-chakra-cell:hover {
+    background: oklch(var(--saffron) / 0.1);
+    border: 1px solid oklch(var(--saffron) / 0.3);
+  }
+
+  .hora-chakra-hour {
+    @apply text-xs font-heading font-bold text-muted-foreground;
+  }
+
+  .hora-chakra-planet {
+    @apply text-sm font-heading font-semibold mt-2;
+    color: oklch(var(--saffron));
+  }
+
+  /* Lagna Display */
+  .lagna-grid {
+    @apply grid grid-cols-3 gap-3;
+  }
+
+  .lagna-cell {
+    @apply bg-muted/50 rounded-lg p-4 text-center transition-all;
+  }
+
+  .lagna-label {
+    @apply text-xs uppercase tracking-wider text-muted-foreground font-medium;
+  }
+
+  .lagna-value {
+    @apply text-lg font-heading font-bold mt-2;
+    color: oklch(var(--gold));
+  }
+
+  /* Pancha Pakshi Grid */
+  .pancha-pakshi-grid {
+    @apply grid grid-cols-5 gap-2;
+  }
+
+  .pancha-pakshi-cell {
+    @apply bg-muted/50 rounded-lg p-3 text-center;
+  }
+
+  .pancha-pakshi-index {
+    @apply text-xs font-heading font-bold text-muted-foreground;
+  }
+
+  .pancha-pakshi-bird {
+    @apply text-xs font-semibold mt-2;
+    color: oklch(var(--saffron));
+  }
   .calculator-result-card {
     @apply bg-card rounded-lg border border-border p-6 md:p-8 shadow-sm hover:shadow-spiritual transition-all duration-300;
     background: linear-gradient(
@@ -848,6 +1085,29 @@
   .font-shloka {
     font-family: "Tiro Devanagari Sanskrit", "Noto Sans Devanagari", serif;
     line-height: 2.0;
+  }
+
+  /* Language mode body classes — applied by LanguageProvider via data-language attr */
+  [data-language="hi"],
+  .lang-hi {
+    font-family: "Noto Sans Devanagari", "Lato", sans-serif;
+  }
+
+  [data-language="gu"],
+  .lang-gu {
+    font-family: "Noto Sans Gurmukhi", sans-serif;
+  }
+
+  /* Inline script helpers — use class="devanagari" on any element */
+  .devanagari {
+    font-family: "Noto Sans Devanagari", serif;
+    line-height: 1.8;
+  }
+
+  /* Inline Gurmukhi script helper */
+  .gurmukhi {
+    font-family: "Noto Sans Gurmukhi", serif;
+    line-height: 1.6;
   }
 
   /* Scrollbar styling */

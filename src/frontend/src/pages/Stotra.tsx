@@ -22,11 +22,18 @@ import { part24bStotras } from "../data/part24bStotras";
 import { part25Stotras } from "../data/part25Stotras";
 import { part26Stotras } from "../data/part26Stotras";
 import { part27Stotras } from "../data/part27Stotras";
+import type { StotraBatch5Entry } from "../data/storasBatch5";
+import { storasBatch5 } from "../data/storasBatch5";
+import { storasBatch6 } from "../data/storasBatch6";
+import { storasBatch7 } from "../data/storasBatch7";
 import {
   type Stotra as StotraEntry,
   stotraData,
   stotraTypes,
 } from "../data/stotraData";
+import { stotraDataBatch2 } from "../data/stotraData_batch2";
+import { stotraDataBatch3 } from "../data/stotraData_batch3";
+import { stotraDataBatch4 } from "../data/stotraData_batch4";
 
 const typeColors: Record<string, { bg: string; text: string; border: string }> =
   {
@@ -45,6 +52,11 @@ const typeColors: Record<string, { bg: string; text: string; border: string }> =
       text: "oklch(0.42 0.14 140)",
       border: "oklch(0.65 0.16 140 / 0.3)",
     },
+    Kavach: {
+      bg: "oklch(0.60 0.15 320 / 0.15)",
+      text: "oklch(0.40 0.15 320)",
+      border: "oklch(0.60 0.15 320 / 0.3)",
+    },
   };
 
 const deityIcons: Record<string, string> = {
@@ -57,8 +69,11 @@ const deityIcons: Record<string, string> = {
   Lakshmi: "🪷",
   Devi: "🌸",
   Bhairav: "⚔️",
+  "Kaal Bhairav": "⚔️",
   Ganesha: "🐘",
+  Ganesh: "🐘",
   Pitru: "🪔",
+  "Pitru (Ancestors)": "🪔",
   Vishnu: "🌀",
   Surya: "☀️",
   Annapurna: "🍚",
@@ -66,6 +81,11 @@ const deityIcons: Record<string, string> = {
   "Lalita Devi": "👑",
   Ganga: "🌊",
   Shani: "⚖️",
+  Durga: "🌸",
+  "Rishabhanatha (Adinath)": "🔯",
+  Parshvanath: "🐍",
+  "Panch Parameshthi": "🙏",
+  Chitragupt: "📜",
 };
 
 function TypeBadge({ type }: { type: string }) {
@@ -328,6 +348,21 @@ function DetailView({
   );
 }
 
+// Adapter: converts StotraBatch5Entry (text[], benefits[]) → Stotra (fullText, benefits string)
+function adaptBatchEntry(entry: StotraBatch5Entry): StotraEntry {
+  return {
+    id: entry.id,
+    title: entry.title,
+    deity: entry.deity,
+    faith: entry.faith,
+    type: entry.type,
+    description: entry.meaning.slice(0, 200),
+    fullText: entry.text.join("\n\n"),
+    meaning: entry.meaning,
+    benefits: entry.benefits.join(" • "),
+  };
+}
+
 export default function Stotra() {
   const [search, setSearch] = useState("");
   const [activeType, setActiveType] = useState("All");
@@ -336,6 +371,9 @@ export default function Stotra() {
   const allStotras = useMemo(() => {
     const raw = [
       ...stotraData,
+      ...stotraDataBatch2,
+      ...stotraDataBatch3,
+      ...stotraDataBatch4,
       ...part12Stotras,
       ...part13Stotras,
       ...part14Stotras,
@@ -355,6 +393,9 @@ export default function Stotra() {
       ...part25Stotras,
       ...part26Stotras,
       ...part27Stotras,
+      ...storasBatch5.map(adaptBatchEntry),
+      ...storasBatch6.map(adaptBatchEntry),
+      ...storasBatch7.map(adaptBatchEntry),
     ];
     // Deduplicate by id — keep first occurrence (canonical source wins)
     const seen = new Set<string>();

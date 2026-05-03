@@ -943,3 +943,7 @@ export const gitaOverview = {
   narrator: "Lord Krishna to Arjuna",
   partOf: "Mahabharata — Bhishma Parva (Ch. 23–40)",
 };
+
+// ── ALIAS EXPORT (canonical name for new pages) ───────────────────────────────
+// gitaChapters is the primary array; BHAGAVAD_GITA_CHAPTERS is an alias for new pages
+export const BHAGAVAD_GITA_CHAPTERS = gitaChapters;

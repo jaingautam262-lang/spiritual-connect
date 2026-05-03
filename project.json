@@ -1,26 +1,37 @@
 {
-  "overview": "Spiritual Connect is a comprehensive devotional platform for Hindu, Jain, and Sikh traditions. It features Aarti, Chalisa, Mantra, and Stotra libraries, a temple directory, puja booking, a Chadhava/Bhet section for sacred offerings, and a spiritual shop.",
+  "overview": "Spiritual Connect is a comprehensive Hindu, Jain, and Sikh spiritual platform featuring an Aarti, Chalisa, Mantra, and Stotra library, a live Panchang with 33 cities, numerology suite, astrology calculators, temple directory, holy books, a full spiritual shop with Stripe checkout, and more. Saffron/gold theme with admin CMS and user profiles.",
   "features": [
-    "Aarti, Chalisa, Mantra, and Stotra libraries with 200+ entries",
-    "Chadhava/Bhet page with 40+ temple offering cards grouped by date and occasion",
-    "Spiritual shop with 18 product categories (Rudraksha, Gemstones, Yantras, etc.)",
-    "Searchable temple directory with 50+ Hindu/Jain/Sikh temples",
-    "Puja booking with Sankalp, date picker, and confirmation",
-    "Admin CMS for managing all content",
-    "Saffron/gold spiritual theme with Hindi and English support"
+    "Aarti, Chalisa, Mantra & Stotra libraries",
+    "Live Panchang with 33 cities and 11 regional tabs",
+    "Combined Sunrise/Sunset & Moonrise/Moonset timings page",
+    "12-month regional festival calendar",
+    "Numerology Suite (Occult Yogis format) with Loshu Grid",
+    "Numerology Exclusive Luck Watches section",
+    "Astrology calculators including Kundali matching",
+    "Holy Books overview + Bhagavad Gita full text",
+    "Temple directory with 50+ temples",
+    "Full Spiritual Shop with Stripe checkout",
+    "Dan Seva Chadava puja booking with Sankalp",
+    "Herb Directory with 60+ Jadi Buti",
+    "Hindi/English language toggle with Devanagari/Gurmukhi fonts",
+    "Admin CMS for all content management"
   ],
-  "category": "spiritual-religion",
+  "category": "spiritual-religious",
   "tags": [
     "spiritual",
-    "hindu",
-    "jain",
-    "sikh",
+    "hinduism",
+    "jainism",
+    "sikhism",
+    "panchang",
+    "numerology",
+    "astrology",
+    "temple",
+    "shop",
+    "mantra",
+    "stotra",
     "aarti",
     "chalisa",
-    "puja",
-    "temple",
-    "mantra",
-    "devotional"
+    "vedic"
   ],
-  "last_updated": "2026-04-17T04:43:49.705Z"
+  "last_updated": "2026-05-01T07:21:26.197Z"
 }

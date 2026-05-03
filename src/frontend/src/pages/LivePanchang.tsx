@@ -1,6 +1,230 @@
+import { Calendar, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 
-// ── Data ────────────────────────────────────────────────────────────────────
+// ── Lookup tables (shared from PanchangWidget) ───────────────────────────────
+
+const TITHIS = [
+  "Pratipada",
+  "Dwitiya",
+  "Tritiya",
+  "Chaturthi",
+  "Panchami",
+  "Shashthi",
+  "Saptami",
+  "Ashtami",
+  "Navami",
+  "Dashami",
+  "Ekadashi",
+  "Dwadashi",
+  "Trayodashi",
+  "Chaturdashi",
+  "Purnima",
+  "Pratipada",
+  "Dwitiya",
+  "Tritiya",
+  "Chaturthi",
+  "Panchami",
+  "Shashthi",
+  "Saptami",
+  "Ashtami",
+  "Navami",
+  "Dashami",
+  "Ekadashi",
+  "Dwadashi",
+  "Trayodashi",
+  "Chaturdashi",
+  "Amavasya",
+];
+
+const TITHIS_HI = [
+  "प्रतिपदा",
+  "द्वितीया",
+  "तृतीया",
+  "चतुर्थी",
+  "पंचमी",
+  "षष्ठी",
+  "सप्तमी",
+  "अष्टमी",
+  "नवमी",
+  "दशमी",
+  "एकादशी",
+  "द्वादशी",
+  "त्रयोदशी",
+  "चतुर्दशी",
+  "पूर्णिमा",
+  "प्रतिपदा",
+  "द्वितीया",
+  "तृतीया",
+  "चतुर्थी",
+  "पंचमी",
+  "षष्ठी",
+  "सप्तमी",
+  "अष्टमी",
+  "नवमी",
+  "दशमी",
+  "एकादशी",
+  "द्वादशी",
+  "त्रयोदशी",
+  "चतुर्दशी",
+  "अमावस्या",
+];
+
+const NAKSHATRAS = [
+  "Ashwini",
+  "Bharani",
+  "Krittika",
+  "Rohini",
+  "Mrigashira",
+  "Ardra",
+  "Punarvasu",
+  "Pushya",
+  "Ashlesha",
+  "Magha",
+  "P.Phalguni",
+  "U.Phalguni",
+  "Hasta",
+  "Chitra",
+  "Swati",
+  "Vishakha",
+  "Anuradha",
+  "Jyeshtha",
+  "Mula",
+  "P.Ashadha",
+  "U.Ashadha",
+  "Shravana",
+  "Dhanishtha",
+  "Shatabhisha",
+  "P.Bhadra",
+  "U.Bhadra",
+  "Revati",
+];
+
+const YOGAS = [
+  "Vishkambha",
+  "Priti",
+  "Ayushman",
+  "Saubhagya",
+  "Shobhana",
+  "Atiganda",
+  "Sukarma",
+  "Dhriti",
+  "Shula",
+  "Ganda",
+  "Vriddhi",
+  "Dhruva",
+  "Vyaghata",
+  "Harshana",
+  "Vajra",
+  "Siddhi",
+  "Vyatipata",
+  "Variyan",
+  "Parigha",
+  "Shiva",
+  "Siddha",
+  "Sadhya",
+  "Shubha",
+  "Shukla",
+  "Brahma",
+  "Indra",
+  "Vaidhriti",
+];
+
+const KARANAS = [
+  "Bava",
+  "Balava",
+  "Kaulava",
+  "Taitila",
+  "Garaja",
+  "Vanija",
+  "Vishti",
+  "Bava",
+  "Balava",
+  "Kaulava",
+  "Taitila",
+];
+
+const RAHU_KAAL: Record<number, string> = {
+  0: "17:00–18:00",
+  1: "07:30–09:00",
+  2: "15:00–16:30",
+  3: "12:00–13:30",
+  4: "13:30–15:00",
+  5: "10:30–12:00",
+  6: "09:00–10:30",
+};
+
+const HINDI_MONTHS = [
+  "Chaitra",
+  "Vaishakh",
+  "Jyestha",
+  "Ashadh",
+  "Shravan",
+  "Bhadrapad",
+  "Ashwin",
+  "Kartik",
+  "Margashirsha",
+  "Paush",
+  "Magh",
+  "Phalgun",
+];
+
+// Festivals by month-day (month is 0-indexed)
+const FESTIVALS: Record<string, string> = {
+  "0-14": "Holi",
+  "0-22": "Ram Navami",
+  "1-2": "Akshaya Tritiya",
+  "1-14": "Vaishakh Purnima",
+  "2-10": "Ganga Dussehra",
+  "3-4": "Guru Purnima",
+  "4-11": "Nag Panchami",
+  "4-15": "Shravan Purnima / Raksha Bandhan",
+  "5-8": "Ganesh Chaturthi",
+  "5-14": "Bhadrapad Purnima",
+  "6-1": "Navratri Begins",
+  "6-9": "Dussehra",
+  "6-14": "Sharad Purnima",
+  "7-1": "Dhanteras",
+  "7-2": "Diwali",
+  "7-4": "Bhai Dooj",
+  "7-13": "Kartik Purnima",
+  "8-5": "Vivah Panchami",
+  "9-5": "Makar Sankranti",
+  "10-1": "Basant Panchami",
+  "11-13": "Maha Shivratri",
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function getDayOfYear(d: Date): number {
+  const start = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d.getTime() - start.getTime()) / 86_400_000);
+}
+
+function getDayData(date: Date) {
+  const dayOfYear = getDayOfYear(date);
+  const weekday = date.getDay();
+  const tithi = TITHIS[dayOfYear % 30];
+  const tithiHi = TITHIS_HI[dayOfYear % 30];
+  const nakshatra = NAKSHATRAS[dayOfYear % 27];
+  const yoga = YOGAS[dayOfYear % 27];
+  const karana = KARANAS[dayOfYear % 11];
+  const rahuKaal = RAHU_KAAL[weekday];
+  const paksha = dayOfYear % 30 < 15 ? "Shukla" : "Krishna";
+  const festivalKey = `${date.getMonth()}-${date.getDate() - 1}`;
+  const festival = FESTIVALS[festivalKey];
+  return {
+    tithi,
+    tithiHi,
+    nakshatra,
+    yoga,
+    karana,
+    rahuKaal,
+    paksha,
+    festival,
+  };
+}
+
+// ── Sub-components ───────────────────────────────────────────────────────────
 
 const LAGNA_SCHEDULE = [
   { sign: "Aries", startH: 0, startM: 0, endH: 1, endM: 30 },
@@ -19,56 +243,49 @@ const LAGNA_SCHEDULE = [
 
 type LagnaEntry = (typeof LAGNA_SCHEDULE)[number];
 
+function toMinutes(h: number, m: number) {
+  return h * 60 + m;
+}
+function pct(minutes: number) {
+  return `${((minutes / 1440) * 100).toFixed(2)}%`;
+}
+function lagnaToMinutes(e: LagnaEntry) {
+  return toMinutes(e.startH, e.startM);
+}
+function lagnaEndMinutes(e: LagnaEntry) {
+  return toMinutes(e.endH, e.endM);
+}
+
 const SUN_MOON_EVENTS = [
   {
     key: "moonrise",
     label: "Moon Rise",
     emoji: "🌙",
     time: "02:49",
-    minutes: 2 * 60 + 49,
+    minutes: 169,
   },
   {
     key: "sunrise",
     label: "Sun Rise",
     emoji: "☀️",
     time: "06:00",
-    minutes: 6 * 60,
+    minutes: 360,
   },
   {
     key: "moonset",
     label: "Moon Set",
     emoji: "🌒",
     time: "13:35",
-    minutes: 13 * 60 + 35,
+    minutes: 815,
   },
   {
     key: "sunset",
     label: "Sun Set",
     emoji: "🔅",
     time: "18:49",
-    minutes: 18 * 60 + 49,
+    minutes: 1129,
   },
 ] as const;
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
-function toMinutes(h: number, m: number) {
-  return h * 60 + m;
-}
-
-function pct(minutes: number) {
-  return `${((minutes / 1440) * 100).toFixed(2)}%`;
-}
-
-function lagnaToMinutes(entry: LagnaEntry) {
-  return toMinutes(entry.startH, entry.startM);
-}
-
-function lagnaEndMinutes(entry: LagnaEntry) {
-  return toMinutes(entry.endH, entry.endM);
-}
-
-// ── Sub-components ──────────────────────────────────────────────────────────
 
 function PanchangCard({
   label,
@@ -111,23 +328,17 @@ function PanchangCard({
 
 function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
   const [hovered, setHovered] = useState<LagnaEntry | null>(null);
-  const SIGNS = LAGNA_SCHEDULE;
-
   return (
     <div className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md">
       <h3 className="font-heading text-lg font-semibold gold-text mb-1">
         Lagna Journey Across the Day
       </h3>
       <p className="text-xs text-muted-foreground mb-4">
-        Hover to reveal precise lagna change timings. The step line holds each
-        rising sign until the next transition.
+        Hover to reveal precise lagna change timings.
       </p>
-
-      {/* Chart grid */}
       <div className="flex gap-0">
-        {/* Y-axis labels */}
         <div className="flex flex-col justify-around pr-2 text-right min-w-[82px]">
-          {SIGNS.map((s) => (
+          {LAGNA_SCHEDULE.map((s) => (
             <span
               key={s.sign}
               className="text-[10px] text-muted-foreground leading-none py-0.5"
@@ -136,10 +347,8 @@ function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
             </span>
           ))}
         </div>
-
-        {/* Bars */}
         <div className="flex-1 flex flex-col gap-[2px] relative">
-          {SIGNS.map((entry) => {
+          {LAGNA_SCHEDULE.map((entry) => {
             const startPct = ((lagnaToMinutes(entry) / 1440) * 100).toFixed(2);
             const widthPct = (
               ((lagnaEndMinutes(entry) - lagnaToMinutes(entry)) / 1440) *
@@ -149,7 +358,6 @@ function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
               nowMinutes >= lagnaToMinutes(entry) &&
               nowMinutes < lagnaEndMinutes(entry);
             const isHovered = hovered?.sign === entry.sign;
-
             return (
               <div
                 key={entry.sign}
@@ -158,13 +366,7 @@ function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
                 onMouseLeave={() => setHovered(null)}
               >
                 <div
-                  className={`absolute top-0 h-full rounded-sm transition-all ${
-                    isCurrent
-                      ? "saffron-gradient ring-1 ring-amber-400"
-                      : isHovered
-                        ? "bg-amber-500/40"
-                        : "bg-amber-500/20"
-                  }`}
+                  className={`absolute top-0 h-full rounded-sm transition-all ${isCurrent ? "saffron-gradient ring-1 ring-amber-400" : isHovered ? "bg-amber-500/40" : "bg-amber-500/20"}`}
                   style={{ left: `${startPct}%`, width: `${widthPct}%` }}
                 />
                 {isCurrent && (
@@ -176,14 +378,10 @@ function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
               </div>
             );
           })}
-
-          {/* Current time vertical line over entire chart */}
           <div
             className="absolute top-0 bottom-0 w-px bg-amber-400/70 pointer-events-none"
             style={{ left: pct(nowMinutes) }}
           />
-
-          {/* X-axis ticks (rendered as overlay at bottom) */}
           <div className="flex justify-between mt-1 pt-1 border-t border-border/50">
             {[
               "00:00",
@@ -203,8 +401,6 @@ function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
           </div>
         </div>
       </div>
-
-      {/* Tooltip */}
       {hovered && (
         <div className="mt-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs text-foreground">
           <span className="font-semibold gold-text">{hovered.sign}</span> rises
@@ -213,7 +409,7 @@ function LagnaJourneyChart({ nowMinutes }: { nowMinutes: number }) {
             {String(hovered.startH).padStart(2, "0")}:
             {String(hovered.startM).padStart(2, "0")}
           </span>{" "}
-          and holds until{" "}
+          until{" "}
           <span className="font-mono">
             {String(hovered.endH).padStart(2, "0")}:
             {String(hovered.endM).padStart(2, "0")}
@@ -231,21 +427,16 @@ function SunMoonTimeline({ nowMinutes }: { nowMinutes: number }) {
         Sun &amp; Moon Timeline
       </h3>
       <div className="relative h-10 bg-muted/40 rounded-full overflow-visible mx-2">
-        {/* Track */}
         <div className="absolute inset-0 rounded-full border border-amber-500/20" />
-
-        {/* Sunrise/sunset gradient fill */}
         <div
           className="absolute top-0 h-full rounded-full"
           style={{
-            left: pct(6 * 60),
-            width: `calc(${pct(18 * 60 + 49)} - ${pct(6 * 60)})`,
+            left: pct(360),
+            width: `calc(${pct(1129)} - ${pct(360)})`,
             background:
               "linear-gradient(90deg, oklch(0.72 0.2 55 / 0.25), oklch(0.78 0.14 75 / 0.15), oklch(0.55 0.18 40 / 0.25))",
           }}
         />
-
-        {/* Event markers */}
         {SUN_MOON_EVENTS.map((ev) => (
           <div
             key={ev.key}
@@ -262,8 +453,6 @@ function SunMoonTimeline({ nowMinutes }: { nowMinutes: number }) {
             </span>
           </div>
         ))}
-
-        {/* Current time marker */}
         <div
           className="absolute top-0 bottom-0 w-0.5 bg-amber-400 rounded-full"
           style={{ left: pct(nowMinutes), transform: "translateX(-50%)" }}
@@ -271,14 +460,12 @@ function SunMoonTimeline({ nowMinutes }: { nowMinutes: number }) {
           <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-amber-400" />
         </div>
       </div>
-
-      {/* Labels row */}
       <div className="flex justify-between mt-2 text-[10px] text-muted-foreground px-2">
         <span>00:00</span>
         <div className="flex gap-4">
           {SUN_MOON_EVENTS.map((ev) => (
             <span key={ev.key} className="flex items-center gap-1">
-              {ev.emoji} <span>{ev.label}</span>
+              {ev.emoji} {ev.label}
             </span>
           ))}
         </div>
@@ -288,35 +475,336 @@ function SunMoonTimeline({ nowMinutes }: { nowMinutes: number }) {
   );
 }
 
-function CrescentMoon() {
+// ── Monthly Calendar ─────────────────────────────────────────────────────────
+
+const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function MonthlyCalendar() {
+  const today = new Date();
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(today);
+
+  const firstDay = new Date(viewYear, viewMonth, 1);
+  const lastDay = new Date(viewYear, viewMonth + 1, 0);
+  const startOffset = firstDay.getDay(); // 0=Sun
+  const daysInMonth = lastDay.getDate();
+
+  const hindiMonth = HINDI_MONTHS[viewMonth];
+
+  function prevMonth() {
+    if (viewMonth === 0) {
+      setViewYear((y) => y - 1);
+      setViewMonth(11);
+    } else setViewMonth((m) => m - 1);
+  }
+  function nextMonth() {
+    if (viewMonth === 11) {
+      setViewYear((y) => y + 1);
+      setViewMonth(0);
+    } else setViewMonth((m) => m + 1);
+  }
+  function goToday() {
+    setViewYear(today.getFullYear());
+    setViewMonth(today.getMonth());
+    setSelectedDate(today);
+  }
+
+  type CalendarCell = { key: string; date: Date | null };
+  const cells: CalendarCell[] = [
+    ...Array.from({ length: startOffset }, (_, i) => ({
+      key: `pre-${i}`,
+      date: null,
+    })),
+    ...Array.from({ length: daysInMonth }, (_, i) => ({
+      key: `day-${viewYear}-${viewMonth}-${i + 1}`,
+      date: new Date(viewYear, viewMonth, i + 1),
+    })),
+  ];
+  while (cells.length % 7 !== 0)
+    cells.push({ key: `post-${cells.length}`, date: null });
+
+  const selectedData = selectedDate ? getDayData(selectedDate) : null;
+
   return (
-    <div className="flex flex-col items-center gap-3">
-      {/* CSS crescent */}
-      <div className="relative w-24 h-24 flex items-center justify-center">
-        <div
-          className="w-20 h-20 rounded-full"
+    <div className="space-y-4">
+      {/* Month navigation */}
+      <div className="flex items-center justify-between px-1">
+        <button
+          type="button"
+          onClick={prevMonth}
+          data-ocid="panchang.calendar.prev_month"
+          className="flex items-center justify-center w-9 h-9 rounded-full transition-all hover:scale-105"
           style={{
-            background: "oklch(0.55 0.04 220)",
-            boxShadow: "inset -12px -4px 0 0 oklch(0.92 0.02 80)",
+            background: "oklch(0.78 0.14 75 / 0.15)",
+            color: "oklch(0.78 0.14 75)",
+          }}
+          aria-label="Previous month"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+
+        <div className="text-center">
+          <h3 className="font-heading text-xl font-bold gold-text">
+            {MONTH_NAMES[viewMonth]} {viewYear}
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            {hindiMonth} माह — Hindu Calendar
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={nextMonth}
+          data-ocid="panchang.calendar.next_month"
+          className="flex items-center justify-center w-9 h-9 rounded-full transition-all hover:scale-105"
+          style={{
+            background: "oklch(0.78 0.14 75 / 0.15)",
+            color: "oklch(0.78 0.14 75)",
+          }}
+          aria-label="Next month"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Today button */}
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={goToday}
+          data-ocid="panchang.calendar.today_button"
+          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-heading font-semibold transition-all hover:scale-105"
+          style={{
+            background: "oklch(0.68 0.20 48 / 0.15)",
+            color: "oklch(0.68 0.20 48)",
+            border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+          }}
+        >
+          <Calendar className="h-3 w-3" /> Today
+        </button>
+      </div>
+
+      {/* Day headers */}
+      <div className="grid grid-cols-7 gap-1">
+        {DAY_LABELS.map((d) => (
+          <div
+            key={d}
+            className="text-center py-1.5 text-xs font-heading font-semibold"
+            style={{
+              color:
+                d === "Sun"
+                  ? "oklch(0.62 0.20 25)"
+                  : d === "Sat"
+                    ? "oklch(0.55 0.18 260)"
+                    : "oklch(0.78 0.14 75)",
+            }}
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 gap-1">
+        {cells.map(({ key, date }) => {
+          if (!date) return <div key={key} className="aspect-square" />;
+          const data = getDayData(date);
+          const isToday = date.toDateString() === today.toDateString();
+          const isSelected =
+            selectedDate?.toDateString() === date.toDateString();
+          const isSunday = date.getDay() === 0;
+          const isSaturday = date.getDay() === 6;
+          const hasFestival = !!data.festival;
+
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSelectedDate(date)}
+              data-ocid={`panchang.calendar.day.${date.getDate()}`}
+              className="relative aspect-square rounded-lg p-1 flex flex-col items-center transition-all duration-150 hover:scale-105 group"
+              style={{
+                background: isSelected
+                  ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
+                  : isToday
+                    ? "oklch(0.78 0.14 75 / 0.20)"
+                    : "oklch(0.20 0.06 28 / 0.6)",
+                border: isToday
+                  ? "1px solid oklch(0.78 0.14 75 / 0.6)"
+                  : isSelected
+                    ? "1px solid oklch(0.78 0.14 75 / 0.4)"
+                    : "1px solid oklch(0.35 0.08 30 / 0.4)",
+              }}
+              title={data.festival ?? `${data.tithi} · ${data.nakshatra}`}
+            >
+              {/* Date number */}
+              <span
+                className="font-heading font-bold text-sm leading-none mt-0.5"
+                style={{
+                  color: isSelected
+                    ? "white"
+                    : isToday
+                      ? "oklch(0.78 0.14 75)"
+                      : isSunday
+                        ? "oklch(0.68 0.20 28)"
+                        : isSaturday
+                          ? "oklch(0.65 0.16 260)"
+                          : "oklch(0.88 0.06 72)",
+                }}
+              >
+                {date.getDate()}
+              </span>
+
+              {/* Tithi */}
+              <span
+                className="text-[8px] leading-none mt-0.5 text-center line-clamp-1 w-full px-0.5"
+                style={{
+                  color: isSelected
+                    ? "rgba(255,255,255,0.85)"
+                    : "oklch(0.65 0.05 60)",
+                }}
+              >
+                {data.tithiHi}
+              </span>
+
+              {/* Nakshatra */}
+              <span
+                className="text-[7px] leading-none mt-0.5 text-center line-clamp-1 w-full px-0.5 hidden sm:block"
+                style={{
+                  color: isSelected
+                    ? "rgba(255,255,255,0.7)"
+                    : "oklch(0.55 0.04 55)",
+                }}
+              >
+                {data.nakshatra.split(" ")[0]}
+              </span>
+
+              {/* Festival dot */}
+              {hasFestival && (
+                <div
+                  className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
+                  style={{
+                    background: isSelected ? "white" : "oklch(0.78 0.14 75)",
+                  }}
+                  title={data.festival}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Selected day detail panel */}
+      {selectedDate && selectedData && (
+        <div
+          className="rounded-xl border border-amber-500/30 bg-card p-4 mt-4"
+          data-ocid="panchang.calendar.day_detail"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-heading text-base font-bold gold-text">
+              {selectedDate.toLocaleDateString("en-IN", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </h4>
+            {selectedData.festival && (
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                style={{
+                  background: "oklch(0.78 0.14 75 / 0.15)",
+                  color: "oklch(0.68 0.20 48)",
+                  border: "1px solid oklch(0.78 0.14 75 / 0.3)",
+                }}
+              >
+                🎉 {selectedData.festival}
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              {
+                icon: "🌙",
+                label: "Tithi",
+                value: selectedData.tithi,
+                sub: selectedData.tithiHi,
+              },
+              { icon: "⭐", label: "Nakshatra", value: selectedData.nakshatra },
+              { icon: "🔯", label: "Yoga", value: selectedData.yoga },
+              { icon: "📿", label: "Karana", value: selectedData.karana },
+              { icon: "🚫", label: "Rahu Kaal", value: selectedData.rahuKaal },
+              { icon: "🌊", label: "Paksha", value: selectedData.paksha },
+              { icon: "🌅", label: "Sunrise", value: "~06:00 AM" },
+              { icon: "🌇", label: "Sunset", value: "~06:30 PM" },
+              { icon: "🪔", label: "Abhijit", value: "11:48–12:36" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-lg p-2.5 text-center"
+                style={{
+                  background: "oklch(0.20 0.06 28)",
+                  border: "1px solid oklch(0.78 0.14 75 / 0.10)",
+                }}
+              >
+                <div className="text-xl mb-1">{item.icon}</div>
+                <p
+                  className="text-[10px] font-heading uppercase tracking-wider mb-0.5"
+                  style={{ color: "oklch(0.78 0.14 75)" }}
+                >
+                  {item.label}
+                </p>
+                <p
+                  className="text-xs font-heading font-bold"
+                  style={{ color: "oklch(0.92 0.06 72)" }}
+                >
+                  {item.value}
+                </p>
+                {item.sub && (
+                  <p
+                    className="text-[9px] mt-0.5"
+                    style={{ color: "oklch(0.65 0.05 60)" }}
+                  >
+                    {item.sub}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Festival legend */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground px-1">
+        <div
+          className="w-2 h-2 rounded-full"
+          style={{ background: "oklch(0.78 0.14 75)" }}
+        />
+        <span>Gold dot = Festival day</span>
+        <div
+          className="w-3 h-3 rounded-sm ml-3"
+          style={{
+            background: "oklch(0.78 0.14 75 / 0.20)",
+            border: "1px solid oklch(0.78 0.14 75 / 0.6)",
           }}
         />
-      </div>
-      <div className="flex gap-4 text-xs text-muted-foreground">
-        <span>Waning Crescent</span>
-        <span className="text-amber-400">•</span>
-        <span>28% illuminated</span>
-        <span className="text-amber-400">•</span>
-        <span>Dashami</span>
-      </div>
-      <div className="flex gap-6 text-xs">
-        <div className="text-center">
-          <p className="text-muted-foreground">Distance</p>
-          <p className="font-semibold text-foreground">391,322 km</p>
-        </div>
-        <div className="text-center">
-          <p className="text-muted-foreground">Parallactic</p>
-          <p className="font-semibold text-foreground">63.3°</p>
-        </div>
+        <span>Today</span>
       </div>
     </div>
   );
@@ -326,6 +814,7 @@ function CrescentMoon() {
 
 export default function LivePanchang() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [activeTab, setActiveTab] = useState<"calendar" | "today">("calendar");
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -341,8 +830,8 @@ export default function LivePanchang() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* ── 1. Page Header ── */}
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+        {/* ── Header ── */}
         <div className="rounded-2xl border border-amber-500/30 bg-card px-6 py-6 shadow-lg">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -350,7 +839,7 @@ export default function LivePanchang() {
                 Live Panchang
               </h1>
               <p className="text-muted-foreground mt-1">
-                Real-time vedic calendar information
+                Vedic calendar — Monthly view + real-time details
               </p>
             </div>
             <div className="flex flex-col items-start sm:items-end gap-2">
@@ -367,7 +856,12 @@ export default function LivePanchang() {
                 </span>
               </div>
               <div className="text-sm text-muted-foreground">
-                Apr 12, 2026 &nbsp;·&nbsp; Mohali, India
+                {currentTime.toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}{" "}
+                · India
               </div>
               {currentLagna && (
                 <div className="text-xs px-2 py-0.5 rounded-full border border-amber-500/30 saffron-text">
@@ -378,234 +872,285 @@ export default function LivePanchang() {
           </div>
         </div>
 
-        {/* ── 2. Panchang Timeline Cards ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <PanchangCard
-            label="Tithi"
-            current="Dashami"
-            from="Navami"
-            to="Dashami"
-            extra="Day 10 of 15 (Krishna Paksha)"
-            color="bg-amber-600"
-          />
-          <PanchangCard
-            label="Nakshatra"
-            current="Dhanishtha"
-            from="Shravana"
-            to="Dhanishtha"
-            color="bg-orange-600"
-          />
-          <PanchangCard
-            label="Yoga"
-            current="Shubha"
-            from="Sadhya"
-            to="Shubha"
-            color="bg-yellow-600"
-          />
-          <PanchangCard
-            label="Karana"
-            current="Vanija"
-            from="Garaja"
-            to="Vishti"
-            extra="Garaja → Vanija → Vishti"
-            color="bg-amber-700"
-          />
+        {/* ── Tab Switcher ── */}
+        <div className="flex gap-2" role="tablist">
+          {(
+            [
+              { id: "calendar", icon: "📅", label: "Monthly Calendar" },
+              { id: "today", icon: "🕐", label: "Today's Detail" },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              data-ocid={`panchang.${tab.id}.tab`}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full font-heading text-sm font-semibold transition-all duration-200"
+              style={{
+                background:
+                  activeTab === tab.id
+                    ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
+                    : "oklch(0.20 0.05 30)",
+                color: activeTab === tab.id ? "white" : "oklch(0.65 0.04 55)",
+                border:
+                  activeTab === tab.id
+                    ? "none"
+                    : "1px solid oklch(0.35 0.08 30 / 0.4)",
+              }}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* ── 3. Lagna Journey Chart ── */}
-        <LagnaJourneyChart nowMinutes={nowMinutes} />
-
-        {/* ── 4. Sun & Moon Position Cards ── */}
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* Sun */}
+        {/* ── Calendar Tab ── */}
+        {activeTab === "calendar" && (
           <div
-            className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
-            data-ocid="sun-position-card"
+            className="rounded-2xl border border-amber-500/30 bg-card p-5 shadow-md"
+            data-ocid="panchang.calendar.panel"
           >
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">☀️</span>
-              <h3 className="font-heading text-lg font-semibold gold-text">
-                Sun Position
-              </h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Sign</p>
-                <p className="font-semibold">Pisces</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Degrees</p>
-                <p className="font-semibold font-mono">28.33°</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Nakshatra</p>
-                <p className="font-semibold">Revati</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Pada</p>
-                <p className="font-semibold">Pada 4</p>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-2 text-sm">
-              <div className="flex items-center gap-1.5">
-                <span>☀️</span>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Sunrise</p>
-                  <p className="font-semibold font-mono">06:00</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span>🌇</span>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Sunset</p>
-                  <p className="font-semibold font-mono">18:49</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground">Solar Noon</p>
-                <p className="font-semibold font-mono">12:25</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground">Day Length</p>
-                <p className="font-semibold">12h 48m</p>
-              </div>
-            </div>
+            <MonthlyCalendar />
           </div>
+        )}
 
-          {/* Moon */}
-          <div
-            className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
-            data-ocid="moon-position-card"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">🌙</span>
-              <h3 className="font-heading text-lg font-semibold gold-text">
-                Moon Position
-              </h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Sign</p>
-                <p className="font-semibold">Capricorn</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Degrees</p>
-                <p className="font-semibold font-mono">24.11°</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Nakshatra</p>
-                <p className="font-semibold">Dhanishtha</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Pada</p>
-                <p className="font-semibold">Pada 1</p>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-2 text-sm">
-              <div className="flex items-center gap-1.5">
-                <span>🌙</span>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Moonrise</p>
-                  <p className="font-semibold font-mono">02:49</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span>🌒</span>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Moonset</p>
-                  <p className="font-semibold font-mono">13:35</p>
-                </div>
-              </div>
-              <div className="col-span-2">
-                <p className="text-[10px] text-muted-foreground">Moon Phase</p>
-                <p className="font-semibold">Waning Crescent</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── 5. Tithi Progress ── */}
-        <div
-          className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
-          data-ocid="tithi-progress"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-            <div>
-              <h3 className="font-heading text-lg font-semibold gold-text">
-                Current Tithi — Dashami
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Day 10 of 15 (Krishna Paksha)
-              </p>
-            </div>
-            <span className="inline-flex items-center px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-xs font-medium saffron-text">
-              Moderate / Variable energy
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Lunar Month Progress</span>
-              <span className="font-semibold gold-text">67%</span>
-            </div>
-            <div className="h-3 rounded-full bg-muted overflow-hidden">
-              <div
-                className="h-full rounded-full saffron-gradient transition-all"
-                style={{ width: "67%" }}
+        {/* ── Today's Detail Tab ── */}
+        {activeTab === "today" && (
+          <div className="space-y-6" data-ocid="panchang.today.panel">
+            {/* Panchang Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <PanchangCard
+                label="Tithi"
+                current="Dashami"
+                from="Navami"
+                to="Dashami"
+                extra="Day 10 of 15 (Krishna Paksha)"
+                color="bg-amber-600"
+              />
+              <PanchangCard
+                label="Nakshatra"
+                current="Dhanishtha"
+                from="Shravana"
+                to="Dhanishtha"
+                color="bg-orange-600"
+              />
+              <PanchangCard
+                label="Yoga"
+                current="Shubha"
+                from="Sadhya"
+                to="Shubha"
+                color="bg-yellow-600"
+              />
+              <PanchangCard
+                label="Karana"
+                current="Vanija"
+                from="Garaja"
+                to="Vishti"
+                extra="Garaja → Vanija → Vishti"
+                color="bg-amber-700"
               />
             </div>
-            <div className="flex justify-between text-[10px] text-muted-foreground">
-              <span>Shukla Paksha 1</span>
-              <span>Amavasya</span>
-            </div>
-          </div>
-        </div>
 
-        {/* ── 6. Moon Visualization ── */}
-        <div
-          className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
-          data-ocid="moon-visualization"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <h3 className="font-heading text-lg font-semibold gold-text">
-              Moon Visualization
-            </h3>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-600 text-xs font-medium">
-              Below Horizon
-            </span>
-          </div>
-          <div className="flex justify-center">
-            <CrescentMoon />
-          </div>
-        </div>
+            <LagnaJourneyChart nowMinutes={nowMinutes} />
 
-        {/* ── 7. Sun & Moon Timeline ── */}
-        <SunMoonTimeline nowMinutes={nowMinutes} />
+            {/* Sun & Moon Cards */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div
+                className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
+                data-ocid="sun-position-card"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-2xl">☀️</span>
+                  <h3 className="font-heading text-lg font-semibold gold-text">
+                    Sun Position
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  {[
+                    ["Sign", "Pisces"],
+                    ["Degrees", "28.33°"],
+                    ["Nakshatra", "Revati"],
+                    ["Pada", "Pada 4"],
+                  ].map(([l, v]) => (
+                    <div key={l}>
+                      <p className="text-muted-foreground text-xs">{l}</p>
+                      <p className="font-semibold">{v}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-2 text-sm">
+                  {[
+                    ["☀️", "Sunrise", "06:00"],
+                    ["🌇", "Sunset", "18:49"],
+                    ["", "Solar Noon", "12:25"],
+                    ["", "Day Length", "12h 48m"],
+                  ].map(([e, l, v]) => (
+                    <div key={l} className="flex items-center gap-1.5">
+                      {e && <span>{e}</span>}
+                      <div>
+                        <p className="text-[10px] text-muted-foreground">{l}</p>
+                        <p className="font-semibold font-mono">{v}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-        {/* ── 8. Location Information ── */}
-        <div className="rounded-xl border border-amber-500/30 bg-muted/40 p-5">
-          <h3 className="font-heading text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Location Information
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <p className="text-xs text-muted-foreground">Date</p>
-              <p className="font-semibold font-mono">2026-04-12</p>
+              <div
+                className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
+                data-ocid="moon-position-card"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-2xl">🌙</span>
+                  <h3 className="font-heading text-lg font-semibold gold-text">
+                    Moon Position
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  {[
+                    ["Sign", "Capricorn"],
+                    ["Degrees", "24.11°"],
+                    ["Nakshatra", "Dhanishtha"],
+                    ["Pada", "Pada 1"],
+                  ].map(([l, v]) => (
+                    <div key={l}>
+                      <p className="text-muted-foreground text-xs">{l}</p>
+                      <p className="font-semibold">{v}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-2 gap-2 text-sm">
+                  {[
+                    ["🌙", "Moonrise", "02:49"],
+                    ["🌒", "Moonset", "13:35"],
+                  ].map(([e, l, v]) => (
+                    <div key={l} className="flex items-center gap-1.5">
+                      <span>{e}</span>
+                      <div>
+                        <p className="text-[10px] text-muted-foreground">{l}</p>
+                        <p className="font-semibold font-mono">{v}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="col-span-2">
+                    <p className="text-[10px] text-muted-foreground">
+                      Moon Phase
+                    </p>
+                    <p className="font-semibold">Waning Crescent</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Reference Time</p>
-              <p className="font-semibold font-mono">16:42</p>
+
+            {/* Tithi Progress */}
+            <div
+              className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-md"
+              data-ocid="tithi-progress"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                <div>
+                  <h3 className="font-heading text-lg font-semibold gold-text">
+                    Current Tithi — Dashami
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Day 10 of 15 (Krishna Paksha)
+                  </p>
+                </div>
+                <span className="inline-flex items-center px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-xs font-medium saffron-text">
+                  Moderate / Variable energy
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Lunar Month Progress</span>
+                  <span className="font-semibold gold-text">67%</span>
+                </div>
+                <div className="h-3 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full rounded-full saffron-gradient transition-all"
+                    style={{ width: "67%" }}
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <span>Shukla Paksha 1</span>
+                  <span>Amavasya</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Location</p>
-              <p className="font-semibold">Mohali, Punjab, India</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Coordinates</p>
-              <p className="font-semibold font-mono">30.70, 76.72</p>
+
+            <SunMoonTimeline nowMinutes={nowMinutes} />
+
+            {/* Location Info */}
+            <div className="rounded-xl border border-amber-500/30 bg-muted/40 p-5">
+              <h3 className="font-heading text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Location Information
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                {[
+                  ["Date", "2026-04-25"],
+                  ["Reference Time", "12:00"],
+                  ["Location", "India"],
+                  ["Coordinates", "28.6°N, 77.2°E"],
+                ].map(([l, v]) => (
+                  <div key={l}>
+                    <p className="text-xs text-muted-foreground">{l}</p>
+                    <p className="font-semibold font-mono">{v}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Quick Today summary always visible at bottom of calendar view */}
+        {activeTab === "calendar" && (
+          <div className="rounded-xl border border-amber-500/30 bg-card p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock
+                className="h-4 w-4"
+                style={{ color: "oklch(0.78 0.14 75)" }}
+              />
+              <h3 className="font-heading text-sm font-semibold gold-text">
+                Today's Quick Panchang
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {(() => {
+                const d = getDayData(new Date());
+                return [
+                  { icon: "🌙", l: "Tithi", v: d.tithi },
+                  { icon: "⭐", l: "Nakshatra", v: d.nakshatra },
+                  { icon: "🚫", l: "Rahu Kaal", v: d.rahuKaal },
+                  { icon: "🔯", l: "Yoga", v: d.yoga },
+                ].map((item) => (
+                  <div
+                    key={item.l}
+                    className="text-center rounded-lg p-2"
+                    style={{
+                      background: "oklch(0.20 0.06 28)",
+                      border: "1px solid oklch(0.78 0.14 75 / 0.10)",
+                    }}
+                  >
+                    <div className="text-lg">{item.icon}</div>
+                    <p
+                      className="text-[9px] font-heading uppercase tracking-wider"
+                      style={{ color: "oklch(0.78 0.14 75)" }}
+                    >
+                      {item.l}
+                    </p>
+                    <p
+                      className="text-xs font-heading font-semibold"
+                      style={{ color: "oklch(0.92 0.06 72)" }}
+                    >
+                      {item.v}
+                    </p>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

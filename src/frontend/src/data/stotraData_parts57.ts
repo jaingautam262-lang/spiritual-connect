@@ -1,35 +1,35 @@
 /**
  * stotraData_parts57.ts
  *
- * VERIFICATION FILE — All 18 stotras from Parts 5, 6, and 7 are CONFIRMED
- * present in the existing data files. This file re-exports them as a single
- * named array so pages can import "Parts 5-7" stotras in one shot.
+ * All stotras from Parts 5, 6, and 7 collected into typed arrays.
  *
- * PART 5 stotras → stotraData.ts (stotraData array)
- *   ✅ durga-saptashloki       (Durga Saptashloki)
- *   ✅ kaal-bhairav-ashtak     (Kaal Bhairav Ashtak)
- *   ✅ dwadash-jyotirlinga-stotram (Dwadash Jyotirlinga Stotram)
- *   ✅ sankat-nashak-ganesh-stotra (Sankat Nashak Ganesh Stotra)
- *   ✅ laxmi-narayan-stotra    (Laxmi Narayan Stotra)
- *   ✅ pitru-stotra            (Pitru Stotra)
+ * PART 5 stotras → stotraData.ts
+ *   ✅ durga-saptashloki
+ *   ✅ kaal-bhairav-ashtak
+ *   ✅ dwadash-jyotirlinga-stotram
+ *   ✅ sankat-nashak-ganesh-stotra
+ *   ✅ laxmi-narayan-stotra
+ *   ✅ pitru-stotra
  *
- * PART 6 stotras → part26Stotras.ts (part26Stotras array)
- *   ✅ surya-raksha-ashtakam   (Surya Raksha Ashtakam)
- *   ✅ annapurna-ashtakam      (Annapurna Ashtakam)
- *   ✅ kalika-ashtakam         (Kalika Ashtakam)
- *   ✅ lalita-sahasranama      (Lalita Sahasranama)
- *   ✅ ganga-stotram           (Ganga Stotram)
+ * PART 6 stotras → part26Stotras.ts
+ *   ✅ surya-raksha-ashtakam
+ *   ✅ annapurna-ashtakam
+ *   ✅ kalika-ashtakam
+ *   ✅ lalita-sahasranama
+ *   ✅ ganga-stotram
  *
- * PART 7 stotras → part12Stotras.ts + part13aStotras.ts + part15bStotras.ts
- *   ✅ devi-kavacham           (Devi Kavacham)        — part15bStotras.ts
- *   ✅ argala-stotram          (Argala Stotram)       — part15bStotras.ts
- *   ✅ keelakam                (Keelakam)             — part15bStotras.ts
- *   ✅ dasha-ratha-krit-shani-stotra (Dasharatha Shani Stotra) — part15bStotras.ts
- *   ✅ chitragupt-stuti        (Chitragupt Stuti)     — part12Stotras.ts
- *   ✅ bhaktamar-stotra        (Bhaktamar Stotra - Jain) — part13aStotras.ts
- *   ✅ uvasaggaharam-stotra    (Uvasaggaharam Stotra - Jain) — part13aStotras.ts
+ * PART 7 stotras → part15bStotras.ts + part12Stotras.ts + part13aStotras.ts
+ *   ✅ devi-kavacham           — part15bStotras.ts
+ *   ✅ argala-stotram          — part15bStotras.ts
+ *   ✅ keelakam                — part15bStotras.ts
+ *   ✅ dasha-ratha-krit-shani-stotra — part15bStotras.ts
+ *   ✅ chitragupt-stuti        — part12Stotras.ts
+ *   ✅ bhaktamar-stotra        — part13aStotras.ts (Jain)
+ *   ✅ uvasaggaharam-stotra    — part13aStotras.ts (Jain)
+ *   ✅ namokar-stotra-extended — part13aStotras.ts (Jain)
  */
 
+import { part12Stotras } from "./part12Stotras";
 import { part13aStotras } from "./part13aStotras";
 import { part15bStotras } from "./part15bStotras";
 import { part26Stotras } from "./part26Stotras";
@@ -55,15 +55,22 @@ const PART6_IDS = new Set([
   "ganga-stotram",
 ]);
 
-/** IDs of the 7 Part-7 stotras */
-const PART7_IDS = new Set([
+/** IDs of Part-7 stotras in part15bStotras */
+const PART7_PART15B_IDS = new Set([
   "devi-kavacham",
   "argala-stotram",
   "keelakam",
   "dasha-ratha-krit-shani-stotra",
-  "chitragupt-stuti",
+]);
+
+/** IDs of Part-7 stotras in part12Stotras */
+const PART7_PART12_IDS = new Set(["chitragupt-stuti"]);
+
+/** IDs of Part-7 stotras in part13aStotras (Jain) */
+const PART7_PART13A_IDS = new Set([
   "bhaktamar-stotra",
   "uvasaggaharam-stotra",
+  "namokar-stotra-extended",
 ]);
 
 /** All 6 Part-5 stotras extracted from the main stotraData array */
@@ -76,17 +83,19 @@ export const part6Stotras: Stotra[] = part26Stotras.filter((s) =>
   PART6_IDS.has(s.id),
 );
 
-/** All 7 Part-7 stotras collected from their canonical source files */
+/** All Part-7 stotras collected from their canonical source files */
 export const part7Stotras: Stotra[] = [
-  // Devi Kavacham, Argala, Keelakam, Dasha Ratha Shani, Chitragupt from part15b
-  ...part15bStotras.filter((s) => PART7_IDS.has(s.id)),
-  // Bhaktamar and Uvasaggaharam (Jain) from part13a
-  ...part13aStotras.filter((s) => PART7_IDS.has(s.id)),
+  // Devi Kavacham, Argala, Keelakam, Dasha Ratha Shani from part15b
+  ...(part15bStotras as Stotra[]).filter((s) => PART7_PART15B_IDS.has(s.id)),
+  // Chitragupt Stuti from part12
+  ...(part12Stotras as Stotra[]).filter((s) => PART7_PART12_IDS.has(s.id)),
+  // Bhaktamar, Uvasaggaharam, Namokar Extended (Jain) from part13a
+  ...(part13aStotras as Stotra[]).filter((s) => PART7_PART13A_IDS.has(s.id)),
 ].filter(
   (s, idx, arr) => arr.findIndex((x) => x.id === s.id) === idx, // deduplicate
 );
 
-/** Complete Parts 5-7 stotras combined (18 total) */
+/** Complete Parts 5-7 stotras combined */
 export const stotraParts57: Stotra[] = [
   ...part5Stotras,
   ...part6Stotras,

@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Bell, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 import type { MantraItem } from "../data/mantraData";
 import { SEED_MANTRAS } from "../data/mantraData";
 import { useGetAllDevotionalContents } from "../hooks/useQueries";
@@ -44,6 +45,7 @@ export default function Mantra() {
     "mantra" | "transliteration" | "meaning"
   >("mantra");
   const { data: backendContents = [] } = useGetAllDevotionalContents();
+  const { t } = useLanguage();
 
   const backendMantras: MantraItem[] = backendContents
     .filter((c) => c.contentType === "mantra")
@@ -101,7 +103,7 @@ export default function Mantra() {
             className="font-decorative text-4xl md:text-5xl font-bold mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            Mantra Sangrah
+            {t("mantra")} {t("all") === "सभी" ? "संग्रह" : "Sangrah"}
           </h1>
           <p
             className="font-body text-xl mb-1"
@@ -137,7 +139,7 @@ export default function Mantra() {
               <Input
                 data-ocid="mantra.search_input"
                 type="text"
-                placeholder="Search by name, deity..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 border font-body"
@@ -181,7 +183,7 @@ export default function Mantra() {
                         : "oklch(0.78 0.14 75 / 0.2)",
                   }}
                 >
-                  {f}
+                  {f === "All" ? t("all") : t(f.toLowerCase())}
                 </button>
               ))}
             </div>
@@ -199,7 +201,7 @@ export default function Mantra() {
                 className="font-heading text-lg"
                 style={{ color: "oklch(0.60 0.06 55)" }}
               >
-                No mantras found for your search.
+                {t("noMantrasFound")}
               </p>
             </div>
           ) : (
@@ -308,7 +310,7 @@ export default function Mantra() {
                       </span>
                       <span style={{ color: "oklch(0.50 0.04 50)" }}>·</span>
                       <span style={{ color: "oklch(0.55 0.18 160)" }}>
-                        Meaning →
+                        {t("readFullMantra")}
                       </span>
                     </div>
                   </button>

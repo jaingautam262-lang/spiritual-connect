@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   type Faith,
+  HOLY_BOOKS_OVERVIEW,
   faithBg,
   faithColors,
   faithStats,
-  holyBooks,
 } from "@/data/holyBooksData";
 import {
   BookMarked,
@@ -54,8 +54,8 @@ export default function HolyBooksOverview() {
   const filtered = useMemo(() => {
     let books =
       faithFilter === "All"
-        ? holyBooks
-        : holyBooks.filter((b) => b.faith === faithFilter);
+        ? HOLY_BOOKS_OVERVIEW
+        : HOLY_BOOKS_OVERVIEW.filter((b) => b.faith === faithFilter);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       books = books.filter(
@@ -371,10 +371,7 @@ export default function HolyBooksOverview() {
                             data-ocid={`read-fulltext-${book.id}`}
                             className="bg-primary text-primary-foreground hover:bg-primary/90"
                             onClick={() => {
-                              window.location.href =
-                                book.id === "bhagavad-gita"
-                                  ? "/holy-books-reader"
-                                  : "/holy-books";
+                              window.location.href = `/holy-books-reader?book=${book.id}`;
                             }}
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
@@ -385,11 +382,13 @@ export default function HolyBooksOverview() {
                             size="sm"
                             variant="outline"
                             data-ocid={`coming-soon-${book.id}`}
-                            className="border-border text-muted-foreground cursor-default"
-                            disabled
+                            className="border-border text-muted-foreground"
+                            onClick={() => {
+                              window.location.href = `/holy-books-reader?book=${book.id}`;
+                            }}
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Full Text — Coming Soon
+                            पाठक में देखें (Open in Reader)
                           </Button>
                         )}
                         <Button

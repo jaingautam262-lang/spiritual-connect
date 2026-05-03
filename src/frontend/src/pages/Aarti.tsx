@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Flame, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import AudioPlayer from "../components/AudioPlayer";
+import { useLanguage } from "../contexts/LanguageContext";
 import { type AartiItem, SEED_AARTIS } from "../data/aartiData";
 import { useGetAllDevotionalContents } from "../hooks/useQueries";
 
@@ -65,6 +67,7 @@ export default function Aarti() {
   const [selectedAarti, setSelectedAarti] = useState<AartiItem | null>(null);
   const [activeTab, setActiveTab] = useState<LyricTab>("hindi");
   const { data: backendContents = [] } = useGetAllDevotionalContents();
+  const { t } = useLanguage();
 
   const backendAartis: AartiItem[] = backendContents
     .filter((c) => c.contentType === "aarti")
@@ -126,7 +129,7 @@ export default function Aarti() {
             className="font-decorative text-4xl md:text-5xl font-bold mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            Aarti Sangrah
+            {t("aarti")} {t("all") === "सभी" ? "संग्रह" : "Sangrah"}
           </h1>
           <p
             className="font-body text-xl mb-1"
@@ -161,7 +164,7 @@ export default function Aarti() {
               <Input
                 data-ocid="aarti.search_input"
                 type="text"
-                placeholder="Search by name, deity..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 border font-body"
@@ -197,7 +200,7 @@ export default function Aarti() {
                       data-ocid={`aarti.${f.toLowerCase()}.tab`}
                       className="text-xs font-heading"
                     >
-                      {f}
+                      {f === "All" ? t("all") : t(f.toLowerCase())}
                     </TabsTrigger>
                   ),
                 )}
@@ -217,7 +220,7 @@ export default function Aarti() {
                 className="font-heading text-lg"
                 style={{ color: "oklch(0.60 0.06 55)" }}
               >
-                No aartis found for your search.
+                {t("noAartisFound")}
               </p>
             </div>
           ) : (
@@ -306,8 +309,8 @@ export default function Aarti() {
                         <span>✦</span>
                         <span>
                           {aarti.faith === "Sikh"
-                            ? "Gurmukhi available"
-                            : "Prakrit script available"}
+                            ? t("gurmukhiAvailable")
+                            : t("prakritAvailable")}
                         </span>
                       </div>
                     )}
@@ -315,7 +318,7 @@ export default function Aarti() {
                       className="mt-4 text-xs font-heading font-semibold"
                       style={{ color: "oklch(0.78 0.14 75)" }}
                     >
-                      Read Full Aarti →
+                      {t("readFullAarti")}
                     </div>
                   </button>
                 );
@@ -571,6 +574,12 @@ export default function Aarti() {
                   </div>
                 </div>
               )}
+
+              {/* Audio Player */}
+              <AudioPlayer
+                title={selectedAarti?.titleEn ?? ""}
+                youtubeSearchQuery={`${selectedAarti?.titleEn ?? ""} aarti bhajan`}
+              />
 
               <div className="flex justify-end mt-4">
                 <Button

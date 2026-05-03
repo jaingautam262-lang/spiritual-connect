@@ -1,274 +1,17 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, ChevronUp, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Search, Shield, Star } from "lucide-react";
 import { useState } from "react";
+import {
+  ASTROLOGER_SEED_DATA,
+  type AstrologerSeed,
+  INDIAN_STATES_FILTER,
+  WORLD_COUNTRIES_FILTER,
+} from "../data/astrologerSeedData";
 import { useGetAllAstrologers } from "../hooks/useQueries";
-import type { AstrologerProfile } from "../types/backend-types";
-
-// ─── Data ────────────────────────────────────────────────────────────────────
-
-const PLACEHOLDER_ASTROLOGERS: AstrologerProfile[] = [
-  {
-    id: "ast-1",
-    name: "Pandit Rajesh Sharma",
-    specializations: ["Vedic Astrology", "Kundli", "Vastu"],
-    bio: "Expert in Vedic astrology with 20+ years of experience helping thousands find their life path.",
-    experienceYears: BigInt(20),
-    rating: 4.9,
-    perMinuteRate: 25,
-    languages: ["Hindi", "English"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-2",
-    name: "Dr. Priya Nair",
-    specializations: ["Tarot Reading", "Numerology", "Palmistry"],
-    bio: "Certified tarot reader and numerologist with a modern approach to ancient wisdom.",
-    experienceYears: BigInt(15),
-    rating: 4.8,
-    perMinuteRate: 20,
-    languages: ["English", "Malayalam"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-3",
-    name: "Acharya Suresh Joshi",
-    specializations: ["Lal Kitab Astrology", "Remedies", "Gemology"],
-    bio: "Specialist in Lal Kitab remedies and gemstone therapy for life transformation.",
-    experienceYears: BigInt(25),
-    rating: 4.7,
-    perMinuteRate: 30,
-    languages: ["Hindi", "Gujarati"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-4",
-    name: "Jyotishi Meera Devi",
-    specializations: ["Nadi Astrology", "Marriage", "Career"],
-    bio: "Expert in Nadi astrology and marriage compatibility with 18 years of practice.",
-    experienceYears: BigInt(18),
-    rating: 4.9,
-    perMinuteRate: 35,
-    languages: ["Tamil", "English"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-5",
-    name: "Pandit Vikram Singh",
-    specializations: ["Vaastu", "Feng Shui", "Numerology"],
-    bio: "Renowned Vastu consultant for homes and businesses across India.",
-    experienceYears: BigInt(22),
-    rating: 4.6,
-    perMinuteRate: 28,
-    languages: ["Hindi", "Punjabi"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-6",
-    name: "Astro Kavita Rao",
-    specializations: ["KP Astrology", "Horary", "Transit"],
-    bio: "Specialist in KP system and horary astrology for precise predictions.",
-    experienceYears: BigInt(12),
-    rating: 4.8,
-    perMinuteRate: 22,
-    languages: ["Telugu", "English"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-7",
-    name: "Guru Anand Mishra",
-    specializations: ["Vedic Astrology", "Muhurta", "Puja"],
-    bio: "Expert in auspicious timing and puja rituals with 30 years of experience.",
-    experienceYears: BigInt(30),
-    rating: 5.0,
-    perMinuteRate: 40,
-    languages: ["Hindi", "Sanskrit"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-8",
-    name: "Ankit Batra",
-    specializations: ["Numerology", "Western Astrology", "Face Reading"],
-    bio: "Specialist in Chaldean numerology and Western astrology using Lo Shu Grid.",
-    experienceYears: BigInt(10),
-    rating: 4.7,
-    perMinuteRate: 18,
-    languages: ["Hindi", "English"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-9",
-    name: "Pandit Ravi Kumar",
-    specializations: ["Vedic Astrology", "Kundli", "Marriage"],
-    bio: "Experienced Vedic astrologer from Varanasi, expert in kundli matching and marriage timing.",
-    experienceYears: BigInt(16),
-    rating: 4.8,
-    perMinuteRate: 24,
-    languages: ["Hindi", "English"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-10",
-    name: "Dr. Sunita Khanna",
-    specializations: ["Psychic Reader", "Tarot Reading", "Numerology"],
-    bio: "Renowned psychic reader and tarot expert helping clients in UK and India for 14 years.",
-    experienceYears: BigInt(14),
-    rating: 4.9,
-    perMinuteRate: 32,
-    languages: ["English", "Hindi"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-11",
-    name: "Acharya Gopal Das",
-    specializations: ["KP Astrology", "Horary", "Career"],
-    bio: "KP astrology specialist based in Singapore, helping the Indian diaspora globally.",
-    experienceYears: BigInt(19),
-    rating: 4.7,
-    perMinuteRate: 38,
-    languages: ["Hindi", "English", "Tamil"],
-    createdAt: BigInt(0),
-  },
-  {
-    id: "ast-12",
-    name: "Panditji Om Sharma",
-    specializations: ["Vaastu", "Vedic Astrology", "Remedies"],
-    bio: "Vastu Shastra expert and Vedic astrologer based in Jaipur with 24 years of experience.",
-    experienceYears: BigInt(24),
-    rating: 4.6,
-    perMinuteRate: 26,
-    languages: ["Hindi", "Rajasthani"],
-    createdAt: BigInt(0),
-  },
-];
-
-// ─── City/Category Data ───────────────────────────────────────────────────────
-
-const INDIAN_CITIES = [
-  // Metro / major cities (original)
-  "Delhi",
-  "Mumbai",
-  "Bangalore",
-  "Hyderabad",
-  "Chennai",
-  "Kolkata",
-  "Pune",
-  "Ahmedabad",
-  "Chandigarh",
-  "Noida",
-  "Gurgaon",
-  "Faridabad",
-  "Thane",
-  // New additions
-  "Jaipur",
-  "Nagpur",
-  "Patna",
-  "Ludhiana",
-  "Jalandhar",
-  "Amritsar",
-  "Guwahati",
-  "Gujarat",
-  "Indore",
-  "Bhubaneswar",
-  "Surat",
-  "Bhopal",
-  "Varanasi",
-  "Navi Mumbai",
-  "Allahabad",
-  "Ranchi",
-  "Jodhpur",
-  "Madurai",
-  "Raipur",
-  "Kharagpur",
-  "Jamshedpur",
-  "Cuttack",
-  "Kochi",
-  "Howrah",
-  "Dehradun",
-  "Durgapur",
-  "Asansol",
-  "Ujjain",
-  "Siliguri",
-  "Jammu",
-  "Udaipur",
-  "Haridwar",
-  "South Delhi",
-  "Coimbatore",
-  "Vijayawada",
-  "Panchkula",
-  "Salem",
-  "Ambala",
-  "Vellore",
-  "Shimla",
-];
-
-const INTERNATIONAL_CITIES: { region: string; places: string[] }[] = [
-  {
-    region: "UK",
-    places: ["London", "Birmingham", "Manchester", "Leeds", "Liverpool"],
-  },
-  {
-    region: "Canada",
-    places: [
-      "Toronto",
-      "Montreal",
-      "Vancouver",
-      "Calgary",
-      "Edmonton",
-      "Ottawa",
-      "Brampton",
-    ],
-  },
-  {
-    region: "Australia",
-    places: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
-  },
-  {
-    region: "Other Countries",
-    places: [
-      "UAE",
-      "Pakistan",
-      "Vietnam",
-      "Greece",
-      "Germany",
-      "South Africa",
-      "Singapore",
-      "Saudi Arabia",
-      "Nigeria",
-      "New Zealand",
-      "Nepal",
-      "Mauritius",
-      "Malaysia",
-      "Kenya",
-      "Italy",
-      "Indonesia",
-    ],
-  },
-];
-
-const SPECIALTIES = [
-  // Original
-  "Vedic Astrology",
-  "Kundli",
-  "Numerology",
-  "Tarot Reading",
-  "Vastu Shastra",
-  "Palmistry",
-  "Nadi Astrology",
-  "Marriage",
-  "Career",
-  "Gemology",
-  "Remedies",
-  "Transit",
-  // New additions
-  "KP Astrology",
-  "Lal Kitab Astrology",
-  "Western Astrology",
-  "Horary",
-  "Face Reading",
-  "Psychic Reader",
-  "Vaastu",
-];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -287,8 +30,8 @@ function StarRating({ rating }: { rating: number }) {
         />
       ))}
       <span
-        className="text-xs font-heading font-semibold ml-1"
-        style={{ color: "oklch(0.55 0.16 60)" }}
+        className="text-xs font-bold ml-1"
+        style={{ color: "oklch(0.68 0.20 48)" }}
       >
         {rating.toFixed(1)}
       </span>
@@ -296,266 +39,369 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-interface FilterSectionProps {
-  title: string;
-  items: string[];
-  selected: string | null;
-  onSelect: (val: string | null) => void;
-  defaultShowCount?: number;
-  dataOcidPrefix: string;
-}
-
-function FilterSection({
-  title,
-  items,
-  selected,
-  onSelect,
-  defaultShowCount = 8,
-  dataOcidPrefix,
-}: FilterSectionProps) {
-  const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? items : items.slice(0, defaultShowCount);
-  const hasMore = items.length > defaultShowCount;
-
+function AstrologerCard({
+  ast,
+  index,
+}: { ast: AstrologerSeed; index: number }) {
+  const bgHues = [48, 55, 30, 60, 40];
+  const hue = bgHues[index % bgHues.length];
   return (
-    <div className="mb-5">
-      <h3
-        className="font-heading font-bold text-xs uppercase tracking-wider mb-2"
-        style={{ color: "oklch(0.78 0.14 75)" }}
-      >
-        {title}
-      </h3>
-      <div className="flex flex-wrap gap-1.5">
-        {visible.map((item) => {
-          const active = selected === item;
-          return (
-            <button
-              type="button"
-              key={item}
-              data-ocid={`${dataOcidPrefix}-${item.toLowerCase().replace(/\s+/g, "-")}`}
-              onClick={() => onSelect(active ? null : item)}
-              className="text-xs px-2.5 py-1 rounded-full font-heading transition-all"
-              style={
-                active
-                  ? {
-                      background: "oklch(0.68 0.20 48)",
-                      color: "white",
-                    }
-                  : {
-                      background: "oklch(0.25 0.06 25 / 0.8)",
-                      color: "oklch(0.75 0.04 75)",
-                      border: "1px solid oklch(0.35 0.06 30 / 0.5)",
-                    }
-              }
+    <div
+      className="rounded-2xl p-5 flex flex-col transition-all hover:scale-[1.01]"
+      data-ocid={`astrologer.item.${index + 1}`}
+      style={{
+        background: "oklch(0.22 0.06 25)",
+        border: "1px solid oklch(0.30 0.06 30 / 0.5)",
+        boxShadow: "0 2px 12px oklch(0.10 0.04 20 / 0.3)",
+      }}
+    >
+      {/* Avatar */}
+      <div className="flex items-center gap-3 mb-3">
+        <div
+          className="h-14 w-14 rounded-full flex items-center justify-center text-lg font-bold shrink-0"
+          style={{
+            background: `linear-gradient(135deg, oklch(0.55 0.18 ${hue} / 0.3), oklch(0.70 0.16 ${hue} / 0.2))`,
+            border: `2px solid oklch(0.68 0.20 ${hue} / 0.5)`,
+            color: `oklch(0.78 0.14 ${hue})`,
+          }}
+        >
+          {ast.initials}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5">
+            <h3
+              className="font-bold text-sm truncate"
+              style={{ color: "oklch(0.88 0.06 75)" }}
             >
-              {item}
-            </button>
-          );
-        })}
-        {hasMore && (
-          <button
-            type="button"
-            onClick={() => setExpanded(!expanded)}
-            className="text-xs px-2.5 py-1 rounded-full font-heading flex items-center gap-1 transition-all"
+              {ast.name}
+            </h3>
+            {ast.is_verified && (
+              <Shield
+                className="h-3.5 w-3.5 shrink-0"
+                style={{ color: "oklch(0.55 0.18 160)" }}
+              />
+            )}
+          </div>
+          <p className="text-xs" style={{ color: "oklch(0.60 0.06 60)" }}>
+            📍 {ast.state}, {ast.country}
+          </p>
+        </div>
+      </div>
+
+      {/* Rating row */}
+      <div className="flex items-center justify-between mb-2">
+        <StarRating rating={ast.rating} />
+        <span className="text-xs" style={{ color: "oklch(0.55 0.06 60)" }}>
+          ({ast.reviews_count.toLocaleString()} reviews)
+        </span>
+      </div>
+
+      {/* Specialization chips */}
+      <div className="flex flex-wrap gap-1 mb-2">
+        {ast.specialization.slice(0, 2).map((s) => (
+          <Badge
+            key={s}
+            className="text-xs px-1.5 py-0 font-normal"
             style={{
-              background: "oklch(0.28 0.08 48 / 0.4)",
-              color: "oklch(0.68 0.20 48)",
-              border: "1px dashed oklch(0.68 0.20 48 / 0.4)",
+              background: "oklch(0.68 0.20 48 / 0.12)",
+              color: "oklch(0.75 0.15 48)",
+              border: "1px solid oklch(0.68 0.20 48 / 0.25)",
             }}
           >
-            {expanded ? (
-              <>
-                Show less <ChevronUp className="h-3 w-3" />
-              </>
-            ) : (
-              <>
-                +{items.length - defaultShowCount} more{" "}
-                <ChevronDown className="h-3 w-3" />
-              </>
-            )}
-          </button>
+            {s}
+          </Badge>
+        ))}
+        {ast.specialization.length > 2 && (
+          <span className="text-xs" style={{ color: "oklch(0.55 0.06 60)" }}>
+            +{ast.specialization.length - 2}
+          </span>
         )}
       </div>
+
+      {/* Languages & Experience */}
+      <p className="text-xs mb-1" style={{ color: "oklch(0.62 0.06 65)" }}>
+        🗣️ {ast.languages.slice(0, 3).join(", ")}
+      </p>
+      <p
+        className="text-xs mb-3 flex-1 line-clamp-2"
+        style={{ color: "oklch(0.60 0.04 65)" }}
+      >
+        {ast.bio}
+      </p>
+
+      {/* Stats row */}
+      <div className="flex items-center justify-between mb-3 text-xs">
+        <span style={{ color: "oklch(0.60 0.06 60)" }}>
+          {ast.experience_years} yrs exp
+        </span>
+        <Badge
+          className="text-xs"
+          style={{
+            background:
+              ast.mode === "Online"
+                ? "oklch(0.40 0.14 160 / 0.2)"
+                : ast.mode === "Offline"
+                  ? "oklch(0.45 0.15 25 / 0.2)"
+                  : "oklch(0.45 0.15 220 / 0.2)",
+            color:
+              ast.mode === "Online"
+                ? "oklch(0.68 0.18 160)"
+                : ast.mode === "Offline"
+                  ? "oklch(0.72 0.16 25)"
+                  : "oklch(0.68 0.14 220)",
+            border: "none",
+          }}
+        >
+          {ast.mode}
+        </Badge>
+        <span className="font-bold" style={{ color: "oklch(0.78 0.14 75)" }}>
+          ₹{ast.fee_per_hour.toLocaleString()}/hr
+        </span>
+      </div>
+
+      {/* CTA */}
+      <Link
+        to="/book-consultation"
+        search={{
+          astrologerId: ast.id,
+          astrologerName: encodeURIComponent(ast.name),
+          rate: String(Math.round(ast.fee_per_hour / 60)),
+        }}
+        data-ocid={`astrologer.book_button.${index + 1}`}
+        className="w-full py-2 rounded-full text-center text-xs font-bold transition-all"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+          color: "white",
+          boxShadow: "0 2px 8px oklch(0.68 0.20 48 / 0.3)",
+        }}
+      >
+        📅 Book Consultation
+      </Link>
     </div>
   );
 }
 
-interface IntlFilterSectionProps {
-  selected: string | null;
-  onSelect: (val: string | null) => void;
-}
-
-function IntlFilterSection({ selected, onSelect }: IntlFilterSectionProps) {
-  const [expanded, setExpanded] = useState(false);
+function FilterChip({
+  label,
+  active,
+  onClick,
+  ocid,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  ocid: string;
+}) {
   return (
-    <div className="mb-5">
-      <h3
-        className="font-heading font-bold text-xs uppercase tracking-wider mb-2"
-        style={{ color: "oklch(0.78 0.14 75)" }}
-      >
-        International
-      </h3>
-      {INTERNATIONAL_CITIES.slice(0, expanded ? undefined : 2).map((group) => (
-        <div key={group.region} className="mb-2">
-          <p
-            className="text-xs font-heading mb-1"
-            style={{ color: "oklch(0.60 0.08 60)" }}
-          >
-            {group.region}
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {group.places.map((place) => {
-              const active = selected === place;
-              return (
-                <button
-                  type="button"
-                  key={place}
-                  data-ocid={`filter-intl-${place.toLowerCase().replace(/\s+/g, "-")}`}
-                  onClick={() => onSelect(active ? null : place)}
-                  className="text-xs px-2.5 py-1 rounded-full font-heading transition-all"
-                  style={
-                    active
-                      ? { background: "oklch(0.68 0.20 48)", color: "white" }
-                      : {
-                          background: "oklch(0.25 0.06 25 / 0.8)",
-                          color: "oklch(0.75 0.04 75)",
-                          border: "1px solid oklch(0.35 0.06 30 / 0.5)",
-                        }
-                  }
-                >
-                  {place}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-      {!expanded && INTERNATIONAL_CITIES.length > 2 && (
-        <button
-          type="button"
-          onClick={() => setExpanded(true)}
-          className="text-xs px-2.5 py-1 rounded-full font-heading flex items-center gap-1 mt-1"
-          style={{
-            background: "oklch(0.28 0.08 48 / 0.4)",
-            color: "oklch(0.68 0.20 48)",
-            border: "1px dashed oklch(0.68 0.20 48 / 0.4)",
-          }}
-        >
-          +
-          {INTERNATIONAL_CITIES.slice(2).reduce(
-            (acc, g) => acc + g.places.length,
-            0,
-          )}{" "}
-          more <ChevronDown className="h-3 w-3" />
-        </button>
-      )}
-      {expanded && (
-        <button
-          type="button"
-          onClick={() => setExpanded(false)}
-          className="text-xs px-2.5 py-1 rounded-full font-heading flex items-center gap-1 mt-1"
-          style={{
-            background: "oklch(0.28 0.08 48 / 0.4)",
-            color: "oklch(0.68 0.20 48)",
-            border: "1px dashed oklch(0.68 0.20 48 / 0.4)",
-          }}
-        >
-          Show less <ChevronUp className="h-3 w-3" />
-        </button>
-      )}
-    </div>
+    <button
+      type="button"
+      data-ocid={ocid}
+      onClick={onClick}
+      className="text-xs px-3 py-1.5 rounded-full font-medium transition-all"
+      style={
+        active
+          ? { background: "oklch(0.68 0.20 48)", color: "white" }
+          : {
+              background: "oklch(0.25 0.06 25 / 0.8)",
+              color: "oklch(0.72 0.05 70)",
+              border: "1px solid oklch(0.35 0.06 30 / 0.5)",
+            }
+      }
+    >
+      {label}
+    </button>
   );
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function AstrologerConsultation() {
-  const { data: astrologers = [], isLoading } = useGetAllAstrologers();
-  const displayAstrologers =
-    astrologers.length > 0 ? astrologers : PLACEHOLDER_ASTROLOGERS;
+  const { data: backendAstrologers = [], isLoading } = useGetAllAstrologers();
 
-  const [cityFilter, setCityFilter] = useState<string | null>(null);
-  const [intlFilter, setIntlFilter] = useState<string | null>(null);
-  const [specialtyFilter, setSpecialtyFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [regionTab, setRegionTab] = useState<"India" | "International">(
+    "India",
+  );
+  const [selectedState, setSelectedState] = useState("All States");
+  const [selectedCountry, setSelectedCountry] = useState("All Countries");
+  const [selectedSpec, setSelectedSpec] = useState<string | null>(null);
+  const [selectedFaith, setSelectedFaith] = useState<string>("All");
+  const [selectedMode, setSelectedMode] = useState<string>("All");
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
 
-  // When one filter group is selected, clear the other city group
-  function handleCitySelect(val: string | null) {
-    setCityFilter(val);
-    if (val) setIntlFilter(null);
-  }
-  function handleIntlSelect(val: string | null) {
-    setIntlFilter(val);
-    if (val) setCityFilter(null);
-  }
+  // Merge backend + seed (backend overrides seed on same id)
+  const seedIds = new Set(ASTROLOGER_SEED_DATA.map((a) => a.id));
+  const backendConverted: AstrologerSeed[] = backendAstrologers
+    .map((a) => ({
+      id: a.id,
+      name: a.name,
+      initials: a.name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+      state: "India",
+      country: "India",
+      region: "India" as const,
+      specialization: a.specializations,
+      languages: a.languages,
+      experience_years: Number(a.experienceYears),
+      rating: a.rating,
+      reviews_count: 0,
+      fee_per_hour: a.perMinuteRate * 60,
+      mode: "Online" as const,
+      faith_expertise: "General" as const,
+      is_verified: true,
+      bio: a.bio,
+    }))
+    .filter((a) => !seedIds.has(a.id));
 
-  const activeCity = cityFilter ?? intlFilter;
+  const allAstrologers = [...ASTROLOGER_SEED_DATA, ...backendConverted];
 
-  const filtered = displayAstrologers.filter((ast) => {
-    const matchSpec =
-      !specialtyFilter ||
-      ast.specializations.some((s) =>
-        s.toLowerCase().includes(specialtyFilter.toLowerCase()),
-      );
-    // City/international filter: in a real app these would be on the profile;
-    // here we filter by specialty only since city isn't a profile field.
-    // We still track city selection for the UI — all astrologers shown when city selected
-    // (they serve nationwide/globally).
-    return matchSpec;
+  const ALL_SPECS = Array.from(
+    new Set(allAstrologers.flatMap((a) => a.specialization)),
+  ).sort();
+  const visibleSpecs = showAllSpecs ? ALL_SPECS : ALL_SPECS.slice(0, 10);
+
+  const filtered = allAstrologers.filter((a) => {
+    if (a.region !== regionTab) return false;
+    if (
+      regionTab === "India" &&
+      selectedState !== "All States" &&
+      a.state !== selectedState
+    )
+      return false;
+    if (
+      regionTab === "International" &&
+      selectedCountry !== "All Countries" &&
+      a.country !== selectedCountry
+    )
+      return false;
+    if (
+      selectedSpec &&
+      !a.specialization.some((s) =>
+        s.toLowerCase().includes(selectedSpec.toLowerCase()),
+      )
+    )
+      return false;
+    if (selectedFaith !== "All" && a.faith_expertise !== selectedFaith)
+      return false;
+    if (selectedMode !== "All" && a.mode !== selectedMode) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      if (
+        !a.name.toLowerCase().includes(q) &&
+        !a.bio.toLowerCase().includes(q) &&
+        !a.specialization.some((s) => s.toLowerCase().includes(q))
+      )
+        return false;
+    }
+    return true;
   });
 
-  const hasActiveFilter = !!(activeCity || specialtyFilter);
-
   return (
-    <div>
+    <div data-ocid="astrologer.page">
       {/* Banner */}
       <div
         className="relative w-full overflow-hidden"
-        style={{ minHeight: "280px" }}
+        style={{ minHeight: "260px" }}
       >
         <img
           src="/assets/generated/consultation-banner.dim_1200x400.png"
           alt="Astrologer Consultation"
-          className="w-full h-72 object-cover"
+          className="w-full h-64 object-cover"
         />
         <div
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-4"
           style={{
             background:
-              "linear-gradient(to bottom, oklch(0.18 0.06 25 / 0.5), oklch(0.12 0.04 20 / 0.75))",
+              "linear-gradient(to bottom, oklch(0.18 0.06 25 / 0.5), oklch(0.12 0.04 20 / 0.78))",
           }}
         >
           <h1
-            className="font-decorative text-3xl md:text-5xl font-bold mb-3"
+            className="font-decorative text-3xl md:text-5xl font-bold mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
             🧘 Consult an Astrologer
           </h1>
           <p
-            className="font-body text-lg mb-4"
+            className="text-base mb-4"
             style={{ color: "oklch(0.85 0.04 75)" }}
           >
-            Book appointments with verified spiritual experts
+            India's largest verified network of spiritual experts
           </p>
-          <Link
-            to="/book-consultation"
-            data-ocid="book-consultation-cta"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-heading font-bold text-sm transition-all"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
-              color: "white",
-              boxShadow: "0 2px 12px oklch(0.68 0.20 48 / 0.4)",
-            }}
-          >
-            📅 Book Consultation Now
-          </Link>
+          <div className="flex gap-3 flex-wrap justify-center">
+            <Link
+              to="/book-consultation"
+              data-ocid="astrologer.book_consultation_cta"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm transition-all"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+                color: "white",
+                boxShadow: "0 2px 12px oklch(0.68 0.20 48 / 0.4)",
+              }}
+            >
+              📅 Book Consultation
+            </Link>
+            <Link
+              to="/tantra-remedies"
+              data-ocid="astrologer.tantra_link"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all"
+              style={{
+                background: "oklch(0.22 0.06 25 / 0.8)",
+                color: "oklch(0.78 0.14 75)",
+                border: "1px solid oklch(0.40 0.08 48 / 0.6)",
+              }}
+            >
+              🕯️ Tantra Remedies
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 py-8">
+        {/* Stats bar */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-8">
+          {[
+            {
+              icon: "🧘",
+              label: "Verified Experts",
+              value: `${allAstrologers.filter((a) => a.is_verified).length}+`,
+            },
+            { icon: "🌏", label: "Countries", value: "12+" },
+            { icon: "⭐", label: "Avg Rating", value: "4.8" },
+            { icon: "🗣️", label: "Languages", value: "20+" },
+            { icon: "📅", label: "Bookings Done", value: "50K+" },
+            { icon: "🏆", label: "Years Exp (avg)", value: "18" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-xl p-3 text-center"
+              style={{
+                background: "oklch(0.22 0.06 25)",
+                border: "1px solid oklch(0.30 0.06 30 / 0.4)",
+              }}
+            >
+              <div className="text-xl mb-1">{stat.icon}</div>
+              <div
+                className="font-bold text-sm"
+                style={{ color: "oklch(0.78 0.14 75)" }}
+              >
+                {stat.value}
+              </div>
+              <div className="text-xs" style={{ color: "oklch(0.55 0.05 60)" }}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* ── Sidebar Filters ─────────────────────────────────────────── */}
-          <aside className="lg:w-64 shrink-0" data-ocid="astrologer-filters">
+          {/* ── Sidebar Filters ───────────────────────────────────────────── */}
+          <aside className="lg:w-64 shrink-0" data-ocid="astrologer.filters">
             <div
               className="rounded-2xl p-5 sticky top-24"
               style={{
@@ -565,21 +411,28 @@ export default function AstrologerConsultation() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2
-                  className="font-heading font-bold text-sm"
+                  className="font-bold text-sm"
                   style={{ color: "oklch(0.78 0.14 75)" }}
                 >
                   🔍 Filter Astrologers
                 </h2>
-                {hasActiveFilter && (
+                {(selectedSpec ||
+                  selectedFaith !== "All" ||
+                  selectedMode !== "All" ||
+                  selectedState !== "All States" ||
+                  selectedCountry !== "All Countries") && (
                   <button
                     type="button"
-                    data-ocid="filter-clear-all"
+                    data-ocid="astrologer.clear_filters"
                     onClick={() => {
-                      setCityFilter(null);
-                      setIntlFilter(null);
-                      setSpecialtyFilter(null);
+                      setSelectedSpec(null);
+                      setSelectedFaith("All");
+                      setSelectedMode("All");
+                      setSelectedState("All States");
+                      setSelectedCountry("All Countries");
+                      setSearchQuery("");
                     }}
-                    className="text-xs font-heading underline"
+                    className="text-xs underline"
                     style={{ color: "oklch(0.68 0.20 48)" }}
                   >
                     Clear all
@@ -587,117 +440,221 @@ export default function AstrologerConsultation() {
                 )}
               </div>
 
+              {/* Search */}
+              <div className="relative mb-4">
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5"
+                  style={{ color: "oklch(0.55 0.06 60)" }}
+                />
+                <Input
+                  data-ocid="astrologer.search_input"
+                  placeholder="Search by name or specialty..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 text-xs h-8"
+                  style={{
+                    background: "oklch(0.18 0.04 20)",
+                    border: "1px solid oklch(0.35 0.06 30 / 0.5)",
+                    color: "oklch(0.85 0.04 70)",
+                  }}
+                />
+              </div>
+
+              {/* Region tabs */}
+              <div className="mb-4">
+                <h3
+                  className="font-bold text-xs uppercase tracking-wider mb-2"
+                  style={{ color: "oklch(0.65 0.10 65)" }}
+                >
+                  Region
+                </h3>
+                <div className="flex gap-2">
+                  {(["India", "International"] as const).map((r) => (
+                    <FilterChip
+                      key={r}
+                      label={r}
+                      active={regionTab === r}
+                      onClick={() => {
+                        setRegionTab(r);
+                        setSelectedState("All States");
+                        setSelectedCountry("All Countries");
+                      }}
+                      ocid={`astrologer.region_tab_${r.toLowerCase()}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* State / Country */}
+              {regionTab === "India" ? (
+                <div className="mb-4">
+                  <h3
+                    className="font-bold text-xs uppercase tracking-wider mb-2"
+                    style={{ color: "oklch(0.65 0.10 65)" }}
+                  >
+                    State
+                  </h3>
+                  <select
+                    data-ocid="astrologer.state_select"
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    className="w-full text-xs rounded-lg px-3 py-2"
+                    style={{
+                      background: "oklch(0.18 0.04 20)",
+                      border: "1px solid oklch(0.35 0.06 30 / 0.5)",
+                      color: "oklch(0.85 0.04 70)",
+                    }}
+                  >
+                    {INDIAN_STATES_FILTER.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="mb-4">
+                  <h3
+                    className="font-bold text-xs uppercase tracking-wider mb-2"
+                    style={{ color: "oklch(0.65 0.10 65)" }}
+                  >
+                    Country
+                  </h3>
+                  <select
+                    data-ocid="astrologer.country_select"
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    className="w-full text-xs rounded-lg px-3 py-2"
+                    style={{
+                      background: "oklch(0.18 0.04 20)",
+                      border: "1px solid oklch(0.35 0.06 30 / 0.5)",
+                      color: "oklch(0.85 0.04 70)",
+                    }}
+                  >
+                    {WORLD_COUNTRIES_FILTER.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Faith */}
+              <div className="mb-4">
+                <h3
+                  className="font-bold text-xs uppercase tracking-wider mb-2"
+                  style={{ color: "oklch(0.65 0.10 65)" }}
+                >
+                  Faith Expertise
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {["All", "Hindu", "Jain", "Sikh", "General"].map((f) => (
+                    <FilterChip
+                      key={f}
+                      label={f}
+                      active={selectedFaith === f}
+                      onClick={() => setSelectedFaith(f)}
+                      ocid={`astrologer.faith_${f.toLowerCase()}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Mode */}
+              <div className="mb-4">
+                <h3
+                  className="font-bold text-xs uppercase tracking-wider mb-2"
+                  style={{ color: "oklch(0.65 0.10 65)" }}
+                >
+                  Consultation Mode
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {["All", "Online", "Offline", "Both"].map((m) => (
+                    <FilterChip
+                      key={m}
+                      label={m}
+                      active={selectedMode === m}
+                      onClick={() => setSelectedMode(m)}
+                      ocid={`astrologer.mode_${m.toLowerCase()}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
               {/* Specialty */}
-              <FilterSection
-                title="Specialty"
-                items={SPECIALTIES}
-                selected={specialtyFilter}
-                onSelect={setSpecialtyFilter}
-                defaultShowCount={10}
-                dataOcidPrefix="filter-spec"
-              />
-
-              {/* Indian Cities */}
-              <FilterSection
-                title="Indian Cities"
-                items={INDIAN_CITIES}
-                selected={cityFilter}
-                onSelect={handleCitySelect}
-                defaultShowCount={8}
-                dataOcidPrefix="filter-city"
-              />
-
-              {/* International */}
-              <IntlFilterSection
-                selected={intlFilter}
-                onSelect={handleIntlSelect}
-              />
+              <div className="mb-2">
+                <h3
+                  className="font-bold text-xs uppercase tracking-wider mb-2"
+                  style={{ color: "oklch(0.65 0.10 65)" }}
+                >
+                  Specialty
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {visibleSpecs.map((s) => (
+                    <FilterChip
+                      key={s}
+                      label={s}
+                      active={selectedSpec === s}
+                      onClick={() =>
+                        setSelectedSpec(selectedSpec === s ? null : s)
+                      }
+                      ocid={`astrologer.spec_${s.toLowerCase().replace(/\s+/g, "-")}`}
+                    />
+                  ))}
+                </div>
+                {ALL_SPECS.length > 10 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllSpecs(!showAllSpecs)}
+                    className="mt-2 flex items-center gap-1 text-xs"
+                    style={{ color: "oklch(0.68 0.20 48)" }}
+                  >
+                    {showAllSpecs ? (
+                      <>
+                        <ChevronUp className="h-3 w-3" /> Show less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-3 w-3" /> +
+                        {ALL_SPECS.length - 10} more
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
           </aside>
 
-          {/* ── Main Content ─────────────────────────────────────────────── */}
+          {/* ── Main Grid ─────────────────────────────────────────────────── */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="section-title mb-1">Our Expert Astrologers</h2>
-                <p className="section-subtitle text-sm">
-                  {hasActiveFilter
-                    ? `Showing astrologers${specialtyFilter ? ` in ${specialtyFilter}` : ""}${activeCity ? ` · ${activeCity}` : ""}`
-                    : "Choose from our panel of verified spiritual experts"}
+                <h2
+                  className="font-bold text-lg"
+                  style={{ color: "oklch(0.88 0.06 75)" }}
+                >
+                  {regionTab === "India"
+                    ? "🇮🇳 Indian Astrologers"
+                    : "🌍 International Astrologers"}
+                </h2>
+                <p className="text-sm" style={{ color: "oklch(0.60 0.05 65)" }}>
+                  {filtered.length} expert{filtered.length !== 1 ? "s" : ""}{" "}
+                  found
                 </p>
               </div>
-              <span
-                className="text-xs font-heading px-3 py-1 rounded-full"
-                style={{
-                  background: "oklch(0.28 0.08 48 / 0.2)",
-                  color: "oklch(0.68 0.20 48)",
-                  border: "1px solid oklch(0.68 0.20 48 / 0.25)",
-                }}
-              >
-                {filtered.length} found
-              </span>
             </div>
 
-            {/* Active filter chips */}
-            {hasActiveFilter && (
-              <div
-                className="flex flex-wrap gap-2 mb-5"
-                data-ocid="active-filters"
-              >
-                {specialtyFilter && (
-                  <span
-                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-heading"
-                    style={{
-                      background: "oklch(0.68 0.20 48 / 0.15)",
-                      color: "oklch(0.68 0.20 48)",
-                      border: "1px solid oklch(0.68 0.20 48 / 0.3)",
-                    }}
-                  >
-                    {specialtyFilter}
-                    <button
-                      type="button"
-                      onClick={() => setSpecialtyFilter(null)}
-                      aria-label="Remove specialty filter"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-                {activeCity && (
-                  <span
-                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-heading"
-                    style={{
-                      background: "oklch(0.55 0.16 60 / 0.15)",
-                      color: "oklch(0.78 0.14 75)",
-                      border: "1px solid oklch(0.78 0.14 75 / 0.3)",
-                    }}
-                  >
-                    📍 {activeCity}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCityFilter(null);
-                        setIntlFilter(null);
-                      }}
-                      aria-label="Remove city filter"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-              </div>
-            )}
-
             {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {Array.from({ length: 6 }, (_, i) => i).map((i) => (
-                  <Skeleton key={i} className="h-64 rounded-2xl" />
+                  <Skeleton key={i} className="h-72 rounded-2xl" />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
               <div
                 className="rounded-2xl p-12 text-center"
-                data-ocid="astrologer-empty-state"
+                data-ocid="astrologer.empty_state"
                 style={{
                   background: "oklch(0.22 0.06 25)",
                   border: "1px dashed oklch(0.35 0.06 30)",
@@ -705,217 +662,109 @@ export default function AstrologerConsultation() {
               >
                 <p className="text-4xl mb-3">🔭</p>
                 <p
-                  className="font-heading font-bold mb-1"
+                  className="font-bold mb-1"
                   style={{ color: "oklch(0.78 0.14 75)" }}
                 >
                   No astrologers found
                 </p>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p
+                  className="text-sm mb-4"
+                  style={{ color: "oklch(0.55 0.05 60)" }}
+                >
                   Try adjusting your filters
                 </p>
-                <button
-                  type="button"
+                <Button
+                  data-ocid="astrologer.clear_filters_button"
                   onClick={() => {
-                    setCityFilter(null);
-                    setIntlFilter(null);
-                    setSpecialtyFilter(null);
+                    setSelectedSpec(null);
+                    setSelectedFaith("All");
+                    setSelectedMode("All");
+                    setSelectedState("All States");
+                    setSelectedCountry("All Countries");
+                    setSearchQuery("");
                   }}
-                  className="text-sm font-heading font-bold px-4 py-2 rounded-full"
+                  size="sm"
                   style={{ background: "oklch(0.68 0.20 48)", color: "white" }}
                 >
                   Clear Filters
-                </button>
+                </Button>
               </div>
             ) : (
               <div
-                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
-                data-ocid="astrologer-grid"
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"
+                data-ocid="astrologer.grid"
               >
-                {filtered.map((ast) => (
-                  <div key={ast.id} className="temple-card p-5 flex flex-col">
-                    <div
-                      className="h-16 w-16 rounded-full flex items-center justify-center text-2xl mb-3 mx-auto"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, oklch(0.68 0.20 48 / 0.2), oklch(0.78 0.14 75 / 0.2))",
-                      }}
-                    >
-                      🧘
-                    </div>
-                    <h3
-                      className="font-heading font-bold text-sm text-center mb-1"
-                      style={{ color: "oklch(0.22 0.08 22)" }}
-                    >
-                      {ast.name}
-                    </h3>
-                    <div className="flex justify-center mb-2">
-                      <StarRating rating={ast.rating} />
-                    </div>
-                    <div className="flex flex-wrap gap-1 justify-center mb-3">
-                      {ast.specializations.slice(0, 2).map((s) => (
-                        <span
-                          key={s}
-                          className="text-xs px-2 py-0.5 rounded-full font-heading"
-                          style={{
-                            background: "oklch(0.68 0.20 48 / 0.1)",
-                            color: "oklch(0.55 0.16 48)",
-                          }}
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="text-xs font-body text-muted-foreground text-center mb-3 flex-1 line-clamp-2">
-                      {ast.bio}
-                    </p>
-                    <div className="flex items-center justify-between mb-3 text-xs font-body">
-                      <span className="text-muted-foreground">
-                        {Number(ast.experienceYears)} yrs exp
-                      </span>
-                      <span
-                        className="font-heading font-bold"
-                        style={{ color: "oklch(0.68 0.20 48)" }}
-                      >
-                        ₹{ast.perMinuteRate}/min
-                      </span>
-                    </div>
-                    <Link
-                      to="/astrologer/$id"
-                      params={{ id: ast.id }}
-                      className="w-full py-2 rounded-full text-center text-xs font-heading font-bold transition-all mb-2"
-                      style={{
-                        border: "1.5px solid oklch(0.68 0.20 48 / 0.6)",
-                        color: "oklch(0.55 0.16 48)",
-                      }}
-                    >
-                      View Profile
-                    </Link>
-                    <Link
-                      to="/book-consultation"
-                      search={{
-                        astrologerId: ast.id,
-                        astrologerName: encodeURIComponent(ast.name),
-                        rate: String(ast.perMinuteRate),
-                      }}
-                      data-ocid={`book-${ast.id}`}
-                      className="w-full py-2 rounded-full text-center text-xs font-heading font-bold transition-all"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
-                        color: "white",
-                      }}
-                    >
-                      Book Consultation
-                    </Link>
-                  </div>
+                {filtered.map((ast, idx) => (
+                  <AstrologerCard key={ast.id} ast={ast} index={idx} />
                 ))}
               </div>
             )}
 
-            {/* City Browse Links — helpful for SEO and navigation */}
+            {/* Browse by state section */}
             <div
               className="mt-12 pt-8"
-              style={{ borderTop: "1px solid oklch(0.30 0.06 30 / 0.4)" }}
+              style={{ borderTop: "1px solid oklch(0.28 0.06 28 / 0.4)" }}
             >
               <h3
-                className="font-heading font-bold text-sm mb-4"
+                className="font-bold text-sm mb-3"
                 style={{ color: "oklch(0.78 0.14 75)" }}
               >
-                🇮🇳 Astrologers by Indian City
+                🇮🇳 Find Astrologers by Indian State
               </h3>
               <div
-                className="flex flex-wrap gap-2 mb-8"
-                data-ocid="city-links-india"
+                className="flex flex-wrap gap-2 mb-6"
+                data-ocid="astrologer.state_links"
               >
-                {INDIAN_CITIES.map((city) => (
+                {INDIAN_STATES_FILTER.slice(1).map((state) => (
                   <button
                     type="button"
-                    key={city}
+                    key={state}
                     onClick={() => {
-                      handleCitySelect(city);
+                      setRegionTab("India");
+                      setSelectedState(state);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="text-xs px-3 py-1 rounded-full font-heading transition-all hover:opacity-80"
+                    className="text-xs px-3 py-1 rounded-full transition-all hover:opacity-80"
                     style={{
                       background: "oklch(0.25 0.06 25)",
                       color: "oklch(0.70 0.08 70)",
                       border: "1px solid oklch(0.32 0.06 30 / 0.5)",
                     }}
                   >
-                    {city}
+                    {state}
                   </button>
                 ))}
               </div>
 
               <h3
-                className="font-heading font-bold text-sm mb-4"
+                className="font-bold text-sm mb-3"
                 style={{ color: "oklch(0.78 0.14 75)" }}
               >
-                🌍 Astrologers by International Location
+                🌍 International Astrologers
               </h3>
-              <div className="space-y-4" data-ocid="city-links-international">
-                {INTERNATIONAL_CITIES.map((group) => (
-                  <div key={group.region}>
-                    <p
-                      className="text-xs font-heading font-semibold mb-2"
-                      style={{ color: "oklch(0.60 0.08 60)" }}
-                    >
-                      {group.region}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {group.places.map((place) => (
-                        <button
-                          type="button"
-                          key={place}
-                          onClick={() => {
-                            handleIntlSelect(place);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                          className="text-xs px-3 py-1 rounded-full font-heading transition-all hover:opacity-80"
-                          style={{
-                            background: "oklch(0.25 0.06 25)",
-                            color: "oklch(0.70 0.08 70)",
-                            border: "1px solid oklch(0.32 0.06 30 / 0.5)",
-                          }}
-                        >
-                          {place}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              <div
+                className="flex flex-wrap gap-2"
+                data-ocid="astrologer.country_links"
+              >
+                {WORLD_COUNTRIES_FILTER.slice(1).map((country) => (
+                  <button
+                    type="button"
+                    key={country}
+                    onClick={() => {
+                      setRegionTab("International");
+                      setSelectedCountry(country);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="text-xs px-3 py-1 rounded-full transition-all hover:opacity-80"
+                    style={{
+                      background: "oklch(0.25 0.06 25)",
+                      color: "oklch(0.70 0.08 70)",
+                      border: "1px solid oklch(0.32 0.06 30 / 0.5)",
+                    }}
+                  >
+                    {country}
+                  </button>
                 ))}
-              </div>
-
-              <div className="mt-8">
-                <h3
-                  className="font-heading font-bold text-sm mb-4"
-                  style={{ color: "oklch(0.78 0.14 75)" }}
-                >
-                  🔮 Browse by Specialty
-                </h3>
-                <div
-                  className="flex flex-wrap gap-2"
-                  data-ocid="specialty-links"
-                >
-                  {SPECIALTIES.map((spec) => (
-                    <button
-                      type="button"
-                      key={spec}
-                      onClick={() => {
-                        setSpecialtyFilter(spec);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      className="text-xs px-3 py-1 rounded-full font-heading transition-all hover:opacity-80"
-                      style={{
-                        background: "oklch(0.28 0.08 48 / 0.2)",
-                        color: "oklch(0.68 0.20 48)",
-                        border: "1px solid oklch(0.68 0.20 48 / 0.25)",
-                      }}
-                    >
-                      {spec}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

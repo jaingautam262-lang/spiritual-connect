@@ -6,10 +6,12 @@ import {
   Heart,
   Menu,
   Search,
+  ShoppingBag,
   ShoppingCart,
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 import { useCartStore } from "../stores/cartStore";
 import LanguageToggle from "./LanguageToggle";
 import ShoppingCartPanel from "./ShoppingCartPanel";
@@ -21,12 +23,21 @@ interface LayoutProps {
 }
 
 const navLinks = [
-  { to: "/aarti", label: "🧘 Aarti" },
-  { to: "/chalisa", label: "📖 Chalisa" },
-  { to: "/mantra", label: "🔔 Mantra" },
-  { to: "/stotra", label: "💿 Stotra" },
-  { to: "/kavach", label: "🛡️ कवच" },
-  { to: "/energized-products", label: "🌰 Energized Products" },
+  { to: "/aarti", label: "🧘 Aarti", tKey: "aarti" },
+  { to: "/chalisa", label: "📖 Chalisa", tKey: "chalisa" },
+  { to: "/mantra", label: "🔔 Mantra", tKey: "mantra" },
+  {
+    to: "/navgrah-mantra",
+    label: "🪐 Navgrah Mul Mantra (108/1008)",
+    tKey: "navgrahMantra",
+  },
+  { to: "/stotra", label: "💿 Stotra", tKey: "stotra" },
+  { to: "/kavach", label: "🛡️ कवच", tKey: "kavach" },
+  {
+    to: "/energized-products",
+    label: "🌰 Energized Products",
+    tKey: "energizedProducts",
+  },
 ];
 
 const jainDepartmentSection = {
@@ -77,6 +88,29 @@ const jainDepartmentSection = {
   ],
 };
 
+const shopSection = {
+  title: "🛍️ Shop",
+  links: [
+    { to: "/shop", label: "🏪 Main Shop" },
+    { to: "/shop/by-purpose", label: "🎯 Shop by Purpose" },
+    { to: "/kartik-shop", label: "💍 KartikJewels Collection" },
+    { to: "/dhwani-shop", label: "🔮 Dhwani Astro" },
+    { to: "/yantra-shop", label: "🔯 Yantra Shop" },
+    { to: "/shop?category=rings", label: "💍 Gemstone Rings" },
+    { to: "/shop?category=crystal-towers", label: "🗼 Crystal Towers" },
+    { to: "/shop?category=coin-pendants", label: "🪙 Coin Pendants" },
+    { to: "/shop?category=owls", label: "🦉 Owls & Figurines" },
+    { to: "/shop?category=brass-murti", label: "🪆 Brass Murti" },
+    { to: "/shop?category=puja-sets", label: "🪔 Puja Sets" },
+    { to: "/shop?category=vastu-frames", label: "🖼️ Vastu Frames" },
+    { to: "/shop?category=yantra-coins", label: "🪙 Yantra Coins" },
+    { to: "/shop?category=rudraksha", label: "🟤 Rudraksha" },
+    { to: "/shop?category=gemstones", label: "💎 Gemstones" },
+    { to: "/life-receipt", label: "🧠 LifeReceipt™ AI" },
+  ] as { to: string; label: string; isGold?: boolean }[],
+  isShop: true as const,
+};
+
 const megaMenuSections = [
   {
     title: "🛕 जैन विभाग",
@@ -89,6 +123,7 @@ const megaMenuSections = [
       { to: "/vedic-dashboard", label: "🪐 Vedic Dashboard (कुंडली)" },
       { to: "/horoscope", label: "राशिफल/Horoscope" },
       { to: "/horoscope-comparison", label: "🌐 Tri-System Comparison" },
+      { to: "/panchang", label: "🗓️ Panchang & Muhurat" },
       { to: "/auspicious-times", label: "🌟 Auspicious Times | शुभ मुहूर्त" },
       { to: "/live-panchang", label: "📅 Live Panchang" },
       { to: "/shadow-planets", label: "☊ Shadow Planets" },
@@ -104,12 +139,15 @@ const megaMenuSections = [
     ],
   },
   {
-    title: "🕉️ सहस्रनाम",
+    title: "🔔 मंत्र संग्रह",
     links: [
-      { to: "/sahasranam-sangrah", label: "✨ सहस्रनाम संग्रह" },
-      { to: "/sahasranam", label: "सहस्रनाम लाइब्रेरी" },
-      { to: "/stuti", label: "स्तुति लाइब्रेरी" },
-      { to: "/ashtakam", label: "अष्टकम लाइब्रेरी" },
+      { to: "/mantra", label: "🔔 Mantra Library" },
+      { to: "/navgrah-mantra", label: "🪐 Navgrah Mul Mantra (108/1008)" },
+      { to: "/stotra", label: "📜 Stotra Library" },
+      { to: "/kavach", label: "🛡️ Kavach Library" },
+      { to: "/ashtakam", label: "🕉️ Ashtakam Library" },
+      { to: "/stuti", label: "🙏 Stuti Library" },
+      { to: "/sahasranam", label: "📿 Sahasranam Library" },
     ],
   },
   {
@@ -127,14 +165,21 @@ const megaMenuSections = [
       { to: "/suktam-library", label: "📜 सूक्तम् Library (43)" },
       { to: "/holy-books", label: "Holy Books" },
       { to: "/devotional", label: "Devotional" },
+      { to: "/guru-directory", label: "🙏 Guru Directory" },
+      { to: "/mehndi", label: "🌿 Mehndi Collection" },
+      { to: "/paintings-greetings", label: "🎨 Paintings & Greetings" },
+      { to: "/daan-seva", label: "💝 Daan & Seva" },
+      { to: "/dan-seva", label: "🙏 Dan Seva / Puja Booking" },
     ],
   },
   {
     title: "🛕 मंदिर & सेवाएं",
     links: [
+      { to: "/dan-seva", label: "🕉️ Dan Seva & Chadava (Stripe)" },
       { to: "/chadhava", label: "🪔 Chadhava & Sacred Bhet" },
       { to: "/virtual-temple", label: "My Temple" },
       { to: "/temples", label: "Temple Directory" },
+      { to: "/temple-directory", label: "🛕 Temples & Tirthas" },
       { to: "/temple-services", label: "Puja Services" },
       { to: "/pujas-catalog", label: "🙏 Book a Puja" },
       { to: "/puja-booking", label: "📋 Puja Booking" },
@@ -146,6 +191,10 @@ const megaMenuSections = [
       { to: "/yantra-shop", label: "🔯 यंत्र शॉप / Yantra Shop" },
       { to: "/yantra-info", label: "📖 यंत्र जानकारी / Yantra Info" },
       { to: "/gemstones/emerald", label: "💚 Emerald (Panna) Stone" },
+      { to: "/gemstones", label: "💎 Gemstone Library" },
+      { to: "/yantras", label: "🔯 Yantra Library" },
+      { to: "/puja-booking-new", label: "📿 Puja Booking (New)" },
+      { to: "/tantra-remedies", label: "🕯️ Tantra Remedies" },
     ],
   },
   {
@@ -185,7 +234,10 @@ const megaMenuSections = [
   },
   {
     title: "🌿 आयुर्वेद",
-    links: [{ to: "/ayurveda", label: "✨ आयुर्वेद & घरेलू नुस्खे" }],
+    links: [
+      { to: "/ayurveda", label: "✨ आयुर्वेद & घरेलू नुस्खे" },
+      { to: "/herb-directory", label: "🌿 Jadi Buti — Sacred Herb Directory" },
+    ],
   },
   {
     title: "📝 Blog & Stories",
@@ -236,6 +288,7 @@ const allMobileLinks = [
   { to: "/jain-pathshala", label: "🏫 बाल विकास" },
   { to: "/jain-bal-vikas", label: "जैन बाल विकास केंद्र" },
   { to: "/jain-parv-calendar", label: "जैन धर्म पर्व कैलेंडर" },
+  { to: "/panchang", label: "🗓️ Panchang & Muhurat" },
   { to: "/horoscope", label: "🔮 राशिफल" },
   { to: "/horoscope-comparison", label: "🌐 Tri-System Comparison" },
   { to: "/auspicious-times", label: "🌟 शुभ मुहूर्त" },
@@ -273,7 +326,19 @@ const allMobileLinks = [
   { to: "/booking-history", label: "🕰️ बुकिंग इतिहास / Booking History" },
   { to: "/puja-types", label: "📋 Puja Types" },
   { to: "/puja-reports", label: "🗒️ Puja Reports" },
-  { to: "/shop", label: "Shop" },
+  { to: "/shop", label: "🏪 Shop — Main" },
+  { to: "/shop/by-purpose", label: "🎯 Shop by Purpose" },
+  { to: "/kartik-shop", label: "💍 KartikJewels Collection" },
+  { to: "/dhwani-shop", label: "🔮 Dhwani Astro" },
+  { to: "/life-receipt", label: "🧠 LifeReceipt™ AI" },
+  { to: "/shop?category=rings", label: "💍 Gemstone Rings" },
+  { to: "/shop?category=crystal-towers", label: "🗼 Crystal Towers" },
+  { to: "/shop?category=coin-pendants", label: "🪙 Coin Pendants" },
+  { to: "/shop?category=owls", label: "🦉 Owls & Figurines" },
+  { to: "/shop?category=brass-murti", label: "🪆 Brass Murti" },
+  { to: "/shop?category=puja-sets", label: "🪔 Puja Sets" },
+  { to: "/shop?category=vastu-frames", label: "🖼️ Vastu Frames" },
+  { to: "/shop?category=yantra-coins", label: "🪙 Yantra Coins" },
   { to: "/yantra-shop", label: "🔯 यंत्र शॉप / Yantra Shop" },
   { to: "/yantra-info", label: "📖 यंत्र जानकारी / Yantra Info" },
   { to: "/gemstones/emerald", label: "💚 Emerald (Panna) Stone" },
@@ -297,11 +362,16 @@ const allMobileLinks = [
   { to: "/astrologer-dashboard", label: "Admin Dashboard" },
   { to: "/admin-cms", label: "Admin CMS" },
   { to: "/ayurveda", label: "🌿 आयुर्वेद" },
+  { to: "/herb-directory", label: "🌿 Jadi Buti — Herb Directory" },
   { to: "/blog", label: "📖 Spiritual Blog" },
   { to: "/web-stories", label: "✨ Web Stories" },
   { to: "/festival-calendar", label: "📅 Festival Calendar" },
   { to: "/surya-dev", label: "☀️ Surya Deva" },
   { to: "/hindu-calendar", label: "📅 Hindu Calendar" },
+  { to: "/guru-directory", label: "🙏 Guru Directory" },
+  { to: "/mehndi", label: "🌿 Mehndi Collection" },
+  { to: "/paintings-greetings", label: "🎨 Paintings & Greetings" },
+  { to: "/daan-seva", label: "💝 Daan & Seva" },
   { to: "/top-hindu-festivals", label: "🏆 Top 25 Hindu Festivals" },
   { to: "/top-hindu-festivals-20", label: "Top 20 Hindu Festivals" },
   { to: "/top-hindu-festivals-10", label: "Top 10 Hindu Festivals" },
@@ -346,6 +416,7 @@ const footerSections = [
       { to: "/jain-pujan", label: "जैन पूजन" },
       { to: "/jain-encyclopedia", label: "जैन विश्वकोश" },
       { to: "/ayurveda", label: "आयुर्वेद" },
+      { to: "/herb-directory", label: "🌿 Jadi Buti" },
     ],
   },
   {
@@ -425,6 +496,8 @@ const footerSections = [
         label: "Gemstone Consultation",
       },
       { to: "/shop?category=gemstones", label: "Buy Gemstones" },
+      { to: "/gemstones", label: "💎 Gemstone Library" },
+      { to: "/yantras", label: "🔯 Yantra Library" },
       { to: "/shop?category=pyrite", label: "Pyrite" },
       { to: "/shop?category=selenite", label: "Selenite" },
       {
@@ -455,6 +528,7 @@ export default function Layout({ children }: LayoutProps) {
   const isAuthenticated = !!identity;
   const megaRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -541,7 +615,7 @@ export default function Layout({ children }: LayoutProps) {
                     },
                   }}
                 >
-                  {link.label}
+                  {link.label.split(" ")[0]} {t(link.tKey)}
                 </Link>
               ))}
 
@@ -554,7 +628,7 @@ export default function Layout({ children }: LayoutProps) {
                   onClick={() => setMegaMenuOpen((v) => !v)}
                   data-ocid="nav.more_button"
                 >
-                  More{" "}
+                  {t("more")}{" "}
                   <ChevronDown
                     className={`h-3 w-3 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`}
                   />
@@ -571,6 +645,41 @@ export default function Layout({ children }: LayoutProps) {
                     }}
                     data-ocid="nav.dropdown_menu"
                   >
+                    {/* Shop Section — featured grid */}
+                    <div
+                      className="p-4 border-b"
+                      style={{ borderColor: "oklch(0.78 0.14 75 / 0.15)" }}
+                    >
+                      <p
+                        className="text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5"
+                        style={{ color: "oklch(0.78 0.14 75)" }}
+                      >
+                        <ShoppingBag className="h-3.5 w-3.5" />
+                        {shopSection.title}
+                      </p>
+                      <div className="grid grid-cols-4 gap-x-4 gap-y-0.5">
+                        {shopSection.links.map((link) => {
+                          const isGold = link.label.startsWith("🧠");
+                          return (
+                            <Link
+                              key={link.to + link.label}
+                              to={link.to}
+                              onClick={() => setMegaMenuOpen(false)}
+                              className="flex items-center px-2 py-1 text-xs rounded-lg transition-colors hover:bg-white/10 font-semibold"
+                              style={{
+                                color: isGold
+                                  ? "oklch(0.78 0.14 75)"
+                                  : "oklch(0.88 0.06 75)",
+                              }}
+                              data-ocid="nav.shop.link"
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     {/* Jain Department — full-width grouped section */}
                     <div
                       className="p-4 border-b"
@@ -706,10 +815,10 @@ export default function Layout({ children }: LayoutProps) {
                 }}
               >
                 {loginStatus === "logging-in"
-                  ? "Connecting..."
+                  ? t("connecting")
                   : isAuthenticated
-                    ? "Logout"
-                    : "Login"}
+                    ? t("logout")
+                    : t("login")}
               </button>
 
               {/* Mobile menu button */}
@@ -753,6 +862,10 @@ export default function Layout({ children }: LayoutProps) {
                 </Link>
               ))}
             </div>
+            {/* Language toggle visible in mobile menu */}
+            <div className="mt-3 flex justify-center sm:hidden">
+              <LanguageToggle />
+            </div>
             <button
               type="button"
               onClick={() => {
@@ -768,10 +881,10 @@ export default function Layout({ children }: LayoutProps) {
               }}
             >
               {loginStatus === "logging-in"
-                ? "Connecting..."
+                ? t("connecting")
                 : isAuthenticated
-                  ? "Logout"
-                  : "Login"}
+                  ? t("logout")
+                  : t("login")}
             </button>
           </div>
         )}
@@ -847,15 +960,15 @@ export default function Layout({ children }: LayoutProps) {
               className="text-xs font-body text-center"
               style={{ color: "oklch(0.55 0.04 50)" }}
             >
-              © {new Date().getFullYear()} SpiritualConnect. All rights
-              reserved.
+              © {new Date().getFullYear()} SpiritualConnect.{" "}
+              {t("allRightsReserved")}
             </p>
 
             <p
               className="text-xs font-body flex items-center gap-1"
               style={{ color: "oklch(0.55 0.04 50)" }}
             >
-              Built with{" "}
+              {t("builtWith")}{" "}
               <Heart
                 className="h-3 w-3 inline"
                 style={{
@@ -863,7 +976,7 @@ export default function Layout({ children }: LayoutProps) {
                   fill: "oklch(0.68 0.20 48)",
                 }}
               />{" "}
-              using{" "}
+              {t("using")}{" "}
               <a
                 href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appId}`}
                 target="_blank"

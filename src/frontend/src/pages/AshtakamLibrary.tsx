@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { type Ashtakam, ashtakamDataA } from "@/data/ashtakamDataA";
 import { ashtakamDataB } from "@/data/ashtakamDataB";
 import { ashtakamDataC } from "@/data/ashtakamDataC";
+import { ashtakamData_D } from "@/data/ashtakamData_D";
 import { ArrowLeft, Search, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
@@ -13,6 +14,7 @@ const ashtakams: Ashtakam[] = [
   ...ashtakamDataA,
   ...ashtakamDataB,
   ...ashtakamDataC,
+  ...ashtakamData_D,
 ];
 
 export default function AshtakamLibrary() {

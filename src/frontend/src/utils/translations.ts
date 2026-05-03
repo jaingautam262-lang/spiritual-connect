@@ -1,3 +1,111 @@
+/**
+ * translations.ts
+ * Unified language utilities for Spiritual Connect.
+ * Provides LanguageKey, TranslationMap, useLanguage hook, and t() function.
+ *
+ * The primary language state lives in contexts/LanguageContext.tsx (the full
+ * React context). This module re-exports the hook from there so consumers can
+ * import from a single place, and also exposes a standalone t() helper that
+ * works outside of React (e.g. in plain utility functions).
+ */
+
+export type LanguageKey = "en" | "hi";
+
+export interface TranslationEntry {
+  en: string;
+  hi: string;
+}
+
+export type TranslationMap = Record<string, TranslationEntry>;
+
+// ─── Core translations dictionary ─────────────────────────────────────────────
+export const translations: TranslationMap = {
+  // Navigation
+  home: { en: "Home", hi: "मुखपृष्ठ" },
+  shop: { en: "Shop", hi: "दुकान" },
+  panchang: { en: "Panchang", hi: "पंचांग" },
+  numerology: { en: "Numerology", hi: "अंकशास्त्र" },
+  astrology: { en: "Astrology", hi: "ज्योतिष" },
+  stotra: { en: "Stotras", hi: "स्तोत्र" },
+  aarti: { en: "Aartis", hi: "आरती" },
+  chalisa: { en: "Chalisas", hi: "चालीसा" },
+  mantra: { en: "Mantras", hi: "मंत्र" },
+  temples: { en: "Temples", hi: "मंदिर" },
+  holyBooks: { en: "Holy Books", hi: "धर्मग्रंथ" },
+  herbs: { en: "Herb Directory", hi: "जड़ी बूटी" },
+  danSeva: { en: "Dan Seva", hi: "दान सेवा" },
+  search: { en: "Search", hi: "खोजें" },
+  login: { en: "Login", hi: "लॉगिन" },
+  logout: { en: "Logout", hi: "लॉगआउट" },
+  dashboard: { en: "Dashboard", hi: "डैशबोर्ड" },
+  admin: { en: "Admin", hi: "व्यवस्थापक" },
+
+  // Additional nav keys used in Layout.tsx
+  kavach: { en: "Kavach", hi: "कवच" },
+  ashtakam: { en: "Ashtakam", hi: "अष्टकम" },
+  stuti: { en: "Stuti", hi: "स्तुति" },
+  sahasranam: { en: "Sahasranam", hi: "सहस्रनाम" },
+  navgrahMantra: {
+    en: "Navgrah Mantra (108/1008)",
+    hi: "नवग्रह मूल मंत्र (108/1008)",
+  },
+  energizedProducts: { en: "Energized Products", hi: "ऊर्जित उत्पाद" },
+  more: { en: "More", hi: "और" },
+
+  // Auth
+  connecting: { en: "Connecting...", hi: "जोड़ रहे हैं..." },
+
+  // Common UI
+  explore: { en: "Explore", hi: "जानें" },
+  viewAll: { en: "View All", hi: "सभी देखें" },
+  filter: { en: "Filter", hi: "फ़िल्टर" },
+  all: { en: "All", hi: "सभी" },
+  hindi: { en: "Hindi", hi: "हिन्दी" },
+  english: { en: "English", hi: "अंग्रेज़ी" },
+  close: { en: "Close", hi: "बंद करें" },
+  back: { en: "Back", hi: "वापस" },
+  loading: { en: "Loading…", hi: "लोड हो रहा है…" },
+  noResults: { en: "No results found", hi: "कोई परिणाम नहीं मिला" },
+  readMore: { en: "Read More", hi: "और पढ़ें" },
+  bookNow: { en: "Book Now", hi: "अभी बुक करें" },
+  buyNow: { en: "Buy Now", hi: "अभी खरीदें" },
+  addToCart: { en: "Add to Cart", hi: "कार्ट में डालें" },
+
+  // Footer
+  allRightsReserved: { en: "All rights reserved.", hi: "सर्वाधिकार सुरक्षित।" },
+  builtWith: { en: "Built with", hi: "निर्मित" },
+  using: { en: "using", hi: "द्वारा" },
+
+  // Spiritual categories
+  hindu: { en: "Hindu", hi: "हिन्दू" },
+  jain: { en: "Jain", hi: "जैन" },
+  sikh: { en: "Sikh", hi: "सिख" },
+  faith: { en: "Faith", hi: "धर्म" },
+  deity: { en: "Deity", hi: "देवता" },
+  category: { en: "Category", hi: "श्रेणी" },
+};
+
+// ─── Standalone t() function ───────────────────────────────────────────────────
+/**
+ * Translate a key to the given language.
+ * Falls back to the key string if not found.
+ *
+ * @example
+ *   t("home", "hi")  // "मुखपृष्ठ"
+ *   t("home", "en")  // "Home"
+ */
+export function t(key: string, lang: LanguageKey): string {
+  const entry = translations[key];
+  if (!entry) return key;
+  return lang === "en" ? entry.en : entry.hi;
+}
+
+// ─── useLanguage hook re-export ────────────────────────────────────────────────
+// The actual React context lives in contexts/LanguageContext.tsx.
+// Re-export here so pages can import from either location.
+export { useLanguage } from "../contexts/LanguageContext";
+
+// Legacy typed t() for backward-compat with calculator pages
 export type TranslationKey =
   | "nav.aarti"
   | "nav.chalisa"
@@ -43,7 +151,6 @@ export type TranslationKey =
   | "ui.roman"
   | "ui.english"
   | "ui.connecting"
-  // Calculator shared
   | "calculator.calculate"
   | "calculator.yourName"
   | "calculator.enterName"
@@ -80,26 +187,21 @@ export type TranslationKey =
   | "calculator.compatibility"
   | "calculator.yourResult"
   | "calculator.learnMore"
-  // Moon Phase
   | "calculator.moonPhase"
   | "calculator.currentMoonPhase"
   | "calculator.birthMoonPhase"
-  // Kaal Sarp Dosh
   | "calculator.kaalSarpDosh"
   | "calculator.doshPresent"
   | "calculator.doshAbsent"
-  // Dasha
   | "calculator.dasha"
   | "calculator.currentDasha"
   | "calculator.dashaEnd"
-  // Flames
   | "calculator.flames"
   | "calculator.flamesResult"
-  // General result
   | "calculator.yourName.label"
   | "calculator.generatedOn";
 
-const translations: Record<TranslationKey, { hi: string; en: string }> = {
+const typedTranslations: Record<TranslationKey, { hi: string; en: string }> = {
   "nav.aarti": { hi: "Aarti", en: "Aarti" },
   "nav.chalisa": { hi: "Chalisa", en: "Chalisa" },
   "nav.mantra": { hi: "Mantra", en: "Mantra" },
@@ -144,8 +246,6 @@ const translations: Record<TranslationKey, { hi: string; en: string }> = {
   "ui.roman": { hi: "रोमन", en: "Roman" },
   "ui.english": { hi: "अंग्रेज़ी", en: "English" },
   "ui.connecting": { hi: "जोड़ रहे हैं...", en: "Connecting..." },
-
-  // Calculator shared
   "calculator.calculate": { en: "Calculate", hi: "गणना करें" },
   "calculator.yourName": { en: "Your Name", hi: "आपका नाम" },
   "calculator.enterName": { en: "Enter your name", hi: "अपना नाम दर्ज करें" },
@@ -212,42 +312,32 @@ const translations: Record<TranslationKey, { hi: string; en: string }> = {
   "calculator.compatibility": { en: "Compatibility", hi: "अनुकूलता" },
   "calculator.yourResult": { en: "Your Result", hi: "आपका परिणाम" },
   "calculator.learnMore": { en: "Learn More", hi: "अधिक जानें" },
-
-  // Moon Phase
   "calculator.moonPhase": { en: "Moon Phase", hi: "चंद्र चरण" },
   "calculator.currentMoonPhase": {
     en: "Current Moon Phase",
     hi: "वर्तमान चंद्र चरण",
   },
-  "calculator.birthMoonPhase": {
-    en: "Birth Moon Phase",
-    hi: "जन्म चंद्र चरण",
-  },
-
-  // Kaal Sarp Dosh
+  "calculator.birthMoonPhase": { en: "Birth Moon Phase", hi: "जन्म चंद्र चरण" },
   "calculator.kaalSarpDosh": { en: "Kaal Sarp Dosh", hi: "काल सर्प दोष" },
   "calculator.doshPresent": { en: "Dosh Present", hi: "दोष उपस्थित" },
   "calculator.doshAbsent": { en: "No Dosh Detected", hi: "कोई दोष नहीं" },
-
-  // Dasha
   "calculator.dasha": { en: "Dasha", hi: "दशा" },
   "calculator.currentDasha": { en: "Current Dasha", hi: "वर्तमान दशा" },
   "calculator.dashaEnd": { en: "Dasha Ends", hi: "दशा समाप्ति" },
-
-  // Flames
   "calculator.flames": { en: "FLAMES", hi: "फ्लेम्स" },
   "calculator.flamesResult": {
     en: "Your FLAMES Result",
     hi: "आपका FLAMES परिणाम",
   },
-
-  // General result
   "calculator.yourName.label": { en: "Name", hi: "नाम" },
   "calculator.generatedOn": { en: "Generated on", hi: "उत्पन्न तिथि" },
 };
 
-export function t(key: TranslationKey, lang: "hi" | "en"): string {
-  return translations[key]?.[lang] ?? translations[key]?.en ?? key;
+/**
+ * Typed translate for calculator pages (backward compat).
+ */
+export function tTyped(key: TranslationKey, lang: "hi" | "en"): string {
+  return typedTranslations[key]?.[lang] ?? typedTranslations[key]?.en ?? key;
 }
 
-export default translations;
+export default typedTranslations;

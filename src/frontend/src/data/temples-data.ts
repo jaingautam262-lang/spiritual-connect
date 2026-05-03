@@ -841,7 +841,22 @@ export const TEMPLES_DATA: TempleEntry[] = [
     timings: "6:00 AM – 7:00 PM",
     imageUrl: "/assets/generated/temple-mahavir-nalanda.jpg",
   },
-  // ── SIKH (7) ──────────────────────────────────────────────────────────────
+  // ── SIKH (8) ──────────────────────────────────────────────────────────────
+  {
+    id: "td-s08",
+    name: "Manikaran Sahib",
+    nameHindi: "मणिकर्ण साहिब",
+    city: "Kullu",
+    state: "Himachal Pradesh",
+    country: "India",
+    deity: "Waheguru",
+    faith: "Sikh",
+    shortDescription:
+      "Sacred Gurdwara in the Parvati Valley with natural hot springs — Langar is cooked in geothermal spring water.",
+    benefits: ["Hot Springs", "Guru Nanak Dev Ji", "Parvati Valley", "Healing"],
+    timings: "Open 24 hours",
+    imageUrl: "/assets/generated/temple-manikaran-sahib.jpg",
+  },
   {
     id: "td-s01",
     name: "Golden Temple (Harmandir Sahib)",
