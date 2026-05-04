@@ -28,6 +28,12 @@ import {
   type NewCategory,
   blogArticlesNew,
 } from "../data/blog-data-new";
+import {
+  GITA_BLOG_CATEGORY_META,
+  type GitaBlogArticle,
+  type GitaBlogCategory,
+  gitaBlogArticles,
+} from "../data/gitaBlogData";
 import { usePublishedBlogArticles } from "../hooks/useQueries";
 
 const ARTICLES_PER_PAGE = 9;
@@ -127,6 +133,11 @@ const NEW12_COLORS: Record<New12Category, string> = {
 };
 
 function getCategoryColor(category: string): string {
+  const gitaMeta =
+    GITA_BLOG_CATEGORY_META[
+      category as import("../data/gitaBlogData").GitaBlogCategory
+    ];
+  if (gitaMeta) return "oklch(0.62 0.18 48)";
   return (
     LEGACY_COLORS[category] ??
     NEW_CATEGORY_COLORS[category as NewCategory] ??
@@ -136,6 +147,11 @@ function getCategoryColor(category: string): string {
 }
 
 function getCategoryLabel(category: string, lang: "en" | "hi"): string {
+  const gitaMeta =
+    GITA_BLOG_CATEGORY_META[
+      category as import("../data/gitaBlogData").GitaBlogCategory
+    ];
+  if (gitaMeta) return lang === "hi" ? gitaMeta.nameHi : gitaMeta.nameEn;
   const legacy = LEGACY_CATEGORIES.find((c) => c.value === category);
   if (legacy) return lang === "hi" ? legacy.labelHindi : legacy.label;
   const newMeta = NEW_CATEGORY_META[category as NewCategory];
@@ -146,6 +162,11 @@ function getCategoryLabel(category: string, lang: "en" | "hi"): string {
 }
 
 function getCategoryEmoji(category: string): string {
+  const gitaMeta =
+    GITA_BLOG_CATEGORY_META[
+      category as import("../data/gitaBlogData").GitaBlogCategory
+    ];
+  if (gitaMeta) return gitaMeta.emoji;
   const legacy = LEGACY_CATEGORIES.find((c) => c.value === category);
   if (legacy) return legacy.emoji;
   const new12 = NEW12_CATEGORIES.find((c) => c.value === category);
@@ -199,6 +220,24 @@ function toNewDisplay(a: BlogArticleNew): DisplayArticle {
     publishDate: a.publishDate,
     isPopular: a.isPopular,
     source: "new",
+  };
+}
+
+function toGitaDisplay(a: GitaBlogArticle): DisplayArticle {
+  return {
+    id: a.id,
+    slug: a.slug,
+    title: a.title,
+    titleHi: a.titleHi,
+    excerpt: a.excerpt,
+    category: a.category,
+    author: a.author,
+    tags: a.tags,
+    publishDate: a.publishDate,
+    isPopular: a.isPopular,
+    featuredEmoji: a.featuredEmoji,
+    readTime: a.readTime,
+    source: "new12",
   };
 }
 
@@ -438,6 +477,17 @@ const DISPLAY_CATEGORIES: {
       !LEGACY_CATEGORIES.some((l) => (l.value as string) === c.value) &&
       !Object.keys(NEW_CATEGORY_META).includes(c.value),
   ),
+  ...(
+    Object.entries(GITA_BLOG_CATEGORY_META) as [
+      GitaBlogCategory,
+      (typeof GITA_BLOG_CATEGORY_META)[GitaBlogCategory],
+    ][]
+  ).map(([id, meta]) => ({
+    value: id,
+    label: meta.nameEn,
+    labelHindi: meta.nameHi,
+    emoji: meta.emoji,
+  })),
 ];
 
 export default function BlogSection() {
@@ -457,7 +507,8 @@ export default function BlogSection() {
     const legacy = legacySource.map(toLegacyDisplay);
     const newArts = blogArticlesNew.map(toNewDisplay);
     const new12Arts = BLOG_ARTICLES_12.map(toNew12Display);
-    return [...legacy, ...newArts, ...new12Arts];
+    const gitaArts = gitaBlogArticles.map(toGitaDisplay);
+    return [...legacy, ...newArts, ...new12Arts, ...gitaArts];
   }, [backendArticles]);
 
   const filtered = useMemo(() => {

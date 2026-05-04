@@ -122,6 +122,21 @@ export interface JainQAPair {
 export interface TransformationOutput {
     response: HttpResponse;
 }
+export interface PujaEvent {
+    id: string;
+    date: string;
+    slotsAvailable: bigint;
+    createdAt: bigint;
+    time: string;
+    description: string;
+    isActive: boolean;
+    pujaName: string;
+    pujaNameHindi: string;
+    slotsBooked: bigint;
+    price: bigint;
+    deity: string;
+    location: string;
+}
 export interface PrasadDeliveryRequest {
     id: string;
     status: string;
@@ -355,6 +370,19 @@ export interface PujaReport {
     intention: string;
     completionNotes: string;
 }
+export interface PersonalisedProduct {
+    id: string;
+    mrp?: bigint;
+    sku?: string;
+    name: string;
+    createdAt: bigint;
+    description: string;
+    imageUrl?: string;
+    manualCode?: string;
+    category: string;
+    price: bigint;
+    isPersonalised: boolean;
+}
 export interface ChadhavaOffering {
     id: string;
     status: string;
@@ -371,6 +399,16 @@ export interface UserProfile {
     birthPlace: string;
     email: string;
     gotra: string;
+}
+export interface PanchangCity {
+    id: string;
+    latitude: number;
+    timezone: string;
+    nameHindi: string;
+    stateName: string;
+    name: string;
+    longitude: number;
+    utcOffset: number;
 }
 export interface KundaliMatch {
     id: string;
@@ -412,6 +450,18 @@ export interface KundaliMatch {
     nadiDosha: boolean;
     personAPlace: string;
 }
+export interface PujaBooking {
+    id: string;
+    status: string;
+    userId: Principal;
+    createdAt: Time;
+    pujaType: string;
+    specialWishes: string;
+    gotra: string;
+    preferredDate: string;
+    templeId: string;
+    devoteeName: string;
+}
 export interface CombinedVedicReading {
     id: string;
     sunSign: string;
@@ -428,18 +478,6 @@ export interface CombinedVedicReading {
     birthPlace: string;
     remediesText: string;
     lagnaSign: string;
-}
-export interface PujaBooking {
-    id: string;
-    status: string;
-    userId: Principal;
-    createdAt: Time;
-    pujaType: string;
-    specialWishes: string;
-    gotra: string;
-    preferredDate: string;
-    templeId: string;
-    devoteeName: string;
 }
 export type Time = bigint;
 export interface VastuRoomCheck {
@@ -502,6 +540,7 @@ export interface BhajanEntry {
     createdAt: Time;
     lyricsText: string;
     artist: string;
+    hasMockAudio: boolean;
     deity: string;
 }
 export interface WalletTransaction {
@@ -606,6 +645,22 @@ export interface Temple {
     deity: string;
     location: string;
 }
+export interface ProductSubCategory {
+    id: string;
+    nameCode: string;
+    name: string;
+    productCount: bigint;
+    autoCodePrefix: string;
+}
+export interface SankalpInput {
+    eventId: string;
+    email: string;
+    specialWishes: string;
+    gotra: string;
+    mobile: string;
+    devoteeName: string;
+    birthDetails: string;
+}
 export interface JainEncyclopediaArticle {
     id: string;
     glossaryTerms: Array<JainGlossaryTerm>;
@@ -617,6 +672,15 @@ export interface JainEncyclopediaArticle {
     articleTitle: string;
     volumeTitle: string;
     crossLinks: Array<string>;
+}
+export interface GemstoneProduct {
+    sku: string;
+    weightRatti: number;
+    gemstoneType: string;
+    description: string;
+    shape: string;
+    gsCode?: string;
+    priceINR: bigint;
 }
 export interface AstroChart {
     id: string;
@@ -641,16 +705,23 @@ export interface ProductVariant {
 export interface ProductUpdateRequest {
     mrp?: number;
     sku?: string;
+    subCategory?: string;
     variantLabel?: string;
+    gemstoneType?: string;
     name?: string;
+    gemstoneWeightRatti?: number;
+    productCode?: string;
     description?: string;
     variants?: Array<ProductVariant>;
     stock?: bigint;
+    imageUrl?: string;
     astrologicalPurpose?: string;
     discount?: bigint;
     category?: string;
     benefits?: string;
     price?: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
 }
 export interface PathshalaLesson {
     id: string;
@@ -701,23 +772,31 @@ export interface VratKathaEntry {
     audioBase64: string;
     storyText: string;
     createdAt: Time;
+    hasMockAudio: boolean;
     festivalName: string;
 }
 export interface Product {
     id: string;
     mrp?: number;
     sku?: string;
+    subCategory?: string;
     variantLabel?: string;
+    gemstoneType?: string;
     name: string;
+    gemstoneWeightRatti?: number;
     createdAt: Time;
+    productCode?: string;
     description: string;
     variants?: Array<ProductVariant>;
     stock: bigint;
+    imageUrl?: string;
     astrologicalPurpose: string;
     discount?: bigint;
     category: string;
     benefits: string;
     price: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -740,6 +819,10 @@ export interface backendInterface {
      * / Admin-only: add a festival event.
      */
     addFestivalEvent(event: FestivalEvent): Promise<void>;
+    /**
+     * / Admin or productManager: add a gemstone product.
+     */
+    addGemstoneProduct(entry: GemstoneProduct): Promise<void>;
     /**
      * / Admin-only: add a new holy book entry.
      */
@@ -771,9 +854,17 @@ export interface backendInterface {
         err: string;
     }>;
     /**
+     * / Admin-only: add a panchang city.
+     */
+    addPanchangCity(city: PanchangCity): Promise<void>;
+    /**
      * / Admin-only: add a new Pathshala lesson.
      */
     addPathshalaLesson(lesson: PathshalaLesson): Promise<void>;
+    /**
+     * / Admin or productManager: add a personalised product.
+     */
+    addPersonalisedProduct(entry: PersonalisedProduct): Promise<void>;
     /**
      * / Admin-only: add a new suktam entry.
      */
@@ -787,6 +878,16 @@ export interface backendInterface {
      */
     addVratKatha(entry: VratKathaEntry): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    /**
+     * / Public: book a slot in a puja event. Returns booking reference or error.
+     */
+    bookPujaEventSlot(sankalp: SankalpInput): Promise<{
+        __kind__: "ok";
+        ok: string;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     /**
      * / Admin-only: create an astrologer profile.
      */
@@ -849,6 +950,10 @@ export interface backendInterface {
      */
     createPujaBooking(booking: PujaBooking): Promise<void>;
     /**
+     * / Admin-only: create a new puja event. Returns the generated id.
+     */
+    createPujaEvent(pujaName: string, pujaNameHindi: string, date: string, time: string, description: string, price: bigint, slotsAvailable: bigint, location: string, deity: string, isActive: boolean): Promise<string>;
+    /**
      * / Admin-only: create a puja report for a completed booking.
      */
     createPujaReport(report: PujaReport): Promise<void>;
@@ -864,6 +969,10 @@ export interface backendInterface {
      * / Authenticated users can create a service booking for themselves. Returns the booking id.
      */
     createServiceBooking(booking: ServiceBooking): Promise<string>;
+    /**
+     * / Admin or productManager: create a new product sub-category. Returns the generated id.
+     */
+    createSubCategory(name: string, nameCode: string, autoCodePrefix: string): Promise<string>;
     /**
      * / Admin-only: create a temple entry.
      */
@@ -905,6 +1014,10 @@ export interface backendInterface {
      */
     deleteFestivalEvent(id: string): Promise<void>;
     /**
+     * / Admin or productManager: delete a gemstone product by sku.
+     */
+    deleteGemstoneProduct(sku: string): Promise<void>;
+    /**
      * / Admin-only: delete a holy book entry.
      */
     deleteHolyBookEntry(id: string): Promise<void>;
@@ -943,17 +1056,33 @@ export interface backendInterface {
      */
     deletePalmistryContent(id: string): Promise<boolean>;
     /**
+     * / Admin-only: delete a panchang city.
+     */
+    deletePanchangCity(id: string): Promise<void>;
+    /**
      * / Admin-only: delete a Pathshala lesson.
      */
     deletePathshalaLesson(id: string): Promise<void>;
+    /**
+     * / Admin or productManager: delete a personalised product.
+     */
+    deletePersonalisedProduct(id: string): Promise<void>;
     /**
      * / Admin-only: delete a product.
      */
     deleteProduct(id: string): Promise<void>;
     /**
+     * / Admin-only: delete a puja event. Returns true if deleted.
+     */
+    deletePujaEvent(id: string): Promise<boolean>;
+    /**
      * / Admin-only: delete a puja type.
      */
     deletePujaType(id: string): Promise<void>;
+    /**
+     * / Admin or productManager: delete a product sub-category. Returns true if deleted.
+     */
+    deleteSubCategory(id: string): Promise<boolean>;
     /**
      * / Admin-only: delete a suktam entry.
      */
@@ -974,6 +1103,12 @@ export interface backendInterface {
      * / Admin-only: delete a web story.
      */
     deleteWebStory(id: string): Promise<void>;
+    /**
+     * / Admin or productManager: generate a product code.
+     * / If manualCode is provided, it is returned as-is.
+     * / Otherwise auto-generates PS_{PREFIX}_{seq:3-digits-padded}.
+     */
+    generateProductCode(subCategoryPrefix: string, manualCode: string | null): Promise<string>;
     /**
      * / Public: anyone may browse astrologer profiles.
      */
@@ -1007,6 +1142,10 @@ export interface backendInterface {
      */
     getAllFestivalEvents(): Promise<Array<FestivalEvent>>;
     /**
+     * / Public: get all gemstone products.
+     */
+    getAllGemstoneProducts(): Promise<Array<GemstoneProduct>>;
+    /**
      * / Public: get all Jain encyclopedia articles.
      */
     getAllJainArticles(): Promise<Array<JainEncyclopediaArticle>>;
@@ -1019,9 +1158,17 @@ export interface backendInterface {
      */
     getAllJainPathshalaEntries(): Promise<Array<JainPathshalaEntry>>;
     /**
+     * / Public: get all panchang cities.
+     */
+    getAllPanchangCities(): Promise<Array<PanchangCity>>;
+    /**
      * / Admin-only: get all Pathshala lessons (published and unpublished).
      */
     getAllPathshalaLessons(): Promise<Array<PathshalaLesson>>;
+    /**
+     * / Public: get all personalised products.
+     */
+    getAllPersonalisedProducts(): Promise<Array<PersonalisedProduct>>;
     /**
      * / Admin-only: list all product manager principals.
      */
@@ -1030,6 +1177,14 @@ export interface backendInterface {
      * / Public: anyone may browse products.
      */
     getAllProducts(): Promise<Array<Product>>;
+    /**
+     * / Public: get all puja events (active only for non-admins).
+     */
+    getAllPujaEvents(): Promise<Array<PujaEvent>>;
+    /**
+     * / Admin-only: get all puja events including inactive.
+     */
+    getAllPujaEventsAdmin(): Promise<Array<PujaEvent>>;
     /**
      * / Admin-only: get all puja reports.
      */
@@ -1084,6 +1239,11 @@ export interface backendInterface {
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     /**
+     * / Public: get panchang cities grouped by state name.
+     * / Returns an array of (stateName, [PanchangCity]) tuples.
+     */
+    getCitiesByState(): Promise<Array<[string, Array<PanchangCity>]>>;
+    /**
      * / Get a single combined vedic reading by id (owner or admin).
      */
     getCombinedVedicReading(id: string): Promise<CombinedVedicReading | null>;
@@ -1095,6 +1255,10 @@ export interface backendInterface {
      * / Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
      */
     getFestivalEventsByFaith(faith: string): Promise<Array<FestivalEvent>>;
+    /**
+     * / Public: get gemstone products filtered by gemstone type (e.g. AMETHYST).
+     */
+    getGemstoneProductsByType(gemstoneType: string): Promise<Array<GemstoneProduct>>;
     /**
      * / Public: anyone may browse holy book entries, optionally filtered by bookTitle.
      */
@@ -1207,6 +1371,10 @@ export interface backendInterface {
      * / Authenticated users can check a Stripe session status (e.g. after checkout).
      */
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
+    /**
+     * / Public: get all product sub-categories.
+     */
+    getSubCategories(): Promise<Array<ProductSubCategory>>;
     /**
      * / Public: get a single suktam entry by id.
      */
@@ -1400,6 +1568,10 @@ export interface backendInterface {
      */
     updateFestivalEvent(event: FestivalEvent): Promise<void>;
     /**
+     * / Admin or productManager: update a gemstone product (full replace by sku).
+     */
+    updateGemstoneProduct(entry: GemstoneProduct): Promise<void>;
+    /**
      * / Admin-only: update an existing holy book entry.
      */
     updateHolyBookEntry(entry: HolyBookEntry): Promise<void>;
@@ -1428,9 +1600,17 @@ export interface backendInterface {
      */
     updatePalmistryContent(id: string, title: string, titleHi: string, category: string, lineOrPalmType: string, descriptionEn: string, descriptionHi: string, characteristicsEn: string, characteristicsHi: string, locationOnPalm: string, benefitsEn: string, benefitsHi: string): Promise<PalmistryContent | null>;
     /**
+     * / Admin-only: update an existing panchang city.
+     */
+    updatePanchangCity(city: PanchangCity): Promise<void>;
+    /**
      * / Admin-only: update an existing Pathshala lesson.
      */
     updatePathshalaLesson(id: string, lesson: PathshalaLesson): Promise<void>;
+    /**
+     * / Admin or productManager: update a personalised product (full replace).
+     */
+    updatePersonalisedProduct(entry: PersonalisedProduct): Promise<void>;
     /**
      * / Admin-only: update the status of a prasad delivery request.
      */
@@ -1440,6 +1620,7 @@ export interface backendInterface {
      */
     updateProduct(product: Product): Promise<void>;
     /**
+     * / Admin or productManager: partial update — only supplied fields are changed.
      * / Admin or productManager: partial update — only supplied fields are changed.
      */
     updateProductFields(id: string, updates: ProductUpdateRequest): Promise<void>;
@@ -1451,6 +1632,10 @@ export interface backendInterface {
      * / Admin or productManager: update only the variants array for a product (gemstone weight variants).
      */
     updateProductVariants(id: string, variants: Array<ProductVariant>): Promise<void>;
+    /**
+     * / Admin-only: update an existing puja event. Returns true if updated.
+     */
+    updatePujaEvent(id: string, pujaName: string, pujaNameHindi: string, date: string, time: string, description: string, price: bigint, slotsAvailable: bigint, location: string, deity: string, isActive: boolean): Promise<boolean>;
     /**
      * / Admin-only: update an existing puja report.
      */
@@ -1467,6 +1652,10 @@ export interface backendInterface {
      * / Admin-only: update the status of a service booking.
      */
     updateServiceBookingStatus(id: string, status: string): Promise<void>;
+    /**
+     * / Admin or productManager: update a product sub-category. Returns true if updated.
+     */
+    updateSubCategory(id: string, name: string, nameCode: string, autoCodePrefix: string): Promise<boolean>;
     /**
      * / Admin-only: update an existing suktam entry.
      */
@@ -1488,7 +1677,7 @@ export interface backendInterface {
      */
     updateWebStory(story: WebStory): Promise<void>;
 }
-import type { AstroChart as _AstroChart, AstrologerProfile as _AstrologerProfile, BhajanEntry as _BhajanEntry, BlogArticle as _BlogArticle, CalculatorFAQ as _CalculatorFAQ, CombinedVedicReading as _CombinedVedicReading, ConsultationBookingRequest as _ConsultationBookingRequest, DevotionalContent as _DevotionalContent, HolyBookEntry as _HolyBookEntry, JainEncyclopediaArticle as _JainEncyclopediaArticle, KundaliMatch as _KundaliMatch, NewsletterSubscription as _NewsletterSubscription, PalmPhotoReading as _PalmPhotoReading, PalmistryContent as _PalmistryContent, PathshalaLesson as _PathshalaLesson, Product as _Product, ProductUpdateRequest as _ProductUpdateRequest, ProductVariant as _ProductVariant, PujaType as _PujaType, SuktamEntry as _SuktamEntry, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, VastuContent as _VastuContent, VastuRoomCheck as _VastuRoomCheck, VirtualTempleConfig as _VirtualTempleConfig, VratKathaEntry as _VratKathaEntry, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { AstroChart as _AstroChart, AstrologerProfile as _AstrologerProfile, BhajanEntry as _BhajanEntry, BlogArticle as _BlogArticle, CalculatorFAQ as _CalculatorFAQ, CombinedVedicReading as _CombinedVedicReading, ConsultationBookingRequest as _ConsultationBookingRequest, DevotionalContent as _DevotionalContent, GemstoneProduct as _GemstoneProduct, HolyBookEntry as _HolyBookEntry, JainEncyclopediaArticle as _JainEncyclopediaArticle, KundaliMatch as _KundaliMatch, NewsletterSubscription as _NewsletterSubscription, PalmPhotoReading as _PalmPhotoReading, PalmistryContent as _PalmistryContent, PathshalaLesson as _PathshalaLesson, PersonalisedProduct as _PersonalisedProduct, Product as _Product, ProductUpdateRequest as _ProductUpdateRequest, ProductVariant as _ProductVariant, PujaType as _PujaType, SuktamEntry as _SuktamEntry, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, VastuContent as _VastuContent, VastuRoomCheck as _VastuRoomCheck, VirtualTempleConfig as _VirtualTempleConfig, VratKathaEntry as _VratKathaEntry, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _immutableObjectStorageBlobsAreLive(arg0: Array<Uint8Array>): Promise<Array<boolean>> {
@@ -1617,6 +1806,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async addGemstoneProduct(arg0: GemstoneProduct): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addGemstoneProduct(to_candid_GemstoneProduct_n8(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addGemstoneProduct(to_candid_GemstoneProduct_n8(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
     async addHolyBookEntry(arg0: HolyBookEntry): Promise<void> {
         if (this.processError) {
             try {
@@ -1696,15 +1899,29 @@ export class Backend implements backendInterface {
     }> {
         if (this.processError) {
             try {
-                const result = await this.actor.addNewsletterSubscription(arg0, to_candid_opt_n8(this._uploadFile, this._downloadFile, arg1), arg2);
-                return from_candid_variant_n9(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.addNewsletterSubscription(arg0, to_candid_opt_n10(this._uploadFile, this._downloadFile, arg1), arg2);
+                return from_candid_variant_n11(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addNewsletterSubscription(arg0, to_candid_opt_n8(this._uploadFile, this._downloadFile, arg1), arg2);
-            return from_candid_variant_n9(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.addNewsletterSubscription(arg0, to_candid_opt_n10(this._uploadFile, this._downloadFile, arg1), arg2);
+            return from_candid_variant_n11(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async addPanchangCity(arg0: PanchangCity): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addPanchangCity(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addPanchangCity(arg0);
+            return result;
         }
     }
     async addPathshalaLesson(arg0: PathshalaLesson): Promise<void> {
@@ -1718,6 +1935,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.addPathshalaLesson(arg0);
+            return result;
+        }
+    }
+    async addPersonalisedProduct(arg0: PersonalisedProduct): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addPersonalisedProduct(to_candid_PersonalisedProduct_n15(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addPersonalisedProduct(to_candid_PersonalisedProduct_n15(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -1766,15 +1997,35 @@ export class Backend implements backendInterface {
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n13(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n17(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n13(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n17(this._uploadFile, this._downloadFile, arg1));
             return result;
+        }
+    }
+    async bookPujaEventSlot(arg0: SankalpInput): Promise<{
+        __kind__: "ok";
+        ok: string;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.bookPujaEventSlot(arg0);
+                return from_candid_variant_n19(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.bookPujaEventSlot(arg0);
+            return from_candid_variant_n19(this._uploadFile, this._downloadFile, result);
         }
     }
     async createAstrologerProfile(arg0: AstrologerProfile): Promise<void> {
@@ -1962,14 +2213,14 @@ export class Backend implements backendInterface {
     async createProduct(arg0: Product): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.createProduct(to_candid_Product_n15(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.createProduct(to_candid_Product_n20(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createProduct(to_candid_Product_n15(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.createProduct(to_candid_Product_n20(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -1984,6 +2235,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createPujaBooking(arg0);
+            return result;
+        }
+    }
+    async createPujaEvent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: bigint, arg6: bigint, arg7: string, arg8: string, arg9: boolean): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createPujaEvent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createPujaEvent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
             return result;
         }
     }
@@ -2040,6 +2305,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createServiceBooking(arg0);
+            return result;
+        }
+    }
+    async createSubCategory(arg0: string, arg1: string, arg2: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createSubCategory(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createSubCategory(arg0, arg1, arg2);
             return result;
         }
     }
@@ -2183,6 +2462,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deleteGemstoneProduct(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteGemstoneProduct(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteGemstoneProduct(arg0);
+            return result;
+        }
+    }
     async deleteHolyBookEntry(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -2263,14 +2556,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteNewsletterSubscription(arg0);
-                return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
+                return from_candid_variant_n22(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteNewsletterSubscription(arg0);
-            return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
+            return from_candid_variant_n22(this._uploadFile, this._downloadFile, result);
         }
     }
     async deletePalmPhotoReading(arg0: string): Promise<boolean> {
@@ -2301,6 +2594,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deletePanchangCity(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePanchangCity(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePanchangCity(arg0);
+            return result;
+        }
+    }
     async deletePathshalaLesson(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -2312,6 +2619,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deletePathshalaLesson(arg0);
+            return result;
+        }
+    }
+    async deletePersonalisedProduct(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePersonalisedProduct(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePersonalisedProduct(arg0);
             return result;
         }
     }
@@ -2329,6 +2650,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deletePujaEvent(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePujaEvent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePujaEvent(arg0);
+            return result;
+        }
+    }
     async deletePujaType(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -2340,6 +2675,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deletePujaType(arg0);
+            return result;
+        }
+    }
+    async deleteSubCategory(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteSubCategory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteSubCategory(arg0);
             return result;
         }
     }
@@ -2410,6 +2759,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deleteWebStory(arg0);
+            return result;
+        }
+    }
+    async generateProductCode(arg0: string, arg1: string | null): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.generateProductCode(arg0, to_candid_opt_n10(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.generateProductCode(arg0, to_candid_opt_n10(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -2531,6 +2894,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getAllGemstoneProducts(): Promise<Array<GemstoneProduct>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllGemstoneProducts();
+                return from_candid_vec_n23(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllGemstoneProducts();
+            return from_candid_vec_n23(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getAllJainArticles(): Promise<Array<JainEncyclopediaArticle>> {
         if (this.processError) {
             try {
@@ -2573,6 +2950,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getAllPanchangCities(): Promise<Array<PanchangCity>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPanchangCities();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPanchangCities();
+            return result;
+        }
+    }
     async getAllPathshalaLessons(): Promise<Array<PathshalaLesson>> {
         if (this.processError) {
             try {
@@ -2585,6 +2976,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getAllPathshalaLessons();
             return result;
+        }
+    }
+    async getAllPersonalisedProducts(): Promise<Array<PersonalisedProduct>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPersonalisedProducts();
+                return from_candid_vec_n26(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPersonalisedProducts();
+            return from_candid_vec_n26(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAllProductManagers(): Promise<Array<Principal>> {
@@ -2605,14 +3010,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getAllProducts();
-                return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n29(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAllProducts();
-            return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n29(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getAllPujaEvents(): Promise<Array<PujaEvent>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPujaEvents();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPujaEvents();
+            return result;
+        }
+    }
+    async getAllPujaEventsAdmin(): Promise<Array<PujaEvent>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllPujaEventsAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllPujaEventsAdmin();
+            return result;
         }
     }
     async getAllPujaReports(): Promise<Array<PujaReport>> {
@@ -2689,42 +3122,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getAstroChart(arg0);
-                return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAstroChart(arg0);
-            return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAstrologerProfile(arg0: string): Promise<AstrologerProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getAstrologerProfile(arg0);
-                return from_candid_opt_n24(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n35(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAstrologerProfile(arg0);
-            return from_candid_opt_n24(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n35(this._uploadFile, this._downloadFile, result);
         }
     }
     async getBhajanById(arg0: string): Promise<BhajanEntry | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getBhajanById(arg0);
-                return from_candid_opt_n25(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getBhajanById(arg0);
-            return from_candid_opt_n25(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
         }
     }
     async getBhajans(): Promise<Array<BhajanEntry>> {
@@ -2745,98 +3178,112 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getBlogArticleBySlug(arg0);
-                return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n37(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getBlogArticleBySlug(arg0);
-            return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n37(this._uploadFile, this._downloadFile, result);
         }
     }
     async getBookingRequest(arg0: string): Promise<ConsultationBookingRequest | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getBookingRequest(arg0);
-                return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getBookingRequest(arg0);
-            return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCalculatorFAQ(arg0: string): Promise<CalculatorFAQ | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCalculatorFAQ(arg0);
-                return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCalculatorFAQ(arg0);
-            return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n29(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n29(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n30(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n41(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n30(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n41(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCitiesByState(): Promise<Array<[string, Array<PanchangCity>]>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCitiesByState();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCitiesByState();
+            return result;
         }
     }
     async getCombinedVedicReading(arg0: string): Promise<CombinedVedicReading | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCombinedVedicReading(arg0);
-                return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n43(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCombinedVedicReading(arg0);
-            return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n43(this._uploadFile, this._downloadFile, result);
         }
     }
     async getDevotionalContent(arg0: string): Promise<DevotionalContent | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getDevotionalContent(arg0);
-                return from_candid_opt_n33(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n44(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getDevotionalContent(arg0);
-            return from_candid_opt_n33(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n44(this._uploadFile, this._downloadFile, result);
         }
     }
     async getFestivalEventsByFaith(arg0: string): Promise<Array<FestivalEvent>> {
@@ -2851,6 +3298,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getFestivalEventsByFaith(arg0);
             return result;
+        }
+    }
+    async getGemstoneProductsByType(arg0: string): Promise<Array<GemstoneProduct>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getGemstoneProductsByType(arg0);
+                return from_candid_vec_n23(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getGemstoneProductsByType(arg0);
+            return from_candid_vec_n23(this._uploadFile, this._downloadFile, result);
         }
     }
     async getHolyBookEntries(arg0: string): Promise<Array<HolyBookEntry>> {
@@ -2871,28 +3332,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getHolyBookEntryById(arg0);
-                return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getHolyBookEntryById(arg0);
-            return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
         }
     }
     async getJainArticleById(arg0: string): Promise<JainEncyclopediaArticle | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getJainArticleById(arg0);
-                return from_candid_opt_n35(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n46(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getJainArticleById(arg0);
-            return from_candid_opt_n35(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n46(this._uploadFile, this._downloadFile, result);
         }
     }
     async getJainArticlesByVolume(arg0: bigint): Promise<Array<JainEncyclopediaArticle>> {
@@ -2941,14 +3402,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getKundaliMatchById(arg0);
-                return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getKundaliMatchById(arg0);
-            return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
         }
     }
     async getKundaliMatches(): Promise<Array<KundaliMatch>> {
@@ -3039,42 +3500,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getNewsletterSubscriptions();
-                return from_candid_vec_n37(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n48(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getNewsletterSubscriptions();
-            return from_candid_vec_n37(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n48(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPalmPhotoReading(arg0: string): Promise<PalmPhotoReading | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getPalmPhotoReading(arg0);
-                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPalmPhotoReading(arg0);
-            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPalmistryContent(arg0: string): Promise<PalmistryContent | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getPalmistryContent(arg0);
-                return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPalmistryContent(arg0);
-            return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPalmistryContents(): Promise<Array<PalmistryContent>> {
@@ -3095,14 +3556,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getPathshalaLesson(arg0);
-                return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPathshalaLesson(arg0);
-            return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPathshalaLessonsByPart(arg0: string): Promise<Array<PathshalaLesson>> {
@@ -3137,28 +3598,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getProduct(arg0);
-                return from_candid_opt_n41(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n52(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getProduct(arg0);
-            return from_candid_opt_n41(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n52(this._uploadFile, this._downloadFile, result);
         }
     }
     async getProductsByCategory(arg0: string): Promise<Array<Product>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getProductsByCategory(arg0);
-                return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n29(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getProductsByCategory(arg0);
-            return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n29(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPublishedBlogArticles(): Promise<Array<BlogArticle>> {
@@ -3207,14 +3668,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getPujaTypeById(arg0);
-                return from_candid_opt_n42(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n53(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPujaTypeById(arg0);
-            return from_candid_opt_n42(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n53(this._uploadFile, this._downloadFile, result);
         }
     }
     async getServiceBookings(): Promise<Array<ServiceBooking>> {
@@ -3245,18 +3706,32 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getSubCategories(): Promise<Array<ProductSubCategory>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSubCategories();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSubCategories();
+            return result;
+        }
+    }
     async getSuktamById(arg0: string): Promise<SuktamEntry | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getSuktamById(arg0);
-                return from_candid_opt_n43(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getSuktamById(arg0);
-            return from_candid_opt_n43(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
         }
     }
     async getSuktams(): Promise<Array<SuktamEntry>> {
@@ -3389,14 +3864,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n29(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n29(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n40(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserPujaBookings(arg0: Principal): Promise<Array<PujaBooking>> {
@@ -3459,14 +3934,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getVastuContent(arg0);
-                return from_candid_opt_n44(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVastuContent(arg0);
-            return from_candid_opt_n44(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVastuContents(): Promise<Array<VastuContent>> {
@@ -3487,42 +3962,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getVastuRoomCheck(arg0);
-                return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVastuRoomCheck(arg0);
-            return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVirtualTempleConfig(arg0: Principal): Promise<VirtualTempleConfig | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getVirtualTempleConfig(arg0);
-                return from_candid_opt_n46(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n57(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVirtualTempleConfig(arg0);
-            return from_candid_opt_n46(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n57(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVratKathaById(arg0: string): Promise<VratKathaEntry | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getVratKathaById(arg0);
-                return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVratKathaById(arg0);
-            return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVratKathas(): Promise<Array<VratKathaEntry>> {
@@ -3801,14 +4276,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.unsubscribeNewsletter(arg0);
-                return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
+                return from_candid_variant_n22(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.unsubscribeNewsletter(arg0);
-            return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
+            return from_candid_variant_n22(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateBhajan(arg0: BhajanEntry): Promise<void> {
@@ -3871,14 +4346,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updateCombinedVedicReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-                return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n43(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateCombinedVedicReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-            return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n43(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateConsultationAppointment(arg0: string, arg1: string, arg2: string): Promise<void> {
@@ -3920,6 +4395,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateFestivalEvent(arg0);
+            return result;
+        }
+    }
+    async updateGemstoneProduct(arg0: GemstoneProduct): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateGemstoneProduct(to_candid_GemstoneProduct_n8(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateGemstoneProduct(to_candid_GemstoneProduct_n8(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -3997,28 +4486,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
         }
     }
     async updatePalmistryContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string): Promise<PalmistryContent | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
-                return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
-            return from_candid_opt_n39(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updatePanchangCity(arg0: PanchangCity): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePanchangCity(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePanchangCity(arg0);
+            return result;
         }
     }
     async updatePathshalaLesson(arg0: string, arg1: PathshalaLesson): Promise<void> {
@@ -4032,6 +4535,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updatePathshalaLesson(arg0, arg1);
+            return result;
+        }
+    }
+    async updatePersonalisedProduct(arg0: PersonalisedProduct): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePersonalisedProduct(to_candid_PersonalisedProduct_n15(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePersonalisedProduct(to_candid_PersonalisedProduct_n15(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -4052,28 +4569,28 @@ export class Backend implements backendInterface {
     async updateProduct(arg0: Product): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProduct(to_candid_Product_n15(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.updateProduct(to_candid_Product_n20(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProduct(to_candid_Product_n15(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.updateProduct(to_candid_Product_n20(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
     async updateProductFields(arg0: string, arg1: ProductUpdateRequest): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n48(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n59(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n48(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n59(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -4102,6 +4619,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateProductVariants(arg0, arg1);
+            return result;
+        }
+    }
+    async updatePujaEvent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: bigint, arg7: bigint, arg8: string, arg9: string, arg10: boolean): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePujaEvent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePujaEvent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
             return result;
         }
     }
@@ -4161,6 +4692,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateSubCategory(arg0: string, arg1: string, arg2: string, arg3: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateSubCategory(arg0, arg1, arg2, arg3);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateSubCategory(arg0, arg1, arg2, arg3);
+            return result;
+        }
+    }
     async updateSuktam(arg0: SuktamEntry): Promise<void> {
         if (this.processError) {
             try {
@@ -4179,28 +4724,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
-                return from_candid_opt_n44(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
-            return from_candid_opt_n44(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateVastuRoomCheck(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: bigint, arg6: string, arg7: string, arg8: string): Promise<VastuRoomCheck | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
-                return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
-            return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateVratKatha(arg0: VratKathaEntry): Promise<void> {
@@ -4232,91 +4777,97 @@ export class Backend implements backendInterface {
         }
     }
 }
-function from_candid_NewsletterSubscription_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _NewsletterSubscription): NewsletterSubscription {
-    return from_candid_record_n11(_uploadFile, _downloadFile, value);
+function from_candid_GemstoneProduct_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _GemstoneProduct): GemstoneProduct {
+    return from_candid_record_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_Product_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Product): Product {
-    return from_candid_record_n20(_uploadFile, _downloadFile, value);
+function from_candid_NewsletterSubscription_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _NewsletterSubscription): NewsletterSubscription {
+    return from_candid_record_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n31(_uploadFile, _downloadFile, value);
+function from_candid_PersonalisedProduct_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _PersonalisedProduct): PersonalisedProduct {
+    return from_candid_record_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_Product_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Product): Product {
+    return from_candid_record_n31(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n41(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n42(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: __ImmutableObjectStorageRefillResult): _ImmutableObjectStorageRefillResult {
     return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
+function from_candid_opt_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [number]): number | null {
+function from_candid_opt_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [number]): number | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Array<_ProductVariant>]): Array<ProductVariant> | null {
+function from_candid_opt_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Array<_ProductVariant>]): Array<ProductVariant> | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstroChart]): AstroChart | null {
+function from_candid_opt_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstroChart]): AstroChart | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstrologerProfile]): AstrologerProfile | null {
+function from_candid_opt_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AstrologerProfile]): AstrologerProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BhajanEntry]): BhajanEntry | null {
+function from_candid_opt_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BhajanEntry]): BhajanEntry | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BlogArticle]): BlogArticle | null {
+function from_candid_opt_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_BlogArticle]): BlogArticle | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ConsultationBookingRequest]): ConsultationBookingRequest | null {
+function from_candid_opt_n38(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ConsultationBookingRequest]): ConsultationBookingRequest | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CalculatorFAQ]): CalculatorFAQ | null {
+function from_candid_opt_n39(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CalculatorFAQ]): CalculatorFAQ | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_opt_n40(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CombinedVedicReading]): CombinedVedicReading | null {
+function from_candid_opt_n43(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_CombinedVedicReading]): CombinedVedicReading | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_DevotionalContent]): DevotionalContent | null {
+function from_candid_opt_n44(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_DevotionalContent]): DevotionalContent | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_HolyBookEntry]): HolyBookEntry | null {
+function from_candid_opt_n45(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_HolyBookEntry]): HolyBookEntry | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_JainEncyclopediaArticle]): JainEncyclopediaArticle | null {
+function from_candid_opt_n46(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_JainEncyclopediaArticle]): JainEncyclopediaArticle | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_KundaliMatch]): KundaliMatch | null {
+function from_candid_opt_n47(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_KundaliMatch]): KundaliMatch | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n38(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmPhotoReading]): PalmPhotoReading | null {
+function from_candid_opt_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmPhotoReading]): PalmPhotoReading | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n39(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmistryContent]): PalmistryContent | null {
+function from_candid_opt_n50(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmistryContent]): PalmistryContent | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n40(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PathshalaLesson]): PathshalaLesson | null {
+function from_candid_opt_n51(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PathshalaLesson]): PathshalaLesson | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n41(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Product]): Product | null {
-    return value.length === 0 ? null : from_candid_Product_n19(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n52(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Product]): Product | null {
+    return value.length === 0 ? null : from_candid_Product_n30(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n42(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PujaType]): PujaType | null {
+function from_candid_opt_n53(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PujaType]): PujaType | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n43(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_SuktamEntry]): SuktamEntry | null {
+function from_candid_opt_n54(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_SuktamEntry]): SuktamEntry | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n44(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuContent]): VastuContent | null {
+function from_candid_opt_n55(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuContent]): VastuContent | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n45(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuRoomCheck]): VastuRoomCheck | null {
+function from_candid_opt_n56(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuRoomCheck]): VastuRoomCheck | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n46(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VirtualTempleConfig]): VirtualTempleConfig | null {
+function from_candid_opt_n57(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VirtualTempleConfig]): VirtualTempleConfig | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n47(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VratKathaEntry]): VratKathaEntry | null {
+function from_candid_opt_n58(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VratKathaEntry]): VratKathaEntry | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
@@ -4325,7 +4876,7 @@ function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
 function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: string;
     subscribedAt: bigint;
     source: string;
@@ -4344,57 +4895,144 @@ function from_candid_record_n11(_uploadFile: (file: ExternalBlob) => Promise<Uin
         id: value.id,
         subscribedAt: value.subscribedAt,
         source: value.source,
-        name: record_opt_to_undefined(from_candid_opt_n12(_uploadFile, _downloadFile, value.name)),
+        name: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.name)),
         isActive: value.isActive,
         email: value.email
     };
 }
-function from_candid_record_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    sku: string;
+    weightRatti: number;
+    gemstoneType: string;
+    description: string;
+    shape: string;
+    gsCode: [] | [string];
+    priceINR: bigint;
+}): {
+    sku: string;
+    weightRatti: number;
+    gemstoneType: string;
+    description: string;
+    shape: string;
+    gsCode?: string;
+    priceINR: bigint;
+} {
+    return {
+        sku: value.sku,
+        weightRatti: value.weightRatti,
+        gemstoneType: value.gemstoneType,
+        description: value.description,
+        shape: value.shape,
+        gsCode: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.gsCode)),
+        priceINR: value.priceINR
+    };
+}
+function from_candid_record_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    mrp: [] | [bigint];
+    sku: [] | [string];
+    name: string;
+    createdAt: bigint;
+    description: string;
+    imageUrl: [] | [string];
+    manualCode: [] | [string];
+    category: string;
+    price: bigint;
+    isPersonalised: boolean;
+}): {
+    id: string;
+    mrp?: bigint;
+    sku?: string;
+    name: string;
+    createdAt: bigint;
+    description: string;
+    imageUrl?: string;
+    manualCode?: string;
+    category: string;
+    price: bigint;
+    isPersonalised: boolean;
+} {
+    return {
+        id: value.id,
+        mrp: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.mrp)),
+        sku: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.sku)),
+        name: value.name,
+        createdAt: value.createdAt,
+        description: value.description,
+        imageUrl: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.imageUrl)),
+        manualCode: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.manualCode)),
+        category: value.category,
+        price: value.price,
+        isPersonalised: value.isPersonalised
+    };
+}
+function from_candid_record_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: string;
     mrp: [] | [number];
     sku: [] | [string];
+    subCategory: [] | [string];
     variantLabel: [] | [string];
+    gemstoneType: [] | [string];
     name: string;
+    gemstoneWeightRatti: [] | [number];
     createdAt: _Time;
+    productCode: [] | [string];
     description: string;
     variants: [] | [Array<_ProductVariant>];
     stock: bigint;
+    imageUrl: [] | [string];
     astrologicalPurpose: string;
     discount: [] | [bigint];
     category: string;
     benefits: string;
     price: number;
+    isPersonalised: [] | [boolean];
+    gemstoneShape: [] | [string];
 }): {
     id: string;
     mrp?: number;
     sku?: string;
+    subCategory?: string;
     variantLabel?: string;
+    gemstoneType?: string;
     name: string;
+    gemstoneWeightRatti?: number;
     createdAt: Time;
+    productCode?: string;
     description: string;
     variants?: Array<ProductVariant>;
     stock: bigint;
+    imageUrl?: string;
     astrologicalPurpose: string;
     discount?: bigint;
     category: string;
     benefits: string;
     price: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
 } {
     return {
         id: value.id,
-        mrp: record_opt_to_undefined(from_candid_opt_n21(_uploadFile, _downloadFile, value.mrp)),
-        sku: record_opt_to_undefined(from_candid_opt_n12(_uploadFile, _downloadFile, value.sku)),
-        variantLabel: record_opt_to_undefined(from_candid_opt_n12(_uploadFile, _downloadFile, value.variantLabel)),
+        mrp: record_opt_to_undefined(from_candid_opt_n32(_uploadFile, _downloadFile, value.mrp)),
+        sku: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.sku)),
+        subCategory: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.subCategory)),
+        variantLabel: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.variantLabel)),
+        gemstoneType: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.gemstoneType)),
         name: value.name,
+        gemstoneWeightRatti: record_opt_to_undefined(from_candid_opt_n32(_uploadFile, _downloadFile, value.gemstoneWeightRatti)),
         createdAt: value.createdAt,
+        productCode: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.productCode)),
         description: value.description,
-        variants: record_opt_to_undefined(from_candid_opt_n22(_uploadFile, _downloadFile, value.variants)),
+        variants: record_opt_to_undefined(from_candid_opt_n33(_uploadFile, _downloadFile, value.variants)),
         stock: value.stock,
+        imageUrl: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.imageUrl)),
         astrologicalPurpose: value.astrologicalPurpose,
         discount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.discount)),
         category: value.category,
         benefits: value.benefits,
-        price: value.price
+        price: value.price,
+        isPersonalised: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.isPersonalised)),
+        gemstoneShape: record_opt_to_undefined(from_candid_opt_n14(_uploadFile, _downloadFile, value.gemstoneShape))
     };
 }
 function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -4409,7 +5047,45 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
     };
 }
-function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _NewsletterSubscription;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: NewsletterSubscription;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: from_candid_NewsletterSubscription_n12(_uploadFile, _downloadFile, value.ok)
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: string;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: string;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     ok: null;
 } | {
     err: string;
@@ -4428,7 +5104,7 @@ function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Ui
         err: value.err
     } : value;
 }
-function from_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n42(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -4437,39 +5113,32 @@ function from_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function from_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    ok: _NewsletterSubscription;
-} | {
-    err: string;
-}): {
-    __kind__: "ok";
-    ok: NewsletterSubscription;
-} | {
-    __kind__: "err";
-    err: string;
-} {
-    return "ok" in value ? {
-        __kind__: "ok",
-        ok: from_candid_NewsletterSubscription_n10(_uploadFile, _downloadFile, value.ok)
-    } : "err" in value ? {
-        __kind__: "err",
-        err: value.err
-    } : value;
+function from_candid_vec_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_GemstoneProduct>): Array<GemstoneProduct> {
+    return value.map((x)=>from_candid_GemstoneProduct_n24(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Product>): Array<Product> {
-    return value.map((x)=>from_candid_Product_n19(_uploadFile, _downloadFile, x));
+function from_candid_vec_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_PersonalisedProduct>): Array<PersonalisedProduct> {
+    return value.map((x)=>from_candid_PersonalisedProduct_n27(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_NewsletterSubscription>): Array<NewsletterSubscription> {
-    return value.map((x)=>from_candid_NewsletterSubscription_n10(_uploadFile, _downloadFile, x));
+function from_candid_vec_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Product>): Array<Product> {
+    return value.map((x)=>from_candid_Product_n30(_uploadFile, _downloadFile, x));
 }
-function to_candid_ProductUpdateRequest_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProductUpdateRequest): _ProductUpdateRequest {
-    return to_candid_record_n49(_uploadFile, _downloadFile, value);
+function from_candid_vec_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_NewsletterSubscription>): Array<NewsletterSubscription> {
+    return value.map((x)=>from_candid_NewsletterSubscription_n12(_uploadFile, _downloadFile, x));
 }
-function to_candid_Product_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Product): _Product {
+function to_candid_GemstoneProduct_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: GemstoneProduct): _GemstoneProduct {
+    return to_candid_record_n9(_uploadFile, _downloadFile, value);
+}
+function to_candid_PersonalisedProduct_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PersonalisedProduct): _PersonalisedProduct {
     return to_candid_record_n16(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
-    return to_candid_variant_n14(_uploadFile, _downloadFile, value);
+function to_candid_ProductUpdateRequest_n59(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProductUpdateRequest): _ProductUpdateRequest {
+    return to_candid_record_n60(_uploadFile, _downloadFile, value);
+}
+function to_candid_Product_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Product): _Product {
+    return to_candid_record_n21(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n18(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ImmutableObjectStorageRefillInformation): __ImmutableObjectStorageRefillInformation {
     return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -4477,55 +5146,115 @@ function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile: (fil
 function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ImmutableObjectStorageRefillInformation | null): [] | [__ImmutableObjectStorageRefillInformation] {
     return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+function to_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
     return value === null ? candid_none() : candid_some(value);
 }
 function to_candid_record_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: string;
-    mrp?: number;
+    mrp?: bigint;
     sku?: string;
-    variantLabel?: string;
     name: string;
-    createdAt: Time;
+    createdAt: bigint;
     description: string;
-    variants?: Array<ProductVariant>;
-    stock: bigint;
-    astrologicalPurpose: string;
-    discount?: bigint;
+    imageUrl?: string;
+    manualCode?: string;
     category: string;
-    benefits: string;
-    price: number;
+    price: bigint;
+    isPersonalised: boolean;
 }): {
     id: string;
-    mrp: [] | [number];
+    mrp: [] | [bigint];
     sku: [] | [string];
-    variantLabel: [] | [string];
     name: string;
-    createdAt: _Time;
+    createdAt: bigint;
     description: string;
-    variants: [] | [Array<_ProductVariant>];
-    stock: bigint;
-    astrologicalPurpose: string;
-    discount: [] | [bigint];
+    imageUrl: [] | [string];
+    manualCode: [] | [string];
     category: string;
-    benefits: string;
-    price: number;
+    price: bigint;
+    isPersonalised: boolean;
 } {
     return {
         id: value.id,
         mrp: value.mrp ? candid_some(value.mrp) : candid_none(),
         sku: value.sku ? candid_some(value.sku) : candid_none(),
-        variantLabel: value.variantLabel ? candid_some(value.variantLabel) : candid_none(),
         name: value.name,
         createdAt: value.createdAt,
         description: value.description,
+        imageUrl: value.imageUrl ? candid_some(value.imageUrl) : candid_none(),
+        manualCode: value.manualCode ? candid_some(value.manualCode) : candid_none(),
+        category: value.category,
+        price: value.price,
+        isPersonalised: value.isPersonalised
+    };
+}
+function to_candid_record_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    mrp?: number;
+    sku?: string;
+    subCategory?: string;
+    variantLabel?: string;
+    gemstoneType?: string;
+    name: string;
+    gemstoneWeightRatti?: number;
+    createdAt: Time;
+    productCode?: string;
+    description: string;
+    variants?: Array<ProductVariant>;
+    stock: bigint;
+    imageUrl?: string;
+    astrologicalPurpose: string;
+    discount?: bigint;
+    category: string;
+    benefits: string;
+    price: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
+}): {
+    id: string;
+    mrp: [] | [number];
+    sku: [] | [string];
+    subCategory: [] | [string];
+    variantLabel: [] | [string];
+    gemstoneType: [] | [string];
+    name: string;
+    gemstoneWeightRatti: [] | [number];
+    createdAt: _Time;
+    productCode: [] | [string];
+    description: string;
+    variants: [] | [Array<_ProductVariant>];
+    stock: bigint;
+    imageUrl: [] | [string];
+    astrologicalPurpose: string;
+    discount: [] | [bigint];
+    category: string;
+    benefits: string;
+    price: number;
+    isPersonalised: [] | [boolean];
+    gemstoneShape: [] | [string];
+} {
+    return {
+        id: value.id,
+        mrp: value.mrp ? candid_some(value.mrp) : candid_none(),
+        sku: value.sku ? candid_some(value.sku) : candid_none(),
+        subCategory: value.subCategory ? candid_some(value.subCategory) : candid_none(),
+        variantLabel: value.variantLabel ? candid_some(value.variantLabel) : candid_none(),
+        gemstoneType: value.gemstoneType ? candid_some(value.gemstoneType) : candid_none(),
+        name: value.name,
+        gemstoneWeightRatti: value.gemstoneWeightRatti ? candid_some(value.gemstoneWeightRatti) : candid_none(),
+        createdAt: value.createdAt,
+        productCode: value.productCode ? candid_some(value.productCode) : candid_none(),
+        description: value.description,
         variants: value.variants ? candid_some(value.variants) : candid_none(),
         stock: value.stock,
+        imageUrl: value.imageUrl ? candid_some(value.imageUrl) : candid_none(),
         astrologicalPurpose: value.astrologicalPurpose,
         discount: value.discount ? candid_some(value.discount) : candid_none(),
         category: value.category,
         benefits: value.benefits,
-        price: value.price
+        price: value.price,
+        isPersonalised: value.isPersonalised ? candid_some(value.isPersonalised) : candid_none(),
+        gemstoneShape: value.gemstoneShape ? candid_some(value.gemstoneShape) : candid_none()
     };
 }
 function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -4537,49 +5266,97 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
-function to_candid_record_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n60(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     mrp?: number;
     sku?: string;
+    subCategory?: string;
     variantLabel?: string;
+    gemstoneType?: string;
     name?: string;
+    gemstoneWeightRatti?: number;
+    productCode?: string;
     description?: string;
     variants?: Array<ProductVariant>;
     stock?: bigint;
+    imageUrl?: string;
     astrologicalPurpose?: string;
     discount?: bigint;
     category?: string;
     benefits?: string;
     price?: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
 }): {
     mrp: [] | [number];
     sku: [] | [string];
+    subCategory: [] | [string];
     variantLabel: [] | [string];
+    gemstoneType: [] | [string];
     name: [] | [string];
+    gemstoneWeightRatti: [] | [number];
+    productCode: [] | [string];
     description: [] | [string];
     variants: [] | [Array<_ProductVariant>];
     stock: [] | [bigint];
+    imageUrl: [] | [string];
     astrologicalPurpose: [] | [string];
     discount: [] | [bigint];
     category: [] | [string];
     benefits: [] | [string];
     price: [] | [number];
+    isPersonalised: [] | [boolean];
+    gemstoneShape: [] | [string];
 } {
     return {
         mrp: value.mrp ? candid_some(value.mrp) : candid_none(),
         sku: value.sku ? candid_some(value.sku) : candid_none(),
+        subCategory: value.subCategory ? candid_some(value.subCategory) : candid_none(),
         variantLabel: value.variantLabel ? candid_some(value.variantLabel) : candid_none(),
+        gemstoneType: value.gemstoneType ? candid_some(value.gemstoneType) : candid_none(),
         name: value.name ? candid_some(value.name) : candid_none(),
+        gemstoneWeightRatti: value.gemstoneWeightRatti ? candid_some(value.gemstoneWeightRatti) : candid_none(),
+        productCode: value.productCode ? candid_some(value.productCode) : candid_none(),
         description: value.description ? candid_some(value.description) : candid_none(),
         variants: value.variants ? candid_some(value.variants) : candid_none(),
         stock: value.stock ? candid_some(value.stock) : candid_none(),
+        imageUrl: value.imageUrl ? candid_some(value.imageUrl) : candid_none(),
         astrologicalPurpose: value.astrologicalPurpose ? candid_some(value.astrologicalPurpose) : candid_none(),
         discount: value.discount ? candid_some(value.discount) : candid_none(),
         category: value.category ? candid_some(value.category) : candid_none(),
         benefits: value.benefits ? candid_some(value.benefits) : candid_none(),
-        price: value.price ? candid_some(value.price) : candid_none()
+        price: value.price ? candid_some(value.price) : candid_none(),
+        isPersonalised: value.isPersonalised ? candid_some(value.isPersonalised) : candid_none(),
+        gemstoneShape: value.gemstoneShape ? candid_some(value.gemstoneShape) : candid_none()
     };
 }
-function to_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+function to_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    sku: string;
+    weightRatti: number;
+    gemstoneType: string;
+    description: string;
+    shape: string;
+    gsCode?: string;
+    priceINR: bigint;
+}): {
+    sku: string;
+    weightRatti: number;
+    gemstoneType: string;
+    description: string;
+    shape: string;
+    gsCode: [] | [string];
+    priceINR: bigint;
+} {
+    return {
+        sku: value.sku,
+        weightRatti: value.weightRatti,
+        gemstoneType: value.gemstoneType,
+        description: value.description,
+        shape: value.shape,
+        gsCode: value.gsCode ? candid_some(value.gsCode) : candid_none(),
+        priceINR: value.priceINR
+    };
+}
+function to_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
 } | {
     user: null;

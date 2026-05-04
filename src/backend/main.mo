@@ -18,6 +18,10 @@ import List "mo:core/List";
 
 
 
+
+
+
+
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -497,6 +501,96 @@ actor {
     };
   };
 
+  // ─── Product Sub-Categories ──────────────────────────────────────────────────
+
+  public type ProductSubCategory = {
+    id : Text;
+    name : Text;
+    nameCode : Text;          // e.g. AASAN, DIYA, GEMSTONE
+    autoCodePrefix : Text;    // e.g. PS_AASAN → codes will be PS_AASAN_001
+    productCount : Nat;       // tracked count for sequential code generation
+  };
+
+  let productSubCategories = Map.empty<Text, ProductSubCategory>();
+  var subCategoryCounter : Nat = 0;
+  // Per-prefix sequential counters for product code generation
+  let productCodeCounters = Map.empty<Text, Nat>();
+
+  /// Admin or productManager: create a new product sub-category. Returns the generated id.
+  public shared ({ caller }) func createSubCategory(name : Text, nameCode : Text, autoCodePrefix : Text) : async Text {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can create sub-categories");
+    };
+    subCategoryCounter += 1;
+    let id = "SC-" # subCategoryCounter.toText() # "-" # Time.now().toText();
+    let subCat : ProductSubCategory = {
+      id;
+      name;
+      nameCode;
+      autoCodePrefix;
+      productCount = 0;
+    };
+    productSubCategories.add(id, subCat);
+    id;
+  };
+
+  /// Public: get all product sub-categories.
+  public query func getSubCategories() : async [ProductSubCategory] {
+    productSubCategories.values().toArray();
+  };
+
+  /// Admin or productManager: update a product sub-category. Returns true if updated.
+  public shared ({ caller }) func updateSubCategory(id : Text, name : Text, nameCode : Text, autoCodePrefix : Text) : async Bool {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can update sub-categories");
+    };
+    switch (productSubCategories.get(id)) {
+      case (null) { false };
+      case (?existing) {
+        productSubCategories.add(id, { existing with name; nameCode; autoCodePrefix });
+        true;
+      };
+    };
+  };
+
+  /// Admin or productManager: delete a product sub-category. Returns true if deleted.
+  public shared ({ caller }) func deleteSubCategory(id : Text) : async Bool {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can delete sub-categories");
+    };
+    switch (productSubCategories.get(id)) {
+      case (null) { false };
+      case (?_) {
+        productSubCategories.remove(id);
+        true;
+      };
+    };
+  };
+
+  /// Admin or productManager: generate a product code.
+  /// If manualCode is provided, it is returned as-is.
+  /// Otherwise auto-generates PS_{PREFIX}_{seq:3-digits-padded}.
+  public shared ({ caller }) func generateProductCode(subCategoryPrefix : Text, manualCode : ?Text) : async Text {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can generate product codes");
+    };
+    switch (manualCode) {
+      case (?code) { code };
+      case (null) {
+        let current = switch (productCodeCounters.get(subCategoryPrefix)) {
+          case (null) { 0 };
+          case (?n) { n };
+        };
+        let next = current + 1;
+        productCodeCounters.add(subCategoryPrefix, next);
+        let padded = if (next < 10) { "00" # next.toText() }
+                     else if (next < 100) { "0" # next.toText() }
+                     else { next.toText() };
+        "PS_" # subCategoryPrefix # "_" # padded;
+      };
+    };
+  };
+
   // ─── Spiritual Shop Products ─────────────────────────────────────────────────
 
   public type ProductVariant = {
@@ -521,6 +615,14 @@ actor {
     mrp : ?Float;                       // crossed-out original price
     discount : ?Nat;                    // discount percentage (0–100)
     sku : ?Text;                        // stock-keeping unit code
+    // Sub-category, product code and gemstone enrichment fields
+    subCategory : ?Text;                // sub-category id reference
+    productCode : ?Text;               // e.g. PS_AASAN_001 or GS001
+    gemstoneType : ?Text;              // AMETHYST, BLUE_SAPPHIRE, etc.
+    gemstoneShape : ?Text;             // Oval, Round, Pear Cut, etc.
+    gemstoneWeightRatti : ?Float;      // weight in ratti
+    isPersonalised : ?Bool;            // true for personalised products
+    imageUrl : ?Text;                  // placeholder URL, replaceable via object-storage
   };
 
   /// Partial update request — only provided fields are changed.
@@ -537,6 +639,13 @@ actor {
     mrp : ?Float;
     discount : ?Nat;
     sku : ?Text;
+    subCategory : ?Text;
+    productCode : ?Text;
+    gemstoneType : ?Text;
+    gemstoneShape : ?Text;
+    gemstoneWeightRatti : ?Float;
+    isPersonalised : ?Bool;
+    imageUrl : ?Text;
   };
 
   let products = Map.empty<Text, Product>();
@@ -564,6 +673,7 @@ actor {
   };
 
   /// Admin or productManager: partial update — only supplied fields are changed.
+  /// Admin or productManager: partial update — only supplied fields are changed.
   public shared ({ caller }) func updateProductFields(id : Text, updates : ProductUpdateRequest) : async () {
     if (not _isAdminOrProductManager(caller)) {
       Runtime.trap("Unauthorized: Only admins or product managers can update products");
@@ -585,6 +695,13 @@ actor {
           mrp               = switch (updates.mrp)               { case (?v) ?v; case null existing.mrp };
           discount          = switch (updates.discount)          { case (?v) ?v; case null existing.discount };
           sku               = switch (updates.sku)               { case (?v) ?v; case null existing.sku };
+          subCategory       = switch (updates.subCategory)       { case (?v) ?v; case null existing.subCategory };
+          productCode       = switch (updates.productCode)       { case (?v) ?v; case null existing.productCode };
+          gemstoneType      = switch (updates.gemstoneType)      { case (?v) ?v; case null existing.gemstoneType };
+          gemstoneShape     = switch (updates.gemstoneShape)     { case (?v) ?v; case null existing.gemstoneShape };
+          gemstoneWeightRatti = switch (updates.gemstoneWeightRatti) { case (?v) ?v; case null existing.gemstoneWeightRatti };
+          isPersonalised    = switch (updates.isPersonalised)    { case (?v) ?v; case null existing.isPersonalised };
+          imageUrl          = switch (updates.imageUrl)          { case (?v) ?v; case null existing.imageUrl };
         };
         products.add(id, updated);
       };
@@ -645,6 +762,124 @@ actor {
       if (p.category == category) { result.add(p) };
     };
     result.toArray()
+  };
+
+  // ─── Gemstone Products ────────────────────────────────────────────────────────
+
+  public type GemstoneProduct = {
+    sku : Text;             // e.g. GS001–GS200
+    gemstoneType : Text;   // AMETHYST, BLUE_SAPPHIRE, RUBY, etc.
+    shape : Text;           // Oval, Round, Pear Cut, Cushion, etc.
+    weightRatti : Float;    // weight in ratti
+    priceINR : Nat;         // price in INR
+    gsCode : ?Text;         // GS001–GS200 code (admin assigned)
+    description : Text;
+  };
+
+  let gemstoneProducts = Map.empty<Text, GemstoneProduct>();
+
+  /// Admin or productManager: add a gemstone product.
+  public shared ({ caller }) func addGemstoneProduct(entry : GemstoneProduct) : async () {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can add gemstone products");
+    };
+    switch (gemstoneProducts.get(entry.sku)) {
+      case (?_) { Runtime.trap("Gemstone product already exists with SKU: " # entry.sku) };
+      case (null) { gemstoneProducts.add(entry.sku, entry) };
+    };
+  };
+
+  /// Admin or productManager: update a gemstone product (full replace by sku).
+  public shared ({ caller }) func updateGemstoneProduct(entry : GemstoneProduct) : async () {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can update gemstone products");
+    };
+    switch (gemstoneProducts.get(entry.sku)) {
+      case (null) { Runtime.trap("Gemstone product not found with SKU: " # entry.sku) };
+      case (?_) { gemstoneProducts.add(entry.sku, entry) };
+    };
+  };
+
+  /// Admin or productManager: delete a gemstone product by sku.
+  public shared ({ caller }) func deleteGemstoneProduct(sku : Text) : async () {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can delete gemstone products");
+    };
+    switch (gemstoneProducts.get(sku)) {
+      case (null) { Runtime.trap("Gemstone product not found with SKU: " # sku) };
+      case (?_) { gemstoneProducts.remove(sku) };
+    };
+  };
+
+  /// Public: get all gemstone products.
+  public query func getAllGemstoneProducts() : async [GemstoneProduct] {
+    gemstoneProducts.values().toArray();
+  };
+
+  /// Public: get gemstone products filtered by gemstone type (e.g. AMETHYST).
+  public query func getGemstoneProductsByType(gemstoneType : Text) : async [GemstoneProduct] {
+    let result = List.empty<GemstoneProduct>();
+    for ((_, g) in gemstoneProducts.entries()) {
+      if (g.gemstoneType == gemstoneType) { result.add(g) };
+    };
+    result.toArray();
+  };
+
+  // ─── Personalised Products ────────────────────────────────────────────────────
+
+  public type PersonalisedProduct = {
+    id : Text;
+    name : Text;
+    category : Text;
+    sku : ?Text;            // admin-assigned SKU
+    manualCode : ?Text;     // admin-assigned product code (no GS code)
+    price : Nat;
+    mrp : ?Nat;
+    description : Text;
+    imageUrl : ?Text;       // placeholder URL, replaceable via object-storage
+    isPersonalised : Bool;
+    createdAt : Int;
+  };
+
+  let personalisedProducts = Map.empty<Text, PersonalisedProduct>();
+  var _personalisedProductCounter : Nat = 0;
+
+  /// Admin or productManager: add a personalised product.
+  public shared ({ caller }) func addPersonalisedProduct(entry : PersonalisedProduct) : async () {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can add personalised products");
+    };
+    switch (personalisedProducts.get(entry.id)) {
+      case (?_) { Runtime.trap("Personalised product already exists with id: " # entry.id) };
+      case (null) { personalisedProducts.add(entry.id, entry) };
+    };
+  };
+
+  /// Admin or productManager: update a personalised product (full replace).
+  public shared ({ caller }) func updatePersonalisedProduct(entry : PersonalisedProduct) : async () {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can update personalised products");
+    };
+    switch (personalisedProducts.get(entry.id)) {
+      case (null) { Runtime.trap("Personalised product not found with id: " # entry.id) };
+      case (?_) { personalisedProducts.add(entry.id, entry) };
+    };
+  };
+
+  /// Admin or productManager: delete a personalised product.
+  public shared ({ caller }) func deletePersonalisedProduct(id : Text) : async () {
+    if (not _isAdminOrProductManager(caller)) {
+      Runtime.trap("Unauthorized: Only admins or product managers can delete personalised products");
+    };
+    switch (personalisedProducts.get(id)) {
+      case (null) { Runtime.trap("Personalised product not found with id: " # id) };
+      case (?_) { personalisedProducts.remove(id) };
+    };
+  };
+
+  /// Public: get all personalised products.
+  public query func getAllPersonalisedProducts() : async [PersonalisedProduct] {
+    personalisedProducts.values().toArray();
   };
 
   // ─── Orders ──────────────────────────────────────────────────────────────────
@@ -989,7 +1224,8 @@ actor {
     deity : Text;
     artist : Text;
     lyricsText : Text;
-    audioBase64 : Text;
+    audioBase64 : Text;    // may be empty Text "" when no real audio uploaded
+    hasMockAudio : Bool;   // true = demo test clip; false = real upload or no audio
     createdAt : Time.Time;
   };
 
@@ -1045,7 +1281,8 @@ actor {
     title : Text;
     festivalName : Text;
     storyText : Text;
-    audioBase64 : Text;
+    audioBase64 : Text;    // may be empty Text "" when no real audio uploaded
+    hasMockAudio : Bool;   // true = demo test clip; false = real upload or no audio
     createdAt : Time.Time;
   };
 
@@ -3241,6 +3478,194 @@ actor {
         } else {
           Runtime.trap("Unauthorized: You can only view your own combined vedic readings");
         };
+      };
+    };
+  };
+
+  // ─── Panchang Cities ──────────────────────────────────────────────────────────
+
+  public type PanchangCity = {
+    id : Text;
+    name : Text;
+    nameHindi : Text;
+    stateName : Text;       // Indian state name for grouping
+    latitude : Float;
+    longitude : Float;
+    timezone : Text;        // e.g. "Asia/Kolkata"
+    utcOffset : Float;      // hours offset from UTC
+  };
+
+  let panchangCities = Map.empty<Text, PanchangCity>();
+
+  /// Admin-only: add a panchang city.
+  public shared ({ caller }) func addPanchangCity(city : PanchangCity) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can add panchang cities");
+    };
+    switch (panchangCities.get(city.id)) {
+      case (?_) { Runtime.trap("Panchang city already exists with id: " # city.id) };
+      case (null) { panchangCities.add(city.id, city) };
+    };
+  };
+
+  /// Admin-only: update an existing panchang city.
+  public shared ({ caller }) func updatePanchangCity(city : PanchangCity) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can update panchang cities");
+    };
+    switch (panchangCities.get(city.id)) {
+      case (null) { Runtime.trap("Panchang city not found with id: " # city.id) };
+      case (?_) { panchangCities.add(city.id, city) };
+    };
+  };
+
+  /// Admin-only: delete a panchang city.
+  public shared ({ caller }) func deletePanchangCity(id : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can delete panchang cities");
+    };
+    switch (panchangCities.get(id)) {
+      case (null) { Runtime.trap("Panchang city not found with id: " # id) };
+      case (?_) { panchangCities.remove(id) };
+    };
+  };
+
+  /// Public: get all panchang cities.
+  public query func getAllPanchangCities() : async [PanchangCity] {
+    panchangCities.values().toArray();
+  };
+
+  /// Public: get panchang cities grouped by state name.
+  /// Returns an array of (stateName, [PanchangCity]) tuples.
+  public query func getCitiesByState() : async [(Text, [PanchangCity])] {
+    // Build state → cities map
+    let stateMap = Map.empty<Text, List.List<PanchangCity>>();
+    for ((_, city) in panchangCities.entries()) {
+      switch (stateMap.get(city.stateName)) {
+        case (null) {
+          let newList = List.empty<PanchangCity>();
+          newList.add(city);
+          stateMap.add(city.stateName, newList);
+        };
+        case (?existing) { existing.add(city) };
+      };
+    };
+    let result = List.empty<(Text, [PanchangCity])>();
+    for ((stateName, cityList) in stateMap.entries()) {
+      result.add((stateName, cityList.toArray()));
+    };
+    result.toArray();
+  };
+
+  // ─── Puja Events ─────────────────────────────────────────────────────────────
+
+  public type PujaEvent = {
+    id : Text;
+    pujaName : Text;
+    pujaNameHindi : Text;
+    date : Text;
+    time : Text;
+    description : Text;
+    price : Nat;
+    slotsAvailable : Nat;
+    slotsBooked : Nat;
+    location : Text;
+    deity : Text;
+    isActive : Bool;
+    createdAt : Int;
+  };
+
+  public type SankalpInput = {
+    eventId : Text;
+    devoteeName : Text;
+    gotra : Text;
+    mobile : Text;
+    email : Text;
+    birthDetails : Text;
+    specialWishes : Text;
+  };
+
+  let pujaEvents = Map.empty<Text, PujaEvent>();
+  var pujaEventCounter : Nat = 0;
+
+  /// Admin-only: create a new puja event. Returns the generated id.
+  public shared ({ caller }) func createPujaEvent(
+    pujaName : Text, pujaNameHindi : Text, date : Text, time : Text,
+    description : Text, price : Nat, slotsAvailable : Nat, location : Text,
+    deity : Text, isActive : Bool
+  ) : async Text {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can create puja events");
+    };
+    pujaEventCounter += 1;
+    let id = "PE-" # pujaEventCounter.toText() # "-" # Time.now().toText();
+    let event : PujaEvent = {
+      id; pujaName; pujaNameHindi; date; time; description;
+      price; slotsAvailable; slotsBooked = 0;
+      location; deity; isActive;
+      createdAt = Time.now();
+    };
+    pujaEvents.add(id, event);
+    id;
+  };
+
+  /// Admin-only: update an existing puja event. Returns true if updated.
+  public shared ({ caller }) func updatePujaEvent(
+    id : Text, pujaName : Text, pujaNameHindi : Text, date : Text, time : Text,
+    description : Text, price : Nat, slotsAvailable : Nat, location : Text,
+    deity : Text, isActive : Bool
+  ) : async Bool {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can update puja events");
+    };
+    switch (pujaEvents.get(id)) {
+      case (null) { false };
+      case (?existing) {
+        pujaEvents.add(id, { existing with pujaName; pujaNameHindi; date; time;
+          description; price; slotsAvailable; location; deity; isActive });
+        true;
+      };
+    };
+  };
+
+  /// Admin-only: delete a puja event. Returns true if deleted.
+  public shared ({ caller }) func deletePujaEvent(id : Text) : async Bool {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can delete puja events");
+    };
+    switch (pujaEvents.get(id)) {
+      case (null) { false };
+      case (?_) { pujaEvents.remove(id); true };
+    };
+  };
+
+  /// Public: get all puja events (active only for non-admins).
+  public query func getAllPujaEvents() : async [PujaEvent] {
+    let result = List.empty<PujaEvent>();
+    for ((_, e) in pujaEvents.entries()) {
+      if (e.isActive) { result.add(e) };
+    };
+    result.toArray();
+  };
+
+  /// Admin-only: get all puja events including inactive.
+  public query ({ caller }) func getAllPujaEventsAdmin() : async [PujaEvent] {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can view all puja events");
+    };
+    pujaEvents.values().toArray();
+  };
+
+  /// Public: book a slot in a puja event. Returns booking reference or error.
+  public shared func bookPujaEventSlot(sankalp : SankalpInput) : async { #ok : Text; #err : Text } {
+    switch (pujaEvents.get(sankalp.eventId)) {
+      case (null) { #err("Puja event not found") };
+      case (?event) {
+        if (not event.isActive) { return #err("This puja event is no longer active") };
+        if (event.slotsBooked >= event.slotsAvailable) { return #err("No slots remaining for this puja event") };
+        let ref = "PES-" # sankalp.eventId # "-" # Time.now().toText();
+        pujaEvents.add(sankalp.eventId, { event with slotsBooked = event.slotsBooked + 1 });
+        #ok(ref);
       };
     };
   };

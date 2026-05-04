@@ -27,6 +27,7 @@ export const BhajanEntry = IDL.Record({
   'createdAt' : Time,
   'lyricsText' : IDL.Text,
   'artist' : IDL.Text,
+  'hasMockAudio' : IDL.Bool,
   'deity' : IDL.Text,
 });
 export const FestivalEvent = IDL.Record({
@@ -39,6 +40,15 @@ export const FestivalEvent = IDL.Record({
   'deity' : IDL.Text,
   'faith' : IDL.Text,
   'eventType' : IDL.Text,
+});
+export const GemstoneProduct = IDL.Record({
+  'sku' : IDL.Text,
+  'weightRatti' : IDL.Float64,
+  'gemstoneType' : IDL.Text,
+  'description' : IDL.Text,
+  'shape' : IDL.Text,
+  'gsCode' : IDL.Opt(IDL.Text),
+  'priceINR' : IDL.Nat,
 });
 export const HolyBookEntry = IDL.Record({
   'id' : IDL.Text,
@@ -107,6 +117,16 @@ export const NewsletterSubscription = IDL.Record({
   'isActive' : IDL.Bool,
   'email' : IDL.Text,
 });
+export const PanchangCity = IDL.Record({
+  'id' : IDL.Text,
+  'latitude' : IDL.Float64,
+  'timezone' : IDL.Text,
+  'nameHindi' : IDL.Text,
+  'stateName' : IDL.Text,
+  'name' : IDL.Text,
+  'longitude' : IDL.Float64,
+  'utcOffset' : IDL.Float64,
+});
 export const PathshalaLesson = IDL.Record({
   'id' : IDL.Text,
   'contentHi' : IDL.Text,
@@ -125,6 +145,19 @@ export const PathshalaLesson = IDL.Record({
   'updatedAt' : IDL.Int,
   'titleEn' : IDL.Text,
   'titleHi' : IDL.Text,
+});
+export const PersonalisedProduct = IDL.Record({
+  'id' : IDL.Text,
+  'mrp' : IDL.Opt(IDL.Nat),
+  'sku' : IDL.Opt(IDL.Text),
+  'name' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'description' : IDL.Text,
+  'imageUrl' : IDL.Opt(IDL.Text),
+  'manualCode' : IDL.Opt(IDL.Text),
+  'category' : IDL.Text,
+  'price' : IDL.Nat,
+  'isPersonalised' : IDL.Bool,
 });
 export const SuktamEntry = IDL.Record({
   'id' : IDL.Text,
@@ -156,12 +189,22 @@ export const VratKathaEntry = IDL.Record({
   'audioBase64' : IDL.Text,
   'storyText' : IDL.Text,
   'createdAt' : Time,
+  'hasMockAudio' : IDL.Bool,
   'festivalName' : IDL.Text,
 });
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
+});
+export const SankalpInput = IDL.Record({
+  'eventId' : IDL.Text,
+  'email' : IDL.Text,
+  'specialWishes' : IDL.Text,
+  'gotra' : IDL.Text,
+  'mobile' : IDL.Text,
+  'devoteeName' : IDL.Text,
+  'birthDetails' : IDL.Text,
 });
 export const AstrologerProfile = IDL.Record({
   'id' : IDL.Text,
@@ -304,17 +347,24 @@ export const Product = IDL.Record({
   'id' : IDL.Text,
   'mrp' : IDL.Opt(IDL.Float64),
   'sku' : IDL.Opt(IDL.Text),
+  'subCategory' : IDL.Opt(IDL.Text),
   'variantLabel' : IDL.Opt(IDL.Text),
+  'gemstoneType' : IDL.Opt(IDL.Text),
   'name' : IDL.Text,
+  'gemstoneWeightRatti' : IDL.Opt(IDL.Float64),
   'createdAt' : Time,
+  'productCode' : IDL.Opt(IDL.Text),
   'description' : IDL.Text,
   'variants' : IDL.Opt(IDL.Vec(ProductVariant)),
   'stock' : IDL.Nat,
+  'imageUrl' : IDL.Opt(IDL.Text),
   'astrologicalPurpose' : IDL.Text,
   'discount' : IDL.Opt(IDL.Nat),
   'category' : IDL.Text,
   'benefits' : IDL.Text,
   'price' : IDL.Float64,
+  'isPersonalised' : IDL.Opt(IDL.Bool),
+  'gemstoneShape' : IDL.Opt(IDL.Text),
 });
 export const PujaBooking = IDL.Record({
   'id' : IDL.Text,
@@ -479,6 +529,21 @@ export const CalculatorFAQ = IDL.Record({
   'calculatorId' : IDL.Text,
   'calculatorName' : IDL.Text,
 });
+export const PujaEvent = IDL.Record({
+  'id' : IDL.Text,
+  'date' : IDL.Text,
+  'slotsAvailable' : IDL.Nat,
+  'createdAt' : IDL.Int,
+  'time' : IDL.Text,
+  'description' : IDL.Text,
+  'isActive' : IDL.Bool,
+  'pujaName' : IDL.Text,
+  'pujaNameHindi' : IDL.Text,
+  'slotsBooked' : IDL.Nat,
+  'price' : IDL.Nat,
+  'deity' : IDL.Text,
+  'location' : IDL.Text,
+});
 export const UserProfile = IDL.Record({
   'birthDate' : IDL.Text,
   'birthTime' : IDL.Text,
@@ -547,6 +612,13 @@ export const StripeSessionStatus = IDL.Record({
   'status' : IDL.Text,
   'paymentStatus' : IDL.Text,
   'customerEmail' : IDL.Text,
+});
+export const ProductSubCategory = IDL.Record({
+  'id' : IDL.Text,
+  'nameCode' : IDL.Text,
+  'name' : IDL.Text,
+  'productCount' : IDL.Nat,
+  'autoCodePrefix' : IDL.Text,
 });
 export const PalmistryReading = IDL.Record({
   'id' : IDL.Text,
@@ -630,16 +702,23 @@ export const TransformationOutput = IDL.Record({ 'response' : HttpResponse });
 export const ProductUpdateRequest = IDL.Record({
   'mrp' : IDL.Opt(IDL.Float64),
   'sku' : IDL.Opt(IDL.Text),
+  'subCategory' : IDL.Opt(IDL.Text),
   'variantLabel' : IDL.Opt(IDL.Text),
+  'gemstoneType' : IDL.Opt(IDL.Text),
   'name' : IDL.Opt(IDL.Text),
+  'gemstoneWeightRatti' : IDL.Opt(IDL.Float64),
+  'productCode' : IDL.Opt(IDL.Text),
   'description' : IDL.Opt(IDL.Text),
   'variants' : IDL.Opt(IDL.Vec(ProductVariant)),
   'stock' : IDL.Opt(IDL.Nat),
+  'imageUrl' : IDL.Opt(IDL.Text),
   'astrologicalPurpose' : IDL.Opt(IDL.Text),
   'discount' : IDL.Opt(IDL.Nat),
   'category' : IDL.Opt(IDL.Text),
   'benefits' : IDL.Opt(IDL.Text),
   'price' : IDL.Opt(IDL.Float64),
+  'isPersonalised' : IDL.Opt(IDL.Bool),
+  'gemstoneShape' : IDL.Opt(IDL.Text),
 });
 
 export const idlService = IDL.Service({
@@ -672,6 +751,7 @@ export const idlService = IDL.Service({
   '_initializeAccessControl' : IDL.Func([], [], []),
   'addBhajan' : IDL.Func([BhajanEntry], [], []),
   'addFestivalEvent' : IDL.Func([FestivalEvent], [], []),
+  'addGemstoneProduct' : IDL.Func([GemstoneProduct], [], []),
   'addHolyBookEntry' : IDL.Func([HolyBookEntry], [], []),
   'addJainArticle' : IDL.Func([JainEncyclopediaArticle], [], []),
   'addJainKatha' : IDL.Func([JainKatha], [], []),
@@ -682,11 +762,18 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : NewsletterSubscription, 'err' : IDL.Text })],
       [],
     ),
+  'addPanchangCity' : IDL.Func([PanchangCity], [], []),
   'addPathshalaLesson' : IDL.Func([PathshalaLesson], [], []),
+  'addPersonalisedProduct' : IDL.Func([PersonalisedProduct], [], []),
   'addSuktam' : IDL.Func([SuktamEntry], [], []),
   'addUserPrasadDeliveryRequest' : IDL.Func([PrasadDeliveryRequest], [], []),
   'addVratKatha' : IDL.Func([VratKathaEntry], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'bookPujaEventSlot' : IDL.Func(
+      [SankalpInput],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'createAstrologerProfile' : IDL.Func([AstrologerProfile], [], []),
   'createBlogArticle' : IDL.Func([BlogArticle], [], []),
   'createBookingRequest' : IDL.Func(
@@ -758,10 +845,31 @@ export const idlService = IDL.Service({
     ),
   'createProduct' : IDL.Func([Product], [], []),
   'createPujaBooking' : IDL.Func([PujaBooking], [], []),
+  'createPujaEvent' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Text,
+        IDL.Bool,
+      ],
+      [IDL.Text],
+      [],
+    ),
   'createPujaReport' : IDL.Func([PujaReport], [], []),
   'createPujaType' : IDL.Func([PujaType], [], []),
   'createReportRequest' : IDL.Func([ReportRequest], [], []),
   'createServiceBooking' : IDL.Func([ServiceBooking], [IDL.Text], []),
+  'createSubCategory' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Text],
+      [],
+    ),
   'createTemple' : IDL.Func([Temple], [], []),
   'createVastuContent' : IDL.Func(
       [
@@ -806,6 +914,7 @@ export const idlService = IDL.Service({
   'deleteCombinedVedicReading' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deleteDevotionalContent' : IDL.Func([IDL.Text], [], []),
   'deleteFestivalEvent' : IDL.Func([IDL.Text], [], []),
+  'deleteGemstoneProduct' : IDL.Func([IDL.Text], [], []),
   'deleteHolyBookEntry' : IDL.Func([IDL.Text], [], []),
   'deleteJainArticle' : IDL.Func([IDL.Text], [], []),
   'deleteJainKatha' : IDL.Func([IDL.Text], [], []),
@@ -818,14 +927,23 @@ export const idlService = IDL.Service({
     ),
   'deletePalmPhotoReading' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deletePalmistryContent' : IDL.Func([IDL.Text], [IDL.Bool], []),
+  'deletePanchangCity' : IDL.Func([IDL.Text], [], []),
   'deletePathshalaLesson' : IDL.Func([IDL.Text], [], []),
+  'deletePersonalisedProduct' : IDL.Func([IDL.Text], [], []),
   'deleteProduct' : IDL.Func([IDL.Text], [], []),
+  'deletePujaEvent' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deletePujaType' : IDL.Func([IDL.Text], [], []),
+  'deleteSubCategory' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deleteSuktam' : IDL.Func([IDL.Text], [], []),
   'deleteVastuContent' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deleteVastuRoomCheck' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'deleteVratKatha' : IDL.Func([IDL.Text], [], []),
   'deleteWebStory' : IDL.Func([IDL.Text], [], []),
+  'generateProductCode' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Text],
+      [],
+    ),
   'getAllAstrologerProfiles' : IDL.Func(
       [],
       [IDL.Vec(AstrologerProfile)],
@@ -857,6 +975,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getAllFestivalEvents' : IDL.Func([], [IDL.Vec(FestivalEvent)], ['query']),
+  'getAllGemstoneProducts' : IDL.Func(
+      [],
+      [IDL.Vec(GemstoneProduct)],
+      ['query'],
+    ),
   'getAllJainArticles' : IDL.Func(
       [],
       [IDL.Vec(JainEncyclopediaArticle)],
@@ -868,13 +991,21 @@ export const idlService = IDL.Service({
       [IDL.Vec(JainPathshalaEntry)],
       ['query'],
     ),
+  'getAllPanchangCities' : IDL.Func([], [IDL.Vec(PanchangCity)], ['query']),
   'getAllPathshalaLessons' : IDL.Func(
       [],
       [IDL.Vec(PathshalaLesson)],
       ['query'],
     ),
+  'getAllPersonalisedProducts' : IDL.Func(
+      [],
+      [IDL.Vec(PersonalisedProduct)],
+      ['query'],
+    ),
   'getAllProductManagers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
+  'getAllPujaEvents' : IDL.Func([], [IDL.Vec(PujaEvent)], ['query']),
+  'getAllPujaEventsAdmin' : IDL.Func([], [IDL.Vec(PujaEvent)], ['query']),
   'getAllPujaReports' : IDL.Func([], [IDL.Vec(PujaReport)], ['query']),
   'getAllPujaTypes' : IDL.Func([], [IDL.Vec(PujaType)], ['query']),
   'getAllTemples' : IDL.Func([], [IDL.Vec(Temple)], ['query']),
@@ -909,6 +1040,11 @@ export const idlService = IDL.Service({
     ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCitiesByState' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(PanchangCity)))],
+      ['query'],
+    ),
   'getCombinedVedicReading' : IDL.Func(
       [IDL.Text],
       [IDL.Opt(CombinedVedicReading)],
@@ -922,6 +1058,11 @@ export const idlService = IDL.Service({
   'getFestivalEventsByFaith' : IDL.Func(
       [IDL.Text],
       [IDL.Vec(FestivalEvent)],
+      ['query'],
+    ),
+  'getGemstoneProductsByType' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(GemstoneProduct)],
       ['query'],
     ),
   'getHolyBookEntries' : IDL.Func(
@@ -1016,6 +1157,7 @@ export const idlService = IDL.Service({
   'getPujaTypeById' : IDL.Func([IDL.Text], [IDL.Opt(PujaType)], ['query']),
   'getServiceBookings' : IDL.Func([], [IDL.Vec(ServiceBooking)], ['query']),
   'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
+  'getSubCategories' : IDL.Func([], [IDL.Vec(ProductSubCategory)], ['query']),
   'getSuktamById' : IDL.Func([IDL.Text], [IDL.Opt(SuktamEntry)], ['query']),
   'getSuktams' : IDL.Func([], [IDL.Vec(SuktamEntry)], ['query']),
   'getUserAstroCharts' : IDL.Func([], [IDL.Vec(AstroChart)], ['query']),
@@ -1150,6 +1292,7 @@ export const idlService = IDL.Service({
     ),
   'updateDevotionalContent' : IDL.Func([DevotionalContent], [], []),
   'updateFestivalEvent' : IDL.Func([FestivalEvent], [], []),
+  'updateGemstoneProduct' : IDL.Func([GemstoneProduct], [], []),
   'updateHolyBookEntry' : IDL.Func([HolyBookEntry], [], []),
   'updateJainArticle' : IDL.Func([JainEncyclopediaArticle], [], []),
   'updateJainKatha' : IDL.Func([JainKatha], [], []),
@@ -1187,7 +1330,9 @@ export const idlService = IDL.Service({
       [IDL.Opt(PalmistryContent)],
       [],
     ),
+  'updatePanchangCity' : IDL.Func([PanchangCity], [], []),
   'updatePathshalaLesson' : IDL.Func([IDL.Text, PathshalaLesson], [], []),
+  'updatePersonalisedProduct' : IDL.Func([PersonalisedProduct], [], []),
   'updatePrasadDeliveryStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'updateProduct' : IDL.Func([Product], [], []),
   'updateProductFields' : IDL.Func([IDL.Text, ProductUpdateRequest], [], []),
@@ -1197,10 +1342,32 @@ export const idlService = IDL.Service({
       [],
       [],
     ),
+  'updatePujaEvent' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Text,
+        IDL.Bool,
+      ],
+      [IDL.Bool],
+      [],
+    ),
   'updatePujaReport' : IDL.Func([IDL.Text, PujaReport], [], []),
   'updatePujaType' : IDL.Func([PujaType], [], []),
   'updateReportRequest' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'updateServiceBookingStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'updateSubCategory' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Bool],
+      [],
+    ),
   'updateSuktam' : IDL.Func([SuktamEntry], [], []),
   'updateVastuContent' : IDL.Func(
       [
@@ -1266,6 +1433,7 @@ export const idlFactory = ({ IDL }) => {
     'createdAt' : Time,
     'lyricsText' : IDL.Text,
     'artist' : IDL.Text,
+    'hasMockAudio' : IDL.Bool,
     'deity' : IDL.Text,
   });
   const FestivalEvent = IDL.Record({
@@ -1278,6 +1446,15 @@ export const idlFactory = ({ IDL }) => {
     'deity' : IDL.Text,
     'faith' : IDL.Text,
     'eventType' : IDL.Text,
+  });
+  const GemstoneProduct = IDL.Record({
+    'sku' : IDL.Text,
+    'weightRatti' : IDL.Float64,
+    'gemstoneType' : IDL.Text,
+    'description' : IDL.Text,
+    'shape' : IDL.Text,
+    'gsCode' : IDL.Opt(IDL.Text),
+    'priceINR' : IDL.Nat,
   });
   const HolyBookEntry = IDL.Record({
     'id' : IDL.Text,
@@ -1346,6 +1523,16 @@ export const idlFactory = ({ IDL }) => {
     'isActive' : IDL.Bool,
     'email' : IDL.Text,
   });
+  const PanchangCity = IDL.Record({
+    'id' : IDL.Text,
+    'latitude' : IDL.Float64,
+    'timezone' : IDL.Text,
+    'nameHindi' : IDL.Text,
+    'stateName' : IDL.Text,
+    'name' : IDL.Text,
+    'longitude' : IDL.Float64,
+    'utcOffset' : IDL.Float64,
+  });
   const PathshalaLesson = IDL.Record({
     'id' : IDL.Text,
     'contentHi' : IDL.Text,
@@ -1364,6 +1551,19 @@ export const idlFactory = ({ IDL }) => {
     'updatedAt' : IDL.Int,
     'titleEn' : IDL.Text,
     'titleHi' : IDL.Text,
+  });
+  const PersonalisedProduct = IDL.Record({
+    'id' : IDL.Text,
+    'mrp' : IDL.Opt(IDL.Nat),
+    'sku' : IDL.Opt(IDL.Text),
+    'name' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'description' : IDL.Text,
+    'imageUrl' : IDL.Opt(IDL.Text),
+    'manualCode' : IDL.Opt(IDL.Text),
+    'category' : IDL.Text,
+    'price' : IDL.Nat,
+    'isPersonalised' : IDL.Bool,
   });
   const SuktamEntry = IDL.Record({
     'id' : IDL.Text,
@@ -1395,12 +1595,22 @@ export const idlFactory = ({ IDL }) => {
     'audioBase64' : IDL.Text,
     'storyText' : IDL.Text,
     'createdAt' : Time,
+    'hasMockAudio' : IDL.Bool,
     'festivalName' : IDL.Text,
   });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const SankalpInput = IDL.Record({
+    'eventId' : IDL.Text,
+    'email' : IDL.Text,
+    'specialWishes' : IDL.Text,
+    'gotra' : IDL.Text,
+    'mobile' : IDL.Text,
+    'devoteeName' : IDL.Text,
+    'birthDetails' : IDL.Text,
   });
   const AstrologerProfile = IDL.Record({
     'id' : IDL.Text,
@@ -1543,17 +1753,24 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Text,
     'mrp' : IDL.Opt(IDL.Float64),
     'sku' : IDL.Opt(IDL.Text),
+    'subCategory' : IDL.Opt(IDL.Text),
     'variantLabel' : IDL.Opt(IDL.Text),
+    'gemstoneType' : IDL.Opt(IDL.Text),
     'name' : IDL.Text,
+    'gemstoneWeightRatti' : IDL.Opt(IDL.Float64),
     'createdAt' : Time,
+    'productCode' : IDL.Opt(IDL.Text),
     'description' : IDL.Text,
     'variants' : IDL.Opt(IDL.Vec(ProductVariant)),
     'stock' : IDL.Nat,
+    'imageUrl' : IDL.Opt(IDL.Text),
     'astrologicalPurpose' : IDL.Text,
     'discount' : IDL.Opt(IDL.Nat),
     'category' : IDL.Text,
     'benefits' : IDL.Text,
     'price' : IDL.Float64,
+    'isPersonalised' : IDL.Opt(IDL.Bool),
+    'gemstoneShape' : IDL.Opt(IDL.Text),
   });
   const PujaBooking = IDL.Record({
     'id' : IDL.Text,
@@ -1718,6 +1935,21 @@ export const idlFactory = ({ IDL }) => {
     'calculatorId' : IDL.Text,
     'calculatorName' : IDL.Text,
   });
+  const PujaEvent = IDL.Record({
+    'id' : IDL.Text,
+    'date' : IDL.Text,
+    'slotsAvailable' : IDL.Nat,
+    'createdAt' : IDL.Int,
+    'time' : IDL.Text,
+    'description' : IDL.Text,
+    'isActive' : IDL.Bool,
+    'pujaName' : IDL.Text,
+    'pujaNameHindi' : IDL.Text,
+    'slotsBooked' : IDL.Nat,
+    'price' : IDL.Nat,
+    'deity' : IDL.Text,
+    'location' : IDL.Text,
+  });
   const UserProfile = IDL.Record({
     'birthDate' : IDL.Text,
     'birthTime' : IDL.Text,
@@ -1786,6 +2018,13 @@ export const idlFactory = ({ IDL }) => {
     'status' : IDL.Text,
     'paymentStatus' : IDL.Text,
     'customerEmail' : IDL.Text,
+  });
+  const ProductSubCategory = IDL.Record({
+    'id' : IDL.Text,
+    'nameCode' : IDL.Text,
+    'name' : IDL.Text,
+    'productCount' : IDL.Nat,
+    'autoCodePrefix' : IDL.Text,
   });
   const PalmistryReading = IDL.Record({
     'id' : IDL.Text,
@@ -1869,16 +2108,23 @@ export const idlFactory = ({ IDL }) => {
   const ProductUpdateRequest = IDL.Record({
     'mrp' : IDL.Opt(IDL.Float64),
     'sku' : IDL.Opt(IDL.Text),
+    'subCategory' : IDL.Opt(IDL.Text),
     'variantLabel' : IDL.Opt(IDL.Text),
+    'gemstoneType' : IDL.Opt(IDL.Text),
     'name' : IDL.Opt(IDL.Text),
+    'gemstoneWeightRatti' : IDL.Opt(IDL.Float64),
+    'productCode' : IDL.Opt(IDL.Text),
     'description' : IDL.Opt(IDL.Text),
     'variants' : IDL.Opt(IDL.Vec(ProductVariant)),
     'stock' : IDL.Opt(IDL.Nat),
+    'imageUrl' : IDL.Opt(IDL.Text),
     'astrologicalPurpose' : IDL.Opt(IDL.Text),
     'discount' : IDL.Opt(IDL.Nat),
     'category' : IDL.Opt(IDL.Text),
     'benefits' : IDL.Opt(IDL.Text),
     'price' : IDL.Opt(IDL.Float64),
+    'isPersonalised' : IDL.Opt(IDL.Bool),
+    'gemstoneShape' : IDL.Opt(IDL.Text),
   });
   
   return IDL.Service({
@@ -1911,6 +2157,7 @@ export const idlFactory = ({ IDL }) => {
     '_initializeAccessControl' : IDL.Func([], [], []),
     'addBhajan' : IDL.Func([BhajanEntry], [], []),
     'addFestivalEvent' : IDL.Func([FestivalEvent], [], []),
+    'addGemstoneProduct' : IDL.Func([GemstoneProduct], [], []),
     'addHolyBookEntry' : IDL.Func([HolyBookEntry], [], []),
     'addJainArticle' : IDL.Func([JainEncyclopediaArticle], [], []),
     'addJainKatha' : IDL.Func([JainKatha], [], []),
@@ -1921,11 +2168,18 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : NewsletterSubscription, 'err' : IDL.Text })],
         [],
       ),
+    'addPanchangCity' : IDL.Func([PanchangCity], [], []),
     'addPathshalaLesson' : IDL.Func([PathshalaLesson], [], []),
+    'addPersonalisedProduct' : IDL.Func([PersonalisedProduct], [], []),
     'addSuktam' : IDL.Func([SuktamEntry], [], []),
     'addUserPrasadDeliveryRequest' : IDL.Func([PrasadDeliveryRequest], [], []),
     'addVratKatha' : IDL.Func([VratKathaEntry], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'bookPujaEventSlot' : IDL.Func(
+        [SankalpInput],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'createAstrologerProfile' : IDL.Func([AstrologerProfile], [], []),
     'createBlogArticle' : IDL.Func([BlogArticle], [], []),
     'createBookingRequest' : IDL.Func(
@@ -2001,10 +2255,31 @@ export const idlFactory = ({ IDL }) => {
       ),
     'createProduct' : IDL.Func([Product], [], []),
     'createPujaBooking' : IDL.Func([PujaBooking], [], []),
+    'createPujaEvent' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Bool,
+        ],
+        [IDL.Text],
+        [],
+      ),
     'createPujaReport' : IDL.Func([PujaReport], [], []),
     'createPujaType' : IDL.Func([PujaType], [], []),
     'createReportRequest' : IDL.Func([ReportRequest], [], []),
     'createServiceBooking' : IDL.Func([ServiceBooking], [IDL.Text], []),
+    'createSubCategory' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Text],
+        [],
+      ),
     'createTemple' : IDL.Func([Temple], [], []),
     'createVastuContent' : IDL.Func(
         [
@@ -2049,6 +2324,7 @@ export const idlFactory = ({ IDL }) => {
     'deleteCombinedVedicReading' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deleteDevotionalContent' : IDL.Func([IDL.Text], [], []),
     'deleteFestivalEvent' : IDL.Func([IDL.Text], [], []),
+    'deleteGemstoneProduct' : IDL.Func([IDL.Text], [], []),
     'deleteHolyBookEntry' : IDL.Func([IDL.Text], [], []),
     'deleteJainArticle' : IDL.Func([IDL.Text], [], []),
     'deleteJainKatha' : IDL.Func([IDL.Text], [], []),
@@ -2061,14 +2337,23 @@ export const idlFactory = ({ IDL }) => {
       ),
     'deletePalmPhotoReading' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deletePalmistryContent' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'deletePanchangCity' : IDL.Func([IDL.Text], [], []),
     'deletePathshalaLesson' : IDL.Func([IDL.Text], [], []),
+    'deletePersonalisedProduct' : IDL.Func([IDL.Text], [], []),
     'deleteProduct' : IDL.Func([IDL.Text], [], []),
+    'deletePujaEvent' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deletePujaType' : IDL.Func([IDL.Text], [], []),
+    'deleteSubCategory' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deleteSuktam' : IDL.Func([IDL.Text], [], []),
     'deleteVastuContent' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deleteVastuRoomCheck' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'deleteVratKatha' : IDL.Func([IDL.Text], [], []),
     'deleteWebStory' : IDL.Func([IDL.Text], [], []),
+    'generateProductCode' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Text],
+        [],
+      ),
     'getAllAstrologerProfiles' : IDL.Func(
         [],
         [IDL.Vec(AstrologerProfile)],
@@ -2100,6 +2385,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getAllFestivalEvents' : IDL.Func([], [IDL.Vec(FestivalEvent)], ['query']),
+    'getAllGemstoneProducts' : IDL.Func(
+        [],
+        [IDL.Vec(GemstoneProduct)],
+        ['query'],
+      ),
     'getAllJainArticles' : IDL.Func(
         [],
         [IDL.Vec(JainEncyclopediaArticle)],
@@ -2111,13 +2401,21 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(JainPathshalaEntry)],
         ['query'],
       ),
+    'getAllPanchangCities' : IDL.Func([], [IDL.Vec(PanchangCity)], ['query']),
     'getAllPathshalaLessons' : IDL.Func(
         [],
         [IDL.Vec(PathshalaLesson)],
         ['query'],
       ),
+    'getAllPersonalisedProducts' : IDL.Func(
+        [],
+        [IDL.Vec(PersonalisedProduct)],
+        ['query'],
+      ),
     'getAllProductManagers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
+    'getAllPujaEvents' : IDL.Func([], [IDL.Vec(PujaEvent)], ['query']),
+    'getAllPujaEventsAdmin' : IDL.Func([], [IDL.Vec(PujaEvent)], ['query']),
     'getAllPujaReports' : IDL.Func([], [IDL.Vec(PujaReport)], ['query']),
     'getAllPujaTypes' : IDL.Func([], [IDL.Vec(PujaType)], ['query']),
     'getAllTemples' : IDL.Func([], [IDL.Vec(Temple)], ['query']),
@@ -2152,6 +2450,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCitiesByState' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Vec(PanchangCity)))],
+        ['query'],
+      ),
     'getCombinedVedicReading' : IDL.Func(
         [IDL.Text],
         [IDL.Opt(CombinedVedicReading)],
@@ -2165,6 +2468,11 @@ export const idlFactory = ({ IDL }) => {
     'getFestivalEventsByFaith' : IDL.Func(
         [IDL.Text],
         [IDL.Vec(FestivalEvent)],
+        ['query'],
+      ),
+    'getGemstoneProductsByType' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(GemstoneProduct)],
         ['query'],
       ),
     'getHolyBookEntries' : IDL.Func(
@@ -2275,6 +2583,7 @@ export const idlFactory = ({ IDL }) => {
     'getPujaTypeById' : IDL.Func([IDL.Text], [IDL.Opt(PujaType)], ['query']),
     'getServiceBookings' : IDL.Func([], [IDL.Vec(ServiceBooking)], ['query']),
     'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
+    'getSubCategories' : IDL.Func([], [IDL.Vec(ProductSubCategory)], ['query']),
     'getSuktamById' : IDL.Func([IDL.Text], [IDL.Opt(SuktamEntry)], ['query']),
     'getSuktams' : IDL.Func([], [IDL.Vec(SuktamEntry)], ['query']),
     'getUserAstroCharts' : IDL.Func([], [IDL.Vec(AstroChart)], ['query']),
@@ -2417,6 +2726,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'updateDevotionalContent' : IDL.Func([DevotionalContent], [], []),
     'updateFestivalEvent' : IDL.Func([FestivalEvent], [], []),
+    'updateGemstoneProduct' : IDL.Func([GemstoneProduct], [], []),
     'updateHolyBookEntry' : IDL.Func([HolyBookEntry], [], []),
     'updateJainArticle' : IDL.Func([JainEncyclopediaArticle], [], []),
     'updateJainKatha' : IDL.Func([JainKatha], [], []),
@@ -2458,7 +2768,9 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(PalmistryContent)],
         [],
       ),
+    'updatePanchangCity' : IDL.Func([PanchangCity], [], []),
     'updatePathshalaLesson' : IDL.Func([IDL.Text, PathshalaLesson], [], []),
+    'updatePersonalisedProduct' : IDL.Func([PersonalisedProduct], [], []),
     'updatePrasadDeliveryStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'updateProduct' : IDL.Func([Product], [], []),
     'updateProductFields' : IDL.Func([IDL.Text, ProductUpdateRequest], [], []),
@@ -2468,10 +2780,32 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
+    'updatePujaEvent' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Bool,
+        ],
+        [IDL.Bool],
+        [],
+      ),
     'updatePujaReport' : IDL.Func([IDL.Text, PujaReport], [], []),
     'updatePujaType' : IDL.Func([PujaType], [], []),
     'updateReportRequest' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'updateServiceBookingStatus' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'updateSubCategory' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Bool],
+        [],
+      ),
     'updateSuktam' : IDL.Func([SuktamEntry], [], []),
     'updateVastuContent' : IDL.Func(
         [

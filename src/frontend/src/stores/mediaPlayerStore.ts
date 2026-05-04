@@ -18,8 +18,11 @@ export interface MediaTrack {
   contentType: ContentType;
   audioUrl?: string;
   duration?: number; // seconds
+  durationLabel?: string; // human-readable mock duration e.g. '3:45'
   thumbnail?: string;
   lyrics?: string;
+  artist?: string;
+  hasMockAudio?: boolean; // true when audioUrl is empty but track is demo
 }
 
 interface MediaPlayerState {

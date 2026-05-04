@@ -3,11 +3,16 @@ import { Input } from "@/components/ui/input";
 import { type Ashtakam, ashtakamDataA } from "@/data/ashtakamDataA";
 import { ashtakamDataB } from "@/data/ashtakamDataB";
 import { ashtakamDataC } from "@/data/ashtakamDataC";
+import { ASHTAKAM_FINAL_DATA } from "@/data/ashtakamDataFinal";
 import { ashtakamData_D } from "@/data/ashtakamData_D";
+import { ashtakamNewBatch } from "@/data/ashtakamData_new_batch";
 import { ArrowLeft, Search, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
+import AudioPlayer from "../components/AudioPlayer";
 import BenefitsSection from "../components/BenefitsSection";
+import FavouriteButton from "../components/FavouriteButton";
+import WhatsAppShare from "../components/WhatsAppShare";
 import { findBenefitsByTitle } from "../data/content-benefits-data";
 
 const ashtakams: Ashtakam[] = [
@@ -15,6 +20,8 @@ const ashtakams: Ashtakam[] = [
   ...ashtakamDataB,
   ...ashtakamDataC,
   ...ashtakamData_D,
+  ...ashtakamNewBatch,
+  ...ASHTAKAM_FINAL_DATA,
 ];
 
 export default function AshtakamLibrary() {
@@ -144,6 +151,28 @@ export default function AshtakamLibrary() {
             })}
           </div>
 
+          {/* Share Row */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginBottom: 16,
+            }}
+          >
+            <FavouriteButton
+              item={{
+                id: selected.id,
+                type: "ashtakam",
+                title: selected.name,
+                subtitle: selected.deity,
+                path: "/ashtakam",
+                icon: "🕉️",
+              }}
+            />
+            <WhatsAppShare title={selected.name} />
+          </div>
+
           {/* Content */}
           <div
             style={{
@@ -154,18 +183,39 @@ export default function AshtakamLibrary() {
             }}
           >
             {activeTab === "text" && (
-              <pre
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontFamily: "'Noto Sans Devanagari', serif",
-                  fontSize: 15,
-                  lineHeight: 2,
-                  color: "oklch(0.90 0.04 80)",
-                  margin: 0,
-                }}
-              >
-                {selected.text}
-              </pre>
+              <>
+                <pre
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    fontFamily: "'Noto Sans Devanagari', serif",
+                    fontSize: 15,
+                    lineHeight: 2,
+                    color: "oklch(0.90 0.04 80)",
+                    margin: 0,
+                  }}
+                >
+                  {selected.text}
+                </pre>
+                {/* Audio Playback */}
+                <div style={{ marginTop: 24 }}>
+                  <p
+                    style={{
+                      color: "oklch(0.78 0.14 75)",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      marginBottom: 8,
+                    }}
+                  >
+                    ॐ Audio Playback
+                  </p>
+                  <AudioPlayer
+                    title={selected.name}
+                    audioUrl=""
+                    hasMockAudio={true}
+                    youtubeSearchQuery={`${selected.name} ashtakam`}
+                  />
+                </div>
+              </>
             )}
             {activeTab === "meaning" && (
               <div>
@@ -332,12 +382,25 @@ export default function AshtakamLibrary() {
                   padding: "22px",
                   cursor: "pointer",
                   transition: "all 0.2s",
+                  position: "relative",
                 }}
                 whileHover={{
                   borderColor: "oklch(0.75 0.20 75 / 0.50)",
                   scale: 1.02,
                 }}
               >
+                <div style={{ position: "absolute", top: 10, right: 10 }}>
+                  <FavouriteButton
+                    item={{
+                      id: ashtakam.id,
+                      type: "ashtakam",
+                      title: ashtakam.name,
+                      subtitle: ashtakam.deity,
+                      path: "/ashtakam",
+                      icon: "🕉️",
+                    }}
+                  />
+                </div>
                 <div
                   style={{ display: "flex", alignItems: "flex-start", gap: 14 }}
                 >

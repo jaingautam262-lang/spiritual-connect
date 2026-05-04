@@ -3,7 +3,10 @@ import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
-import { useCreateCheckoutSession } from "../hooks/useQueries";
+import {
+  useCreateCheckoutSession,
+  useIsStripeConfigured,
+} from "../hooks/useQueries";
 import { useCartStore } from "../stores/cartStore";
 
 interface ShoppingCartPanelProps {
@@ -20,12 +23,24 @@ export default function ShoppingCartPanel({
   const { identity } = useInternetIdentity();
   const checkoutMutation = useCreateCheckoutSession();
 
+  const { data: stripeConfigured } = useIsStripeConfigured();
+
   const handleCheckout = async () => {
     if (!identity) {
       toast.error("Please login to proceed with checkout");
       return;
     }
     if (items.length === 0) return;
+
+    // If Stripe not configured, direct to WhatsApp
+    if (stripeConfigured === false) {
+      const itemList = items.map((i) => `${i.name} x${i.quantity}`).join(", ");
+      const msg = encodeURIComponent(
+        `Hello! I'd like to purchase: ${itemList}. Total: ₹${totalPrice().toFixed(2)}`,
+      );
+      window.open(`https://wa.me/919999999999?text=${msg}`, "_blank");
+      return;
+    }
 
     const shoppingItems = items.map((item) => ({
       name: item.name,
@@ -43,7 +58,9 @@ export default function ShoppingCartPanel({
       if (!session?.url) throw new Error("Stripe session missing url");
       window.location.href = session.url;
     } catch {
-      toast.error("Checkout failed. Please try again.");
+      toast.error(
+        "Checkout unavailable. Contact us via WhatsApp to complete your purchase.",
+      );
     }
   };
 
@@ -203,25 +220,59 @@ export default function ShoppingCartPanel({
                 ₹{totalPrice().toFixed(2)}
               </span>
             </div>
-            <button
-              type="button"
-              onClick={handleCheckout}
-              disabled={checkoutMutation.isPending}
-              className="w-full py-3 rounded-full font-heading font-bold text-sm tracking-wide transition-all disabled:opacity-50"
-              style={{
-                background:
-                  "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
-                color: "white",
-              }}
-            >
-              {checkoutMutation.isPending
-                ? "Processing..."
-                : "Proceed to Checkout"}
-            </button>
+
+            {stripeConfigured === false ? (
+              <div
+                className="rounded-xl p-3 text-center"
+                style={{
+                  background: "oklch(0.22 0.07 22 / 0.08)",
+                  border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+                }}
+              >
+                <p
+                  className="text-xs font-body mb-2"
+                  style={{ color: "oklch(0.40 0.08 25)" }}
+                >
+                  Contact us to complete your purchase
+                </p>
+                <button
+                  type="button"
+                  onClick={handleCheckout}
+                  className="w-full py-2.5 rounded-full font-heading font-bold text-sm tracking-wide transition-all"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, oklch(0.55 0.18 145), oklch(0.45 0.18 140))",
+                    color: "white",
+                  }}
+                  data-ocid="cart.whatsapp_button"
+                >
+                  💬 Order via WhatsApp
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleCheckout}
+                disabled={checkoutMutation.isPending}
+                className="w-full py-3 rounded-full font-heading font-bold text-sm tracking-wide transition-all disabled:opacity-50"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+                  color: "white",
+                }}
+                data-ocid="cart.checkout_button"
+              >
+                {checkoutMutation.isPending
+                  ? "Processing..."
+                  : "Proceed to Checkout"}
+              </button>
+            )}
+
             <button
               type="button"
               onClick={clearCart}
               className="w-full py-2 text-sm font-heading text-muted-foreground hover:text-destructive transition-colors"
+              data-ocid="cart.clear_button"
             >
               Clear Cart
             </button>

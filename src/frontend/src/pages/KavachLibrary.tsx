@@ -1,15 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { kavachBatch2025 } from "@/data/kavachBatch2025";
 import { type Kavach, kavachDataA } from "@/data/kavachDataA";
 import { kavachDataB } from "@/data/kavachDataB";
 import { kavachData_C } from "@/data/kavachData_C";
 import { ArrowLeft, Search, Shield, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
+import AudioPlayer from "../components/AudioPlayer";
 import BenefitsSection from "../components/BenefitsSection";
+import { ContentCard } from "../components/ContentCard";
+import FavouriteButton from "../components/FavouriteButton";
+import WhatsAppShare from "../components/WhatsAppShare";
+import { useLanguage } from "../contexts/LanguageContext";
 import { findBenefitsByTitle } from "../data/content-benefits-data";
 
-const kavachs: Kavach[] = [...kavachDataA, ...kavachDataB, ...kavachData_C];
+const kavachs: Kavach[] = [
+  ...kavachDataA,
+  ...kavachDataB,
+  ...kavachData_C,
+  ...kavachBatch2025,
+];
 
 const faithColors: Record<string, string> = {
   हिंदू: "oklch(0.55 0.20 48)",
@@ -24,6 +35,8 @@ export default function KavachLibrary() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Kavach | null>(null);
   const benefitsData = selected ? findBenefitsByTitle(selected.name) : null;
+  const { language } = useLanguage();
+  const isHindi = language === "hi";
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -65,7 +78,7 @@ export default function KavachLibrary() {
                 fontFamily: "'Playfair Display', serif",
               }}
             >
-              कवच लाइब्रेरी
+              {isHindi ? "कवच लाइब्रेरी" : "Kavach Library"}
             </h1>
             <Shield
               className="h-10 w-10"
@@ -73,19 +86,21 @@ export default function KavachLibrary() {
             />
           </div>
           <p className="text-lg mb-1" style={{ color: "oklch(0.88 0.06 75)" }}>
-            Kavach Library
+            {isHindi ? "दिव्य सुरक्षा कवच" : "Kavach Library"}
           </p>
           <p
             className="text-sm max-w-xl mx-auto"
             style={{ color: "oklch(0.70 0.06 60)" }}
           >
-            दिव्य कवचों का संग्रह — शरीर और आत्मा की रक्षा के लिए
+            {isHindi
+              ? "दिव्य कवचों का संग्रह — शरीर और आत्मा की रक्षा के लिए"
+              : "Collection of divine Kavachs — for protection of body and soul"}
           </p>
           <div
             className="mt-4 text-xs font-semibold"
             style={{ color: "oklch(0.78 0.14 75 / 0.7)" }}
           >
-            {kavachs.length} कवच उपलब्ध
+            {kavachs.length} {isHindi ? "कवच उपलब्ध" : "Kavachs available"}
           </div>
         </motion.div>
       </div>
@@ -114,7 +129,7 @@ export default function KavachLibrary() {
                   style={{ color: "oklch(0.78 0.14 75)" }}
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  कवच लाइब्रेरी
+                  {isHindi ? "कवच लाइब्रेरी" : "Kavach Library"}
                 </button>
                 <span>›</span>
                 <span style={{ color: "oklch(0.88 0.06 75)" }}>
@@ -166,7 +181,7 @@ export default function KavachLibrary() {
                         className="text-base"
                         style={{ color: "oklch(0.88 0.06 75)" }}
                       >
-                        देवता: {selected.deity}
+                        {isHindi ? "देवता:" : "Deity:"} {selected.deity}
                       </p>
                     </div>
                     <button
@@ -181,12 +196,12 @@ export default function KavachLibrary() {
                       }}
                     >
                       <ArrowLeft className="h-4 w-4" />
-                      वापस
+                      {isHindi ? "वापस" : "Back"}
                     </button>
                   </div>
                 </div>
 
-                {/* Benefits Section */}
+                {/* Benefits inline */}
                 <div
                   className="mx-8 mt-6 mb-4 p-4 rounded-xl"
                   style={{
@@ -206,7 +221,7 @@ export default function KavachLibrary() {
                       className="text-base font-bold"
                       style={{ color: "oklch(0.78 0.14 75)" }}
                     >
-                      फल एवं लाभ
+                      {isHindi ? "फल एवं लाभ" : "Benefits & Results"}
                     </h3>
                   </div>
                   <p
@@ -217,33 +232,32 @@ export default function KavachLibrary() {
                   </p>
                 </div>
 
-                {/* Full Text */}
+                {/* Full Text via ContentCard */}
                 <div className="px-8 pb-8">
-                  <h3
-                    className="text-sm font-semibold uppercase tracking-wider mb-4"
-                    style={{ color: "oklch(0.78 0.14 75 / 0.7)" }}
-                  >
-                    पूर्ण पाठ
-                  </h3>
-                  <div
-                    className="rounded-xl p-6"
-                    style={{
-                      background: "oklch(0.18 0.07 22)",
-                      border: "1px solid oklch(0.78 0.14 75 / 0.12)",
-                    }}
-                  >
-                    <pre
-                      className="whitespace-pre-wrap font-sans leading-8 font-devanagari"
-                      style={{
-                        color: "oklch(0.92 0.04 75)",
-                        fontSize: "1.05rem",
-                      }}
-                    >
-                      {selected.text}
-                    </pre>
+                  <ContentCard title={selected.name} text={selected.text} />
+
+                  {/* WhatsApp Share */}
+                  <div className="mt-4 flex items-center gap-3">
+                    <WhatsAppShare title={selected.name} />
                   </div>
 
-                  {/* Benefits Section */}
+                  {/* Audio Playback */}
+                  <div className="mt-6">
+                    <p
+                      className="text-sm font-semibold mb-2"
+                      style={{ color: "oklch(0.78 0.14 75)" }}
+                    >
+                      ॐ Audio Playback
+                    </p>
+                    <AudioPlayer
+                      title={selected.name}
+                      audioUrl=""
+                      hasMockAudio={true}
+                      youtubeSearchQuery={`${selected.name} kavach`}
+                    />
+                  </div>
+
+                  {/* BenefitsSection */}
                   {benefitsData && (
                     <div className="mt-6">
                       <BenefitsSection
@@ -276,7 +290,9 @@ export default function KavachLibrary() {
                 />
                 <Input
                   data-ocid="kavach.search_input"
-                  placeholder="कवच या देवता खोजें..."
+                  placeholder={
+                    isHindi ? "कवच या देवता खोजें..." : "Search kavach or deity..."
+                  }
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10 py-3 text-base rounded-full border"
@@ -294,7 +310,7 @@ export default function KavachLibrary() {
                   className="text-sm mb-4 text-center"
                   style={{ color: "oklch(0.70 0.06 60)" }}
                 >
-                  {filtered.length} परिणाम मिले
+                  {filtered.length} {isHindi ? "परिणाम मिले" : "results found"}
                 </p>
               )}
 
@@ -306,7 +322,9 @@ export default function KavachLibrary() {
                   style={{ color: "oklch(0.60 0.04 50)" }}
                 >
                   <Shield className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                  <p className="text-lg">कोई कवच नहीं मिला</p>
+                  <p className="text-lg">
+                    {isHindi ? "कोई कवच नहीं मिला" : "No kavach found"}
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -317,7 +335,27 @@ export default function KavachLibrary() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.04 }}
+                      style={{ position: "relative" }}
                     >
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          zIndex: 10,
+                        }}
+                      >
+                        <FavouriteButton
+                          item={{
+                            id: kavach.id,
+                            type: "kavach",
+                            title: kavach.name,
+                            subtitle: kavach.deity,
+                            path: "/kavach",
+                            icon: "🛡️",
+                          }}
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => setSelected(kavach)}
@@ -400,7 +438,7 @@ export default function KavachLibrary() {
                           className="mt-3 text-xs font-medium flex items-center gap-1"
                           style={{ color: "oklch(0.78 0.14 75)" }}
                         >
-                          पाठ पढ़ें →
+                          {isHindi ? "पाठ पढ़ें \u2192" : "Read Kavach \u2192"}
                         </div>
                       </button>
                     </motion.div>

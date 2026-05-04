@@ -43,6 +43,7 @@ export interface BhajanEntry {
   'createdAt' : Time,
   'lyricsText' : string,
   'artist' : string,
+  'hasMockAudio' : boolean,
   'deity' : string,
 }
 export interface BlogArticle {
@@ -154,6 +155,15 @@ export interface FestivalEvent {
   'deity' : string,
   'faith' : string,
   'eventType' : string,
+}
+export interface GemstoneProduct {
+  'sku' : string,
+  'weightRatti' : number,
+  'gemstoneType' : string,
+  'description' : string,
+  'shape' : string,
+  'gsCode' : [] | [string],
+  'priceINR' : bigint,
 }
 export interface HolyBookEntry {
   'id' : string,
@@ -363,6 +373,16 @@ export interface PalmistryReading {
   'imageUrl' : string,
   'heartLine' : string,
 }
+export interface PanchangCity {
+  'id' : string,
+  'latitude' : number,
+  'timezone' : string,
+  'nameHindi' : string,
+  'stateName' : string,
+  'name' : string,
+  'longitude' : number,
+  'utcOffset' : number,
+}
 export interface PathshalaLesson {
   'id' : string,
   'contentHi' : string,
@@ -382,6 +402,19 @@ export interface PathshalaLesson {
   'titleEn' : string,
   'titleHi' : string,
 }
+export interface PersonalisedProduct {
+  'id' : string,
+  'mrp' : [] | [bigint],
+  'sku' : [] | [string],
+  'name' : string,
+  'createdAt' : bigint,
+  'description' : string,
+  'imageUrl' : [] | [string],
+  'manualCode' : [] | [string],
+  'category' : string,
+  'price' : bigint,
+  'isPersonalised' : boolean,
+}
 export interface PrasadDeliveryRequest {
   'id' : string,
   'status' : string,
@@ -395,31 +428,52 @@ export interface Product {
   'id' : string,
   'mrp' : [] | [number],
   'sku' : [] | [string],
+  'subCategory' : [] | [string],
   'variantLabel' : [] | [string],
+  'gemstoneType' : [] | [string],
   'name' : string,
+  'gemstoneWeightRatti' : [] | [number],
   'createdAt' : Time,
+  'productCode' : [] | [string],
   'description' : string,
   'variants' : [] | [Array<ProductVariant>],
   'stock' : bigint,
+  'imageUrl' : [] | [string],
   'astrologicalPurpose' : string,
   'discount' : [] | [bigint],
   'category' : string,
   'benefits' : string,
   'price' : number,
+  'isPersonalised' : [] | [boolean],
+  'gemstoneShape' : [] | [string],
+}
+export interface ProductSubCategory {
+  'id' : string,
+  'nameCode' : string,
+  'name' : string,
+  'productCount' : bigint,
+  'autoCodePrefix' : string,
 }
 export interface ProductUpdateRequest {
   'mrp' : [] | [number],
   'sku' : [] | [string],
+  'subCategory' : [] | [string],
   'variantLabel' : [] | [string],
+  'gemstoneType' : [] | [string],
   'name' : [] | [string],
+  'gemstoneWeightRatti' : [] | [number],
+  'productCode' : [] | [string],
   'description' : [] | [string],
   'variants' : [] | [Array<ProductVariant>],
   'stock' : [] | [bigint],
+  'imageUrl' : [] | [string],
   'astrologicalPurpose' : [] | [string],
   'discount' : [] | [bigint],
   'category' : [] | [string],
   'benefits' : [] | [string],
   'price' : [] | [number],
+  'isPersonalised' : [] | [boolean],
+  'gemstoneShape' : [] | [string],
 }
 export interface ProductVariant {
   'variantName' : string,
@@ -437,6 +491,21 @@ export interface PujaBooking {
   'preferredDate' : string,
   'templeId' : string,
   'devoteeName' : string,
+}
+export interface PujaEvent {
+  'id' : string,
+  'date' : string,
+  'slotsAvailable' : bigint,
+  'createdAt' : bigint,
+  'time' : string,
+  'description' : string,
+  'isActive' : boolean,
+  'pujaName' : string,
+  'pujaNameHindi' : string,
+  'slotsBooked' : bigint,
+  'price' : bigint,
+  'deity' : string,
+  'location' : string,
 }
 export interface PujaReport {
   'id' : string,
@@ -483,6 +552,15 @@ export interface ReportRequest {
   'name' : string,
   'createdAt' : Time,
   'reportType' : string,
+}
+export interface SankalpInput {
+  'eventId' : string,
+  'email' : string,
+  'specialWishes' : string,
+  'gotra' : string,
+  'mobile' : string,
+  'devoteeName' : string,
+  'birthDetails' : string,
 }
 export interface ServiceBooking {
   'id' : string,
@@ -609,6 +687,7 @@ export interface VratKathaEntry {
   'audioBase64' : string,
   'storyText' : string,
   'createdAt' : Time,
+  'hasMockAudio' : boolean,
   'festivalName' : string,
 }
 export interface WalletTransaction {
@@ -667,6 +746,10 @@ export interface _SERVICE {
    */
   'addFestivalEvent' : ActorMethod<[FestivalEvent], undefined>,
   /**
+   * / Admin or productManager: add a gemstone product.
+   */
+  'addGemstoneProduct' : ActorMethod<[GemstoneProduct], undefined>,
+  /**
    * / Admin-only: add a new holy book entry.
    */
   'addHolyBookEntry' : ActorMethod<[HolyBookEntry], undefined>,
@@ -695,9 +778,17 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   /**
+   * / Admin-only: add a panchang city.
+   */
+  'addPanchangCity' : ActorMethod<[PanchangCity], undefined>,
+  /**
    * / Admin-only: add a new Pathshala lesson.
    */
   'addPathshalaLesson' : ActorMethod<[PathshalaLesson], undefined>,
+  /**
+   * / Admin or productManager: add a personalised product.
+   */
+  'addPersonalisedProduct' : ActorMethod<[PersonalisedProduct], undefined>,
   /**
    * / Admin-only: add a new suktam entry.
    */
@@ -714,6 +805,14 @@ export interface _SERVICE {
    */
   'addVratKatha' : ActorMethod<[VratKathaEntry], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  /**
+   * / Public: book a slot in a puja event. Returns booking reference or error.
+   */
+  'bookPujaEventSlot' : ActorMethod<
+    [SankalpInput],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   /**
    * / Admin-only: create an astrologer profile.
    */
@@ -830,6 +929,24 @@ export interface _SERVICE {
    */
   'createPujaBooking' : ActorMethod<[PujaBooking], undefined>,
   /**
+   * / Admin-only: create a new puja event. Returns the generated id.
+   */
+  'createPujaEvent' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      bigint,
+      bigint,
+      string,
+      string,
+      boolean,
+    ],
+    string
+  >,
+  /**
    * / Admin-only: create a puja report for a completed booking.
    */
   'createPujaReport' : ActorMethod<[PujaReport], undefined>,
@@ -845,6 +962,10 @@ export interface _SERVICE {
    * / Authenticated users can create a service booking for themselves. Returns the booking id.
    */
   'createServiceBooking' : ActorMethod<[ServiceBooking], string>,
+  /**
+   * / Admin or productManager: create a new product sub-category. Returns the generated id.
+   */
+  'createSubCategory' : ActorMethod<[string, string, string], string>,
   /**
    * / Admin-only: create a temple entry.
    */
@@ -909,6 +1030,10 @@ export interface _SERVICE {
    */
   'deleteFestivalEvent' : ActorMethod<[string], undefined>,
   /**
+   * / Admin or productManager: delete a gemstone product by sku.
+   */
+  'deleteGemstoneProduct' : ActorMethod<[string], undefined>,
+  /**
    * / Admin-only: delete a holy book entry.
    */
   'deleteHolyBookEntry' : ActorMethod<[string], undefined>,
@@ -945,17 +1070,33 @@ export interface _SERVICE {
    */
   'deletePalmistryContent' : ActorMethod<[string], boolean>,
   /**
+   * / Admin-only: delete a panchang city.
+   */
+  'deletePanchangCity' : ActorMethod<[string], undefined>,
+  /**
    * / Admin-only: delete a Pathshala lesson.
    */
   'deletePathshalaLesson' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin or productManager: delete a personalised product.
+   */
+  'deletePersonalisedProduct' : ActorMethod<[string], undefined>,
   /**
    * / Admin-only: delete a product.
    */
   'deleteProduct' : ActorMethod<[string], undefined>,
   /**
+   * / Admin-only: delete a puja event. Returns true if deleted.
+   */
+  'deletePujaEvent' : ActorMethod<[string], boolean>,
+  /**
    * / Admin-only: delete a puja type.
    */
   'deletePujaType' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin or productManager: delete a product sub-category. Returns true if deleted.
+   */
+  'deleteSubCategory' : ActorMethod<[string], boolean>,
   /**
    * / Admin-only: delete a suktam entry.
    */
@@ -976,6 +1117,12 @@ export interface _SERVICE {
    * / Admin-only: delete a web story.
    */
   'deleteWebStory' : ActorMethod<[string], undefined>,
+  /**
+   * / Admin or productManager: generate a product code.
+   * / If manualCode is provided, it is returned as-is.
+   * / Otherwise auto-generates PS_{PREFIX}_{seq:3-digits-padded}.
+   */
+  'generateProductCode' : ActorMethod<[string, [] | [string]], string>,
   /**
    * / Public: anyone may browse astrologer profiles.
    */
@@ -1015,6 +1162,10 @@ export interface _SERVICE {
    */
   'getAllFestivalEvents' : ActorMethod<[], Array<FestivalEvent>>,
   /**
+   * / Public: get all gemstone products.
+   */
+  'getAllGemstoneProducts' : ActorMethod<[], Array<GemstoneProduct>>,
+  /**
    * / Public: get all Jain encyclopedia articles.
    */
   'getAllJainArticles' : ActorMethod<[], Array<JainEncyclopediaArticle>>,
@@ -1027,9 +1178,17 @@ export interface _SERVICE {
    */
   'getAllJainPathshalaEntries' : ActorMethod<[], Array<JainPathshalaEntry>>,
   /**
+   * / Public: get all panchang cities.
+   */
+  'getAllPanchangCities' : ActorMethod<[], Array<PanchangCity>>,
+  /**
    * / Admin-only: get all Pathshala lessons (published and unpublished).
    */
   'getAllPathshalaLessons' : ActorMethod<[], Array<PathshalaLesson>>,
+  /**
+   * / Public: get all personalised products.
+   */
+  'getAllPersonalisedProducts' : ActorMethod<[], Array<PersonalisedProduct>>,
   /**
    * / Admin-only: list all product manager principals.
    */
@@ -1038,6 +1197,14 @@ export interface _SERVICE {
    * / Public: anyone may browse products.
    */
   'getAllProducts' : ActorMethod<[], Array<Product>>,
+  /**
+   * / Public: get all puja events (active only for non-admins).
+   */
+  'getAllPujaEvents' : ActorMethod<[], Array<PujaEvent>>,
+  /**
+   * / Admin-only: get all puja events including inactive.
+   */
+  'getAllPujaEventsAdmin' : ActorMethod<[], Array<PujaEvent>>,
   /**
    * / Admin-only: get all puja reports.
    */
@@ -1095,6 +1262,11 @@ export interface _SERVICE {
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   /**
+   * / Public: get panchang cities grouped by state name.
+   * / Returns an array of (stateName, [PanchangCity]) tuples.
+   */
+  'getCitiesByState' : ActorMethod<[], Array<[string, Array<PanchangCity>]>>,
+  /**
    * / Get a single combined vedic reading by id (owner or admin).
    */
   'getCombinedVedicReading' : ActorMethod<
@@ -1109,6 +1281,10 @@ export interface _SERVICE {
    * / Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
    */
   'getFestivalEventsByFaith' : ActorMethod<[string], Array<FestivalEvent>>,
+  /**
+   * / Public: get gemstone products filtered by gemstone type (e.g. AMETHYST).
+   */
+  'getGemstoneProductsByType' : ActorMethod<[string], Array<GemstoneProduct>>,
   /**
    * / Public: anyone may browse holy book entries, optionally filtered by bookTitle.
    */
@@ -1227,6 +1403,10 @@ export interface _SERVICE {
    * / Authenticated users can check a Stripe session status (e.g. after checkout).
    */
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
+  /**
+   * / Public: get all product sub-categories.
+   */
+  'getSubCategories' : ActorMethod<[], Array<ProductSubCategory>>,
   /**
    * / Public: get a single suktam entry by id.
    */
@@ -1459,6 +1639,10 @@ export interface _SERVICE {
    */
   'updateFestivalEvent' : ActorMethod<[FestivalEvent], undefined>,
   /**
+   * / Admin or productManager: update a gemstone product (full replace by sku).
+   */
+  'updateGemstoneProduct' : ActorMethod<[GemstoneProduct], undefined>,
+  /**
    * / Admin-only: update an existing holy book entry.
    */
   'updateHolyBookEntry' : ActorMethod<[HolyBookEntry], undefined>,
@@ -1506,9 +1690,17 @@ export interface _SERVICE {
     [] | [PalmistryContent]
   >,
   /**
+   * / Admin-only: update an existing panchang city.
+   */
+  'updatePanchangCity' : ActorMethod<[PanchangCity], undefined>,
+  /**
    * / Admin-only: update an existing Pathshala lesson.
    */
   'updatePathshalaLesson' : ActorMethod<[string, PathshalaLesson], undefined>,
+  /**
+   * / Admin or productManager: update a personalised product (full replace).
+   */
+  'updatePersonalisedProduct' : ActorMethod<[PersonalisedProduct], undefined>,
   /**
    * / Admin-only: update the status of a prasad delivery request.
    */
@@ -1518,6 +1710,7 @@ export interface _SERVICE {
    */
   'updateProduct' : ActorMethod<[Product], undefined>,
   /**
+   * / Admin or productManager: partial update — only supplied fields are changed.
    * / Admin or productManager: partial update — only supplied fields are changed.
    */
   'updateProductFields' : ActorMethod<
@@ -1536,6 +1729,25 @@ export interface _SERVICE {
     undefined
   >,
   /**
+   * / Admin-only: update an existing puja event. Returns true if updated.
+   */
+  'updatePujaEvent' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      bigint,
+      bigint,
+      string,
+      string,
+      boolean,
+    ],
+    boolean
+  >,
+  /**
    * / Admin-only: update an existing puja report.
    */
   'updatePujaReport' : ActorMethod<[string, PujaReport], undefined>,
@@ -1551,6 +1763,10 @@ export interface _SERVICE {
    * / Admin-only: update the status of a service booking.
    */
   'updateServiceBookingStatus' : ActorMethod<[string, string], undefined>,
+  /**
+   * / Admin or productManager: update a product sub-category. Returns true if updated.
+   */
+  'updateSubCategory' : ActorMethod<[string, string, string, string], boolean>,
   /**
    * / Admin-only: update an existing suktam entry.
    */

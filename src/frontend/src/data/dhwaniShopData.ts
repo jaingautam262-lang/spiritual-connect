@@ -1,5 +1,5 @@
-// ─── Dhwani Astro / Spiritual Connect — Product Catalog ────────────────────────
-// Curated & Energized by Dhwani Jain | 20+ years expertise
+// ─── Spiritual Connect — Product Catalog ─────────────────────────────────────────────────────────────────────────
+// Curated & Energized by Spiritual Connect | 20+ years expertise
 
 export interface DhwaniProduct {
   id: string;

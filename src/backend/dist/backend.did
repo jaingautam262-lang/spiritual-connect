@@ -34,6 +34,7 @@ type VratKathaEntry =
    audioBase64: text;
    createdAt: Time;
    festivalName: text;
+   hasMockAudio: bool;
    id: text;
    storyText: text;
    title: text;
@@ -172,6 +173,16 @@ type ServiceBooking =
    status: text;
    userId: principal;
  };
+type SankalpInput = 
+ record {
+   birthDetails: text;
+   devoteeName: text;
+   email: text;
+   eventId: text;
+   gotra: text;
+   mobile: text;
+   specialWishes: text;
+ };
 type ReportRequest = 
  record {
    content: text;
@@ -221,6 +232,22 @@ type PujaReport =
    sankalp: text;
    userId: principal;
  };
+type PujaEvent = 
+ record {
+   createdAt: int;
+   date: text;
+   deity: text;
+   description: text;
+   id: text;
+   isActive: bool;
+   location: text;
+   price: nat;
+   pujaName: text;
+   pujaNameHindi: text;
+   slotsAvailable: nat;
+   slotsBooked: nat;
+   time: text;
+ };
 type PujaBooking = 
  record {
    createdAt: Time;
@@ -247,13 +274,28 @@ type ProductUpdateRequest =
    category: opt text;
    description: opt text;
    discount: opt nat;
+   gemstoneShape: opt text;
+   gemstoneType: opt text;
+   gemstoneWeightRatti: opt float64;
+   imageUrl: opt text;
+   isPersonalised: opt bool;
    mrp: opt float64;
    name: opt text;
    price: opt float64;
+   productCode: opt text;
    sku: opt text;
    stock: opt nat;
+   subCategory: opt text;
    variantLabel: opt text;
    variants: opt vec ProductVariant;
+ };
+type ProductSubCategory = 
+ record {
+   autoCodePrefix: text;
+   id: text;
+   name: text;
+   nameCode: text;
+   productCount: nat;
  };
 type Product = 
  record {
@@ -263,12 +305,19 @@ type Product =
    createdAt: Time;
    description: text;
    discount: opt nat;
+   gemstoneShape: opt text;
+   gemstoneType: opt text;
+   gemstoneWeightRatti: opt float64;
    id: text;
+   imageUrl: opt text;
+   isPersonalised: opt bool;
    mrp: opt float64;
    name: text;
    price: float64;
+   productCode: opt text;
    sku: opt text;
    stock: nat;
+   subCategory: opt text;
    variantLabel: opt text;
    variants: opt vec ProductVariant;
  };
@@ -281,6 +330,20 @@ type PrasadDeliveryRequest =
    status: text;
    templeId: text;
    userId: principal;
+ };
+type PersonalisedProduct = 
+ record {
+   category: text;
+   createdAt: int;
+   description: text;
+   id: text;
+   imageUrl: opt text;
+   isPersonalised: bool;
+   manualCode: opt text;
+   mrp: opt nat;
+   name: text;
+   price: nat;
+   sku: opt text;
  };
 type PathshalaLesson = 
  record {
@@ -301,6 +364,17 @@ type PathshalaLesson =
    titleEn: text;
    titleHi: text;
    updatedAt: int;
+ };
+type PanchangCity = 
+ record {
+   id: text;
+   latitude: float64;
+   longitude: float64;
+   name: text;
+   nameHindi: text;
+   stateName: text;
+   timezone: text;
+   utcOffset: float64;
  };
 type PalmistryReading = 
  record {
@@ -533,6 +607,16 @@ type HolyBookEntry =
    shlokaText: text;
    trackNumber: nat;
  };
+type GemstoneProduct = 
+ record {
+   description: text;
+   gemstoneType: text;
+   gsCode: opt text;
+   priceINR: nat;
+   shape: text;
+   sku: text;
+   weightRatti: float64;
+ };
 type FestivalEvent = 
  record {
    date: text;
@@ -660,6 +744,7 @@ type BhajanEntry =
    audioBase64: text;
    createdAt: Time;
    deity: text;
+   hasMockAudio: bool;
    id: text;
    lyricsText: text;
    title: text;
@@ -707,6 +792,8 @@ service : {
   addBhajan: (entry: BhajanEntry) -> ();
   /// Admin-only: add a festival event.
   addFestivalEvent: (event: FestivalEvent) -> ();
+  /// Admin or productManager: add a gemstone product.
+  addGemstoneProduct: (entry: GemstoneProduct) -> ();
   /// Admin-only: add a new holy book entry.
   addHolyBookEntry: (entry: HolyBookEntry) -> ();
   /// Admin-only: add a new Jain encyclopedia article.
@@ -723,8 +810,12 @@ service : {
       err: text;
       ok: NewsletterSubscription;
     });
+  /// Admin-only: add a panchang city.
+  addPanchangCity: (city: PanchangCity) -> ();
   /// Admin-only: add a new Pathshala lesson.
   addPathshalaLesson: (lesson: PathshalaLesson) -> ();
+  /// Admin or productManager: add a personalised product.
+  addPersonalisedProduct: (entry: PersonalisedProduct) -> ();
   /// Admin-only: add a new suktam entry.
   addSuktam: (entry: SuktamEntry) -> ();
   /// Authenticated users can submit a prasad delivery request for themselves.
@@ -732,6 +823,12 @@ service : {
   /// Admin-only: add a new vrat katha entry.
   addVratKatha: (entry: VratKathaEntry) -> ();
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  /// Public: book a slot in a puja event. Returns booking reference or error.
+  bookPujaEventSlot: (sankalp: SankalpInput) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
   /// Admin-only: create an astrologer profile.
   createAstrologerProfile: (profile: AstrologerProfile) -> ();
   /// Admin-only: create a blog article.
@@ -775,6 +872,10 @@ service : {
   createProduct: (product: Product) -> ();
   /// Authenticated users can create a puja booking for themselves.
   createPujaBooking: (booking: PujaBooking) -> ();
+  /// Admin-only: create a new puja event. Returns the generated id.
+  createPujaEvent: (pujaName: text, pujaNameHindi: text, date: text, time:
+   text, description: text, price: nat, slotsAvailable: nat, location: 
+   text, deity: text, isActive: bool) -> (text);
   /// Admin-only: create a puja report for a completed booking.
   createPujaReport: (report: PujaReport) -> ();
   /// Admin-only: create a puja type.
@@ -783,6 +884,9 @@ service : {
   createReportRequest: (request: ReportRequest) -> ();
   /// Authenticated users can create a service booking for themselves. Returns the booking id.
   createServiceBooking: (booking: ServiceBooking) -> (text);
+  /// Admin or productManager: create a new product sub-category. Returns the generated id.
+  createSubCategory: (name: text, nameCode: text, autoCodePrefix: text) ->
+   (text);
   /// Admin-only: create a temple entry.
   createTemple: (temple: Temple) -> ();
   /// Admin-only: create a new vastu content entry. Returns the created entry.
@@ -809,6 +913,8 @@ service : {
   deleteDevotionalContent: (id: text) -> ();
   /// Admin-only: delete a festival event.
   deleteFestivalEvent: (id: text) -> ();
+  /// Admin or productManager: delete a gemstone product by sku.
+  deleteGemstoneProduct: (sku: text) -> ();
   /// Admin-only: delete a holy book entry.
   deleteHolyBookEntry: (id: text) -> ();
   /// Admin-only: delete a Jain encyclopedia article.
@@ -828,12 +934,20 @@ service : {
   deletePalmPhotoReading: (id: text) -> (bool);
   /// Admin-only: delete a palmistry content entry. Returns true if deleted, false if not found.
   deletePalmistryContent: (id: text) -> (bool);
+  /// Admin-only: delete a panchang city.
+  deletePanchangCity: (id: text) -> ();
   /// Admin-only: delete a Pathshala lesson.
   deletePathshalaLesson: (id: text) -> ();
+  /// Admin or productManager: delete a personalised product.
+  deletePersonalisedProduct: (id: text) -> ();
   /// Admin-only: delete a product.
   deleteProduct: (id: text) -> ();
+  /// Admin-only: delete a puja event. Returns true if deleted.
+  deletePujaEvent: (id: text) -> (bool);
   /// Admin-only: delete a puja type.
   deletePujaType: (id: text) -> ();
+  /// Admin or productManager: delete a product sub-category. Returns true if deleted.
+  deleteSubCategory: (id: text) -> (bool);
   /// Admin-only: delete a suktam entry.
   deleteSuktam: (id: text) -> ();
   /// Admin-only: delete a vastu content entry. Returns true if deleted, false if not found.
@@ -844,6 +958,11 @@ service : {
   deleteVratKatha: (id: text) -> ();
   /// Admin-only: delete a web story.
   deleteWebStory: (id: text) -> ();
+  /// Admin or productManager: generate a product code.
+  /// If manualCode is provided, it is returned as-is.
+  /// Otherwise auto-generates PS_{PREFIX}_{seq:3-digits-padded}.
+  generateProductCode: (subCategoryPrefix: text, manualCode: opt text) ->
+   (text);
   /// Public: anyone may browse astrologer profiles.
   getAllAstrologerProfiles: () -> (vec AstrologerProfile) query;
   /// Public: get all blog articles (admin may see unpublished; public sees all).
@@ -866,18 +985,28 @@ service : {
   getAllDevotionalContents: () -> (vec DevotionalContent) query;
   /// Public: get all festival events.
   getAllFestivalEvents: () -> (vec FestivalEvent) query;
+  /// Public: get all gemstone products.
+  getAllGemstoneProducts: () -> (vec GemstoneProduct) query;
   /// Public: get all Jain encyclopedia articles.
   getAllJainArticles: () -> (vec JainEncyclopediaArticle) query;
   /// Public: get all Jain Kathas.
   getAllJainKathas: () -> (vec JainKatha) query;
   /// Public: get all Jain Pathshala entries.
   getAllJainPathshalaEntries: () -> (vec JainPathshalaEntry) query;
+  /// Public: get all panchang cities.
+  getAllPanchangCities: () -> (vec PanchangCity) query;
   /// Admin-only: get all Pathshala lessons (published and unpublished).
   getAllPathshalaLessons: () -> (vec PathshalaLesson) query;
+  /// Public: get all personalised products.
+  getAllPersonalisedProducts: () -> (vec PersonalisedProduct) query;
   /// Admin-only: list all product manager principals.
   getAllProductManagers: () -> (vec principal) query;
   /// Public: anyone may browse products.
   getAllProducts: () -> (vec Product) query;
+  /// Public: get all puja events (active only for non-admins).
+  getAllPujaEvents: () -> (vec PujaEvent) query;
+  /// Admin-only: get all puja events including inactive.
+  getAllPujaEventsAdmin: () -> (vec PujaEvent) query;
   /// Admin-only: get all puja reports.
   getAllPujaReports: () -> (vec PujaReport) query;
   /// Public: anyone may browse puja types.
@@ -908,12 +1037,21 @@ service : {
   /// Get the calling user's own profile.
   getCallerUserProfile: () -> (opt UserProfile) query;
   getCallerUserRole: () -> (UserRole) query;
+  /// Public: get panchang cities grouped by state name.
+  /// Returns an array of (stateName, [PanchangCity]) tuples.
+  getCitiesByState: () -> (vec record {
+                                 text;
+                                 vec PanchangCity;
+                               }) query;
   /// Get a single combined vedic reading by id (owner or admin).
   getCombinedVedicReading: (id: text) -> (opt CombinedVedicReading) query;
   /// Public: get a single devotional content entry.
   getDevotionalContent: (id: text) -> (opt DevotionalContent) query;
   /// Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
   getFestivalEventsByFaith: (faith: text) -> (vec FestivalEvent) query;
+  /// Public: get gemstone products filtered by gemstone type (e.g. AMETHYST).
+  getGemstoneProductsByType: (gemstoneType: text) ->
+   (vec GemstoneProduct) query;
   /// Public: anyone may browse holy book entries, optionally filtered by bookTitle.
   getHolyBookEntries: (bookTitle: text) -> (vec HolyBookEntry) query;
   /// Public: get a single holy book entry by id.
@@ -973,6 +1111,8 @@ service : {
   getServiceBookings: () -> (vec ServiceBooking) query;
   /// Authenticated users can check a Stripe session status (e.g. after checkout).
   getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
+  /// Public: get all product sub-categories.
+  getSubCategories: () -> (vec ProductSubCategory) query;
   /// Public: get a single suktam entry by id.
   getSuktamById: (id: text) -> (opt SuktamEntry) query;
   /// Public: anyone may browse suktam entries.
@@ -1081,6 +1221,8 @@ service : {
   updateDevotionalContent: (content: DevotionalContent) -> ();
   /// Admin-only: update an existing festival event.
   updateFestivalEvent: (event: FestivalEvent) -> ();
+  /// Admin or productManager: update a gemstone product (full replace by sku).
+  updateGemstoneProduct: (entry: GemstoneProduct) -> ();
   /// Admin-only: update an existing holy book entry.
   updateHolyBookEntry: (entry: HolyBookEntry) -> ();
   /// Admin-only: update an existing Jain encyclopedia article.
@@ -1101,18 +1243,27 @@ service : {
    text, lineOrPalmType: text, descriptionEn: text, descriptionHi: text,
    characteristicsEn: text, characteristicsHi: text, locationOnPalm: 
    text, benefitsEn: text, benefitsHi: text) -> (opt PalmistryContent);
+  /// Admin-only: update an existing panchang city.
+  updatePanchangCity: (city: PanchangCity) -> ();
   /// Admin-only: update an existing Pathshala lesson.
   updatePathshalaLesson: (id: text, lesson: PathshalaLesson) -> ();
+  /// Admin or productManager: update a personalised product (full replace).
+  updatePersonalisedProduct: (entry: PersonalisedProduct) -> ();
   /// Admin-only: update the status of a prasad delivery request.
   updatePrasadDeliveryStatus: (id: text, status: text) -> ();
   /// Admin or productManager: replace a product entirely (backward-compatible full update).
   updateProduct: (product: Product) -> ();
+  /// Admin or productManager: partial update — only supplied fields are changed.
   /// Admin or productManager: partial update — only supplied fields are changed.
   updateProductFields: (id: text, updates: ProductUpdateRequest) -> ();
   /// Admin or productManager: update stock for a product.
   updateProductStock: (id: text, stock: nat) -> ();
   /// Admin or productManager: update only the variants array for a product (gemstone weight variants).
   updateProductVariants: (id: text, variants: vec ProductVariant) -> ();
+  /// Admin-only: update an existing puja event. Returns true if updated.
+  updatePujaEvent: (id: text, pujaName: text, pujaNameHindi: text, date:
+   text, time: text, description: text, price: nat, slotsAvailable: nat,
+   location: text, deity: text, isActive: bool) -> (bool);
   /// Admin-only: update an existing puja report.
   updatePujaReport: (id: text, report: PujaReport) -> ();
   /// Admin-only: update an existing puja type.
@@ -1121,6 +1272,9 @@ service : {
   updateReportRequest: (id: text, status: text, content: text) -> ();
   /// Admin-only: update the status of a service booking.
   updateServiceBookingStatus: (id: text, status: text) -> ();
+  /// Admin or productManager: update a product sub-category. Returns true if updated.
+  updateSubCategory: (id: text, name: text, nameCode: text, autoCodePrefix:
+   text) -> (bool);
   /// Admin-only: update an existing suktam entry.
   updateSuktam: (entry: SuktamEntry) -> ();
   /// Admin-only: update an existing vastu content entry. Returns the updated entry or null if not found.

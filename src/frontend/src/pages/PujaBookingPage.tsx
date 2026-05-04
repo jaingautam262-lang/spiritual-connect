@@ -13,10 +13,13 @@ import {
   Star,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
+import { seedPujaEvents } from "../data/pujaEventsData";
 import {
+  useBookPujaEventSlot,
   useCreatePujaBooking,
+  useGetAllPujaEvents,
   useGetAllTemples,
   useGetUserPujaBookings,
 } from "../hooks/useQueries";
@@ -183,6 +186,693 @@ const TIME_SLOTS = [
 ];
 
 const DAAN_PRESETS = [251, 501, 1001, 2001];
+// ─── Sankalp modal for event booking ───────────────────────────────────────────────────
+
+interface SankalpFormState {
+  devoteeName: string;
+  gotra: string;
+  mobile: string;
+  email: string;
+  birthDetails: string;
+  specialWishes: string;
+}
+
+function SankalpModal({
+  event,
+  onClose,
+}: {
+  event: {
+    id: string;
+    pujaName: string;
+    pujaNameHindi: string;
+    date: string;
+    time: string;
+    price: number;
+    location: string;
+  };
+  onClose: () => void;
+}) {
+  const bookSlot = useBookPujaEventSlot();
+  const [form, setForm] = useState<SankalpFormState>({
+    devoteeName: "",
+    gotra: "",
+    mobile: "",
+    email: "",
+    birthDetails: "",
+    specialWishes: "",
+  });
+  const [booked, setBooked] = useState<string | null>(null);
+
+  const inputCls =
+    "w-full px-3 py-2 rounded-lg border text-sm font-body focus:outline-none bg-background";
+  const borderStyle = { borderColor: "oklch(0.78 0.14 75 / 0.3)" };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!form.devoteeName.trim()) {
+      toast.error("कृपया अपना नाम दर्ज करें");
+      return;
+    }
+    bookSlot.mutate(
+      {
+        eventId: event.id,
+        devoteeName: form.devoteeName,
+        gotra: form.gotra,
+        mobile: form.mobile,
+        email: form.email,
+        birthDetails: form.birthDetails,
+        specialWishes: form.specialWishes,
+      },
+      {
+        onSuccess: (ref) => {
+          setBooked(ref);
+          toast.success("🙏 संकल्प दर्ज किया गया!");
+        },
+        onError: (err) => toast.error(err.message),
+      },
+    );
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "oklch(0.10 0.04 20 / 0.7)" }}
+      onClick={onClose}
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      role="presentation"
+      data-ocid="puja_event.modal"
+    >
+      <div
+        className="bg-card rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        style={{ border: "1px solid oklch(0.78 0.14 75 / 0.3)" }}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <div
+          className="p-5 relative"
+          style={{
+            background:
+              "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.55 0.16 35))",
+          }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+            aria-label="Close"
+            data-ocid="puja_event.close_button"
+          >
+            ×
+          </button>
+          <h2 className="font-heading font-bold text-white text-lg">
+            {event.pujaNameHindi}
+          </h2>
+          <p className="font-body text-white/80 text-sm">{event.pujaName}</p>
+          <div className="flex gap-4 mt-2 text-xs text-white/70 font-body">
+            <span>📅 {event.date}</span>
+            <span>⏰ {event.time}</span>
+            <span>💰 ₹{event.price.toLocaleString("en-IN")}</span>
+          </div>
+        </div>
+
+        {booked ? (
+          <div className="p-6 text-center" data-ocid="puja_event.success_state">
+            <CheckCircle
+              className="h-12 w-12 mx-auto mb-3"
+              style={{ color: "oklch(0.55 0.18 145)" }}
+            />
+            <h3
+              className="font-heading font-bold text-lg mb-2"
+              style={{ color: "oklch(0.35 0.12 25)" }}
+            >
+              🙏 संकल्प सफल!
+            </h3>
+            <p className="font-body text-sm text-muted-foreground mb-1">
+              आपका संकल्प दर्ज हो गया है
+            </p>
+            <div
+              className="inline-block px-4 py-1.5 rounded-full text-xs font-heading font-bold mt-2"
+              style={{
+                background: "oklch(0.68 0.20 48 / 0.1)",
+                color: "oklch(0.45 0.14 40)",
+                border: "1px solid oklch(0.68 0.20 48 / 0.3)",
+              }}
+            >
+              {booked}
+            </div>
+            <p
+              className="text-xs font-body mt-3"
+              style={{ color: "oklch(0.55 0.06 50)" }}
+            >
+              24 घंटे में पंडित जी आपसे संपर्क करेंगे
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 px-6 py-2 rounded-full font-heading font-bold text-sm text-white"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+              }}
+              data-ocid="puja_event.close_success_button"
+            >
+              ठीक है
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <h3
+              className="font-heading font-semibold text-sm"
+              style={{ color: "oklch(0.35 0.12 25)" }}
+            >
+              🩷 संकल्प विवरण दर्ज करें
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="sk-name"
+                  className="block text-xs font-heading font-semibold mb-1"
+                  style={{ color: "oklch(0.45 0.10 35)" }}
+                >
+                  पूरा नाम *
+                </label>
+                <input
+                  id="sk-name"
+                  type="text"
+                  required
+                  value={form.devoteeName}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, devoteeName: e.target.value }))
+                  }
+                  placeholder="श्री रामप्रसाद..."
+                  className={inputCls}
+                  style={borderStyle}
+                  data-ocid="puja_event.name_input"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="sk-gotra"
+                  className="block text-xs font-heading font-semibold mb-1"
+                  style={{ color: "oklch(0.45 0.10 35)" }}
+                >
+                  गोत्र
+                </label>
+                <input
+                  id="sk-gotra"
+                  type="text"
+                  value={form.gotra}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, gotra: e.target.value }))
+                  }
+                  placeholder="कश्यप, भारद्वाज..."
+                  className={inputCls}
+                  style={borderStyle}
+                  data-ocid="puja_event.gotra_input"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="sk-mobile"
+                  className="block text-xs font-heading font-semibold mb-1"
+                  style={{ color: "oklch(0.45 0.10 35)" }}
+                >
+                  मोबाइल
+                </label>
+                <input
+                  id="sk-mobile"
+                  type="tel"
+                  value={form.mobile}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, mobile: e.target.value }))
+                  }
+                  placeholder="+91 98765 43210"
+                  className={inputCls}
+                  style={borderStyle}
+                  data-ocid="puja_event.mobile_input"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="sk-email"
+                  className="block text-xs font-heading font-semibold mb-1"
+                  style={{ color: "oklch(0.45 0.10 35)" }}
+                >
+                  ईमेल
+                </label>
+                <input
+                  id="sk-email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, email: e.target.value }))
+                  }
+                  placeholder="name@example.com"
+                  className={inputCls}
+                  style={borderStyle}
+                  data-ocid="puja_event.email_input"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="sk-birth"
+                className="block text-xs font-heading font-semibold mb-1"
+                style={{ color: "oklch(0.45 0.10 35)" }}
+              >
+                जन्म विवरण (DOB / नक्षत्र / राशि)
+              </label>
+              <input
+                id="sk-birth"
+                type="text"
+                value={form.birthDetails}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, birthDetails: e.target.value }))
+                }
+                placeholder="उदा: 15-08-1990, सिंह राशि, मघा नक्षत्र"
+                className={inputCls}
+                style={borderStyle}
+                data-ocid="puja_event.birth_input"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="sk-wishes"
+                className="block text-xs font-heading font-semibold mb-1"
+                style={{ color: "oklch(0.45 0.10 35)" }}
+              >
+                🕉️ संकल्प / मनोकामना
+              </label>
+              <textarea
+                id="sk-wishes"
+                value={form.specialWishes}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, specialWishes: e.target.value }))
+                }
+                placeholder="आपकी मनोकामना व संकल्प लिخें..."
+                rows={3}
+                className={`${inputCls} resize-none`}
+                style={borderStyle}
+                data-ocid="puja_event.wishes_textarea"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={bookSlot.isPending}
+              className="w-full py-3 rounded-full font-heading font-bold text-sm text-white transition-all disabled:opacity-50 hover:scale-[1.02]"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+              }}
+              data-ocid="puja_event.submit_button"
+            >
+              {bookSlot.isPending ? "संकल्प दर्ज हो रहा है..." : "🙏 संकल्प दर्ज करें"}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Upcoming Puja Events section ───────────────────────────────────────────────────
+
+function UpcomingPujaEvents() {
+  const { data: backendEvents = [] } = useGetAllPujaEvents();
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [sankalpEvent, setSankalpEvent] = useState<
+    (typeof seedPujaEvents)[0] | null
+  >(null);
+
+  const [ym, setYm] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+
+  const allEvents = [
+    ...seedPujaEvents,
+    ...backendEvents.map((e) => ({
+      id: e.id,
+      pujaName: e.pujaName,
+      pujaNameHindi: e.pujaNameHindi,
+      date: e.date,
+      time: e.time,
+      description: e.description,
+      price: Number(e.price),
+      slotsAvailable: Number(e.slotsAvailable),
+      slotsBooked: Number(e.slotsBooked),
+      location: e.location,
+      deity: e.deity,
+      icon: "🕉️",
+      isActive: e.isActive,
+      createdAt: Number(e.createdAt),
+    })),
+  ].filter((e) => e.isActive);
+
+  const today = new Date().toISOString().split("T")[0];
+  const upcomingEvents = allEvents
+    .filter((e) => e.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const filteredByMonth = upcomingEvents.filter((e) => e.date.startsWith(ym));
+
+  const MONTH_NAMES = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const [ymYear, ymMonth] = ym.split("-").map(Number);
+
+  const prevYearMonth = () => {
+    if (ymMonth === 1) setYm(`${ymYear - 1}-12`);
+    else setYm(`${ymYear}-${String(ymMonth - 1).padStart(2, "0")}`);
+  };
+  const nextYearMonth = () => {
+    if (ymMonth === 12) setYm(`${ymYear + 1}-01`);
+    else setYm(`${ymYear}-${String(ymMonth + 1).padStart(2, "0")}`);
+  };
+
+  const daysInMonth = new Date(ymYear, ymMonth, 0).getDate();
+  const firstDay = new Date(ymYear, ymMonth - 1, 1).getDay();
+  const eventsByDate: Record<string, typeof upcomingEvents> = {};
+  for (const ev of upcomingEvents) {
+    if (!eventsByDate[ev.date]) eventsByDate[ev.date] = [];
+    eventsByDate[ev.date].push(ev);
+  }
+
+  return (
+    <section
+      className="container mx-auto px-4 py-10"
+      data-ocid="puja_events.section"
+    >
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2
+            className="font-heading text-2xl font-bold"
+            style={{ color: "oklch(0.35 0.12 25)" }}
+          >
+            🗓️ आगामी पूजा कार्यक्रम
+          </h2>
+          <p
+            className="font-body text-sm mt-1"
+            style={{ color: "oklch(0.55 0.06 50)" }}
+          >
+            Upcoming Puja Events — Book your slot &amp; submit Sankalp
+          </p>
+        </div>
+        <div
+          className="flex items-center rounded-full p-1 gap-1"
+          style={{ background: "oklch(0.92 0.02 75)" }}
+        >
+          <button
+            type="button"
+            onClick={() => setViewMode("list")}
+            className="px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all"
+            style={{
+              background:
+                viewMode === "list"
+                  ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
+                  : "transparent",
+              color: viewMode === "list" ? "white" : "oklch(0.50 0.08 40)",
+            }}
+            data-ocid="puja_events.list_toggle"
+          >
+            ☰ List
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("calendar")}
+            className="px-4 py-1.5 rounded-full text-xs font-heading font-bold transition-all"
+            style={{
+              background:
+                viewMode === "calendar"
+                  ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
+                  : "transparent",
+              color: viewMode === "calendar" ? "white" : "oklch(0.50 0.08 40)",
+            }}
+            data-ocid="puja_events.calendar_toggle"
+          >
+            🗓️ Calendar
+          </button>
+        </div>
+      </div>
+
+      {/* Month navigator */}
+      <div
+        className="flex items-center justify-between mb-5 rounded-xl px-4 py-2.5"
+        style={{
+          background: "oklch(0.99 0.008 80)",
+          border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+        }}
+      >
+        <button
+          type="button"
+          onClick={prevYearMonth}
+          className="p-1.5 rounded-lg hover:bg-muted"
+          aria-label="Previous month"
+          data-ocid="puja_events.prev_month"
+        >
+          <ChevronLeft
+            className="h-4 w-4"
+            style={{ color: "oklch(0.68 0.20 48)" }}
+          />
+        </button>
+        <span
+          className="font-heading font-bold text-sm"
+          style={{ color: "oklch(0.35 0.12 25)" }}
+        >
+          {MONTH_NAMES[ymMonth - 1]} {ymYear}
+        </span>
+        <button
+          type="button"
+          onClick={nextYearMonth}
+          className="p-1.5 rounded-lg hover:bg-muted"
+          aria-label="Next month"
+          data-ocid="puja_events.next_month"
+        >
+          <ChevronRight
+            className="h-4 w-4"
+            style={{ color: "oklch(0.68 0.20 48)" }}
+          />
+        </button>
+      </div>
+
+      {/* Calendar grid */}
+      {viewMode === "calendar" && (
+        <div
+          className="rounded-2xl p-4 mb-6"
+          style={{
+            background: "oklch(0.99 0.008 80)",
+            border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+          }}
+        >
+          <div className="grid grid-cols-7 mb-2">
+            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+              <div
+                key={d}
+                className="text-center text-xs font-heading font-semibold py-1"
+                style={{ color: "oklch(0.55 0.06 50)" }}
+              >
+                {d}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {Array.from({ length: firstDay }).map((_, i) => (
+              <div key={`sp-${String(i)}`} />
+            ))}
+            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+              const dateStr = `${ymYear}-${String(ymMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+              const evts = eventsByDate[dateStr] ?? [];
+              const isPast = dateStr < today;
+              return (
+                <div
+                  key={dateStr}
+                  className="aspect-square flex flex-col items-center justify-center rounded-lg text-xs relative"
+                  style={{
+                    background:
+                      evts.length > 0
+                        ? "oklch(0.68 0.20 48 / 0.12)"
+                        : "transparent",
+                    color: isPast
+                      ? "oklch(0.75 0.02 50)"
+                      : "oklch(0.30 0.06 30)",
+                    opacity: isPast ? 0.5 : 1,
+                  }}
+                >
+                  <span>{day}</span>
+                  {evts.length > 0 && (
+                    <span
+                      className="w-1.5 h-1.5 rounded-full absolute bottom-1"
+                      style={{ background: "oklch(0.68 0.20 48)" }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Event cards */}
+      {filteredByMonth.length === 0 ? (
+        <div
+          className="text-center py-10 rounded-2xl"
+          style={{
+            background: "oklch(0.99 0.008 80)",
+            border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+          }}
+          data-ocid="puja_events.empty_state"
+        >
+          <div className="text-4xl mb-3">🕉️</div>
+          <p
+            className="font-heading font-semibold"
+            style={{ color: "oklch(0.45 0.10 35)" }}
+          >
+            इस माह कोई पूजा कार्यक्रम नहीं
+          </p>
+          <p className="font-body text-sm text-muted-foreground mt-1">
+            No events this month
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filteredByMonth.map((ev, idx) => {
+            const slotsLeft = ev.slotsAvailable - ev.slotsBooked;
+            const isFull = slotsLeft <= 0;
+            return (
+              <div
+                key={ev.id}
+                className="rounded-2xl overflow-hidden transition-all hover:scale-[1.01]"
+                style={{
+                  background: "oklch(0.99 0.008 80)",
+                  border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+                  boxShadow: "0 2px 12px oklch(0.68 0.20 48 / 0.06)",
+                }}
+                data-ocid={`puja_events.item.${idx + 1}`}
+              >
+                <div
+                  className="px-4 py-3"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, oklch(0.68 0.20 48 / 0.12), oklch(0.78 0.14 75 / 0.08))",
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{ev.icon}</span>
+                      <div>
+                        <h3
+                          className="font-heading font-bold text-sm"
+                          style={{ color: "oklch(0.28 0.10 22)" }}
+                        >
+                          {ev.pujaNameHindi}
+                        </h3>
+                        <p
+                          className="font-body text-xs"
+                          style={{ color: "oklch(0.50 0.08 40)" }}
+                        >
+                          {ev.pujaName}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className="text-xs font-heading font-bold px-2 py-0.5 rounded-full shrink-0"
+                      style={{
+                        background: isFull
+                          ? "oklch(0.55 0.18 20 / 0.1)"
+                          : "oklch(0.55 0.18 145 / 0.1)",
+                        color: isFull
+                          ? "oklch(0.45 0.14 20)"
+                          : "oklch(0.40 0.14 145)",
+                        border: `1px solid ${isFull ? "oklch(0.55 0.18 20 / 0.25)" : "oklch(0.55 0.18 145 / 0.25)"}`,
+                      }}
+                    >
+                      {isFull ? "Full" : `${slotsLeft} left`}
+                    </span>
+                  </div>
+                </div>
+                <div className="px-4 py-3 space-y-1.5">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <span
+                      className="flex items-center gap-1 text-xs font-body"
+                      style={{ color: "oklch(0.50 0.08 40)" }}
+                    >
+                      <Calendar className="h-3 w-3" /> {ev.date}
+                    </span>
+                    <span
+                      className="flex items-center gap-1 text-xs font-body"
+                      style={{ color: "oklch(0.50 0.08 40)" }}
+                    >
+                      <Clock className="h-3 w-3" /> {ev.time}
+                    </span>
+                  </div>
+                  <p
+                    className="flex items-start gap-1 text-xs font-body"
+                    style={{ color: "oklch(0.50 0.08 40)" }}
+                  >
+                    <MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {ev.location}
+                  </p>
+                  <p
+                    className="text-xs font-body line-clamp-2"
+                    style={{ color: "oklch(0.45 0.06 40)" }}
+                  >
+                    {ev.description}
+                  </p>
+                </div>
+                <div className="px-4 pb-4 flex items-center justify-between">
+                  <span
+                    className="font-heading font-bold text-base"
+                    style={{ color: "oklch(0.45 0.16 40)" }}
+                  >
+                    ₹{ev.price.toLocaleString("en-IN")}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={isFull}
+                    onClick={() => setSankalpEvent(ev)}
+                    className="px-4 py-1.5 rounded-full font-heading font-bold text-xs text-white transition-all disabled:opacity-40 hover:scale-105"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+                    }}
+                    data-ocid={`puja_events.book_button.${idx + 1}`}
+                  >
+                    {isFull ? "Full" : "🙏 Book Now"}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {sankalpEvent && (
+        <SankalpModal
+          event={{
+            id: sankalpEvent.id,
+            pujaName: sankalpEvent.pujaName,
+            pujaNameHindi: sankalpEvent.pujaNameHindi,
+            date: sankalpEvent.date,
+            time: sankalpEvent.time,
+            price: sankalpEvent.price,
+            location: sankalpEvent.location,
+          }}
+          onClose={() => setSankalpEvent(null)}
+        />
+      )}
+    </section>
+  );
+}
 
 const AUSPICIOUS_DATES: Record<string, string> = {
   "2026-04-14": "राम नवमी",
@@ -650,7 +1340,6 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function PujaBookingPage() {
   const { identity } = useInternetIdentity();
   const { data: backendTemples = [] } = useGetAllTemples();
@@ -818,7 +1507,35 @@ export default function PujaBookingPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-10">
+      {/* Upcoming Puja Events Calendar */}
+
+      {/* Divider */}
+      <div className="container mx-auto px-4">
+        <div
+          className="flex items-center gap-4 py-2"
+          style={{ borderTop: "1px solid oklch(0.78 0.14 75 / 0.15)" }}
+        >
+          <span
+            className="font-heading font-bold text-base"
+            style={{ color: "oklch(0.35 0.12 25)" }}
+          >
+            🕉️ कस्टम पूजा बुक करें
+          </span>
+          <div
+            className="flex-1 border-t"
+            style={{ borderColor: "oklch(0.78 0.14 75 / 0.15)" }}
+          />
+          <span className="font-body text-xs text-muted-foreground">
+            Custom booking with temple &amp; date
+          </span>
+        </div>
+      </div>
+
+      {/* Upcoming Puja Events Calendar */}
+      <UpcomingPujaEvents />
+      <UpcomingPujaEvents />
+
+      <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main booking form */}
           <div className="lg:col-span-2">

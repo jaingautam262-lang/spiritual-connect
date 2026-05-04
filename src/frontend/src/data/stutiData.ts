@@ -9,6 +9,7 @@ export interface Stuti {
   deityInfo: string;
 }
 
+import { STUTI_FINAL_DATA } from "./stutiDataFinal";
 import { stutiData_1 } from "./stutiData_1";
 import { stutiData_2 } from "./stutiData_2";
 import { stutiData_3 } from "./stutiData_3";
@@ -18,6 +19,7 @@ import { stutiData_6 } from "./stutiData_6";
 import { stutiData_7 } from "./stutiData_7";
 import { stutiData_8 } from "./stutiData_8";
 import { stutiData_9 } from "./stutiData_9";
+import { stutiNewBatch } from "./stutiData_new_batch";
 
 export const stutiData: Stuti[] = [
   ...stutiData_1,
@@ -29,4 +31,6 @@ export const stutiData: Stuti[] = [
   ...stutiData_7,
   ...stutiData_8,
   ...stutiData_9,
+  ...stutiNewBatch,
+  ...STUTI_FINAL_DATA,
 ];

@@ -284,9 +284,9 @@ function getDescription(
   const catLabel =
     dhwaniCategories.find((c) => c.id === category)?.name ?? category;
   if (stone) {
-    return `This ${name} is crafted from genuine ${stone} — a powerful stone revered for its spiritual energy. Personally Abhimantrit by Dhwani Jain with your Name & DOB for maximum benefit. Ideal for ${concernLabel || catLabel}, it brings positive vibrations and cosmic alignment to your daily life.`;
+    return `This ${name} is crafted from genuine ${stone} — a powerful stone revered for its spiritual energy. Personally Abhimantrit by Spiritual Connect with your Name & DOB for maximum benefit. Ideal for ${concernLabel || catLabel}, it brings positive vibrations and cosmic alignment to your daily life.`;
   }
-  return `The ${name} is a sacred ${catLabel} item carefully curated and energized by Dhwani Jain with 20+ years of expertise. Each piece undergoes genuine ritual energization${concernLabel ? `, making it especially powerful for ${concernLabel}` : ""}. Wear or place it to invite divine blessings, protection, and spiritual growth.`;
+  return `The ${name} is a sacred ${catLabel} item carefully curated and energized by Spiritual Connect with 20+ years of expertise. Each piece undergoes genuine ritual energization${concernLabel ? `, making it especially powerful for ${concernLabel}` : ""}. Wear or place it to invite divine blessings, protection, and spiritual growth.`;
 }
 
 // ─── Mini Product Card for Related ────────────────────────────────────────────
@@ -422,7 +422,7 @@ export default function DhwaniProductDetail() {
           data-ocid="dhwani-product.back_link"
           className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
         >
-          <ArrowLeft size={14} /> Back to Dhwani Astro
+          <ArrowLeft size={14} /> Back to Spiritual Connect Shop
         </a>
       </div>
     );
@@ -469,7 +469,7 @@ export default function DhwaniProductDetail() {
             href="/dhwani-shop"
             className="hover:text-foreground transition-colors"
           >
-            Dhwani Astro
+            Spiritual Connect Shop
           </a>
           <span>/</span>
           <span
@@ -490,7 +490,7 @@ export default function DhwaniProductDetail() {
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
           <ArrowLeft size={14} />
-          Back to Dhwani Astro
+          Back to Spiritual Connect
         </a>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -796,7 +796,7 @@ export default function DhwaniProductDetail() {
                   className="font-heading font-semibold text-xs mb-1"
                   style={{ color: "oklch(0.35 0.12 25)" }}
                 >
-                  Personally Abhimantrit by Dhwani Jain
+                  Personally Abhimantrit by Spiritual Connect
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Each product is energized with your Name & DOB for maximum
@@ -819,7 +819,7 @@ export default function DhwaniProductDetail() {
                 You May Also Like
               </h2>
               <span className="text-xs text-muted-foreground">
-                Similar products from Dhwani Astro
+                Similar products from Spiritual Connect Shop
               </span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -849,7 +849,7 @@ export default function DhwaniProductDetail() {
             style={{ color: "oklch(0.45 0.15 35)" }}
           >
             <ArrowLeft size={14} />
-            Back to Dhwani Astro Collection
+            Back to Spiritual Connect Collection
           </a>
           <span className="text-xs text-muted-foreground">
             Product ID: {product.id}

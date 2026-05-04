@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import AudioPlayer from "../components/AudioPlayer";
+import { ContentCard } from "../components/ContentCard";
 import { useLanguage } from "../contexts/LanguageContext";
 import { SEED_CHALISAS } from "../data/chalisaData";
 import type { ChalisaItem } from "../data/chalisaData";
@@ -54,7 +55,8 @@ export default function Chalisa() {
   );
   const [showHindi, setShowHindi] = useState(true);
   const { data: backendContents = [] } = useGetAllDevotionalContents();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isHindi = language === "hi";
 
   const backendChalisas: ChalisaItem[] = backendContents
     .filter((c) => c.contentType === "chalisa")
@@ -112,11 +114,14 @@ export default function Chalisa() {
             className="font-decorative text-4xl md:text-5xl font-bold mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            {t("chalisa")} {t("all") === "सभी" ? "संग्रह" : "Sangrah"}
+            {isHindi ? "चालीसा संग्रह" : "Chalisa Sangrah"}
           </h1>
           <p
             className="font-body text-xl mb-1"
-            style={{ color: "oklch(0.88 0.08 65)", fontFamily: "serif" }}
+            style={{
+              color: "oklch(0.88 0.08 65)",
+              fontFamily: "'Noto Sans Devanagari', serif",
+            }}
           >
             चालीसा संग्रह
           </p>
@@ -124,7 +129,8 @@ export default function Chalisa() {
             className="font-body text-sm mt-3"
             style={{ color: "oklch(0.68 0.06 60)" }}
           >
-            {filtered.length} Sacred Chalisas — 40-Verse Devotional Hymns
+            {filtered.length} {isHindi ? "पवित्र चालीसाएँ" : "Sacred Chalisas"} —
+            40-Verse Devotional Hymns
           </p>
         </div>
       </section>
@@ -195,7 +201,7 @@ export default function Chalisa() {
                   {cat === "All"
                     ? t("all")
                     : cat === "Most Popular"
-                      ? t("all") === "सभी"
+                      ? isHindi
                         ? "सबसे लोकप्रिय"
                         : cat
                       : cat}
@@ -267,16 +273,16 @@ export default function Chalisa() {
                     className="font-heading font-bold text-base mb-1 group-hover:underline"
                     style={{ color: "oklch(0.88 0.06 75)" }}
                   >
-                    {chalisa.titleEn}
+                    {isHindi ? chalisa.titleHi : chalisa.titleEn}
                   </h3>
                   <p
                     className="font-body text-sm mb-2"
                     style={{
                       color: "oklch(0.70 0.06 65)",
-                      fontFamily: "serif",
+                      fontFamily: "'Noto Sans Devanagari', serif",
                     }}
                   >
-                    {chalisa.titleHi}
+                    {isHindi ? chalisa.titleEn : chalisa.titleHi}
                   </p>
                   <Badge
                     variant="outline"
@@ -298,9 +304,11 @@ export default function Chalisa() {
                     className="mt-4 text-xs font-heading font-semibold flex items-center gap-1"
                     style={{ color: "oklch(0.78 0.14 75)" }}
                   >
-                    <span>{t("all") === "सभी" ? "40 श्लोक" : "40 Verses"}</span>
+                    <span>{isHindi ? "40 श्लोक" : "40 Verses"}</span>
                     <span style={{ color: "oklch(0.50 0.04 50)" }}>·</span>
-                    <span>{t("readFullChalisa")}</span>
+                    <span>
+                      {isHindi ? "पूरी चालीसा पढ़ें →" : "Read Full Chalisa →"}
+                    </span>
                   </div>
                 </button>
               ))}
@@ -331,16 +339,20 @@ export default function Chalisa() {
                       className="font-decorative text-xl"
                       style={{ color: "oklch(0.78 0.14 75)" }}
                     >
-                      {selectedChalisa.titleEn}
+                      {isHindi
+                        ? selectedChalisa.titleHi
+                        : selectedChalisa.titleEn}
                     </DialogTitle>
                     <p
                       className="font-body text-sm mt-1"
                       style={{
                         color: "oklch(0.70 0.06 65)",
-                        fontFamily: "serif",
+                        fontFamily: "'Noto Sans Devanagari', serif",
                       }}
                     >
-                      {selectedChalisa.titleHi}
+                      {isHindi
+                        ? selectedChalisa.titleEn
+                        : selectedChalisa.titleHi}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -407,23 +419,16 @@ export default function Chalisa() {
                 </Button>
               </div>
 
-              <div
-                className="mt-4 p-5 rounded-xl border"
-                style={{
-                  background: "oklch(0.22 0.07 24)",
-                  borderColor: "oklch(0.78 0.14 75 / 0.12)",
-                }}
-              >
-                <pre
-                  className="font-body text-sm leading-relaxed whitespace-pre-wrap"
-                  style={{
-                    color: "oklch(0.88 0.04 70)",
-                    fontFamily: showHindi ? "serif" : "inherit",
-                  }}
-                >
-                  {showHindi ? selectedChalisa.textHi : selectedChalisa.textEn}
-                </pre>
-              </div>
+              {/* ContentCard for language-aware display */}
+              <ContentCard
+                className="mt-4"
+                title={selectedChalisa.titleEn}
+                titleHindi={selectedChalisa.titleHi}
+                text={
+                  showHindi ? selectedChalisa.textHi : selectedChalisa.textEn
+                }
+                meaningEnglish={selectedChalisa.description}
+              />
 
               {/* Audio Player */}
               <AudioPlayer
@@ -442,7 +447,7 @@ export default function Chalisa() {
                     color: "oklch(0.78 0.14 75)",
                   }}
                 >
-                  Close
+                  {isHindi ? "संवाद बंद करें" : "Close"}
                 </Button>
               </div>
             </>

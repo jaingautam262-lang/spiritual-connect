@@ -6,24 +6,31 @@ interface AudioPlayerProps {
   audioUrl?: string;
   /** If provided, shown as a "Listen on YouTube" button when no audioUrl */
   youtubeSearchQuery?: string;
+  /** Mark as demo/mock track — shows different styling and banner */
+  hasMockAudio?: boolean;
+  /** Human-readable mock duration e.g. '3:45' shown when no real audio */
+  durationLabel?: string;
 }
 
 export default function AudioPlayer({
   title,
   audioUrl,
   youtubeSearchQuery,
+  hasMockAudio = false,
+  durationLabel,
 }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [noAudioMsg, setNoAudioMsg] = useState(false);
 
-  const hasAudio = !!audioUrl;
+  const hasRealAudio = !!(audioUrl && audioUrl.trim() !== "");
   const searchQuery = youtubeSearchQuery ?? `${title} aarti`;
   const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
 
   useEffect(() => {
-    if (!hasAudio) return;
+    if (!hasRealAudio) return;
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
@@ -50,7 +57,7 @@ export default function AudioPlayer({
       setIsPlaying(false);
       setProgress(0);
     };
-  }, [audioUrl, hasAudio]);
+  }, [audioUrl, hasRealAudio]);
 
   useEffect(() => {
     return () => {
@@ -59,6 +66,11 @@ export default function AudioPlayer({
   }, []);
 
   function togglePlay() {
+    if (!hasRealAudio) {
+      setNoAudioMsg(true);
+      setTimeout(() => setNoAudioMsg(false), 3000);
+      return;
+    }
     const audio = audioRef.current;
     if (!audio) return;
     if (isPlaying) {
@@ -94,30 +106,49 @@ export default function AudioPlayer({
       className="rounded-xl border p-4 mt-4"
       style={{
         background:
-          "linear-gradient(135deg, oklch(0.20 0.07 28), oklch(0.24 0.09 35))",
-        borderColor: "oklch(0.78 0.14 75 / 0.25)",
+          hasMockAudio && !hasRealAudio
+            ? "linear-gradient(135deg, oklch(0.18 0.05 25), oklch(0.22 0.06 30))"
+            : "linear-gradient(135deg, oklch(0.20 0.07 28), oklch(0.24 0.09 35))",
+        borderColor:
+          hasMockAudio && !hasRealAudio
+            ? "oklch(0.60 0.08 55 / 0.35)"
+            : "oklch(0.78 0.14 75 / 0.25)",
       }}
       data-ocid="audio-player.card"
     >
+      {/* Demo mode banner for mock tracks */}
+      {hasMockAudio && !hasRealAudio && (
+        <div
+          className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg text-xs font-body"
+          style={{
+            background: "oklch(0.55 0.10 55 / 0.15)",
+            border: "1px solid oklch(0.65 0.10 55 / 0.25)",
+            color: "oklch(0.78 0.10 60)",
+          }}
+        >
+          <span>🎵</span>
+          <span>Audio coming soon — admin upload pending</span>
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         {/* Play / Pause button */}
         <button
           type="button"
-          onClick={hasAudio ? togglePlay : undefined}
+          onClick={togglePlay}
           data-ocid="audio-player.toggle"
           aria-label={isPlaying ? "Pause" : "Play"}
           title={
-            hasAudio ? (isPlaying ? "Pause" : "Play") : "Audio coming soon"
+            hasRealAudio ? (isPlaying ? "Pause" : "Play") : "Audio coming soon"
           }
-          disabled={!hasAudio}
           className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
           style={{
-            background: hasAudio
+            background: hasRealAudio
               ? "linear-gradient(135deg, oklch(0.78 0.14 75), oklch(0.68 0.20 48))"
-              : "oklch(0.35 0.04 50)",
-            cursor: hasAudio ? "pointer" : "not-allowed",
+              : "oklch(0.32 0.05 45)",
+            cursor: "pointer",
             boxShadow:
-              hasAudio && isPlaying
+              hasRealAudio && isPlaying
                 ? "0 0 0 0 oklch(0.78 0.14 75 / 0.4), 0 0 12px oklch(0.78 0.14 75 / 0.3)"
                 : "none",
           }}
@@ -131,7 +162,9 @@ export default function AudioPlayer({
             <Play
               className="h-4 w-4 ml-0.5"
               style={{
-                color: hasAudio ? "oklch(0.18 0.04 30)" : "oklch(0.55 0.04 50)",
+                color: hasRealAudio
+                  ? "oklch(0.18 0.04 30)"
+                  : "oklch(0.60 0.06 55)",
               }}
             />
           )}
@@ -146,12 +179,19 @@ export default function AudioPlayer({
             >
               {title}
             </p>
-            {hasAudio && duration > 0 ? (
+            {hasRealAudio && duration > 0 ? (
               <span
                 className="text-xs font-body flex-shrink-0 ml-2"
                 style={{ color: "oklch(0.65 0.04 55)" }}
               >
                 {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
+            ) : durationLabel ? (
+              <span
+                className="text-xs font-body flex-shrink-0 ml-2"
+                style={{ color: "oklch(0.50 0.04 50)" }}
+              >
+                {durationLabel}
               </span>
             ) : (
               <span
@@ -165,7 +205,7 @@ export default function AudioPlayer({
           </div>
 
           {/* Progress bar */}
-          {hasAudio ? (
+          {hasRealAudio ? (
             <input
               type="range"
               min={0}
@@ -181,15 +221,33 @@ export default function AudioPlayer({
             />
           ) : (
             <div
-              className="w-full h-1.5 rounded-full"
-              style={{ background: "oklch(0.35 0.05 40)", opacity: 0.5 }}
-            />
+              className="w-full h-1.5 rounded-full relative overflow-hidden"
+              style={{ background: "oklch(0.28 0.04 40)", opacity: 0.6 }}
+            >
+              {/* Subtle animated shimmer for demo tracks */}
+              {hasMockAudio && (
+                <div
+                  className="absolute inset-y-0 left-0 w-1/3 animate-pulse"
+                  style={{ background: "oklch(0.50 0.06 55 / 0.4)" }}
+                />
+              )}
+            </div>
+          )}
+
+          {/* No audio message (on click) */}
+          {noAudioMsg && (
+            <p
+              className="text-xs mt-1 font-body"
+              style={{ color: "oklch(0.72 0.12 55)" }}
+            >
+              No audio file uploaded yet
+            </p>
           )}
         </div>
       </div>
 
       {/* YouTube search button when no audio */}
-      {!hasAudio && (
+      {!hasRealAudio && (
         <div className="mt-3 flex items-center gap-3">
           <a
             href={youtubeUrl}

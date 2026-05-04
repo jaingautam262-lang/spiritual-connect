@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Flame, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import AudioPlayer from "../components/AudioPlayer";
+import { ContentCard } from "../components/ContentCard";
 import { useLanguage } from "../contexts/LanguageContext";
 import { type AartiItem, SEED_AARTIS } from "../data/aartiData";
 import { useGetAllDevotionalContents } from "../hooks/useQueries";
@@ -67,7 +68,8 @@ export default function Aarti() {
   const [selectedAarti, setSelectedAarti] = useState<AartiItem | null>(null);
   const [activeTab, setActiveTab] = useState<LyricTab>("hindi");
   const { data: backendContents = [] } = useGetAllDevotionalContents();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isHindi = language === "hi";
 
   const backendAartis: AartiItem[] = backendContents
     .filter((c) => c.contentType === "aarti")
@@ -103,7 +105,7 @@ export default function Aarti() {
 
   function openAarti(aarti: AartiItem) {
     setSelectedAarti(aarti);
-    setActiveTab("hindi");
+    setActiveTab(isHindi ? "hindi" : "english");
   }
 
   return (
@@ -129,7 +131,7 @@ export default function Aarti() {
             className="font-decorative text-4xl md:text-5xl font-bold mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            {t("aarti")} {t("all") === "सभी" ? "संग्रह" : "Sangrah"}
+            {isHindi ? "आरती संग्रह" : "Aarti Sangrah"}
           </h1>
           <p
             className="font-body text-xl mb-1"
@@ -141,7 +143,8 @@ export default function Aarti() {
             className="font-body text-sm mt-3"
             style={{ color: "oklch(0.68 0.06 60)" }}
           >
-            {filtered.length} Sacred Aartis — Hindu · Jain · Sikh
+            {filtered.length} {isHindi ? "पवित्र आरतियाँ" : "Sacred Aartis"} —
+            Hindu · Jain · Sikh
           </p>
         </div>
       </section>
@@ -270,16 +273,16 @@ export default function Aarti() {
                       className="font-heading font-bold text-base mb-1 group-hover:underline"
                       style={{ color: "oklch(0.88 0.06 75)" }}
                     >
-                      {aarti.titleEn}
+                      {isHindi ? aarti.titleHi : aarti.titleEn}
                     </h3>
                     <p
                       className="font-body text-sm mb-2"
                       style={{
                         color: "oklch(0.70 0.06 65)",
-                        fontFamily: "serif",
+                        fontFamily: "'Noto Sans Devanagari', serif",
                       }}
                     >
-                      {aarti.titleHi}
+                      {isHindi ? aarti.titleEn : aarti.titleHi}
                     </p>
                     <Badge
                       variant="outline"
@@ -306,7 +309,7 @@ export default function Aarti() {
                           color: "oklch(0.55 0.18 145)",
                         }}
                       >
-                        <span>✦</span>
+                        <span>❖</span>
                         <span>
                           {aarti.faith === "Sikh"
                             ? t("gurmukhiAvailable")
@@ -318,7 +321,7 @@ export default function Aarti() {
                       className="mt-4 text-xs font-heading font-semibold"
                       style={{ color: "oklch(0.78 0.14 75)" }}
                     >
-                      {t("readFullAarti")}
+                      {isHindi ? "पूरी आरती पढ़ें →" : "Read Full Aarti →"}
                     </div>
                   </button>
                 );
@@ -350,16 +353,16 @@ export default function Aarti() {
                       className="font-decorative text-xl"
                       style={{ color: "oklch(0.78 0.14 75)" }}
                     >
-                      {selectedAarti.titleEn}
+                      {isHindi ? selectedAarti.titleHi : selectedAarti.titleEn}
                     </DialogTitle>
                     <p
                       className="font-body text-sm mt-1"
                       style={{
                         color: "oklch(0.70 0.06 65)",
-                        fontFamily: "serif",
+                        fontFamily: "'Noto Sans Devanagari', serif",
                       }}
                     >
-                      {selectedAarti.titleHi}
+                      {isHindi ? selectedAarti.titleEn : selectedAarti.titleHi}
                     </p>
                   </div>
                   <div className="flex gap-2 flex-wrap">
@@ -452,27 +455,19 @@ export default function Aarti() {
                 )}
               </div>
 
-              {/* Hindi / English lyric view */}
+              {/* ContentCard view — language-aware text display */}
               {activeTab !== "original" && (
-                <div
-                  className="mt-4 p-5 rounded-xl border"
-                  style={{
-                    background: "oklch(0.22 0.07 24)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.12)",
-                  }}
-                >
-                  <pre
-                    className="font-body text-sm leading-relaxed whitespace-pre-wrap"
-                    style={{
-                      color: "oklch(0.88 0.04 70)",
-                      fontFamily: activeTab === "hindi" ? "serif" : "inherit",
-                    }}
-                  >
-                    {activeTab === "hindi"
-                      ? selectedAarti.lyricsHi
-                      : selectedAarti.lyricsEn}
-                  </pre>
-                </div>
+                <ContentCard
+                  className="mt-4"
+                  title={selectedAarti.titleEn}
+                  titleHindi={selectedAarti.titleHi}
+                  text={
+                    activeTab === "hindi"
+                      ? selectedAarti.lyricsHi || selectedAarti.lyricsEn || ""
+                      : selectedAarti.lyricsEn || selectedAarti.lyricsHi || ""
+                  }
+                  transliteration={selectedAarti.originalTranslit}
+                />
               )}
 
               {/* Original Script view — 2 columns: script | transliteration */}
@@ -592,7 +587,7 @@ export default function Aarti() {
                     color: "oklch(0.78 0.14 75)",
                   }}
                 >
-                  Close
+                  {isHindi ? "संवाद बंद करें" : "Close"}
                 </Button>
               </div>
             </>

@@ -433,20 +433,87 @@ function VideoDarshan() {
 
 interface BookingForm {
   devoteeName: string;
+  gotra: string;
+  fatherName: string;
+  dob: string;
+  city: string;
   phone: string;
   date: string;
   time: string;
   location: string;
-  specialInstructions: string;
+  sankalpText: string;
+  dakshina: string;
+  customDakshina: string;
+  prasadDelivery: boolean;
+  videoDarshan: boolean;
 }
+
+const DAKSHINA_OPTIONS = [
+  { value: "101", label: "₹101" },
+  { value: "251", label: "₹251" },
+  { value: "501", label: "₹501" },
+  { value: "1001", label: "₹1001" },
+  { value: "custom", label: "Custom" },
+];
+
+const UPCOMING_PUJAS = [
+  {
+    id: "np1",
+    name: "Navratri Puja",
+    date: "Oct 3, 2026",
+    time: "6:00 AM",
+    type: "Devi Puja",
+    emoji: "🪔",
+  },
+  {
+    id: "np2",
+    name: "Diwali Lakshmi Puja",
+    date: "Oct 20, 2026",
+    time: "6:00 PM",
+    type: "Wealth Puja",
+    emoji: "✨",
+  },
+  {
+    id: "np3",
+    name: "Ganesh Chaturthi",
+    date: "Aug 22, 2026",
+    time: "7:00 AM",
+    type: "Ganesh Puja",
+    emoji: "🐘",
+  },
+  {
+    id: "np4",
+    name: "Shivratri Rudrabhishek",
+    date: "Feb 18, 2027",
+    time: "12:00 AM",
+    type: "Shiva Puja",
+    emoji: "🕉️",
+  },
+  {
+    id: "np5",
+    name: "Satyanarayan Puja",
+    date: "Every Purnima",
+    time: "Flexible",
+    type: "Vishnu Puja",
+    emoji: "🙏",
+  },
+];
 
 const defaultForm: BookingForm = {
   devoteeName: "",
+  gotra: "",
+  fatherName: "",
+  dob: "",
+  city: "",
   phone: "",
   date: "",
   time: "",
   location: "",
-  specialInstructions: "",
+  sankalpText: "",
+  dakshina: "",
+  customDakshina: "",
+  prasadDelivery: false,
+  videoDarshan: false,
 };
 
 function PujaCard({
@@ -762,10 +829,15 @@ function BookingFormView({
   isLoading: boolean;
 }) {
   const [form, setForm] = useState<BookingForm>({ ...defaultForm });
-  const set =
+  const setF =
     (field: keyof BookingForm) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((f) => ({ ...f, [field]: e.target.value }));
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value =
+        e.target.type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : e.target.value;
+      setForm((f) => ({ ...f, [field]: value }));
+    };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -794,6 +866,7 @@ function BookingFormView({
           borderColor: "oklch(0.78 0.14 75 / 0.2)",
         }}
       >
+        {/* Header */}
         <div
           className="p-5"
           style={{
@@ -816,115 +889,355 @@ function BookingFormView({
             </div>
           </div>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="space-y-2">
-              <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                Devotee Name* / भक्त का नाम
-              </Label>
-              <Input
-                value={form.devoteeName}
-                onChange={set("devoteeName")}
-                placeholder="Full name"
-                required
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                  color: "oklch(0.90 0.04 70)",
-                }}
-                data-ocid="puja.devotee_name_input"
-              />
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-7">
+          {/* ──── SANKALP SECTION ──── */}
+          <div>
+            <h3
+              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
+              style={{ color: "oklch(0.78 0.14 75)" }}
+            >
+              <span>🪔</span> Sankalp Details / संकल्प
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Devotee Name* / भक्त नाम
+                </Label>
+                <Input
+                  value={form.devoteeName}
+                  onChange={setF("devoteeName")}
+                  placeholder="Full name"
+                  required
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.devotee_name_input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Gotra / गोत्र
+                </Label>
+                <Input
+                  value={form.gotra}
+                  onChange={setF("gotra")}
+                  placeholder="e.g. Kashyap, Bharadwaj"
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.gotra_input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Father's Name / पिता का नाम
+                </Label>
+                <Input
+                  value={form.fatherName}
+                  onChange={setF("fatherName")}
+                  placeholder="Father's full name"
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.father_name_input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Date of Birth / जन्म तिथि
+                </Label>
+                <Input
+                  type="date"
+                  value={form.dob}
+                  onChange={setF("dob")}
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.dob_input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Phone* / मोबाइल
+                </Label>
+                <Input
+                  value={form.phone}
+                  onChange={setF("phone")}
+                  placeholder="+91 9876543210"
+                  required
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.phone_input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  City / शहर
+                </Label>
+                <Input
+                  value={form.city}
+                  onChange={setF("city")}
+                  placeholder="Your city"
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.city_input"
+                />
+              </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 mt-4">
               <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                Phone / मोबाइल*
+                Wish / Sankalp Text / मनोकामना
               </Label>
-              <Input
-                value={form.phone}
-                onChange={set("phone")}
-                placeholder="+91 9876543210"
-                required
+              <Textarea
+                value={form.sankalpText}
+                onChange={setF("sankalpText")}
+                placeholder="Write your wish or sankalp (e.g. For health and prosperity of our family)..."
+                rows={2}
                 style={{
                   background: "oklch(0.22 0.07 22)",
                   borderColor: "oklch(0.78 0.14 75 / 0.2)",
                   color: "oklch(0.90 0.04 70)",
                 }}
-                data-ocid="puja.phone_input"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                Preferred Date* / तिथि
-              </Label>
-              <Input
-                type="date"
-                value={form.date}
-                onChange={set("date")}
-                required
-                min={new Date().toISOString().split("T")[0]}
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                  color: "oklch(0.90 0.04 70)",
-                }}
-                data-ocid="puja.date_input"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                Preferred Time / समय
-              </Label>
-              <Input
-                type="time"
-                value={form.time}
-                onChange={set("time")}
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                  color: "oklch(0.90 0.04 70)",
-                }}
-                data-ocid="puja.time_input"
+                data-ocid="puja.sankalp_textarea"
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-              {puja.booking_type === "At Home"
-                ? "Your Address / घर का पता"
-                : "City / Location"}
-            </Label>
-            <Input
-              value={form.location}
-              onChange={set("location")}
-              placeholder={
-                puja.booking_type === "At Home"
-                  ? "Full address"
-                  : "City or temple name"
-              }
-              style={{
-                background: "oklch(0.22 0.07 22)",
-                borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                color: "oklch(0.90 0.04 70)",
-              }}
-              data-ocid="puja.location_input"
-            />
+
+          {/* ──── SCHEDULE ──── */}
+          <div>
+            <h3
+              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
+              style={{ color: "oklch(0.78 0.14 75)" }}
+            >
+              <span>📅</span> Preferred Date &amp; Time
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Date* / तिथि
+                </Label>
+                <Input
+                  type="date"
+                  value={form.date}
+                  onChange={setF("date")}
+                  required
+                  min={new Date().toISOString().split("T")[0]}
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.date_input"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Time / समय
+                </Label>
+                <Input
+                  type="time"
+                  value={form.time}
+                  onChange={setF("time")}
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.time_input"
+                />
+              </div>
+            </div>
+            {puja.booking_type === "At Home" && (
+              <div className="space-y-2 mt-4">
+                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                  Address / पता
+                </Label>
+                <Input
+                  value={form.location}
+                  onChange={setF("location")}
+                  placeholder="Full address for pandit visit"
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.90 0.04 70)",
+                  }}
+                  data-ocid="puja.location_input"
+                />
+              </div>
+            )}
           </div>
-          <div className="space-y-2">
-            <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-              Special Instructions / विशेष निर्देश
-            </Label>
-            <Textarea
-              value={form.specialInstructions}
-              onChange={set("specialInstructions")}
-              placeholder="Any special wishes, Gotra, or requirements..."
-              rows={3}
-              style={{
-                background: "oklch(0.22 0.07 22)",
-                borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                color: "oklch(0.90 0.04 70)",
-              }}
-              data-ocid="puja.special_instructions_textarea"
-            />
+
+          {/* ──── UPCOMING PUJAS CALENDAR ──── */}
+          <div>
+            <h3
+              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
+              style={{ color: "oklch(0.78 0.14 75)" }}
+            >
+              <span>🗓️</span> Upcoming Sacred Events
+            </h3>
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              data-ocid="puja.upcoming_events"
+            >
+              {UPCOMING_PUJAS.map((event) => (
+                <button
+                  key={event.id}
+                  type="button"
+                  onClick={() => {
+                    const eventDate = event.date.includes("/")
+                      ? event.date
+                      : new Date(event.date).toISOString().split("T")[0];
+                    if (!eventDate.includes("NaN"))
+                      setForm((f) => ({ ...f, date: eventDate }));
+                  }}
+                  className="flex items-start gap-3 p-3 rounded-xl text-left transition-all hover:scale-[1.01]"
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+                  }}
+                  data-ocid={`puja.event.${event.id}`}
+                >
+                  <span className="text-2xl mt-0.5">{event.emoji}</span>
+                  <div className="min-w-0">
+                    <p
+                      className="font-heading font-semibold text-sm"
+                      style={{ color: "oklch(0.88 0.06 75)" }}
+                    >
+                      {event.name}
+                    </p>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: "oklch(0.68 0.12 65)" }}
+                    >
+                      {event.date} · {event.time}
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: "oklch(0.60 0.04 55)" }}
+                    >
+                      {event.type}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ──── DAAN / BHET ──── */}
+          <div>
+            <h3
+              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
+              style={{ color: "oklch(0.78 0.14 75)" }}
+            >
+              <span>🪙</span> Daan / Bhet / Dakshina
+            </h3>
+            <div
+              className="flex flex-wrap gap-2 mb-3"
+              data-ocid="puja.dakshina_options"
+            >
+              {DAKSHINA_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() =>
+                    setForm((f) => ({ ...f, dakshina: opt.value }))
+                  }
+                  className="px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all"
+                  style={{
+                    background:
+                      form.dakshina === opt.value
+                        ? "oklch(0.68 0.20 48)"
+                        : "oklch(0.22 0.07 22)",
+                    color:
+                      form.dakshina === opt.value
+                        ? "white"
+                        : "oklch(0.80 0.04 60)",
+                    border: `1px solid ${form.dakshina === opt.value ? "oklch(0.68 0.20 48)" : "oklch(0.78 0.14 75 / 0.2)"}`,
+                  }}
+                  data-ocid={`puja.dakshina.${opt.value}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            {form.dakshina === "custom" && (
+              <Input
+                value={form.customDakshina}
+                onChange={setF("customDakshina")}
+                placeholder="Enter custom amount (₹)"
+                style={{
+                  background: "oklch(0.22 0.07 22)",
+                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                  color: "oklch(0.90 0.04 70)",
+                }}
+                data-ocid="puja.custom_dakshina_input"
+              />
+            )}
+            {/* Prasad + Video Darshan toggles */}
+            <div className="flex flex-col gap-3 mt-4">
+              <label
+                className="flex items-center gap-3 cursor-pointer p-3 rounded-lg"
+                style={{
+                  background: "oklch(0.22 0.07 22)",
+                  border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={form.prasadDelivery}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, prasadDelivery: e.target.checked }))
+                  }
+                  className="w-4 h-4 accent-amber-500"
+                  data-ocid="puja.prasad_delivery_checkbox"
+                />
+                <span
+                  className="text-sm"
+                  style={{ color: "oklch(0.85 0.06 70)" }}
+                >
+                  🙏 Prasad Home Delivery (add ₹99)
+                </span>
+              </label>
+              <label
+                className="flex items-center gap-3 cursor-pointer p-3 rounded-lg"
+                style={{
+                  background: "oklch(0.22 0.07 22)",
+                  border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={form.videoDarshan}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, videoDarshan: e.target.checked }))
+                  }
+                  className="w-4 h-4 accent-amber-500"
+                  data-ocid="puja.video_darshan_checkbox"
+                />
+                <span
+                  className="text-sm"
+                  style={{ color: "oklch(0.85 0.06 70)" }}
+                >
+                  📹 Join via Video Darshan (Live puja stream link sent to your
+                  WhatsApp)
+                </span>
+              </label>
+            </div>
           </div>
 
           <div
@@ -937,6 +1250,8 @@ function BookingFormView({
             <p className="text-xs" style={{ color: "oklch(0.65 0.04 55)" }}>
               By booking, you agree to our terms. Payment to be made upon
               confirmation. Our pandit will contact you within 24 hours.
+              {form.videoDarshan &&
+                " A video link will be sent to your phone number."}
             </p>
           </div>
 
@@ -1051,16 +1366,28 @@ export default function PujaBooking() {
       return;
     }
     const ref = `PB-${Date.now().toString(36).toUpperCase()}-${selectedPuja.id.slice(0, 4).toUpperCase()}`;
+    const dakshinaAmt =
+      form.dakshina === "custom" ? form.customDakshina : form.dakshina;
     try {
       await createBooking.mutateAsync({
         id: ref,
         userId: identity.getPrincipal(),
         templeId: selectedPuja.id,
         devoteeName: form.devoteeName,
-        gotra: "",
+        gotra: form.gotra,
         pujaType: selectedPuja.name,
         preferredDate: `${form.date}T${form.time || "06:00"}`,
-        specialWishes: `Phone: ${form.phone}\nLocation: ${form.location}\n${form.specialInstructions}`,
+        specialWishes: [
+          `Phone: ${form.phone}`,
+          `City: ${form.city}`,
+          `Father: ${form.fatherName}`,
+          `DOB: ${form.dob}`,
+          `Sankalp: ${form.sankalpText}`,
+          `Dakshina: ₹${dakshinaAmt}`,
+          `Prasad Delivery: ${form.prasadDelivery ? "Yes" : "No"}`,
+          `Video Darshan: ${form.videoDarshan ? "Yes" : "No"}`,
+          `Location: ${form.location}`,
+        ].join("\n"),
         status: "pending",
         createdAt: BigInt(Date.now()),
       });

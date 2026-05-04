@@ -2,10 +2,13 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import type { Principal } from "@icp-sdk/core/principal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
+import type { PujaEvent, SankalpInput } from "../types/backend-types";
 import type {
   AstrologerProfile,
   BhajanEntry,
+  BlogArticle,
   BusinessNameRecord,
+  CalculatorFAQ,
   ChadhavaOffering,
   ConsultationAppointment,
   DevotionalContent,
@@ -22,8 +25,10 @@ import type {
   PujaBooking,
   PujaReport,
   ReportRequest,
+  ServiceBooking,
   ShoppingItem,
   StripeConfiguration,
+  SuktamEntry,
   Temple,
   UserProfile,
   VastuContent,
@@ -31,6 +36,7 @@ import type {
   VirtualTempleConfig,
   VratKathaEntry,
   WalletTransaction,
+  WebStory,
 } from "../types/backend-types";
 
 // Actor interface matching backend methods
@@ -203,6 +209,37 @@ interface BackendActor {
   ): Promise<{ ok: NewsletterSubscription } | { err: string }>;
   getNewsletterSubscriptions(): Promise<NewsletterSubscription[]>;
   unsubscribeNewsletter(email: string): Promise<{ ok: null } | { err: string }>;
+  createPujaEvent(
+    pujaName: string,
+    pujaNameHindi: string,
+    date: string,
+    time: string,
+    description: string,
+    price: bigint,
+    slotsAvailable: bigint,
+    location: string,
+    deity: string,
+    isActive: boolean,
+  ): Promise<string>;
+  updatePujaEvent(
+    id: string,
+    pujaName: string,
+    pujaNameHindi: string,
+    date: string,
+    time: string,
+    description: string,
+    price: bigint,
+    slotsAvailable: bigint,
+    location: string,
+    deity: string,
+    isActive: boolean,
+  ): Promise<boolean>;
+  deletePujaEvent(id: string): Promise<boolean>;
+  getAllPujaEvents(): Promise<PujaEvent[]>;
+  getAllPujaEventsAdmin(): Promise<PujaEvent[]>;
+  bookPujaEventSlot(
+    sankalp: SankalpInput,
+  ): Promise<{ ok: string } | { err: string }>;
   deleteNewsletterSubscription(
     email: string,
   ): Promise<{ ok: null } | { err: string }>;
@@ -1403,7 +1440,6 @@ import {
   calculatorFAQs,
   getFAQsByCalculatorId,
 } from "../data/calculatorFAQData";
-import type { CalculatorFAQ } from "../types/backend-types";
 
 function toCalculatorFAQ(
   entry: ReturnType<typeof getFAQsByCalculatorId>,
@@ -1463,8 +1499,6 @@ export function useUpdateCalculatorFAQ() {
 }
 
 // ─── Suktam Entries (local static data) ──────────────────────────────────────
-
-import type { SuktamEntry } from "../types/backend-types";
 
 export function useGetSuktams() {
   return useQuery<SuktamEntry[]>({
@@ -1598,8 +1632,6 @@ export function useDeleteFestivalEvent() {
 }
 
 // ─── Blog Articles ────────────────────────────────────────────────────────────
-
-import type { BlogArticle, WebStory } from "../types/backend-types";
 
 export function useBlogArticles() {
   return useQuery<BlogArticle[]>({
@@ -1882,8 +1914,6 @@ export function useAddJainKatha() {
 
 // ─── Service Bookings (localStorage-backed, frontend-only) ───────────────────
 
-import type { ServiceBooking } from "../types/backend-types";
-
 const SERVICE_BOOKINGS_KEY = "service_bookings_v1";
 
 function loadServiceBookings(): ServiceBooking[] {
@@ -2106,6 +2136,138 @@ export function useUnsubscribeNewsletter() {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["newsletterSubscriptions"] }),
+  });
+}
+
+// ─── Puja Events ─────────────────────────────────────────────────────────────
+
+export function useGetAllPujaEvents() {
+  const { actor, isFetching } = useBackendActor();
+  return useQuery<PujaEvent[]>({
+    queryKey: ["pujaEvents"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllPujaEvents();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetAllPujaEventsAdmin() {
+  const { actor, isFetching } = useBackendActor();
+  return useQuery<PujaEvent[]>({
+    queryKey: ["pujaEventsAdmin"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllPujaEventsAdmin();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useCreatePujaEvent() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (event: {
+      pujaName: string;
+      pujaNameHindi: string;
+      date: string;
+      time: string;
+      description: string;
+      price: number;
+      slotsAvailable: number;
+      location: string;
+      deity: string;
+      isActive: boolean;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.createPujaEvent(
+        event.pujaName,
+        event.pujaNameHindi,
+        event.date,
+        event.time,
+        event.description,
+        BigInt(event.price),
+        BigInt(event.slotsAvailable),
+        event.location,
+        event.deity,
+        event.isActive,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pujaEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["pujaEventsAdmin"] });
+    },
+  });
+}
+
+export function useUpdatePujaEvent() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (event: {
+      id: string;
+      pujaName: string;
+      pujaNameHindi: string;
+      date: string;
+      time: string;
+      description: string;
+      price: number;
+      slotsAvailable: number;
+      location: string;
+      deity: string;
+      isActive: boolean;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.updatePujaEvent(
+        event.id,
+        event.pujaName,
+        event.pujaNameHindi,
+        event.date,
+        event.time,
+        event.description,
+        BigInt(event.price),
+        BigInt(event.slotsAvailable),
+        event.location,
+        event.deity,
+        event.isActive,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pujaEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["pujaEventsAdmin"] });
+    },
+  });
+}
+
+export function useDeletePujaEvent() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.deletePujaEvent(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pujaEvents"] });
+      queryClient.invalidateQueries({ queryKey: ["pujaEventsAdmin"] });
+    },
+  });
+}
+
+export function useBookPujaEventSlot() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (sankalp: SankalpInput) => {
+      if (!actor) throw new Error("Actor not available");
+      const result = await actor.bookPujaEventSlot(sankalp);
+      if ("err" in result) throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["pujaEvents"] }),
   });
 }
 

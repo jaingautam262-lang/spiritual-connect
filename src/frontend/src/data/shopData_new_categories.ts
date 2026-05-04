@@ -4795,7 +4795,7 @@ export const STATIONERY: ProductWithMRP[] = [
     category: "Stationery",
     price: 699,
     description:
-      "Decorative pyrite pen by Dhwani Jain, Abhimantrit for wealth, confidence, and business success.",
+      "Decorative pyrite pen by Spiritual Connect, Abhimantrit for wealth, confidence, and business success.",
     benefits:
       "Wealth, confidence, business success, positive energy in writing",
     astrologicalPurpose: "Sun/Mars energy — success and confidence",
@@ -4832,7 +4832,7 @@ export const STATIONERY: ProductWithMRP[] = [
     category: "Stationery",
     price: 799,
     description:
-      "Premium gold pyrite pen by Dhwani Jain, Abhimantrit for success, luxury, and confidence.",
+      "Premium gold pyrite pen by Spiritual Connect, Abhimantrit for success, luxury, and confidence.",
     benefits: "Success, luxury, confidence, wealth attraction",
     astrologicalPurpose: "Sun energy — authority and leadership",
     stock: BigInt(100),

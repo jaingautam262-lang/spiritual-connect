@@ -40,6 +40,21 @@ export interface JainQAPair {
 export interface TransformationOutput {
     response: HttpResponse;
 }
+export interface PujaEvent {
+    id: string;
+    date: string;
+    slotsAvailable: bigint;
+    createdAt: bigint;
+    time: string;
+    description: string;
+    isActive: boolean;
+    pujaName: string;
+    pujaNameHindi: string;
+    slotsBooked: bigint;
+    price: bigint;
+    deity: string;
+    location: string;
+}
 export interface PrasadDeliveryRequest {
     id: string;
     status: string;
@@ -266,6 +281,19 @@ export interface PujaReport {
     intention: string;
     completionNotes: string;
 }
+export interface PersonalisedProduct {
+    id: string;
+    mrp?: bigint;
+    sku?: string;
+    name: string;
+    createdAt: bigint;
+    description: string;
+    imageUrl?: string;
+    manualCode?: string;
+    category: string;
+    price: bigint;
+    isPersonalised: boolean;
+}
 export interface ChadhavaOffering {
     id: string;
     status: string;
@@ -282,6 +310,16 @@ export interface UserProfile {
     birthPlace: string;
     email: string;
     gotra: string;
+}
+export interface PanchangCity {
+    id: string;
+    latitude: number;
+    timezone: string;
+    nameHindi: string;
+    stateName: string;
+    name: string;
+    longitude: number;
+    utcOffset: number;
 }
 export interface KundaliMatch {
     id: string;
@@ -323,6 +361,18 @@ export interface KundaliMatch {
     nadiDosha: boolean;
     personAPlace: string;
 }
+export interface PujaBooking {
+    id: string;
+    status: string;
+    userId: Principal;
+    createdAt: Time;
+    pujaType: string;
+    specialWishes: string;
+    gotra: string;
+    preferredDate: string;
+    templeId: string;
+    devoteeName: string;
+}
 export interface CombinedVedicReading {
     id: string;
     sunSign: string;
@@ -339,18 +389,6 @@ export interface CombinedVedicReading {
     birthPlace: string;
     remediesText: string;
     lagnaSign: string;
-}
-export interface PujaBooking {
-    id: string;
-    status: string;
-    userId: Principal;
-    createdAt: Time;
-    pujaType: string;
-    specialWishes: string;
-    gotra: string;
-    preferredDate: string;
-    templeId: string;
-    devoteeName: string;
 }
 export type Time = bigint;
 export interface VastuRoomCheck {
@@ -413,6 +451,7 @@ export interface BhajanEntry {
     createdAt: Time;
     lyricsText: string;
     artist: string;
+    hasMockAudio: boolean;
     deity: string;
 }
 export interface WalletTransaction {
@@ -513,6 +552,22 @@ export interface Temple {
     deity: string;
     location: string;
 }
+export interface ProductSubCategory {
+    id: string;
+    nameCode: string;
+    name: string;
+    productCount: bigint;
+    autoCodePrefix: string;
+}
+export interface SankalpInput {
+    eventId: string;
+    email: string;
+    specialWishes: string;
+    gotra: string;
+    mobile: string;
+    devoteeName: string;
+    birthDetails: string;
+}
 export interface JainEncyclopediaArticle {
     id: string;
     glossaryTerms: Array<JainGlossaryTerm>;
@@ -524,6 +579,15 @@ export interface JainEncyclopediaArticle {
     articleTitle: string;
     volumeTitle: string;
     crossLinks: Array<string>;
+}
+export interface GemstoneProduct {
+    sku: string;
+    weightRatti: number;
+    gemstoneType: string;
+    description: string;
+    shape: string;
+    gsCode?: string;
+    priceINR: bigint;
 }
 export interface AstroChart {
     id: string;
@@ -548,16 +612,23 @@ export interface ProductVariant {
 export interface ProductUpdateRequest {
     mrp?: number;
     sku?: string;
+    subCategory?: string;
     variantLabel?: string;
+    gemstoneType?: string;
     name?: string;
+    gemstoneWeightRatti?: number;
+    productCode?: string;
     description?: string;
     variants?: Array<ProductVariant>;
     stock?: bigint;
+    imageUrl?: string;
     astrologicalPurpose?: string;
     discount?: bigint;
     category?: string;
     benefits?: string;
     price?: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
 }
 export interface PathshalaLesson {
     id: string;
@@ -608,23 +679,31 @@ export interface VratKathaEntry {
     audioBase64: string;
     storyText: string;
     createdAt: Time;
+    hasMockAudio: boolean;
     festivalName: string;
 }
 export interface Product {
     id: string;
     mrp?: number;
     sku?: string;
+    subCategory?: string;
     variantLabel?: string;
+    gemstoneType?: string;
     name: string;
+    gemstoneWeightRatti?: number;
     createdAt: Time;
+    productCode?: string;
     description: string;
     variants?: Array<ProductVariant>;
     stock: bigint;
+    imageUrl?: string;
     astrologicalPurpose: string;
     discount?: bigint;
     category: string;
     benefits: string;
     price: number;
+    isPersonalised?: boolean;
+    gemstoneShape?: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -640,6 +719,10 @@ export interface backendInterface {
      * / Admin-only: add a festival event.
      */
     addFestivalEvent(event: FestivalEvent): Promise<void>;
+    /**
+     * / Admin or productManager: add a gemstone product.
+     */
+    addGemstoneProduct(entry: GemstoneProduct): Promise<void>;
     /**
      * / Admin-only: add a new holy book entry.
      */
@@ -671,9 +754,17 @@ export interface backendInterface {
         err: string;
     }>;
     /**
+     * / Admin-only: add a panchang city.
+     */
+    addPanchangCity(city: PanchangCity): Promise<void>;
+    /**
      * / Admin-only: add a new Pathshala lesson.
      */
     addPathshalaLesson(lesson: PathshalaLesson): Promise<void>;
+    /**
+     * / Admin or productManager: add a personalised product.
+     */
+    addPersonalisedProduct(entry: PersonalisedProduct): Promise<void>;
     /**
      * / Admin-only: add a new suktam entry.
      */
@@ -687,6 +778,16 @@ export interface backendInterface {
      */
     addVratKatha(entry: VratKathaEntry): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    /**
+     * / Public: book a slot in a puja event. Returns booking reference or error.
+     */
+    bookPujaEventSlot(sankalp: SankalpInput): Promise<{
+        __kind__: "ok";
+        ok: string;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     /**
      * / Admin-only: create an astrologer profile.
      */
@@ -749,6 +850,10 @@ export interface backendInterface {
      */
     createPujaBooking(booking: PujaBooking): Promise<void>;
     /**
+     * / Admin-only: create a new puja event. Returns the generated id.
+     */
+    createPujaEvent(pujaName: string, pujaNameHindi: string, date: string, time: string, description: string, price: bigint, slotsAvailable: bigint, location: string, deity: string, isActive: boolean): Promise<string>;
+    /**
      * / Admin-only: create a puja report for a completed booking.
      */
     createPujaReport(report: PujaReport): Promise<void>;
@@ -764,6 +869,10 @@ export interface backendInterface {
      * / Authenticated users can create a service booking for themselves. Returns the booking id.
      */
     createServiceBooking(booking: ServiceBooking): Promise<string>;
+    /**
+     * / Admin or productManager: create a new product sub-category. Returns the generated id.
+     */
+    createSubCategory(name: string, nameCode: string, autoCodePrefix: string): Promise<string>;
     /**
      * / Admin-only: create a temple entry.
      */
@@ -805,6 +914,10 @@ export interface backendInterface {
      */
     deleteFestivalEvent(id: string): Promise<void>;
     /**
+     * / Admin or productManager: delete a gemstone product by sku.
+     */
+    deleteGemstoneProduct(sku: string): Promise<void>;
+    /**
      * / Admin-only: delete a holy book entry.
      */
     deleteHolyBookEntry(id: string): Promise<void>;
@@ -843,17 +956,33 @@ export interface backendInterface {
      */
     deletePalmistryContent(id: string): Promise<boolean>;
     /**
+     * / Admin-only: delete a panchang city.
+     */
+    deletePanchangCity(id: string): Promise<void>;
+    /**
      * / Admin-only: delete a Pathshala lesson.
      */
     deletePathshalaLesson(id: string): Promise<void>;
+    /**
+     * / Admin or productManager: delete a personalised product.
+     */
+    deletePersonalisedProduct(id: string): Promise<void>;
     /**
      * / Admin-only: delete a product.
      */
     deleteProduct(id: string): Promise<void>;
     /**
+     * / Admin-only: delete a puja event. Returns true if deleted.
+     */
+    deletePujaEvent(id: string): Promise<boolean>;
+    /**
      * / Admin-only: delete a puja type.
      */
     deletePujaType(id: string): Promise<void>;
+    /**
+     * / Admin or productManager: delete a product sub-category. Returns true if deleted.
+     */
+    deleteSubCategory(id: string): Promise<boolean>;
     /**
      * / Admin-only: delete a suktam entry.
      */
@@ -874,6 +1003,12 @@ export interface backendInterface {
      * / Admin-only: delete a web story.
      */
     deleteWebStory(id: string): Promise<void>;
+    /**
+     * / Admin or productManager: generate a product code.
+     * / If manualCode is provided, it is returned as-is.
+     * / Otherwise auto-generates PS_{PREFIX}_{seq:3-digits-padded}.
+     */
+    generateProductCode(subCategoryPrefix: string, manualCode: string | null): Promise<string>;
     /**
      * / Public: anyone may browse astrologer profiles.
      */
@@ -907,6 +1042,10 @@ export interface backendInterface {
      */
     getAllFestivalEvents(): Promise<Array<FestivalEvent>>;
     /**
+     * / Public: get all gemstone products.
+     */
+    getAllGemstoneProducts(): Promise<Array<GemstoneProduct>>;
+    /**
      * / Public: get all Jain encyclopedia articles.
      */
     getAllJainArticles(): Promise<Array<JainEncyclopediaArticle>>;
@@ -919,9 +1058,17 @@ export interface backendInterface {
      */
     getAllJainPathshalaEntries(): Promise<Array<JainPathshalaEntry>>;
     /**
+     * / Public: get all panchang cities.
+     */
+    getAllPanchangCities(): Promise<Array<PanchangCity>>;
+    /**
      * / Admin-only: get all Pathshala lessons (published and unpublished).
      */
     getAllPathshalaLessons(): Promise<Array<PathshalaLesson>>;
+    /**
+     * / Public: get all personalised products.
+     */
+    getAllPersonalisedProducts(): Promise<Array<PersonalisedProduct>>;
     /**
      * / Admin-only: list all product manager principals.
      */
@@ -930,6 +1077,14 @@ export interface backendInterface {
      * / Public: anyone may browse products.
      */
     getAllProducts(): Promise<Array<Product>>;
+    /**
+     * / Public: get all puja events (active only for non-admins).
+     */
+    getAllPujaEvents(): Promise<Array<PujaEvent>>;
+    /**
+     * / Admin-only: get all puja events including inactive.
+     */
+    getAllPujaEventsAdmin(): Promise<Array<PujaEvent>>;
     /**
      * / Admin-only: get all puja reports.
      */
@@ -984,6 +1139,11 @@ export interface backendInterface {
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     /**
+     * / Public: get panchang cities grouped by state name.
+     * / Returns an array of (stateName, [PanchangCity]) tuples.
+     */
+    getCitiesByState(): Promise<Array<[string, Array<PanchangCity>]>>;
+    /**
      * / Get a single combined vedic reading by id (owner or admin).
      */
     getCombinedVedicReading(id: string): Promise<CombinedVedicReading | null>;
@@ -995,6 +1155,10 @@ export interface backendInterface {
      * / Public: get festival events filtered by faith (Hindu/Jain/Sikh/Tamil/Malayalam).
      */
     getFestivalEventsByFaith(faith: string): Promise<Array<FestivalEvent>>;
+    /**
+     * / Public: get gemstone products filtered by gemstone type (e.g. AMETHYST).
+     */
+    getGemstoneProductsByType(gemstoneType: string): Promise<Array<GemstoneProduct>>;
     /**
      * / Public: anyone may browse holy book entries, optionally filtered by bookTitle.
      */
@@ -1107,6 +1271,10 @@ export interface backendInterface {
      * / Authenticated users can check a Stripe session status (e.g. after checkout).
      */
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
+    /**
+     * / Public: get all product sub-categories.
+     */
+    getSubCategories(): Promise<Array<ProductSubCategory>>;
     /**
      * / Public: get a single suktam entry by id.
      */
@@ -1300,6 +1468,10 @@ export interface backendInterface {
      */
     updateFestivalEvent(event: FestivalEvent): Promise<void>;
     /**
+     * / Admin or productManager: update a gemstone product (full replace by sku).
+     */
+    updateGemstoneProduct(entry: GemstoneProduct): Promise<void>;
+    /**
      * / Admin-only: update an existing holy book entry.
      */
     updateHolyBookEntry(entry: HolyBookEntry): Promise<void>;
@@ -1328,9 +1500,17 @@ export interface backendInterface {
      */
     updatePalmistryContent(id: string, title: string, titleHi: string, category: string, lineOrPalmType: string, descriptionEn: string, descriptionHi: string, characteristicsEn: string, characteristicsHi: string, locationOnPalm: string, benefitsEn: string, benefitsHi: string): Promise<PalmistryContent | null>;
     /**
+     * / Admin-only: update an existing panchang city.
+     */
+    updatePanchangCity(city: PanchangCity): Promise<void>;
+    /**
      * / Admin-only: update an existing Pathshala lesson.
      */
     updatePathshalaLesson(id: string, lesson: PathshalaLesson): Promise<void>;
+    /**
+     * / Admin or productManager: update a personalised product (full replace).
+     */
+    updatePersonalisedProduct(entry: PersonalisedProduct): Promise<void>;
     /**
      * / Admin-only: update the status of a prasad delivery request.
      */
@@ -1340,6 +1520,7 @@ export interface backendInterface {
      */
     updateProduct(product: Product): Promise<void>;
     /**
+     * / Admin or productManager: partial update — only supplied fields are changed.
      * / Admin or productManager: partial update — only supplied fields are changed.
      */
     updateProductFields(id: string, updates: ProductUpdateRequest): Promise<void>;
@@ -1351,6 +1532,10 @@ export interface backendInterface {
      * / Admin or productManager: update only the variants array for a product (gemstone weight variants).
      */
     updateProductVariants(id: string, variants: Array<ProductVariant>): Promise<void>;
+    /**
+     * / Admin-only: update an existing puja event. Returns true if updated.
+     */
+    updatePujaEvent(id: string, pujaName: string, pujaNameHindi: string, date: string, time: string, description: string, price: bigint, slotsAvailable: bigint, location: string, deity: string, isActive: boolean): Promise<boolean>;
     /**
      * / Admin-only: update an existing puja report.
      */
@@ -1367,6 +1552,10 @@ export interface backendInterface {
      * / Admin-only: update the status of a service booking.
      */
     updateServiceBookingStatus(id: string, status: string): Promise<void>;
+    /**
+     * / Admin or productManager: update a product sub-category. Returns true if updated.
+     */
+    updateSubCategory(id: string, name: string, nameCode: string, autoCodePrefix: string): Promise<boolean>;
     /**
      * / Admin-only: update an existing suktam entry.
      */

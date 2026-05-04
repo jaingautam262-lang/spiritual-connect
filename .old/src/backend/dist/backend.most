@@ -33,6 +33,7 @@ type BhajanEntry__1018555507 =
     audioBase64 : Text;
     createdAt : Time__900049286;
     deity : Text;
+    hasMockAudio : Bool;
     id : Text;
     lyricsText : Text;
     title : Text
@@ -155,6 +156,16 @@ type FestivalEvent__257208547 =
     significance : Text;
     title : Text;
     titleHindi : Text
+  };
+type GemstoneProduct__70028309 =
+  {
+    description : Text;
+    gemstoneType : Text;
+    gsCode : ?Text;
+    priceINR : Nat;
+    shape : Text;
+    sku : Text;
+    weightRatti : Float
   };
 type HolyBookEntry__686870446 =
   {
@@ -345,6 +356,17 @@ type PalmistryReading__845030135 =
     traits : [Text];
     userId : Principal
   };
+type PanchangCity__1062730840 =
+  {
+    id : Text;
+    latitude : Float;
+    longitude : Float;
+    name : Text;
+    nameHindi : Text;
+    stateName : Text;
+    timezone : Text;
+    utcOffset : Float
+  };
 type PathshalaLesson__340250413 =
   {
     chapterNumber : Nat;
@@ -365,6 +387,20 @@ type PathshalaLesson__340250413 =
     titleHi : Text;
     updatedAt : Int
   };
+type PersonalisedProduct__672823337 =
+  {
+    category : Text;
+    createdAt : Int;
+    description : Text;
+    id : Text;
+    imageUrl : ?Text;
+    isPersonalised : Bool;
+    manualCode : ?Text;
+    mrp : ?Nat;
+    name : Text;
+    price : Nat;
+    sku : ?Text
+  };
 type PrasadDeliveryRequest__346386837 =
   {
     address : Text;
@@ -374,6 +410,14 @@ type PrasadDeliveryRequest__346386837 =
     status : Text;
     templeId : Text;
     userId : Principal
+  };
+type ProductSubCategory__1036904949 =
+  {
+    autoCodePrefix : Text;
+    id : Text;
+    name : Text;
+    nameCode : Text;
+    productCount : Nat
   };
 type ProductVariant__478289016 =
   {price : Float; stock : Nat; variantName : Text};
@@ -385,12 +429,19 @@ type Product__853085059 =
     createdAt : Time__900049286;
     description : Text;
     discount : ?Nat;
+    gemstoneShape : ?Text;
+    gemstoneType : ?Text;
+    gemstoneWeightRatti : ?Float;
     id : Text;
+    imageUrl : ?Text;
+    isPersonalised : ?Bool;
     mrp : ?Float;
     name : Text;
     price : Float;
+    productCode : ?Text;
     sku : ?Text;
     stock : Nat;
+    subCategory : ?Text;
     variantLabel : ?Text;
     variants : ?[ProductVariant__478289016]
   };
@@ -406,6 +457,22 @@ type PujaBooking__361576401 =
     status : Text;
     templeId : Text;
     userId : Principal
+  };
+type PujaEvent__330840644 =
+  {
+    createdAt : Int;
+    date : Text;
+    deity : Text;
+    description : Text;
+    id : Text;
+    isActive : Bool;
+    location : Text;
+    price : Nat;
+    pujaName : Text;
+    pujaNameHindi : Text;
+    slotsAvailable : Nat;
+    slotsBooked : Nat;
+    time : Text
   };
 type PujaReport__568267304 =
   {
@@ -564,6 +631,7 @@ type VratKathaEntry__45099806 =
     audioBase64 : Text;
     createdAt : Time__900049286;
     festivalName : Text;
+    hasMockAudio : Bool;
     id : Text;
     storyText : Text;
     title : Text
@@ -587,6 +655,7 @@ type WebStory__515786195 =
     title : Text
   };
 actor {
+  stable var _personalisedProductCounter : Nat;
   stable accessControlState :
     {
       var adminAssigned : Bool;
@@ -653,6 +722,11 @@ actor {
       var root : Node__46230540<Text, FestivalEvent__257208547>;
       var size : Nat__490723111
     };
+  stable gemstoneProducts :
+    {
+      var root : Node__46230540<Text, GemstoneProduct__70028309>;
+      var size : Nat__490723111
+    };
   stable holyBookEntries :
     {
       var root : Node__46230540<Text, HolyBookEntry__686870446>;
@@ -713,9 +787,19 @@ actor {
       var root : Node__46230540<Text, PalmistryReading__845030135>;
       var size : Nat__490723111
     };
+  stable panchangCities :
+    {
+      var root : Node__46230540<Text, PanchangCity__1062730840>;
+      var size : Nat__490723111
+    };
   stable pathshalaLessons :
     {
       var root : Node__46230540<Text, PathshalaLesson__340250413>;
+      var size : Nat__490723111
+    };
+  stable personalisedProducts :
+    {
+      var root : Node__46230540<Text, PersonalisedProduct__672823337>;
       var size : Nat__490723111
     };
   stable prasadDeliveryRequests :
@@ -723,8 +807,15 @@ actor {
       var root : Node__46230540<Text, PrasadDeliveryRequest__346386837>;
       var size : Nat__490723111
     };
+  stable productCodeCounters :
+    {var root : Node__46230540<Text, Nat>; var size : Nat__490723111};
   stable productManagerPrincipals :
     {var root : Node__92254746<Principal>; var size : Nat__490723111};
+  stable productSubCategories :
+    {
+      var root : Node__46230540<Text, ProductSubCategory__1036904949>;
+      var size : Nat__490723111
+    };
   stable products :
     {
       var root : Node__46230540<Text, Product__853085059>;
@@ -733,6 +824,12 @@ actor {
   stable pujaBookings :
     {
       var root : Node__46230540<Text, PujaBooking__361576401>;
+      var size : Nat__490723111
+    };
+  stable var pujaEventCounter : Nat;
+  stable pujaEvents :
+    {
+      var root : Node__46230540<Text, PujaEvent__330840644>;
       var size : Nat__490723111
     };
   stable pujaReports :
@@ -756,6 +853,7 @@ actor {
       var size : Nat__490723111
     };
   stable var stripeConfig : ?StripeConfiguration__551841935;
+  stable var subCategoryCounter : Nat;
   stable suktamEntries :
     {
       var root : Node__46230540<Text, SuktamEntry__980290658>;

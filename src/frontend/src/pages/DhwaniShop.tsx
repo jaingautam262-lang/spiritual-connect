@@ -491,19 +491,19 @@ export default function DhwaniShop() {
             className="font-heading font-bold text-4xl md:text-6xl tracking-wide mb-3 leading-tight"
             style={{ color: "oklch(0.97 0.015 85)" }}
           >
-            Dhwani Astro
+            Spiritual Connect Shop
           </h1>
           <p
             className="font-heading text-lg md:text-xl mb-2"
             style={{ color: "oklch(0.78 0.14 75)" }}
           >
-            Curated & Energized by Dhwani Jain
+            Curated & Energized by Spiritual Connect
           </p>
           <p
             className="font-body text-sm md:text-base max-w-2xl mx-auto leading-relaxed"
             style={{ color: "oklch(0.82 0.03 80 / 0.85)" }}
           >
-            Every product is personally Abhimantrit by Founder Dhwani Jain with
+            Every product is personally Abhimantrit by Spiritual Connect with
             your Name & DOB — 20+ years expertise in Spiritual Healing,
             Astrology & Gemology
           </p>
@@ -819,7 +819,9 @@ export default function DhwaniShop() {
       {/* ── ABOUT DHWANI JAIN ── */}
       <section className="bg-card border-t border-border py-14 px-4 mt-10">
         <div className="max-w-4xl mx-auto">
-          <h2 className="section-title text-2xl mb-8">About Dhwani Jain</h2>
+          <h2 className="section-title text-2xl mb-8">
+            About Spiritual Connect
+          </h2>
           <div className="flex flex-col md:flex-row gap-8 items-start">
             {/* Photo placeholder */}
             <div
@@ -837,7 +839,7 @@ export default function DhwaniShop() {
                 className="font-heading font-bold text-xl mb-1"
                 style={{ color: "oklch(0.35 0.12 25)" }}
               >
-                Dhwani Jain
+                Spiritual Connect
               </h3>
               <p
                 className="font-heading text-sm mb-3"
@@ -847,11 +849,11 @@ export default function DhwaniShop() {
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 With over <strong>20 years of expertise</strong> in Spiritual
-                Healing, Astrology & Gemology, Dhwani Jain personally curates,
-                energizes, and certifies every product. Unlike mass-produced
-                alternatives, each item undergoes genuine procurement and ritual
-                energization — making it a powerful source of positive energy
-                aligned to your individual Name & DOB.
+                Healing, Astrology & Gemology, Spiritual Connect personally
+                curates, energizes, and certifies every product. Unlike
+                mass-produced alternatives, each item undergoes genuine
+                procurement and ritual energization — making it a powerful
+                source of positive energy aligned to your individual Name & DOB.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5">
                 Once you receive your product, our experts guide you on the
@@ -872,7 +874,7 @@ export default function DhwaniShop() {
                   <Phone size={14} /> +91-6366526901
                 </a>
                 <a
-                  href="mailto:support@dhwaniastro.com"
+                  href="mailto:support@spiritualconnect.app"
                   data-ocid="dhwani-shop.contact_email"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
                   style={{
@@ -881,7 +883,7 @@ export default function DhwaniShop() {
                     border: "1px solid oklch(0.68 0.2 48 / 0.3)",
                   }}
                 >
-                  <Mail size={14} /> support@dhwaniastro.com
+                  <Mail size={14} /> support@spiritualconnect.app
                 </a>
               </div>
             </div>

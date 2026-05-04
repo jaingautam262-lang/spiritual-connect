@@ -2,6 +2,8 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, BookOpen, Search, Star } from "lucide-react";
 import { useMemo, useState } from "react";
 import BenefitsSection from "../components/BenefitsSection";
+import { ContentCard } from "../components/ContentCard";
+import { useLanguage } from "../contexts/LanguageContext";
 import { findBenefitsByTitle } from "../data/content-benefits-data";
 import { part12Stotras } from "../data/part12Stotras";
 import { part13Stotras } from "../data/part13Stotras";
@@ -34,6 +36,9 @@ import {
 import { stotraDataBatch2 } from "../data/stotraData_batch2";
 import { stotraDataBatch3 } from "../data/stotraData_batch3";
 import { stotraDataBatch4 } from "../data/stotraData_batch4";
+import { stotraPart5 } from "../data/stotraPart5";
+import { stotraPart6 } from "../data/stotraPart6";
+import { stotraPart7 } from "../data/stotraPart7";
 
 const typeColors: Record<string, { bg: string; text: string; border: string }> =
   {
@@ -113,6 +118,7 @@ function StotraCard({
   index: number;
   onClick: () => void;
 }) {
+  const { t } = useLanguage();
   const icon = deityIcons[stotra.deity] ?? "📿";
   return (
     <button
@@ -191,7 +197,7 @@ function StotraCard({
             className="text-xs font-heading font-semibold flex items-center gap-1"
             style={{ color: "oklch(0.62 0.18 48)" }}
           >
-            Read Stotra <BookOpen className="h-3 w-3" />
+            {t("readStotra")} <BookOpen className="h-3 w-3" />
           </span>
         </div>
       </div>
@@ -205,6 +211,8 @@ function DetailView({
 }: { stotra: StotraEntry; onBack: () => void }) {
   const icon = deityIcons[stotra.deity] ?? "📿";
   const benefitsData = findBenefitsByTitle(stotra.title);
+  const { t } = useLanguage();
+
   return (
     <div className="max-w-3xl mx-auto">
       {/* Back button */}
@@ -216,7 +224,7 @@ function DetailView({
         style={{ color: "oklch(0.62 0.18 48)" }}
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Stotras
+        {t("backToStotras")}
       </button>
 
       {/* Header card */}
@@ -259,13 +267,13 @@ function DetailView({
                 className="text-sm font-body"
                 style={{ color: "oklch(0.70 0.06 60)" }}
               >
-                Deity: {stotra.deity}
+                {t("deity")}: {stotra.deity}
               </span>
               <span
                 className="text-sm font-body"
                 style={{ color: "oklch(0.70 0.06 60)" }}
               >
-                Faith: {stotra.faith}
+                {t("faith")}: {stotra.faith}
               </span>
             </div>
           </div>
@@ -294,43 +302,12 @@ function DetailView({
         </div>
       </div>
 
-      {/* Full text */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{
-          border: "1px solid oklch(0.85 0.04 70)",
-          boxShadow: "0 2px 12px oklch(0.62 0.18 48 / 0.06)",
-        }}
-      >
-        <div
-          className="px-6 py-4 border-b flex items-center justify-between"
-          style={{
-            background: "oklch(0.94 0.025 80)",
-            borderColor: "oklch(0.85 0.04 70)",
-          }}
-        >
-          <span
-            className="font-heading font-semibold text-sm"
-            style={{ color: "oklch(0.35 0.12 25)" }}
-          >
-            पूर्ण पाठ — Full Text
-          </span>
-        </div>
-        <div
-          className="p-6 md:p-8"
-          style={{ background: "oklch(0.99 0.008 80)" }}
-        >
-          <pre
-            className="whitespace-pre-wrap font-body text-base md:text-lg leading-loose font-devanagari"
-            style={{
-              color: "oklch(0.22 0.06 28)",
-              letterSpacing: "0.01em",
-            }}
-          >
-            {stotra.fullText}
-          </pre>
-        </div>
-      </div>
+      {/* Full text via ContentCard */}
+      <ContentCard
+        title={stotra.title}
+        text={stotra.fullText}
+        meaningEnglish={stotra.meaning}
+      />
 
       {/* Benefits Section */}
       {benefitsData && (
@@ -364,16 +341,33 @@ function adaptBatchEntry(entry: StotraBatch5Entry): StotraEntry {
 }
 
 export default function Stotra() {
+  const { t } = useLanguage();
   const [search, setSearch] = useState("");
   const [activeType, setActiveType] = useState("All");
   const [selected, setSelected] = useState<StotraEntry | null>(null);
 
   const allStotras = useMemo(() => {
+    // stotraPart5/6/7 use schema { id, name, deity, faith, category, text, transliteration, meaningHindi, meaningEnglish }
+    // Map them to StotraEntry before merging
+    const mapPart = (e: (typeof stotraPart5)[0]): StotraEntry => ({
+      id: e.id,
+      title: e.name,
+      deity: e.deity,
+      faith: e.faith,
+      type: e.category,
+      description: e.meaningEnglish.slice(0, 200),
+      fullText: e.text,
+      meaning: e.meaningEnglish,
+      benefits: "",
+    });
     const raw = [
       ...stotraData,
       ...stotraDataBatch2,
       ...stotraDataBatch3,
       ...stotraDataBatch4,
+      ...stotraPart5.map(mapPart),
+      ...stotraPart6.map(mapPart),
+      ...stotraPart7.map(mapPart),
       ...part12Stotras,
       ...part13Stotras,
       ...part14Stotras,
@@ -486,7 +480,7 @@ export default function Stotra() {
             />
             <Input
               data-ocid="stotra.search_input"
-              placeholder="Search by title or deity..."
+              placeholder={t("searchByTitleOrDeity")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 font-body"
@@ -530,7 +524,8 @@ export default function Stotra() {
           className="text-sm font-body mb-6"
           style={{ color: "oklch(0.55 0.04 50)" }}
         >
-          Showing {filtered.length} of {allStotras.length} stotras
+          {t("showing")} {filtered.length} {t("of")} {allStotras.length}{" "}
+          {t("stotras")}
         </p>
 
         {filtered.length === 0 ? (
@@ -547,13 +542,13 @@ export default function Stotra() {
               className="font-heading text-lg"
               style={{ color: "oklch(0.40 0.04 40)" }}
             >
-              No stotras found
+              {t("noStotrasFound")}
             </p>
             <p
               className="font-body text-sm mt-1"
               style={{ color: "oklch(0.60 0.04 50)" }}
             >
-              Try a different search or filter
+              {t("tryDifferentSearch")}
             </p>
           </div>
         ) : (

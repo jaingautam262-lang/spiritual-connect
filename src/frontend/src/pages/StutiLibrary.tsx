@@ -5,6 +5,7 @@ import { ArrowLeft, Search, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import BenefitsSection from "../components/BenefitsSection";
+import FavouriteButton from "../components/FavouriteButton";
 import { findBenefitsByTitle } from "../data/content-benefits-data";
 
 const stutis: Stuti[] = stutiData;
@@ -272,12 +273,25 @@ export default function StutiLibrary() {
                   padding: "20px 18px",
                   cursor: "pointer",
                   transition: "transform 0.2s, box-shadow 0.2s",
+                  position: "relative",
                 }}
                 whileHover={{
                   y: -4,
                   boxShadow: "0 8px 28px oklch(0.50 0.20 70 / 0.25)",
                 }}
               >
+                <div style={{ position: "absolute", top: 10, right: 10 }}>
+                  <FavouriteButton
+                    item={{
+                      id: stuti.id,
+                      type: "stuti",
+                      title: stuti.name,
+                      subtitle: stuti.deity,
+                      path: "/stuti",
+                      icon: "🌸",
+                    }}
+                  />
+                </div>
                 <div
                   style={{
                     fontSize: 28,

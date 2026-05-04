@@ -461,3 +461,28 @@ export interface VastuContent {
   createdAt: bigint;
   updatedAt: bigint;
 }
+export interface PujaEvent {
+  id: string;
+  pujaName: string;
+  pujaNameHindi: string;
+  date: string;
+  time: string;
+  description: string;
+  price: bigint;
+  slotsAvailable: bigint;
+  slotsBooked: bigint;
+  location: string;
+  deity: string;
+  isActive: boolean;
+  createdAt: bigint;
+}
+
+export interface SankalpInput {
+  eventId: string;
+  devoteeName: string;
+  gotra: string;
+  mobile: string;
+  email: string;
+  birthDetails: string;
+  specialWishes: string;
+}

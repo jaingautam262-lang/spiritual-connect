@@ -19,13 +19,17 @@ import {
   APRIL_2026_FESTIVALS,
   CHOGHADIYA_QUALITY,
   CITIES,
+  CITIES_BY_STATE,
   GLOSSARY,
   HORA_PLANET_CHARACTER,
   PANCHAKA_TYPES,
   PANCHA_PAKSHI_BIRDS,
   REGIONAL_TERMINOLOGY,
 } from "../utils/panchang/panchangConstants";
-import { getPanchangData } from "../utils/panchang/panchangData";
+import {
+  getPanchangData,
+  getStaticPanchangSample,
+} from "../utils/panchang/panchangData";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -1491,6 +1495,15 @@ export default function PanchangPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const [selectedRegion, setSelectedRegion] = useState("Hindi");
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [dataSource, setDataSource] = useState<"live" | "sample">("live");
+  const [activeStateFilter, setActiveStateFilter] = useState<string | null>(
+    null,
+  );
+
+  // Ordered list of state names for chips
+  const stateNames = useMemo(() => Object.keys(CITIES_BY_STATE), []);
+
+  // Filtered cities for display (state filter only affects the chip highlight; select always shows all)
 
   useEffect(() => {
     const id = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -1498,8 +1511,11 @@ export default function PanchangPage() {
   }, []);
 
   const panchangData = useMemo(
-    () => getPanchangData(selectedCity, selectedDate),
-    [selectedCity, selectedDate],
+    () =>
+      dataSource === "sample"
+        ? getStaticPanchangSample(selectedCity)
+        : getPanchangData(selectedCity, selectedDate),
+    [selectedCity, selectedDate, dataSource],
   );
   const terminology = useMemo(
     () => REGIONAL_TERMINOLOGY[selectedRegion] ?? REGIONAL_TERMINOLOGY.Hindi,
@@ -1616,6 +1632,66 @@ export default function PanchangPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 flex-wrap justify-center">
+            {/* ── Data Source Toggle ── */}
+            <div
+              className="flex items-center gap-1 rounded-xl border overflow-hidden"
+              style={{
+                borderColor: "oklch(0.35 0.12 45)",
+                background: "oklch(0.18 0.07 24)",
+              }}
+              data-ocid="panchang.datasource.toggle"
+            >
+              <button
+                type="button"
+                onClick={() => setDataSource("live")}
+                className="px-3 py-2 text-xs font-bold flex items-center gap-1.5 transition-all"
+                style={
+                  dataSource === "live"
+                    ? {
+                        background: "oklch(0.55 0.18 145 / 0.25)",
+                        color: "oklch(0.75 0.18 145)",
+                      }
+                    : { color: "oklch(0.60 0.04 55)" }
+                }
+                data-ocid="panchang.datasource.live"
+              >
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{
+                    background:
+                      dataSource === "live"
+                        ? "oklch(0.55 0.18 145)"
+                        : "oklch(0.40 0.04 50)",
+                  }}
+                />
+                Live Today
+              </button>
+              <div
+                style={{
+                  width: "1px",
+                  height: "20px",
+                  background: "oklch(0.30 0.08 30)",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setDataSource("sample")}
+                className="px-3 py-2 text-xs font-bold flex items-center gap-1.5 transition-all"
+                style={
+                  dataSource === "sample"
+                    ? {
+                        background: "oklch(0.68 0.20 48 / 0.20)",
+                        color: "oklch(0.78 0.14 75)",
+                      }
+                    : { color: "oklch(0.60 0.04 55)" }
+                }
+                data-ocid="panchang.datasource.sample"
+              >
+                📋 Sample
+              </button>
+            </div>
+
+            {/* ── City selector (grouped by state) ── */}
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
@@ -1628,10 +1704,14 @@ export default function PanchangPage() {
               data-ocid="panchang.city.select"
               aria-label="Select city"
             >
-              {CITIES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
+              {Object.entries(CITIES_BY_STATE).map(([state, cities]) => (
+                <optgroup key={state} label={state}>
+                  {cities.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
 
@@ -1703,6 +1783,36 @@ export default function PanchangPage() {
             <p className="text-xs" style={{ color: "oklch(0.50 0.04 50)" }}>
               All timings shown in {city.name} local time ({city.offset} IST)
             </p>
+            {/* Data source badge */}
+            <div className="flex justify-center mt-1">
+              {dataSource === "live" ? (
+                <span
+                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                  style={{
+                    background: "oklch(0.55 0.18 145 / 0.18)",
+                    color: "oklch(0.70 0.18 145)",
+                    border: "1px solid oklch(0.55 0.18 145 / 0.35)",
+                  }}
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                    style={{ background: "oklch(0.55 0.18 145)" }}
+                  />
+                  Live
+                </span>
+              ) : (
+                <span
+                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                  style={{
+                    background: "oklch(0.68 0.20 48 / 0.15)",
+                    color: "oklch(0.78 0.14 75)",
+                    border: "1px solid oklch(0.68 0.20 48 / 0.35)",
+                  }}
+                >
+                  📋 Sample Data
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <div
@@ -1751,6 +1861,120 @@ export default function PanchangPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+        {/* ── State Filter Chips ── */}
+        <div
+          className="rounded-2xl border overflow-hidden"
+          style={{ borderColor: "oklch(0.28 0.08 30)" }}
+          data-ocid="panchang.state.filter"
+        >
+          <div
+            className="px-5 py-2 border-b flex items-center gap-2"
+            style={{
+              background: "oklch(0.20 0.08 24)",
+              borderColor: "oklch(0.28 0.08 30)",
+            }}
+          >
+            <span
+              className="text-xs font-semibold"
+              style={{ color: "oklch(0.55 0.06 55)" }}
+            >
+              Filter by State:
+            </span>
+            {activeStateFilter && (
+              <button
+                type="button"
+                onClick={() => setActiveStateFilter(null)}
+                className="text-xs px-2 py-0.5 rounded-full transition-all"
+                style={{
+                  background: "oklch(0.50 0.20 20 / 0.15)",
+                  color: "oklch(0.65 0.20 20)",
+                  border: "1px solid oklch(0.50 0.20 20 / 0.3)",
+                }}
+                data-ocid="panchang.state.clear"
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+          <div
+            className="overflow-x-auto"
+            style={{ background: "oklch(0.17 0.06 22)" }}
+          >
+            <div className="flex gap-1.5 p-2.5 w-max min-w-full">
+              {stateNames.map((state) => (
+                <button
+                  key={state}
+                  type="button"
+                  onClick={() => {
+                    setActiveStateFilter(
+                      activeStateFilter === state ? null : state,
+                    );
+                    // Auto-select first city in this state
+                    const stateCities = CITIES_BY_STATE[state];
+                    if (stateCities?.length && activeStateFilter !== state) {
+                      setSelectedCity(stateCities[0].id);
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all border"
+                  style={
+                    activeStateFilter === state
+                      ? {
+                          background: "oklch(0.68 0.20 48)",
+                          color: "white",
+                          borderColor: "oklch(0.68 0.20 48)",
+                        }
+                      : {
+                          background: "oklch(0.22 0.07 24)",
+                          color: "oklch(0.65 0.04 55)",
+                          borderColor: "oklch(0.26 0.07 28)",
+                        }
+                  }
+                  data-ocid={`panchang.state.${state.toLowerCase().replace(/[^a-z0-9]/g, "-")}.chip`}
+                >
+                  {state}
+                  <span className="ml-1 text-[10px] opacity-60">
+                    ({CITIES_BY_STATE[state]?.length ?? 0})
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Filtered city quick-select strip */}
+          {activeStateFilter && CITIES_BY_STATE[activeStateFilter] && (
+            <div
+              className="flex gap-1.5 px-3 pb-3 pt-1 flex-wrap border-t"
+              style={{
+                background: "oklch(0.15 0.05 20)",
+                borderColor: "oklch(0.24 0.06 26)",
+              }}
+            >
+              {CITIES_BY_STATE[activeStateFilter].map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setSelectedCity(c.id)}
+                  className="px-3 py-1 rounded-lg text-xs font-medium transition-all border"
+                  style={
+                    selectedCity === c.id
+                      ? {
+                          background: "oklch(0.78 0.14 75 / 0.2)",
+                          color: "oklch(0.88 0.12 75)",
+                          borderColor: "oklch(0.78 0.14 75 / 0.4)",
+                        }
+                      : {
+                          background: "oklch(0.20 0.07 22)",
+                          color: "oklch(0.68 0.08 60)",
+                          borderColor: "oklch(0.26 0.07 28)",
+                        }
+                  }
+                  data-ocid={`panchang.state.city.${c.id}`}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {/* ── Regional Terminology Tabs ── */}
         <div
           className="rounded-2xl border overflow-hidden"

@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen, Search, Sparkles, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import BenefitsSection from "../components/BenefitsSection";
+import FavouriteButton from "../components/FavouriteButton";
 import { findBenefitsByTitle } from "../data/content-benefits-data";
 import { part12Stotras } from "../data/part12Stotras";
 import { part13Stotras } from "../data/part13Stotras";
@@ -711,6 +712,16 @@ export default function SahasranamLibrary() {
                       {getDeityIcon(entry.deity)}
                     </span>
                     <div className="flex flex-col items-end gap-1">
+                      <FavouriteButton
+                        item={{
+                          id: entry.id,
+                          type: "sahasranam",
+                          title: entry.title,
+                          subtitle: entry.deity,
+                          path: "/sahasranam",
+                          icon: "🕉️",
+                        }}
+                      />
                       <Badge
                         className="text-xs"
                         style={{

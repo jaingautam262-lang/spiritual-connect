@@ -966,6 +966,35 @@ function buildDefault(cityId: string, date: Date): DailyPanchangData {
 }
 
 /**
+ * Returns a static representative panchang sample for a city.
+ * Pre-defined illustrative data showing a typical spring Shukla Panchami.
+ */
+export function getStaticPanchangSample(cityId: string): DailyPanchangData {
+  const city = CITIES.find((c) => c.id === cityId);
+  const offsetMins = city ? Math.round((city.lng - DELHI_LNG) * 4) * -1 : 0;
+  const sampleDate = "2026-05-03";
+  const wd = new Date(sampleDate).getDay();
+  const base = makeDay(
+    sampleDate,
+    addMinsToTime("06:05", offsetMins),
+    addMinsToTime("18:52", offsetMins),
+    addMinsToTime("09:30", offsetMins),
+    addMinsToTime("22:10", offsetMins),
+    addMinsToTime("06:04", offsetMins),
+    4, // Panchami
+    6, // Punarvasu nakshatra
+    3, // Saubhagya yoga
+    2, // Balava karana
+    2, // Mithuna moon sign
+    offsetTimes(RAHU_KALAM_DELHI[wd] ?? ["09:00", "10:30"], offsetMins),
+    offsetTimes(GULIKA_DELHI[wd] ?? ["06:00", "07:30"], offsetMins),
+    offsetTimes(YAMAGANDA_DELHI[wd] ?? ["13:30", "15:00"], offsetMins),
+    "Shukla",
+  );
+  return { ...base, cityId, date: sampleDate };
+}
+
+/**
  * Look up pre-computed panchang data for a city and date.
  * For cities with pre-computed data, returns that directly.
  * For all other cities in the 33-city list, computes approximate data

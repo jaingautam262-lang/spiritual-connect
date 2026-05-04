@@ -18,14 +18,21 @@ import Aarti from "./pages/Aarti";
 // if ANY import fails (circular deps, missing exports, etc.)
 import AdminCMS from "./pages/AdminCMS";
 import AshtakamLibrary from "./pages/AshtakamLibrary";
+import AskKrishna from "./pages/AskKrishna";
 import AstroScore from "./pages/AstroScore";
 import AstrologerBookingPage from "./pages/AstrologerBookingPage";
+import AstrologerCity from "./pages/AstrologerCity";
 import AstrologerConsultation from "./pages/AstrologerConsultation";
 import AstrologerDashboard from "./pages/AstrologerDashboard";
+import AstrologerLanding from "./pages/AstrologerLanding";
 import AstrologerProfile from "./pages/AstrologerProfile";
+import AstrologersIndia from "./pages/AstrologersIndia";
 import AstrologyCalculatorsPage from "./pages/AstrologyCalculatorsPage";
 import AuspiciousTimes from "./pages/AuspiciousTimes";
 import AyurvedaSection from "./pages/AyurvedaSection";
+import BabyNameReport from "./pages/BabyNameReport";
+import BhagavadGita from "./pages/BhagavadGita";
+import BhagavadGitaChapter from "./pages/BhagavadGitaChapter";
 import BhajanLibrary from "./pages/BhajanLibrary";
 import BirthdayRituals from "./pages/BirthdayRituals";
 import BlogDetail from "./pages/BlogDetail";
@@ -39,9 +46,11 @@ import CalculatorIndex from "./pages/CalculatorIndex";
 import CaratRattiCalculator from "./pages/CaratRattiCalculator";
 import CareerPathCalculator from "./pages/CareerPathCalculator";
 import ChadhavaPage from "./pages/ChadhavaPage";
+import ChakraAssessment from "./pages/ChakraAssessment";
 import Chalisa from "./pages/Chalisa";
 import ChartRectification from "./pages/ChartRectification";
 import CombinedVedicReading from "./pages/CombinedVedicReading";
+import ConsultExpertPage from "./pages/ConsultExpertPage";
 import CurrentTransits from "./pages/CurrentTransits";
 import DaanSeva from "./pages/DaanSeva";
 import DanSevaPage from "./pages/DanSevaPage";
@@ -57,7 +66,9 @@ import EnergizedProductDetail from "./pages/EnergizedProductDetail";
 import EnergizedProducts from "./pages/EnergizedProducts";
 import FestivalCalendar from "./pages/FestivalCalendar";
 import FestivalCalendarPage from "./pages/FestivalCalendarPage";
+import FreeKundli from "./pages/FreeKundli";
 import GemstoneLibrary from "./pages/GemstoneLibrary";
+import GemstoneShop from "./pages/GemstoneShop";
 import GrihaPravesh2026Page from "./pages/GrihaPravesh2026Page";
 import GurugDirectory from "./pages/GurugDirectory";
 import HerbDirectoryPage from "./pages/HerbDirectoryPage";
@@ -79,6 +90,7 @@ import JainKathayen from "./pages/JainKathayen";
 import JainKnowledgeBase from "./pages/JainKnowledgeBase";
 import JainMeriBhavna from "./pages/JainMeriBhavna";
 import JainNewStotraDetail from "./pages/JainNewStotraDetail";
+import JainOriginalAartiPage from "./pages/JainOriginalAartiPage";
 import JainParvCalendar from "./pages/JainParvCalendar";
 import JainPathshala from "./pages/JainPathshala";
 import JainPoojasSangreh from "./pages/JainPoojasSangreh";
@@ -97,6 +109,9 @@ import KartikJewelsShop from "./pages/KartikJewelsShop";
 import KartikProductDetail from "./pages/KartikProductDetail";
 import KavachLibrary from "./pages/KavachLibrary";
 import KundaliMatchingPage from "./pages/KundaliMatchingPage";
+import KundliReportPage from "./pages/KundliReportPage";
+import LifeGuidance from "./pages/LifeGuidance";
+import LifeGuidanceTopic from "./pages/LifeGuidanceTopic";
 import LifeReceipt from "./pages/LifeReceipt";
 import LivePanchang from "./pages/LivePanchang";
 import LoShuGrid from "./pages/LoShuGrid";
@@ -104,12 +119,16 @@ import LogoCreator from "./pages/LogoCreator";
 import Mantra from "./pages/Mantra";
 import MediaPlayerPage from "./pages/MediaPlayerPage";
 import MehndiCollection from "./pages/MehndiCollection";
+import MoolankOilStore from "./pages/MoolankOilStore";
+import MurtiPage from "./pages/MurtiPage";
+import MyFavourites from "./pages/MyFavourites";
 import NadiCollection from "./pages/NadiCollection";
 import NadiDetail from "./pages/NadiDetail";
 import NameSelection from "./pages/NameSelection";
 import NavgrahMantraCounter from "./pages/NavgrahMantraCounter";
 import Newsletter from "./pages/Newsletter";
 import Numerology from "./pages/Numerology";
+import NumerologyReportPage from "./pages/NumerologyReportPage";
 import NumerologyWatchesPage from "./pages/NumerologyWatchesPage";
 import PadmavatiVratKatha from "./pages/PadmavatiVratKatha";
 import PaintingsGreetings from "./pages/PaintingsGreetings";
@@ -120,13 +139,16 @@ import PanchangTimingsPage from "./pages/PanchangTimingsPage";
 import Pathshala from "./pages/Pathshala";
 import PaymentFailure from "./pages/PaymentFailure";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import PersonalisedProducts from "./pages/PersonalisedProducts";
 import PlanetaryStrength from "./pages/PlanetaryStrength";
 import PredictionServices from "./pages/PredictionServices";
+import Pricing from "./pages/Pricing";
 import ProductDetail from "./pages/ProductDetail";
 import PujaBooking from "./pages/PujaBooking";
 import PujaBookingPage from "./pages/PujaBookingPage";
 import PujaDetail from "./pages/PujaDetail";
 import PujaReports from "./pages/PujaReports";
+import PujaStore from "./pages/PujaStore";
 import PujaTypesList from "./pages/PujaTypesList";
 import PujasCatalog from "./pages/PujasCatalog";
 import ReportOutput from "./pages/ReportOutput";
@@ -139,12 +161,14 @@ import ShopByPurpose from "./pages/ShopByPurpose";
 import ShopSpecialCollections from "./pages/ShopSpecialCollections";
 import SikhKirtans from "./pages/SikhKirtans";
 import SikhNitnemPage from "./pages/SikhNitnemPage";
+import SikhOriginalAartiPage from "./pages/SikhOriginalAartiPage";
 import SpiritualShop from "./pages/SpiritualShop";
 import Stotra from "./pages/Stotra";
 import StutiLibrary from "./pages/StutiLibrary";
 import SuktamLibrary from "./pages/SuktamLibrary";
 import SuryaDev from "./pages/SuryaDev";
 import TantraRemedies from "./pages/TantraRemedies";
+import TarotReading from "./pages/TarotReading";
 import TattvarthaSutra from "./pages/TattvarthaSutra";
 import TempleDirectory from "./pages/TempleDirectory";
 import TempleDirectoryPage from "./pages/TempleDirectoryPage";
@@ -174,20 +198,25 @@ import YellowSapphireStonePage from "./pages/YellowSapphireStonePage";
 import YogasInChart from "./pages/YogasInChart";
 import AtmakarakaCalculator from "./pages/calculators/AtmakarakaCalculator";
 import BirthChartCalculator from "./pages/calculators/BirthChartCalculator";
+import BraceletCalculator from "./pages/calculators/BraceletCalculator";
 import DashaCalculator from "./pages/calculators/DashaCalculator";
 import FlamesCalculator from "./pages/calculators/FlamesCalculator";
 import FriendshipCalculator from "./pages/calculators/FriendshipCalculator";
+import GemstoneCalculator from "./pages/calculators/GemstoneCalculator";
 import IshtaDevataCalculator from "./pages/calculators/IshtaDevataCalculator";
 import KaalSarpDoshCalculator from "./pages/calculators/KaalSarpDoshCalculator";
 import LoShuGridCalculator from "./pages/calculators/LoShuGridCalculator";
 import LoveCalculator from "./pages/calculators/LoveCalculator";
 import LuckyVehicleCalculator from "./pages/calculators/LuckyVehicleCalculator";
 import MangalDoshaCalculator from "./pages/calculators/MangalDoshaCalculator";
+import MoolankCalculator from "./pages/calculators/MoolankCalculator";
 import MoonPhaseCalculator from "./pages/calculators/MoonPhaseCalculator";
 import NakshatraFinderCalculator from "./pages/calculators/NakshatraFinderCalculator";
 import NameNumerologyCalculator from "./pages/calculators/NameNumerologyCalculator";
 import RashiCalculator from "./pages/calculators/RashiCalculator";
+import RattiCalculator from "./pages/calculators/RattiCalculator";
 import RisingAscendantCalculator from "./pages/calculators/RisingAscendantCalculator";
+import RudrakshaCalculator from "./pages/calculators/RudrakshaCalculator";
 import SadeSatiCalculator from "./pages/calculators/SadeSatiCalculator";
 import SunSignCalculator from "./pages/calculators/SunSignCalculator";
 import TransitChartCalculator from "./pages/calculators/TransitChartCalculator";
@@ -195,6 +224,71 @@ import TransitChartCalculator from "./pages/calculators/TransitChartCalculator";
 // Remove loading overlay ONLY after React has successfully rendered
 // (useEffect runs after first paint — this is the safe, correct place)
 
+const myFavouritesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/favourites",
+  component: MyFavourites,
+});
+const bhagavadGitaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/bhagavad-gita",
+  component: BhagavadGita,
+});
+const bhagavadGitaChapterRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/bhagavad-gita/$chapterId",
+  component: BhagavadGitaChapter,
+});
+const rudrakshaCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/rudraksha-calculator",
+  component: RudrakshaCalculator,
+});
+const gemstoneCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gemstone-calculator",
+  component: GemstoneCalculator,
+});
+const moolankCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/moolank-calculator",
+  component: MoolankCalculator,
+});
+const rattiCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/ratti-calculator",
+  component: RattiCalculator,
+});
+const braceletCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/bracelet-calculator",
+  component: BraceletCalculator,
+});
+const askKrishnaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/ask-krishna",
+  component: AskKrishna,
+});
+const freeKundliRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/free-kundli",
+  component: FreeKundli,
+});
+const pricingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/pricing",
+  component: Pricing,
+});
+const astrologersIndiaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/astrologers-india",
+  component: AstrologersIndia,
+});
+const astrologerCityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/astrologers-india/$citySlug",
+  component: AstrologerCity,
+});
 const rootRoute = createRootRoute({
   component: () => (
     <ErrorBoundary>
@@ -1092,12 +1186,99 @@ const kartikProductDetailRoute = createRoute({
   component: KartikProductDetail,
 });
 
+const pujaStoreRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/puja-store",
+  component: PujaStore,
+});
+
+const moolankOilRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/moolank-oil",
+  component: MoolankOilStore,
+});
+
+const personalisedProductsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/personalised-products",
+  component: PersonalisedProducts,
+});
+
 const shopSpecialCollectionsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/shop/special-collections",
   component: ShopSpecialCollections,
 });
+const gemstoneShopRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/gemstone-shop",
+  component: GemstoneShop,
+});
 
+const consultExpertRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/consult-expert",
+  component: ConsultExpertPage,
+});
+
+const jainAartisOriginalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/jain-aartis-original",
+  component: JainOriginalAartiPage,
+});
+
+const sikhAartisOriginalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/sikh-aartis-original",
+  component: SikhOriginalAartiPage,
+});
+
+const chakraAssessmentRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/chakra-assessment",
+  component: ChakraAssessment,
+});
+const astrologerLandingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/astrology-landing",
+  component: AstrologerLanding,
+});
+const numerologyReportRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/numerology-report",
+  component: NumerologyReportPage,
+});
+const kundliReportRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/kundli-report",
+  component: KundliReportPage,
+});
+const murtiPageRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/murti",
+  component: MurtiPage,
+});
+const babyNameReportRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/baby-name-report",
+  component: BabyNameReport,
+});
+const tarotReadingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tarot-reading",
+  component: TarotReading,
+});
+const lifeGuidanceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/life-guidance",
+  component: LifeGuidance,
+});
+const lifeGuidanceTopicRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/life-guidance/$topic",
+  component: LifeGuidanceTopic,
+});
+// freeKundliRoute defined above
 const routeTree = rootRoute.addChildren([
   indexRoute,
   templeRoute,
@@ -1277,6 +1458,35 @@ const routeTree = rootRoute.addChildren([
   kartikShopRoute,
   kartikProductDetailRoute,
   shopSpecialCollectionsRoute,
+  pujaStoreRoute,
+  chakraAssessmentRoute,
+  astrologerLandingRoute,
+  numerologyReportRoute,
+  kundliReportRoute,
+  murtiPageRoute,
+  babyNameReportRoute,
+  gemstoneShopRoute,
+  moolankOilRoute,
+  personalisedProductsRoute,
+  consultExpertRoute,
+  jainAartisOriginalRoute,
+  sikhAartisOriginalRoute,
+  freeKundliRoute,
+  rudrakshaCalculatorRoute,
+  gemstoneCalculatorRoute,
+  moolankCalculatorRoute,
+  rattiCalculatorRoute,
+  braceletCalculatorRoute,
+  askKrishnaRoute,
+  tarotReadingRoute,
+  lifeGuidanceRoute,
+  lifeGuidanceTopicRoute,
+  myFavouritesRoute,
+  bhagavadGitaRoute,
+  bhagavadGitaChapterRoute,
+  pricingRoute,
+  astrologersIndiaRoute,
+  astrologerCityRoute,
 ]);
 
 const router = createRouter({ routeTree });

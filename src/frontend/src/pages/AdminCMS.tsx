@@ -11,13 +11,16 @@ import {
   Eye,
   EyeOff,
   FileText,
+  Gem,
   Lock,
   Music,
   Package,
   Plus,
   ShoppingBag,
+  Tags,
   Trash2,
   Upload,
+  User,
 } from "lucide-react";
 import type React from "react";
 import { useRef, useState } from "react";
@@ -36,6 +39,7 @@ import {
   useBlogArticles,
   useCreateBlogArticle,
   useCreatePalmistryContent,
+  useCreatePujaEvent,
   useCreateVastuContent,
   useCreateWebStory,
   useDeleteBhajan,
@@ -43,13 +47,16 @@ import {
   useDeleteFestivalEvent,
   useDeleteHolyBookEntry,
   useDeletePalmistryContent,
+  useDeletePujaEvent,
   useDeleteVastuContent,
   useDeleteVratKatha,
   useDeleteWebStory,
   useFestivalEvents,
+  useGetAllPujaEventsAdmin,
   useGetAllPujaReports,
   useHolyBookEntries,
   usePalmistryContents,
+  useUpdatePujaEvent,
   useUpdatePujaReport,
   useVastuContents,
   useVratKathas,
@@ -116,6 +123,7 @@ function BhajanManagement() {
       artist: form.artist,
       lyricsText: form.lyricsText,
       audioBase64,
+      hasMockAudio: false,
       createdAt: BigInt(Date.now()),
     };
     addBhajan.mutate(entry, {
@@ -295,6 +303,7 @@ function VratKathaManagement() {
       festivalName: form.festivalName,
       storyText: form.storyText,
       audioBase64,
+      hasMockAudio: false,
       createdAt: BigInt(Date.now()),
     };
     addKatha.mutate(entry, {
@@ -1296,6 +1305,311 @@ function WebStoriesManagement() {
 
 // ─── Festival Events Management Tab ──────────────────────────────────────────
 
+// ─── Puja Event Management ─────────────────────────────────────────────────────────────
+
+function PujaEventManagement() {
+  const { data: events = [], isLoading } = useGetAllPujaEventsAdmin();
+  const createEvent = useCreatePujaEvent();
+  const updateEvent = useUpdatePujaEvent();
+  const deleteEvent = useDeletePujaEvent();
+
+  const emptyForm = {
+    pujaName: "",
+    pujaNameHindi: "",
+    date: "",
+    time: "",
+    description: "",
+    price: "",
+    slotsAvailable: "11",
+    location: "",
+    deity: "",
+    isActive: true,
+  };
+  const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const setField = (field: string, value: string | boolean) =>
+    setForm((f) => ({ ...f, [field]: value }));
+
+  const resetForm = () => {
+    setForm(emptyForm);
+    setEditingId(null);
+  };
+
+  const loadForEdit = (ev: (typeof events)[0]) => {
+    setForm({
+      pujaName: ev.pujaName,
+      pujaNameHindi: ev.pujaNameHindi,
+      date: ev.date,
+      time: ev.time,
+      description: ev.description,
+      price: String(Number(ev.price)),
+      slotsAvailable: String(Number(ev.slotsAvailable)),
+      location: ev.location,
+      deity: ev.deity,
+      isActive: ev.isActive,
+    });
+    setEditingId(ev.id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.pujaName || !form.date || !form.time) {
+      toast.error("Puja name, date and time are required");
+      return;
+    }
+    const payload = {
+      pujaName: form.pujaName,
+      pujaNameHindi: form.pujaNameHindi,
+      date: form.date,
+      time: form.time,
+      description: form.description,
+      price: Number(form.price) || 0,
+      slotsAvailable: Number(form.slotsAvailable) || 11,
+      location: form.location,
+      deity: form.deity,
+      isActive: form.isActive,
+    };
+    if (editingId) {
+      updateEvent.mutate(
+        { id: editingId, ...payload },
+        {
+          onSuccess: () => {
+            toast.success("Puja event updated!");
+            resetForm();
+          },
+          onError: () => toast.error("Update failed"),
+        },
+      );
+    } else {
+      createEvent.mutate(payload, {
+        onSuccess: () => {
+          toast.success("Puja event created!");
+          resetForm();
+        },
+        onError: () => toast.error("Create failed"),
+      });
+    }
+  };
+
+  const _inputCls =
+    "w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground";
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-card border border-border rounded-xl p-5">
+        <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Plus className="w-4 h-4 text-primary" />
+          {editingId ? "Edit Puja Event" : "Add New Puja Event"}
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="pe-name">Puja Name (English) *</Label>
+              <Input
+                id="pe-name"
+                value={form.pujaName}
+                onChange={(e) => setField("pujaName", e.target.value)}
+                placeholder="Rudrabhishek"
+                data-ocid="admin.puja_event.name_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-hindi">पूजा नाम (हिंदी)</Label>
+              <Input
+                id="pe-hindi"
+                value={form.pujaNameHindi}
+                onChange={(e) => setField("pujaNameHindi", e.target.value)}
+                placeholder="रुद्राभिषेक"
+                data-ocid="admin.puja_event.hindi_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-date">Date *</Label>
+              <Input
+                id="pe-date"
+                type="date"
+                value={form.date}
+                onChange={(e) => setField("date", e.target.value)}
+                data-ocid="admin.puja_event.date_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-time">Time *</Label>
+              <Input
+                id="pe-time"
+                value={form.time}
+                onChange={(e) => setField("time", e.target.value)}
+                placeholder="6:00 AM"
+                data-ocid="admin.puja_event.time_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-price">Price (₹)</Label>
+              <Input
+                id="pe-price"
+                type="number"
+                value={form.price}
+                onChange={(e) => setField("price", e.target.value)}
+                placeholder="2100"
+                data-ocid="admin.puja_event.price_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-slots">Slots Available</Label>
+              <Input
+                id="pe-slots"
+                type="number"
+                value={form.slotsAvailable}
+                onChange={(e) => setField("slotsAvailable", e.target.value)}
+                placeholder="11"
+                data-ocid="admin.puja_event.slots_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-deity">Deity</Label>
+              <Input
+                id="pe-deity"
+                value={form.deity}
+                onChange={(e) => setField("deity", e.target.value)}
+                placeholder="Shiva, Lakshmi..."
+                data-ocid="admin.puja_event.deity_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pe-location">Location</Label>
+              <Input
+                id="pe-location"
+                value={form.location}
+                onChange={(e) => setField("location", e.target.value)}
+                placeholder="Kashi Vishwanath, Varanasi"
+                data-ocid="admin.puja_event.location_input"
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="pe-desc">Description</Label>
+            <Textarea
+              id="pe-desc"
+              value={form.description}
+              onChange={(e) => setField("description", e.target.value)}
+              placeholder="Describe the puja ceremony, benefits..."
+              rows={3}
+              data-ocid="admin.puja_event.description_textarea"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="pe-active"
+              checked={form.isActive}
+              onChange={(e) => setField("isActive", e.target.checked)}
+              className="rounded border-input"
+              data-ocid="admin.puja_event.active_checkbox"
+            />
+            <Label htmlFor="pe-active">Active (visible to devotees)</Label>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="submit"
+              disabled={createEvent.isPending || updateEvent.isPending}
+              data-ocid="admin.puja_event.submit_button"
+            >
+              {editingId ? "Update Event" : "Add Event"}
+            </Button>
+            {editingId && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                data-ocid="admin.puja_event.cancel_button"
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <div className="bg-card border border-border rounded-xl p-5">
+        <h3 className="font-semibold text-foreground mb-4">
+          All Puja Events ({events.length})
+        </h3>
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        ) : events.length === 0 ? (
+          <div
+            className="text-center py-8"
+            data-ocid="admin.puja_events.empty_state"
+          >
+            <p className="text-sm text-muted-foreground">कोई पूजा इवेंट नहीं है</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {events.map((ev, i) => (
+              <div
+                key={ev.id}
+                className="flex items-start justify-between gap-3 p-3 rounded-lg border border-border"
+                data-ocid={`admin.puja_events.item.${i + 1}`}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-sm text-foreground truncate">
+                      {ev.pujaName}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {ev.pujaNameHindi}
+                    </span>
+                    <Badge
+                      variant={ev.isActive ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {ev.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    📅 {ev.date}  ⏰ {ev.time}  📍 {ev.location}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    ₹{Number(ev.price).toLocaleString("en-IN")}  • {" "}
+                    {Number(ev.slotsAvailable)} slots
+                  </p>
+                </div>
+                <div className="flex gap-1.5 shrink-0">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => loadForEdit(ev)}
+                    data-ocid={`admin.puja_events.edit_button.${i + 1}`}
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="destructive"
+                    onClick={() =>
+                      deleteEvent.mutate(ev.id, {
+                        onSuccess: () => toast.success("Deleted"),
+                        onError: () => toast.error("Delete failed"),
+                      })
+                    }
+                    data-ocid={`admin.puja_events.delete_button.${i + 1}`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function FestivalEventsManagement() {
   const { data: events = [], isLoading } = useFestivalEvents();
   const createEvent = useAddFestivalEvent();
@@ -2141,6 +2455,1515 @@ function VastuManagement() {
   );
 }
 
+// ─── Puja Sub-Categories Tab ────────────────────────────────────────────────
+
+interface PujaSubCategory {
+  id: string;
+  nameCode: string;
+  name: string;
+  nameHindi: string;
+  productCount: number;
+  prefix: string;
+}
+
+const INITIAL_PUJA_SUBCATS: PujaSubCategory[] = [
+  {
+    id: "ps-1",
+    nameCode: "AASAN",
+    name: "Aasan",
+    nameHindi: "आसन",
+    productCount: 12,
+    prefix: "PS_AASAN",
+  },
+  {
+    id: "ps-2",
+    nameCode: "DIYA",
+    name: "Diya",
+    nameHindi: "दीया",
+    productCount: 8,
+    prefix: "PS_DIYA",
+  },
+  {
+    id: "ps-3",
+    nameCode: "INCENSE",
+    name: "Incense & Dhoop",
+    nameHindi: "धूप अगरबत्ती",
+    productCount: 15,
+    prefix: "PS_INCENSE",
+  },
+  {
+    id: "ps-4",
+    nameCode: "KALASH",
+    name: "Kalash",
+    nameHindi: "कलश",
+    productCount: 6,
+    prefix: "PS_KALASH",
+  },
+  {
+    id: "ps-5",
+    nameCode: "THALI",
+    name: "Puja Thali",
+    nameHindi: "पूजा थाली",
+    productCount: 9,
+    prefix: "PS_THALI",
+  },
+  {
+    id: "ps-6",
+    nameCode: "BELL",
+    name: "Puja Bell",
+    nameHindi: "घंटी",
+    productCount: 5,
+    prefix: "PS_BELL",
+  },
+];
+
+function PujaSubCategoriesManagement() {
+  const [categories, setCategories] =
+    useState<PujaSubCategory[]>(INITIAL_PUJA_SUBCATS);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", nameHindi: "", nameCode: "" });
+  const [editForm, setEditForm] = useState({
+    name: "",
+    nameHindi: "",
+    nameCode: "",
+  });
+
+  const codePreview = form.nameCode
+    ? `PS_${form.nameCode.toUpperCase()}_001`
+    : "PS_XXXX_001";
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.nameCode) {
+      toast.error("Name and Name Code are required");
+      return;
+    }
+    const code = form.nameCode.toUpperCase().replace(/\s+/g, "_");
+    const newCat: PujaSubCategory = {
+      id: `ps-${Date.now()}`,
+      nameCode: code,
+      name: form.name,
+      nameHindi: form.nameHindi,
+      productCount: 0,
+      prefix: `PS_${code}`,
+    };
+    setCategories((prev) => [newCat, ...prev]);
+    setForm({ name: "", nameHindi: "", nameCode: "" });
+    setShowAddForm(false);
+    toast.success(`Sub-category PS_${code}_001 created!`);
+  };
+
+  const handleEdit = (cat: PujaSubCategory) => {
+    setEditingId(cat.id);
+    setEditForm({
+      name: cat.name,
+      nameHindi: cat.nameHindi,
+      nameCode: cat.nameCode,
+    });
+  };
+
+  const handleSaveEdit = (id: string) => {
+    const code = editForm.nameCode.toUpperCase().replace(/\s+/g, "_");
+    setCategories((prev) =>
+      prev.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              name: editForm.name,
+              nameHindi: editForm.nameHindi,
+              nameCode: code,
+              prefix: `PS_${code}`,
+            }
+          : c,
+      ),
+    );
+    setEditingId(null);
+    toast.success("Sub-category updated!");
+  };
+
+  const handleDelete = (id: string) => {
+    setCategories((prev) => prev.filter((c) => c.id !== id));
+    toast.success("Sub-category deleted");
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-semibold text-foreground">Puja Sub-Categories</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Codes auto-generated as PS_&#123;NAMECODE&#125;_001,
+            PS_&#123;NAMECODE&#125;_002...
+          </p>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => setShowAddForm(!showAddForm)}
+          data-ocid="puja-subcats.add_button"
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          {showAddForm ? "Cancel" : "Add Sub-Category"}
+        </Button>
+      </div>
+
+      {showAddForm && (
+        <div
+          className="bg-card border border-border rounded-xl p-5"
+          data-ocid="puja-subcats.add_form"
+        >
+          <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
+            <Tags className="w-4 h-4 text-primary" /> New Sub-Category
+          </h4>
+          <form onSubmit={handleAdd} className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="psc-name">Name (English) *</Label>
+                <Input
+                  id="psc-name"
+                  value={form.name}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, name: e.target.value }))
+                  }
+                  placeholder="e.g. Aasan"
+                  data-ocid="puja-subcats.name_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="psc-hindi">Name (Hindi)</Label>
+                <Input
+                  id="psc-hindi"
+                  value={form.nameHindi}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, nameHindi: e.target.value }))
+                  }
+                  placeholder="e.g. आसन"
+                  data-ocid="puja-subcats.hindi_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="psc-code">Name Code *</Label>
+                <Input
+                  id="psc-code"
+                  value={form.nameCode}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      nameCode: e.target.value
+                        .toUpperCase()
+                        .replace(/\s+/g, "_"),
+                    }))
+                  }
+                  placeholder="e.g. AASAN"
+                  data-ocid="puja-subcats.namecode_input"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Preview:{" "}
+                  <span
+                    className="font-mono font-semibold"
+                    style={{ color: "oklch(0.55 0.17 48)" }}
+                  >
+                    {codePreview}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              data-ocid="puja-subcats.submit_button"
+            >
+              <Plus className="w-4 h-4 mr-1" /> Save Sub-Category
+            </Button>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="text-left px-4 py-3 font-semibold text-foreground text-xs uppercase tracking-wide">
+                  Code Prefix
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground text-xs uppercase tracking-wide">
+                  Name
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground text-xs uppercase tracking-wide">
+                  Hindi Name
+                </th>
+                <th className="text-right px-4 py-3 font-semibold text-foreground text-xs uppercase tracking-wide">
+                  Products
+                </th>
+                <th className="text-right px-4 py-3 font-semibold text-foreground text-xs uppercase tracking-wide">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((cat, idx) => (
+                <tr
+                  key={cat.id}
+                  className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
+                  data-ocid={`puja-subcats.item.${idx + 1}`}
+                >
+                  <td className="px-4 py-3">
+                    <span
+                      className="font-mono text-xs px-2 py-0.5 rounded-md font-semibold"
+                      style={{
+                        background: "oklch(0.68 0.20 48 / 0.1)",
+                        color: "oklch(0.45 0.16 40)",
+                      }}
+                    >
+                      {cat.prefix}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {editingId === cat.id ? (
+                      <Input
+                        value={editForm.name}
+                        onChange={(e) =>
+                          setEditForm((f) => ({ ...f, name: e.target.value }))
+                        }
+                        className="h-7 text-xs w-32"
+                      />
+                    ) : (
+                      <span className="font-medium text-foreground">
+                        {cat.name}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {editingId === cat.id ? (
+                      <Input
+                        value={editForm.nameHindi}
+                        onChange={(e) =>
+                          setEditForm((f) => ({
+                            ...f,
+                            nameHindi: e.target.value,
+                          }))
+                        }
+                        className="h-7 text-xs w-28"
+                      />
+                    ) : (
+                      <span className="text-muted-foreground">
+                        {cat.nameHindi}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Badge variant="outline" className="text-xs">
+                      {cat.productCount}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      {editingId === cat.id ? (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs px-2"
+                            onClick={() => handleSaveEdit(cat.id)}
+                            data-ocid={`puja-subcats.save_button.${idx + 1}`}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs px-2"
+                            onClick={() => setEditingId(null)}
+                            data-ocid={`puja-subcats.cancel_button.${idx + 1}`}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => handleEdit(cat)}
+                            data-ocid={`puja-subcats.edit_button.${idx + 1}`}
+                            aria-label="Edit sub-category"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive"
+                            onClick={() => handleDelete(cat.id)}
+                            data-ocid={`puja-subcats.delete_button.${idx + 1}`}
+                            aria-label="Delete sub-category"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {categories.length === 0 && (
+          <div
+            className="py-10 text-center"
+            data-ocid="puja-subcats.empty_state"
+          >
+            <Tags className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-muted-foreground text-sm">
+              No sub-categories yet. Add one above.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Gemstone Products Tab ────────────────────────────────────────────────────
+
+interface GemstoneProduct {
+  id: string;
+  sku: string;
+  type: string;
+  hindiName: string;
+  shape: string;
+  weightRatti?: number;
+  price: number;
+  mrp?: number;
+  gsCode?: string;
+  description: string;
+  inStock: boolean;
+}
+
+const GEMSTONE_TYPES = [
+  "Ruby",
+  "Blue Sapphire",
+  "Yellow Sapphire",
+  "Emerald",
+  "Diamond",
+  "Pearl",
+  "Red Coral",
+  "Hessonite (Gomed)",
+  "Cat's Eye (Lehsunia)",
+  "Opal",
+  "Amethyst",
+  "Turquoise (Feroza)",
+  "Moonstone",
+  "Citrine",
+  "Rose Quartz",
+  "Tiger Eye",
+  "Green Jade",
+  "Pyrite",
+];
+
+const GEM_SHAPES = [
+  "Oval",
+  "Round",
+  "Pear Cut",
+  "Cushion",
+  "Octagon",
+  "Square",
+  "Triangle",
+  "Baguette",
+];
+
+const INITIAL_GEM_PRODUCTS: GemstoneProduct[] = [
+  {
+    id: "gem-1",
+    sku: "RUB-OV-3R",
+    type: "Ruby",
+    hindiName: "माणिक्य",
+    shape: "Oval",
+    weightRatti: 3,
+    price: 4500,
+    mrp: 5500,
+    gsCode: "GS001",
+    description: "Natural Burma Ruby, certified",
+    inStock: true,
+  },
+  {
+    id: "gem-2",
+    sku: "SAP-OV-4R",
+    type: "Blue Sapphire",
+    hindiName: "नीलम",
+    shape: "Oval",
+    weightRatti: 4,
+    price: 8500,
+    mrp: 10000,
+    gsCode: "GS002",
+    description: "Ceylon Blue Sapphire, AAA quality",
+    inStock: true,
+  },
+  {
+    id: "gem-3",
+    sku: "YSP-CU-3R",
+    type: "Yellow Sapphire",
+    hindiName: "पुखराज",
+    shape: "Cushion",
+    weightRatti: 3,
+    price: 6000,
+    gsCode: "GS003",
+    description: "Sri Lanka Yellow Sapphire",
+    inStock: true,
+  },
+  {
+    id: "gem-4",
+    sku: "EMR-OV-2R",
+    type: "Emerald",
+    hindiName: "पन्ना",
+    shape: "Oval",
+    weightRatti: 2.5,
+    price: 5200,
+    mrp: 6000,
+    gsCode: "GS004",
+    description: "Colombian Emerald, natural",
+    inStock: false,
+  },
+  {
+    id: "gem-5",
+    sku: "PRL-RD-5R",
+    type: "Pearl",
+    hindiName: "मोती",
+    shape: "Round",
+    weightRatti: 5,
+    price: 2800,
+    description: "South Sea Pearl, lustre grade A",
+    inStock: true,
+  },
+  {
+    id: "gem-6",
+    sku: "COR-OV-6R",
+    type: "Red Coral",
+    hindiName: "मूंगा",
+    shape: "Oval",
+    weightRatti: 6,
+    price: 3200,
+    mrp: 3800,
+    gsCode: "GS005",
+    description: "Italian Red Coral, certified",
+    inStock: true,
+  },
+];
+
+function GemstoneProductsManagement() {
+  const [products, setProducts] =
+    useState<GemstoneProduct[]>(INITIAL_GEM_PRODUCTS);
+  const [filterType, setFilterType] = useState("All");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [assigningCodeId, setAssigningCodeId] = useState<string | null>(null);
+  const [inlineGsCode, setInlineGsCode] = useState("");
+  const [form, setForm] = useState({
+    sku: "",
+    type: "Ruby",
+    hindiName: "",
+    shape: "Oval",
+    weightRatti: "",
+    price: "",
+    mrp: "",
+    gsCode: "",
+    description: "",
+  });
+
+  const GS_CODE_REGEX = /^GS[0-9]{3}$/;
+
+  const filtered =
+    filterType === "All"
+      ? products
+      : products.filter((p) => p.type === filterType);
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.sku || !form.type || !form.price) {
+      toast.error("SKU, type, and price are required");
+      return;
+    }
+    if (form.gsCode && !GS_CODE_REGEX.test(form.gsCode)) {
+      toast.error("GS Code must be in format GS001–GS200");
+      return;
+    }
+    setProducts((prev) => [
+      {
+        id: `gem-${Date.now()}`,
+        sku: form.sku,
+        type: form.type,
+        hindiName: form.hindiName,
+        shape: form.shape,
+        weightRatti: form.weightRatti ? Number(form.weightRatti) : undefined,
+        price: Number(form.price),
+        mrp: form.mrp ? Number(form.mrp) : undefined,
+        gsCode: form.gsCode || undefined,
+        description: form.description,
+        inStock: true,
+      },
+      ...prev,
+    ]);
+    setForm({
+      sku: "",
+      type: "Ruby",
+      hindiName: "",
+      shape: "Oval",
+      weightRatti: "",
+      price: "",
+      mrp: "",
+      gsCode: "",
+      description: "",
+    });
+    setShowAddForm(false);
+    toast.success("Gemstone product added!");
+  };
+
+  const handleAssignCode = (id: string) => {
+    if (!GS_CODE_REGEX.test(inlineGsCode)) {
+      toast.error("GS Code must match format GS001–GS200");
+      return;
+    }
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, gsCode: inlineGsCode } : p)),
+    );
+    setAssigningCodeId(null);
+    setInlineGsCode("");
+    toast.success(`GS Code ${inlineGsCode} assigned!`);
+  };
+
+  const handleDelete = (id: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    toast.success("Product deleted");
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground"
+            data-ocid="gemstone.type_filter"
+          >
+            <option value="All">All Types ({products.length})</option>
+            {GEMSTONE_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t} ({products.filter((p) => p.type === t).length})
+              </option>
+            ))}
+          </select>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => setShowAddForm(!showAddForm)}
+          data-ocid="gemstone.add_button"
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          {showAddForm ? "Cancel" : "Add Gemstone Product"}
+        </Button>
+      </div>
+
+      {showAddForm && (
+        <div
+          className="bg-card border border-border rounded-xl p-5"
+          data-ocid="gemstone.add_form"
+        >
+          <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
+            <Gem className="w-4 h-4 text-primary" /> Add Gemstone Product
+          </h4>
+          <form onSubmit={handleAdd} className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div>
+                <Label htmlFor="gem-type">Gemstone Type *</Label>
+                <select
+                  id="gem-type"
+                  value={form.type}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, type: e.target.value }))
+                  }
+                  className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground"
+                  data-ocid="gemstone.type_select"
+                >
+                  {GEMSTONE_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="gem-sku">SKU *</Label>
+                <Input
+                  id="gem-sku"
+                  value={form.sku}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, sku: e.target.value }))
+                  }
+                  placeholder="e.g. RUB-OV-3R"
+                  data-ocid="gemstone.sku_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="gem-hindi">Hindi Name</Label>
+                <Input
+                  id="gem-hindi"
+                  value={form.hindiName}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, hindiName: e.target.value }))
+                  }
+                  placeholder="e.g. माणिक्य"
+                  data-ocid="gemstone.hindi_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="gem-shape">Shape</Label>
+                <select
+                  id="gem-shape"
+                  value={form.shape}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, shape: e.target.value }))
+                  }
+                  className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground"
+                  data-ocid="gemstone.shape_select"
+                >
+                  {GEM_SHAPES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="gem-weight">Weight (Ratti)</Label>
+                <Input
+                  id="gem-weight"
+                  type="number"
+                  step="0.5"
+                  value={form.weightRatti}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, weightRatti: e.target.value }))
+                  }
+                  placeholder="e.g. 3.5"
+                  data-ocid="gemstone.weight_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="gem-price">Price INR *</Label>
+                <Input
+                  id="gem-price"
+                  type="number"
+                  value={form.price}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, price: e.target.value }))
+                  }
+                  placeholder="e.g. 4500"
+                  data-ocid="gemstone.price_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="gem-mrp">MRP (optional)</Label>
+                <Input
+                  id="gem-mrp"
+                  type="number"
+                  value={form.mrp}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, mrp: e.target.value }))
+                  }
+                  placeholder="e.g. 5500"
+                  data-ocid="gemstone.mrp_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="gem-gscode">
+                  GS Code{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (GS001–GS200)
+                  </span>
+                </Label>
+                <Input
+                  id="gem-gscode"
+                  value={form.gsCode}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      gsCode: e.target.value.toUpperCase(),
+                    }))
+                  }
+                  placeholder="e.g. GS007"
+                  data-ocid="gemstone.gscode_input"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="gem-desc">Description</Label>
+              <Textarea
+                id="gem-desc"
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+                rows={2}
+                placeholder="Brief description of the gemstone product..."
+                data-ocid="gemstone.description_input"
+              />
+            </div>
+            <Button type="submit" size="sm" data-ocid="gemstone.submit_button">
+              <Gem className="w-4 h-4 mr-1" /> Add Product
+            </Button>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  SKU
+                </th>
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Type
+                </th>
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Hindi
+                </th>
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Shape
+                </th>
+                <th className="text-right px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Ratti
+                </th>
+                <th className="text-right px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Price
+                </th>
+                <th className="text-center px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  GS Code
+                </th>
+                <th className="text-right px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p, idx) => (
+                <tr
+                  key={p.id}
+                  className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
+                  data-ocid={`gemstone.item.${idx + 1}`}
+                >
+                  <td className="px-3 py-3">
+                    <span className="font-mono text-xs">{p.sku}</span>
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="font-medium text-foreground text-xs">
+                      {p.type}
+                    </div>
+                    {!p.inStock && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs mt-0.5"
+                        style={{ color: "oklch(0.55 0.18 25)" }}
+                      >
+                        Out of Stock
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-3 py-3 text-muted-foreground text-xs">
+                    {p.hindiName}
+                  </td>
+                  <td className="px-3 py-3 text-muted-foreground text-xs">
+                    {p.shape}
+                  </td>
+                  <td className="px-3 py-3 text-right text-xs text-muted-foreground">
+                    {p.weightRatti ? `${p.weightRatti}R` : "—"}
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    <span
+                      className="font-semibold text-xs"
+                      style={{ color: "oklch(0.45 0.16 40)" }}
+                    >
+                      ₹{p.price.toLocaleString()}
+                    </span>
+                    {p.mrp && (
+                      <div className="text-xs text-muted-foreground line-through">
+                        ₹{p.mrp.toLocaleString()}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-3 py-3 text-center">
+                    {assigningCodeId === p.id ? (
+                      <div className="flex items-center gap-1 justify-center">
+                        <Input
+                          value={inlineGsCode}
+                          onChange={(e) =>
+                            setInlineGsCode(e.target.value.toUpperCase())
+                          }
+                          className="h-6 w-20 text-xs font-mono text-center"
+                          placeholder="GS001"
+                          data-ocid={`gemstone.gscode_inline.${idx + 1}`}
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 text-xs px-2"
+                          onClick={() => handleAssignCode(p.id)}
+                          data-ocid={`gemstone.gscode_save.${idx + 1}`}
+                        >
+                          OK
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 text-xs px-1"
+                          onClick={() => {
+                            setAssigningCodeId(null);
+                            setInlineGsCode("");
+                          }}
+                        >
+                          ✕
+                        </Button>
+                      </div>
+                    ) : p.gsCode ? (
+                      <button
+                        type="button"
+                        className="font-mono text-xs px-2 py-0.5 rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+                        style={{
+                          background: "oklch(0.55 0.15 145 / 0.12)",
+                          color: "oklch(0.40 0.14 145)",
+                        }}
+                        onClick={() => {
+                          setAssigningCodeId(p.id);
+                          setInlineGsCode(p.gsCode ?? "");
+                        }}
+                        data-ocid={`gemstone.gscode_badge.${idx + 1}`}
+                        title="Click to change GS code"
+                      >
+                        {p.gsCode}
+                      </button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-6 text-xs px-2"
+                        onClick={() => {
+                          setAssigningCodeId(p.id);
+                          setInlineGsCode("");
+                        }}
+                        data-ocid={`gemstone.assign_code_button.${idx + 1}`}
+                      >
+                        Assign GS
+                      </Button>
+                    )}
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-destructive hover:text-destructive"
+                        onClick={() => handleDelete(p.id)}
+                        data-ocid={`gemstone.delete_button.${idx + 1}`}
+                        aria-label="Delete gemstone product"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filtered.length === 0 && (
+          <div className="py-10 text-center" data-ocid="gemstone.empty_state">
+            <Gem className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-muted-foreground text-sm">
+              No gemstone products found.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Personalised Products Tab ────────────────────────────────────────────────
+
+interface PersonalisedProduct {
+  id: string;
+  name: string;
+  nameHindi: string;
+  category: string;
+  price: number;
+  mrp?: number;
+  manualCode: string;
+  description: string;
+  customisationNote: string;
+  inStock: boolean;
+}
+
+const PERSONALISED_CATEGORIES = [
+  "Pendant",
+  "Kada",
+  "Pen",
+  "Ring",
+  "Bracelet",
+  "Necklace",
+  "Keychain",
+  "Locket",
+  "Other",
+];
+
+const INITIAL_PERSONALISED: PersonalisedProduct[] = [
+  {
+    id: "pp-1",
+    name: "Name Engraved Pendant",
+    nameHindi: "नाम अंकित लॉकेट",
+    category: "Pendant",
+    price: 1499,
+    mrp: 1999,
+    manualCode: "PP-PEND-001",
+    description: "Silver pendant with custom name engraving",
+    customisationNote: "Please provide name in English/Hindi",
+    inStock: true,
+  },
+  {
+    id: "pp-2",
+    name: "Kundali Inscribed Ring",
+    nameHindi: "कुंडली अंकित अंगूठी",
+    category: "Ring",
+    price: 2499,
+    manualCode: "PP-RING-001",
+    description: "Gold-plated ring with birth chart inscription",
+    customisationNote: "Requires DOB, time and place of birth",
+    inStock: true,
+  },
+  {
+    id: "pp-3",
+    name: "Name Mantra Kada",
+    nameHindi: "नाम मंत्र कड़ा",
+    category: "Kada",
+    price: 1999,
+    mrp: 2499,
+    manualCode: "PP-KADA-001",
+    description: "Brass kada with personalised mantra engraving",
+    customisationNote: "Specify deity preference",
+    inStock: false,
+  },
+];
+
+function PersonalisedProductsManagement() {
+  const [products, setProducts] =
+    useState<PersonalisedProduct[]>(INITIAL_PERSONALISED);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<PersonalisedProduct | null>(null);
+  const [form, setForm] = useState({
+    name: "",
+    nameHindi: "",
+    category: "Pendant",
+    price: "",
+    mrp: "",
+    manualCode: "",
+    description: "",
+    customisationNote: "",
+    inStock: true,
+  });
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.price || !form.manualCode) {
+      toast.error("Name, price, and manual code are required");
+      return;
+    }
+    setProducts((prev) => [
+      {
+        id: `pp-${Date.now()}`,
+        name: form.name,
+        nameHindi: form.nameHindi,
+        category: form.category,
+        price: Number(form.price),
+        mrp: form.mrp ? Number(form.mrp) : undefined,
+        manualCode: form.manualCode,
+        description: form.description,
+        customisationNote: form.customisationNote,
+        inStock: form.inStock,
+      },
+      ...prev,
+    ]);
+    setForm({
+      name: "",
+      nameHindi: "",
+      category: "Pendant",
+      price: "",
+      mrp: "",
+      manualCode: "",
+      description: "",
+      customisationNote: "",
+      inStock: true,
+    });
+    setShowAddForm(false);
+    toast.success("Personalised product added!");
+  };
+
+  const handleEdit = (p: PersonalisedProduct) => {
+    setEditingId(p.id);
+    setEditForm({ ...p });
+  };
+
+  const handleSaveEdit = () => {
+    if (!editForm) return;
+    setProducts((prev) =>
+      prev.map((p) => (p.id === editForm.id ? editForm : p)),
+    );
+    setEditingId(null);
+    setEditForm(null);
+    toast.success("Product updated!");
+  };
+
+  const handleDelete = (id: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    toast.success("Product deleted");
+  };
+
+  return (
+    <div className="space-y-5">
+      <div
+        className="rounded-xl p-3 flex items-start gap-2 border"
+        style={{
+          background: "oklch(0.68 0.20 48 / 0.08)",
+          borderColor: "oklch(0.68 0.20 48 / 0.25)",
+        }}
+        data-ocid="personalised.info_banner"
+      >
+        <User
+          className="w-4 h-4 mt-0.5 shrink-0"
+          style={{ color: "oklch(0.50 0.18 48)" }}
+        />
+        <p className="text-sm" style={{ color: "oklch(0.40 0.14 48)" }}>
+          <strong>Note:</strong> These products have no GS code. Assign any
+          custom code in the <strong>Manual Code</strong> field — admin freely
+          assigns codes.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-foreground">
+          Personalised Products ({products.length})
+        </h3>
+        <Button
+          size="sm"
+          onClick={() => setShowAddForm(!showAddForm)}
+          data-ocid="personalised.add_button"
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          {showAddForm ? "Cancel" : "Add Personalised Product"}
+        </Button>
+      </div>
+
+      {showAddForm && (
+        <div
+          className="bg-card border border-border rounded-xl p-5"
+          data-ocid="personalised.add_form"
+        >
+          <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
+            <User className="w-4 h-4 text-primary" /> Add Personalised Product
+          </h4>
+          <form onSubmit={handleAdd} className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="pp-name">Name (English) *</Label>
+                <Input
+                  id="pp-name"
+                  value={form.name}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, name: e.target.value }))
+                  }
+                  placeholder="e.g. Name Engraved Pendant"
+                  data-ocid="personalised.name_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="pp-hindi">Name (Hindi)</Label>
+                <Input
+                  id="pp-hindi"
+                  value={form.nameHindi}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, nameHindi: e.target.value }))
+                  }
+                  placeholder="e.g. नाम अंकित लॉकेट"
+                  data-ocid="personalised.hindi_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="pp-cat">Category</Label>
+                <select
+                  id="pp-cat"
+                  value={form.category}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, category: e.target.value }))
+                  }
+                  className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground"
+                  data-ocid="personalised.category_select"
+                >
+                  {PERSONALISED_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="pp-code">
+                  Manual Code *{" "}
+                  <span className="text-muted-foreground text-xs">
+                    (admin assigns freely)
+                  </span>
+                </Label>
+                <Input
+                  id="pp-code"
+                  value={form.manualCode}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, manualCode: e.target.value }))
+                  }
+                  placeholder="e.g. PP-PEND-001"
+                  data-ocid="personalised.code_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="pp-price">Price (₹) *</Label>
+                <Input
+                  id="pp-price"
+                  type="number"
+                  value={form.price}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, price: e.target.value }))
+                  }
+                  placeholder="e.g. 1499"
+                  data-ocid="personalised.price_input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="pp-mrp">MRP (₹)</Label>
+                <Input
+                  id="pp-mrp"
+                  type="number"
+                  value={form.mrp}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, mrp: e.target.value }))
+                  }
+                  placeholder="Optional"
+                  data-ocid="personalised.mrp_input"
+                />
+              </div>
+              <div className="flex items-center gap-3 pt-5">
+                <input
+                  type="checkbox"
+                  id="pp-stock"
+                  checked={form.inStock}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, inStock: e.target.checked }))
+                  }
+                  data-ocid="personalised.stock_toggle"
+                />
+                <Label htmlFor="pp-stock">In Stock</Label>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="pp-desc">Description</Label>
+              <Textarea
+                id="pp-desc"
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+                rows={2}
+                placeholder="Product description..."
+                data-ocid="personalised.description_input"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pp-note">Customisation Note</Label>
+              <Textarea
+                id="pp-note"
+                value={form.customisationNote}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, customisationNote: e.target.value }))
+                }
+                rows={2}
+                placeholder="Instructions for customer customisation..."
+                data-ocid="personalised.customisation_input"
+              />
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              data-ocid="personalised.submit_button"
+            >
+              <User className="w-4 h-4 mr-1" /> Add Product
+            </Button>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Code
+                </th>
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Name
+                </th>
+                <th className="text-left px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Category
+                </th>
+                <th className="text-right px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Price
+                </th>
+                <th className="text-center px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Stock
+                </th>
+                <th className="text-right px-3 py-3 font-semibold text-xs uppercase tracking-wide text-foreground">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((p, idx) => (
+                <tr
+                  key={p.id}
+                  className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
+                  data-ocid={`personalised.item.${idx + 1}`}
+                >
+                  {editingId === p.id && editForm ? (
+                    <td colSpan={6} className="px-3 py-3">
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          <div>
+                            <Label className="text-xs">Name</Label>
+                            <Input
+                              value={editForm.name}
+                              onChange={(e) =>
+                                setEditForm((f) =>
+                                  f ? { ...f, name: e.target.value } : f,
+                                )
+                              }
+                              className="h-7 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Hindi</Label>
+                            <Input
+                              value={editForm.nameHindi}
+                              onChange={(e) =>
+                                setEditForm((f) =>
+                                  f ? { ...f, nameHindi: e.target.value } : f,
+                                )
+                              }
+                              className="h-7 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Manual Code</Label>
+                            <Input
+                              value={editForm.manualCode}
+                              onChange={(e) =>
+                                setEditForm((f) =>
+                                  f ? { ...f, manualCode: e.target.value } : f,
+                                )
+                              }
+                              className="h-7 text-xs font-mono"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Price ₹</Label>
+                            <Input
+                              type="number"
+                              value={editForm.price}
+                              onChange={(e) =>
+                                setEditForm((f) =>
+                                  f
+                                    ? { ...f, price: Number(e.target.value) }
+                                    : f,
+                                )
+                              }
+                              className="h-7 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">MRP ₹</Label>
+                            <Input
+                              type="number"
+                              value={editForm.mrp ?? ""}
+                              onChange={(e) =>
+                                setEditForm((f) =>
+                                  f
+                                    ? {
+                                        ...f,
+                                        mrp: e.target.value
+                                          ? Number(e.target.value)
+                                          : undefined,
+                                      }
+                                    : f,
+                                )
+                              }
+                              className="h-7 text-xs"
+                              placeholder="Optional"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2 pt-4">
+                            <input
+                              type="checkbox"
+                              checked={editForm.inStock}
+                              onChange={(e) =>
+                                setEditForm((f) =>
+                                  f ? { ...f, inStock: e.target.checked } : f,
+                                )
+                              }
+                            />
+                            <Label className="text-xs">In Stock</Label>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={handleSaveEdit}
+                            data-ocid={`personalised.save_button.${idx + 1}`}
+                          >
+                            <CheckCircle className="w-3.5 h-3.5 mr-1" /> Save
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditForm(null);
+                            }}
+                            data-ocid={`personalised.cancel_button.${idx + 1}`}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </td>
+                  ) : (
+                    <>
+                      <td className="px-3 py-3">
+                        <span
+                          className="font-mono text-xs px-2 py-0.5 rounded-md"
+                          style={{
+                            background: "oklch(0.60 0.12 260 / 0.10)",
+                            color: "oklch(0.40 0.12 260)",
+                          }}
+                        >
+                          {p.manualCode}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3">
+                        <p className="font-medium text-foreground text-xs">
+                          {p.name}
+                        </p>
+                        {p.nameHindi && (
+                          <p className="text-muted-foreground text-xs">
+                            {p.nameHindi}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-3 py-3">
+                        <Badge variant="outline" className="text-xs">
+                          {p.category}
+                        </Badge>
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <span
+                          className="font-semibold text-xs"
+                          style={{ color: "oklch(0.45 0.16 40)" }}
+                        >
+                          ₹{p.price.toLocaleString()}
+                        </span>
+                        {p.mrp && (
+                          <div className="text-xs text-muted-foreground line-through">
+                            ₹{p.mrp.toLocaleString()}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-3 py-3 text-center">
+                        <Badge
+                          variant="outline"
+                          className="text-xs"
+                          style={
+                            p.inStock
+                              ? {
+                                  background: "oklch(0.55 0.15 145 / 0.10)",
+                                  color: "oklch(0.40 0.14 145)",
+                                  border:
+                                    "1px solid oklch(0.55 0.15 145 / 0.30)",
+                                }
+                              : {
+                                  background: "oklch(0.60 0.18 25 / 0.10)",
+                                  color: "oklch(0.45 0.16 25)",
+                                  border:
+                                    "1px solid oklch(0.60 0.18 25 / 0.30)",
+                                }
+                          }
+                        >
+                          {p.inStock ? "In Stock" : "Out of Stock"}
+                        </Badge>
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => handleEdit(p)}
+                            data-ocid={`personalised.edit_button.${idx + 1}`}
+                            aria-label="Edit personalised product"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive"
+                            onClick={() => handleDelete(p.id)}
+                            data-ocid={`personalised.delete_button.${idx + 1}`}
+                            aria-label="Delete personalised product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {products.length === 0 && (
+          <div
+            className="py-10 text-center"
+            data-ocid="personalised.empty_state"
+          >
+            <User className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-muted-foreground text-sm">
+              No personalised products yet. Add one above.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Product Manager Tab ─────────────────────────────────────────────────────
 
 interface ManagedProduct extends ProductWithMRP {
@@ -2979,6 +4802,13 @@ export default function AdminCMS() {
               📱 Web Stories
             </TabsTrigger>
             <TabsTrigger
+              value="puja-events"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.puja_events_tab"
+            >
+              🕉️ Puja Events
+            </TabsTrigger>
+            <TabsTrigger
               value="festivals"
               className="flex items-center gap-1.5"
             >
@@ -2986,6 +4816,27 @@ export default function AdminCMS() {
             </TabsTrigger>
             <TabsTrigger value="products" className="flex items-center gap-1.5">
               <ShoppingBag className="w-4 h-4" /> Products
+            </TabsTrigger>
+            <TabsTrigger
+              value="puja-subcats"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.puja_subcats_tab"
+            >
+              <Tags className="w-4 h-4" /> Puja Sub-Categories
+            </TabsTrigger>
+            <TabsTrigger
+              value="gemstone-products"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.gemstone_products_tab"
+            >
+              <Gem className="w-4 h-4" /> Gemstone Products
+            </TabsTrigger>
+            <TabsTrigger
+              value="personalised"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.personalised_tab"
+            >
+              <User className="w-4 h-4" /> Personalised Products
             </TabsTrigger>
           </TabsList>
 
@@ -3016,11 +4867,23 @@ export default function AdminCMS() {
           <TabsContent value="web-stories">
             <WebStoriesManagement />
           </TabsContent>
+          <TabsContent value="puja-events">
+            <PujaEventManagement />
+          </TabsContent>
           <TabsContent value="festivals">
             <FestivalEventsManagement />
           </TabsContent>
           <TabsContent value="products">
             <ProductManagerDashboard />
+          </TabsContent>
+          <TabsContent value="puja-subcats">
+            <PujaSubCategoriesManagement />
+          </TabsContent>
+          <TabsContent value="gemstone-products">
+            <GemstoneProductsManagement />
+          </TabsContent>
+          <TabsContent value="personalised">
+            <PersonalisedProductsManagement />
           </TabsContent>
         </Tabs>
       </div>

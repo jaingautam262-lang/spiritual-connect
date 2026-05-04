@@ -1,9 +1,11 @@
+import { SAHASRANAMA_FINAL_DATA } from "./sahasranamaDataFinal";
 import { sahasranamaData_2 } from "./sahasranamaData_2";
 import { sahasranamaData_a } from "./sahasranamaData_a";
 import { sahasranamaData_b } from "./sahasranamaData_b";
 import { SAHASRANAMA_C } from "./sahasranamaData_c";
 import { SAHASRANAMA_D } from "./sahasranamaData_d";
 import { SAHASRANAMA_E } from "./sahasranamaData_e";
+import { sahasranamaNewBatch } from "./sahasranamaData_new_batch";
 import type { Stotra } from "./stotraData";
 
 // Lalita Sahasranama with special verses 795-855 included
@@ -116,4 +118,6 @@ export const sahasranamaData: Stotra[] = [
   ...SAHASRANAMA_D,
   ...SAHASRANAMA_E,
   lalitaSahasranama,
+  ...sahasranamaNewBatch,
+  ...SAHASRANAMA_FINAL_DATA,
 ];

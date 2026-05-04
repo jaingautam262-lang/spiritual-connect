@@ -2,182 +2,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { History, ListMusic, Music, Plus, Search, Trash2 } from "lucide-react";
+import {
+  History,
+  ListMusic,
+  Music,
+  Plus,
+  Search,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { useMemo, useState } from "react";
+import { MOCK_AUDIO_TRACKS } from "../data/mockAudioData";
 import type { ContentType, MediaTrack } from "../stores/mediaPlayerStore";
 import { useMediaPlayerStore } from "../stores/mediaPlayerStore";
 
-// Sample track data for demonstration
-const SAMPLE_TRACKS: MediaTrack[] = [
-  {
-    id: "a001",
-    title: "Om Jai Jagdish Hare",
-    titleHindi: "ॐ जय जगदीश हरे",
-    deity: "Lord Vishnu",
-    faith: "Hindu",
-    contentType: "aarti",
-    thumbnail: "",
-  },
-  {
-    id: "a002",
-    title: "Om Jai Shiv Omkara",
-    titleHindi: "ॐ जय शिव ओंकारा",
-    deity: "Lord Shiva",
-    faith: "Hindu",
-    contentType: "aarti",
-  },
-  {
-    id: "a003",
-    title: "Om Jai Ambe Gauri",
-    titleHindi: "ॐ जय अम्बे गौरी",
-    deity: "Goddess Durga",
-    faith: "Hindu",
-    contentType: "aarti",
-  },
-  {
-    id: "a004",
-    title: "Aarti Kunj Bihari Ki",
-    titleHindi: "आरती कुंज बिहारी की",
-    deity: "Lord Krishna",
-    faith: "Hindu",
-    contentType: "aarti",
-  },
-  {
-    id: "a005",
-    title: "Aarti Mahaveer Prabhu",
-    titleHindi: "आरती महावीर प्रभु",
-    deity: "Mahavira",
-    faith: "Jain",
-    contentType: "aarti",
-  },
-  {
-    id: "c001",
-    title: "Hanuman Chalisa",
-    titleHindi: "हनुमान चालीसा",
-    deity: "Lord Hanuman",
-    faith: "Hindu",
-    contentType: "chalisa",
-  },
-  {
-    id: "c002",
-    title: "Shiv Chalisa",
-    titleHindi: "शिव चालीसा",
-    deity: "Lord Shiva",
-    faith: "Hindu",
-    contentType: "chalisa",
-  },
-  {
-    id: "c003",
-    title: "Durga Chalisa",
-    titleHindi: "दुर्गा चालीसा",
-    deity: "Goddess Durga",
-    faith: "Hindu",
-    contentType: "chalisa",
-  },
-  {
-    id: "c004",
-    title: "Rishabhdeva Chalisa",
-    titleHindi: "ऋषभदेव चालीसा",
-    deity: "Adinath",
-    faith: "Jain",
-    contentType: "chalisa",
-  },
-  {
-    id: "c005",
-    title: "Parshvanath Chalisa",
-    titleHindi: "पार्श्वनाथ चालीसा",
-    deity: "Parshvanath",
-    faith: "Jain",
-    contentType: "chalisa",
-  },
-  {
-    id: "m001",
-    title: "Gayatri Mantra",
-    titleHindi: "गायत्री मंत्र",
-    deity: "Gayatri Devi",
-    faith: "Hindu",
-    contentType: "mantra",
-  },
-  {
-    id: "m002",
-    title: "Mahamrityunjaya Mantra",
-    titleHindi: "महामृत्युंजय मंत्र",
-    deity: "Lord Shiva",
-    faith: "Hindu",
-    contentType: "mantra",
-  },
-  {
-    id: "m003",
-    title: "Namokar Mantra",
-    titleHindi: "णमोकार मंत्र",
-    deity: "Panch Parameshthi",
-    faith: "Jain",
-    contentType: "mantra",
-  },
-  {
-    id: "m004",
-    title: "Mool Mantar",
-    titleHindi: "ਮੂਲ ਮੰਤਰ",
-    deity: "Waheguru",
-    faith: "Sikh",
-    contentType: "mantra",
-  },
-  {
-    id: "b001",
-    title: "Vaishnav Jan To",
-    titleHindi: "वैष्णव जन तो",
-    deity: "Lord Vishnu",
-    faith: "Hindu",
-    contentType: "bhajan",
-  },
-  {
-    id: "b002",
-    title: "Jai Ganesh Deva",
-    titleHindi: "जय गणेश देवा",
-    deity: "Lord Ganesha",
-    faith: "Hindu",
-    contentType: "bhajan",
-  },
-  {
-    id: "b003",
-    title: "Raghupati Raghava Raja Ram",
-    titleHindi: "रघुपति राघव राजाराम",
-    deity: "Lord Ram",
-    faith: "Hindu",
-    contentType: "bhajan",
-  },
-  {
-    id: "k001",
-    title: "Ekadashi Vrat Katha",
-    titleHindi: "एकादशी व्रत कथा",
-    faith: "Hindu",
-    contentType: "katha",
-  },
-  {
-    id: "k002",
-    title: "Satyanarayan Katha",
-    titleHindi: "सत्यनारायण कथा",
-    deity: "Lord Vishnu",
-    faith: "Hindu",
-    contentType: "katha",
-  },
-  {
-    id: "s001",
-    title: "Purusha Suktam",
-    titleHindi: "पुरुष सूक्तम",
-    deity: "Lord Vishnu",
-    faith: "Hindu",
-    contentType: "suktam",
-  },
-  {
-    id: "s002",
-    title: "Sri Suktam",
-    titleHindi: "श्री सूक्तम",
-    deity: "Goddess Lakshmi",
-    faith: "Hindu",
-    contentType: "suktam",
-  },
-];
+// Use mock audio tracks as the demo dataset
+const SAMPLE_TRACKS: MediaTrack[] = MOCK_AUDIO_TRACKS;
 
 const CONTENT_TYPE_ICONS: Record<ContentType, string> = {
   aarti: "🪔",
@@ -203,16 +43,31 @@ function TrackRow({
   onPlayNow,
   isInPlaylist,
   isPlaying,
+  noAudio,
 }: {
   track: MediaTrack;
   onAddToPlaylist: (t: MediaTrack) => void;
   onPlayNow: (t: MediaTrack) => void;
   isInPlaylist: boolean;
   isPlaying: boolean;
+  noAudio: boolean;
 }) {
+  const [showNoAudioMsg, setShowNoAudioMsg] = useState(false);
+
+  function handlePlayClick() {
+    if (noAudio) {
+      setShowNoAudioMsg(true);
+      setTimeout(() => setShowNoAudioMsg(false), 3000);
+      return;
+    }
+    onPlayNow(track);
+  }
+
   return (
     <div
-      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all hover:border-amber-700/40 ${isPlaying ? "border-amber-600/40" : "border-transparent"}`}
+      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all hover:border-amber-700/40 ${
+        isPlaying ? "border-amber-600/40" : "border-transparent"
+      }`}
       style={{
         background: isPlaying
           ? "oklch(0.20 0.08 28 / 0.8)"
@@ -230,14 +85,30 @@ function TrackRow({
         {CONTENT_TYPE_ICONS[track.contentType]}
       </div>
       <div className="flex-1 min-w-0">
-        <p
-          className="text-sm font-heading font-medium truncate"
-          style={{
-            color: isPlaying ? "oklch(0.78 0.14 75)" : "oklch(0.92 0.06 75)",
-          }}
-        >
-          {track.title}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p
+            className="text-sm font-heading font-medium truncate"
+            style={{
+              color: isPlaying ? "oklch(0.78 0.14 75)" : "oklch(0.92 0.06 75)",
+            }}
+          >
+            {track.title}
+          </p>
+          {noAudio && (
+            <span
+              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-body shrink-0"
+              style={{
+                background: "oklch(0.45 0.08 55 / 0.25)",
+                border: "1px solid oklch(0.60 0.08 55 / 0.3)",
+                color: "oklch(0.72 0.08 58)",
+              }}
+              title="No audio uploaded yet"
+            >
+              <Upload className="h-2.5 w-2.5" />
+              upload pending
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-0.5">
           {track.deity && (
             <span
@@ -252,10 +123,25 @@ function TrackRow({
               • {track.faith}
             </span>
           )}
+          {track.durationLabel && (
+            <span className="text-xs" style={{ color: "oklch(0.48 0.04 50)" }}>
+              • {track.durationLabel}
+            </span>
+          )}
         </div>
+        {showNoAudioMsg && (
+          <p
+            className="text-xs mt-0.5 font-body"
+            style={{ color: "oklch(0.72 0.10 55)" }}
+          >
+            No audio file uploaded yet
+          </p>
+        )}
       </div>
       <Badge
-        className={`text-xs border hidden sm:flex ${CONTENT_TYPE_COLORS[track.contentType]}`}
+        className={`text-xs border hidden sm:flex ${
+          CONTENT_TYPE_COLORS[track.contentType]
+        }`}
       >
         {track.contentType}
       </Badge>
@@ -264,9 +150,13 @@ function TrackRow({
           size="sm"
           variant="ghost"
           className="h-7 px-2 text-xs hover:bg-white/10"
-          onClick={() => onPlayNow(track)}
+          onClick={handlePlayClick}
           style={{
-            color: isPlaying ? "oklch(0.78 0.14 75)" : "oklch(0.65 0.04 60)",
+            color: isPlaying
+              ? "oklch(0.78 0.14 75)"
+              : noAudio
+                ? "oklch(0.52 0.06 55)"
+                : "oklch(0.65 0.04 60)",
           }}
           data-ocid="media_page.play_now"
         >
@@ -348,7 +238,7 @@ export default function MediaPlayerPage() {
         }}
       >
         <div className="container mx-auto max-w-5xl">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-3">
             <span className="text-3xl">🎶</span>
             <div>
               <h1
@@ -362,6 +252,33 @@ export default function MediaPlayerPage() {
                 style={{ color: "oklch(0.65 0.04 60)" }}
               >
                 आरती • चालीसा • मंत्र • भजन • कथा • सूक्तम — सभी एक जगह
+              </p>
+            </div>
+          </div>
+
+          {/* Demo Mode banner */}
+          <div
+            className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm font-body"
+            style={{
+              background: "oklch(0.55 0.10 55 / 0.12)",
+              border: "1px solid oklch(0.65 0.10 55 / 0.30)",
+            }}
+            data-ocid="media_page.demo_banner"
+          >
+            <span className="text-base mt-0.5">🎵</span>
+            <div>
+              <p
+                className="font-semibold font-heading"
+                style={{ color: "oklch(0.80 0.10 65)" }}
+              >
+                Demo Mode
+              </p>
+              <p
+                className="text-xs mt-0.5"
+                style={{ color: "oklch(0.62 0.06 58)" }}
+              >
+                Audio player preview — Admin uploads will replace demo tracks.
+                All controls are functional; real audio plays once uploaded.
               </p>
             </div>
           </div>
@@ -461,6 +378,7 @@ export default function MediaPlayerPage() {
                   onPlayNow={play}
                   isInPlaylist={playlist.some((t) => t.id === track.id)}
                   isPlaying={currentTrack?.id === track.id}
+                  noAudio={!track.audioUrl || track.audioUrl === ""}
                 />
               ))}
             </div>

@@ -8,6 +8,7 @@ export interface PanchangCity {
   lng: number;
   timezone: string;
   offset: string; // e.g. "+5:30"
+  stateName?: string; // e.g. "Maharashtra"
 }
 
 export interface TimeRange {

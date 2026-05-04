@@ -1,8 +1,21 @@
 import { Globe } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
+import type { Language } from "../contexts/LanguageContext";
 
 export default function LanguageToggle() {
   const { language, setLanguage } = useLanguage();
+
+  function handleSetLanguage(lang: Language) {
+    setLanguage(lang);
+    // Also persist to the 'lang' key for legacy localStorage readers
+    try {
+      localStorage.setItem("lang", lang);
+    } catch {}
+    // Dispatch a custom event so any non-React consumers can react
+    window.dispatchEvent(
+      new CustomEvent("languagechange", { detail: { lang } }),
+    );
+  }
 
   return (
     <div
@@ -19,7 +32,7 @@ export default function LanguageToggle() {
       />
       <button
         type="button"
-        onClick={() => setLanguage("hi")}
+        onClick={() => handleSetLanguage("hi")}
         className="px-2.5 py-1 text-xs font-heading font-semibold transition-all duration-200"
         style={{
           background:
@@ -38,7 +51,7 @@ export default function LanguageToggle() {
       </button>
       <button
         type="button"
-        onClick={() => setLanguage("en")}
+        onClick={() => handleSetLanguage("en")}
         className="px-2.5 py-1 text-xs font-heading font-semibold transition-all duration-200"
         style={{
           background:
