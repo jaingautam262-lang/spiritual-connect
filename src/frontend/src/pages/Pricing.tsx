@@ -4,15 +4,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Check, RefreshCcw, Shield, Star, Zap } from "lucide-react";
+import { Check, Loader2, RefreshCcw, Shield, Star, Zap } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useLanguage } from "../contexts/LanguageContext";
-import { useCartStore } from "../stores/cartStore";
+import { useCreateStripeSession } from "../hooks/useQueries";
 
 const trustBadges = [
   { icon: RefreshCcw, en: "7-day money-back", hi: "7 दिन रिफंड" },
@@ -113,55 +112,45 @@ export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "yearly",
   );
-  const addItem = useCartStore((s) => s.addItem);
   const { language } = useLanguage();
   const hi = language === "hi";
+  const createStripeSession = useCreateStripeSession();
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  const handleEkPrashn = () => {
-    addItem({
-      id: "ek-prashn-chat",
-      name: hi ? "एक प्रश्न — कृष्ण से" : "Ek Prashn — Ask Krishna",
-      price: 20,
-      category: "divine-guidance",
-      type: "product",
-    });
-    toast.success(hi ? "एक प्रश्न कार्ट में जोड़ा गया" : "Ek Prashn added to cart");
-  };
+  async function handleStripe(tier: string, amount: number, label: string) {
+    setLoadingTier(tier);
+    try {
+      const url = await createStripeSession.mutateAsync({
+        productType: "pricing-tier",
+        amount,
+        metadata: label,
+      });
+      window.location.href = url;
+    } catch {
+      toast.error(
+        hi
+          ? "भुगतान में समस्या आई, पुनः प्रयास करें"
+          : "Payment failed, please try again",
+      );
+    } finally {
+      setLoadingTier(null);
+    }
+  }
+
+  const handleEkPrashn = () =>
+    handleStripe("ek-prashn", 20, "Ek Prashn - Single Question");
 
   const handleMaasik = () => {
     const price = billingCycle === "yearly" ? 4999 : 499;
     const label =
       billingCycle === "yearly"
-        ? hi
-          ? "मासिक सेवा (वार्षिक)"
-          : "Maasik Seva (Yearly)"
-        : hi
-          ? "मासिक सेवा (मासिक)"
-          : "Maasik Seva (Monthly)";
-    addItem({
-      id: `maasik-seva-${billingCycle}`,
-      name: label,
-      price,
-      category: "divine-guidance",
-      type: "product",
-    });
-    toast.success(
-      hi ? "मासिक सेवा कार्ट में जोड़ी गई" : "Maasik Seva added to cart",
-    );
+        ? "Maasik - Yearly Plan"
+        : "Maasik - Monthly Plan";
+    handleStripe("maasik", price, label);
   };
 
-  const handleVivah = () => {
-    addItem({
-      id: "vivah-margdarshan",
-      name: hi ? "विवाह मार्गदर्शन" : "Vivah Margdarshan",
-      price: 999,
-      category: "specialty-report",
-      type: "product",
-    });
-    toast.success(
-      hi ? "विवाह मार्गदर्शन कार्ट में जोड़ा गया" : "Vivah Margdarshan added to cart",
-    );
-  };
+  const handleVivah = () =>
+    handleStripe("vivah", 999, "Vivah - Marriage Consultation");
 
   const maasikPrice = billingCycle === "yearly" ? "₹4,999/year" : "₹499/month";
   const maasikSub =
@@ -334,6 +323,7 @@ export default function Pricing() {
               ))}
             </ul>
             <Button
+              type="button"
               variant="outline"
               className="w-full font-heading font-semibold"
               style={{
@@ -341,7 +331,9 @@ export default function Pricing() {
                 color: "oklch(0.78 0.14 75)",
                 background: "transparent",
               }}
-              data-ocid="pricing.free_cta"
+              onClick={() => {
+                window.location.href = "/ask-krishna";
+              }}
             >
               {hi ? "निःशुल्क शुरू करें" : "Start Free"}
             </Button>
@@ -396,6 +388,7 @@ export default function Pricing() {
               ))}
             </ul>
             <Button
+              type="button"
               className="w-full font-heading font-semibold mb-2"
               style={{
                 background:
@@ -403,9 +396,19 @@ export default function Pricing() {
                 color: "white",
               }}
               onClick={handleEkPrashn}
+              disabled={loadingTier === "ek-prashn"}
               data-ocid="pricing.ek_prashn_cta"
             >
-              {hi ? "अभी खरीदें" : "Buy Now"}
+              {loadingTier === "ek-prashn" ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {hi ? "भुगतान प्रक्रिया में..." : "Processing..."}
+                </>
+              ) : hi ? (
+                "अभी खरीदें"
+              ) : (
+                "Buy Now"
+              )}
             </Button>
             <p
               className="text-center text-xs"
@@ -485,6 +488,7 @@ export default function Pricing() {
               ))}
             </ul>
             <Button
+              type="button"
               className="w-full font-heading font-semibold mb-2 text-sm"
               style={{
                 background:
@@ -493,15 +497,25 @@ export default function Pricing() {
                 fontWeight: 700,
               }}
               onClick={handleMaasik}
+              disabled={loadingTier === "maasik"}
               data-ocid="pricing.maasik_cta"
             >
-              {billingCycle === "yearly"
-                ? hi
-                  ? "वार्षिक सदस्यता लें"
-                  : "Subscribe Yearly"
-                : hi
-                  ? "मासिक सदस्यता लें"
-                  : "Subscribe Monthly"}
+              {loadingTier === "maasik" ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {hi ? "भुगतान प्रक्रिया में..." : "Processing..."}
+                </>
+              ) : billingCycle === "yearly" ? (
+                hi ? (
+                  "वार्षिक सदस्यता लें"
+                ) : (
+                  "Subscribe Yearly"
+                )
+              ) : hi ? (
+                "मासिक सदस्यता लें"
+              ) : (
+                "Subscribe Monthly"
+              )}
             </Button>
             <p
               className="text-center text-xs"
@@ -545,7 +559,7 @@ export default function Pricing() {
           >
             <span className="flex items-center gap-1">
               <Shield className="h-3 w-3" />{" "}
-              {hi ? "Razorpay एन्क्रिप्टेड" : "Razorpay encrypted"}
+              {hi ? "Stripe एन्क्रिप्टेड" : "Stripe encrypted"}
             </span>
             <span className="flex items-center gap-1">
               <Check className="h-3 w-3" /> PCI-DSS compliant
@@ -645,6 +659,7 @@ export default function Pricing() {
                   </p>
                 </div>
                 <Button
+                  type="button"
                   style={{
                     background:
                       "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
@@ -652,9 +667,19 @@ export default function Pricing() {
                   }}
                   className="font-heading font-semibold"
                   onClick={handleVivah}
+                  disabled={loadingTier === "vivah"}
                   data-ocid="pricing.vivah_cta"
                 >
-                  {hi ? "यह रीडिंग प्राप्त करें" : "Get this reading"}
+                  {loadingTier === "vivah" ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {hi ? "भुगतान प्रक्रिया में..." : "Processing..."}
+                    </>
+                  ) : hi ? (
+                    "यह रीडिंग प्राप्त करें"
+                  ) : (
+                    "Get this reading"
+                  )}
                 </Button>
               </div>
             </div>

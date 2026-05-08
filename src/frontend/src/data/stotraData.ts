@@ -312,7 +312,7 @@ export const stotraData: Stotra[] = [
     benefits:
       "Those who recite Rudrashtakam with devotion receive the grace of Lord Shambhu. Destroys fears, sorrows, poverty, and all afflictions. Grants liberation.",
   },
-  // ====== PART 5 — BATCH 2 ======
+  // ====== BATCH 2 (Parts 5-6) ======
   {
     id: "durga-saptashloki",
     title: "Durga Saptashloki",
@@ -559,6 +559,586 @@ export const stotraData: Stotra[] = [
       "The Pitru Stotra offers salutations to all ancestral souls — those who are peaceful (Somya) or fierce (Ugra), those in the sun, those in the east-west-north-south directions. It invites them to accept the Shraddha offering and be satisfied.",
     benefits:
       "Reciting this during Pitru Paksha or Shraddha ceremonies ensures complete peace (Shanti) for departed ancestors, frees them from any lingering attachments, and blesses the family with prosperity and freedom from ancestral curses.",
+  },
+  // ====== BATCH 3 (Part 6) ======
+  {
+    id: "surya-raksha-ashtakam",
+    title: "Surya Raksha Ashtakam",
+    deity: "Surya",
+    faith: "Hindu",
+    type: "Ashtakam",
+    description:
+      "Eight-verse protective hymn to Lord Surya (the Sun God). Each verse invokes Surya to guard a specific part of the body and life, granting health, vitality, and divine protection.",
+    fullText: `॥ सूर्य रक्षा अष्टकम् ॥
+
+सूर्यः शिरो मे रक्षतु ललाटं रक्षतु प्रभुः।
+नेत्रे रक्षतु आदित्यो नासिकां भास्करः सदा॥१॥
+
+मुखं रक्षतु मार्तण्डः कण्ठं रक्षतु दिनकरः।
+स्कन्धौ रक्षतु सविता भुजौ रक्षतु भानुमान्॥२॥
+
+हृदयं रक्षतु हरिः नाभिं रक्षतु तेजसाम्।
+कटिं रक्षतु सूर्यश्च ऊरू रक्षतु पूषणः॥३॥
+
+जानुनी रक्षतु ध्वान्तघ्नः जङ्घे रक्षतु त्वष्टा।
+पादौ रक्षतु विवस्वान् सर्वाङ्गं रक्षतु प्रभाकरः॥४॥
+
+प्राचि दिशि रक्षतु मां सूर्यः प्रतीच्यां च विभावसुः।
+उदीच्यां रक्षतु द्युमान् दक्षिणे रक्षतु ग्रहः॥५॥
+
+आरोग्यं देहि देवेश आयुः प्रज्ञां च देहि मे।
+श्रेयः प्रदेहि देवेश लोकालोकप्रदीपन॥६॥
+
+दोषान् नाशय सर्वान् मे दुःस्वप्नान् च विनाशय।
+पापान् नाशय मे सर्वान् शत्रून् नाशय सर्वतः॥७॥
+
+या तव अर्चिर्मही भामा सूर्यमण्डलवासिनी।
+तस्यां मां पालय देव सर्वपापविनाशन॥८॥
+
+सूर्यरक्षाष्टकमिदं पठेद्यः प्रयतो नरः।
+दीर्घायुरारोग्यसम्पत् तस्य स्याद् धनसम्पदा॥`,
+    meaning:
+      "Invokes Surya by many names — Aditya, Bhaskar, Martand, Dinakar, Savita, Bhanu, Hari, Pooshan, Vivaswaan, Prabhakara — to protect every limb of the devotee and all four directions. Final verses ask Surya to grant health, longevity, wisdom, and destroy sins, nightmares, and enemies.",
+    benefits:
+      "Provides complete divine protection of body and soul. Bestows long life, good health, wealth, and intelligence. Destroys all sins, evil dreams, enemies, and planetary afflictions caused by a weak Sun. Best recited at sunrise facing east.",
+  },
+  {
+    id: "annapurna-ashtakam",
+    title: "Annapurna Ashtakam",
+    deity: "Annapurna",
+    faith: "Hindu",
+    type: "Ashtakam",
+    description:
+      "Eight-verse hymn by Adi Shankaracharya in praise of Goddess Annapurna — the divine provider of food and nourishment. She is the form of Parvati who feeds the entire universe. Reciting this stotra ensures devotees never suffer from hunger or poverty.",
+    fullText: `॥ अन्नपूर्णा अष्टकम् ॥
+(श्रीमदाद्यशंकराचार्य विरचितम्)
+
+नित्यानन्दकरी वराभयकरी सौन्दर्यरत्नाकरी
+निर्धूताखिलघोरपावनकरी प्रत्यक्षमाहेश्वरी।
+प्रालेयाचलवंशपावनकरी काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥१॥
+
+नानारत्नविचित्रभूषणकरी हेमाम्बराडम्बरी
+मुक्ताहारविडम्बमानविलसद्वक्षोजकुम्भान्तरी।
+काश्मीरागरुवासिता रुचिकरी काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥२॥
+
+योगानन्दकरी रिपुक्षयकरी धर्मार्थनिष्ठाकरी
+चन्द्रार्कानलभासमानलहरी त्रैलोक्यरक्षाकरी।
+सर्वैश्वर्यसमस्तवाञ्छितकरी काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥३॥
+
+कैलासाचलकन्दरालयकरी गौरी ह्युमा शङ्करी
+कौमारी निगमार्थगोचरकरी ओंकारबीजाक्षरी।
+मोक्षद्वारकवाटपाटनकरी काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥४॥
+
+दृश्यादृश्यविभूतिवाहनकरी ब्रह्माण्डभाण्डोदरी
+लीलानाटकसूत्रभेदनकरी विज्ञानदीपाङ्कुरी।
+श्रीविश्वेशमनःप्रसादनकरी काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥५॥
+
+उर्वीसर्वजनेश्वरी भगवती माताऽन्नपूर्णेश्वरी
+वेणीनीलसमानकुन्तलधरी नित्यान्नदानेश्वरी।
+सर्वानन्दकरी सदाशिवकरी काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥६॥
+
+आदिक्षान्तसमस्तवर्णनकरी शम्भोस्त्रिनेत्राद्रि सा
+काशीत्रिपुरभैरवी त्रिभुवनी माताऽन्नपूर्णेश्वरी।
+सर्वानन्दकरी देवी भवतु मे काशीपुराधीश्वरी
+भिक्षां देहि कृपावलम्बनकरी मातान्नपूर्णेश्वरी॥७॥
+
+अन्नपूर्णे सदापूर्णे शंकरप्राणवल्लभे
+ज्ञानवैराग्यसिद्ध्यर्थं भिक्षां देहि च पार्वति॥८॥
+
+माता च पार्वती देवी पिता देवो महेश्वरः।
+बान्धवाः शिवभक्ताश्च स्वदेशो भुवनत्रयम्॥`,
+    meaning:
+      "Shankaracharya praises Annapurna as the eternally blissful Goddess of Kashi who provides alms (bhiksha). She is the beloved of Shankara, the embodiment of all knowledge, who purifies the lineage of Himalaya. The final verse: 'Mother is Parvati, Father is Maheshwara, kinsmen are Shiva-devotees, and the homeland is all three worlds.'",
+    benefits:
+      "Ensures freedom from hunger, poverty, and material want. Grants food, nourishment, and prosperity. Particularly beneficial for those facing financial hardship. Reciting with devotion in Kashi or any Devi temple ensures the grace of Annapurna and Sadashiva together.",
+  },
+  {
+    id: "kalika-ashtakam",
+    title: "Kalika Ashtakam",
+    deity: "Kali",
+    faith: "Hindu",
+    type: "Ashtakam",
+    description:
+      "Eight powerful verses in praise of Goddess Kalika (Kali), the fierce, time-transcending form of the Divine Mother. This stotra glorifies her terrifying yet compassionate nature as the destroyer of all evil and the liberator of devotees.",
+    fullText: `॥ कालिका अष्टकम् ॥
+
+कालि कालि महाकालि कालिके परमेश्वरि।
+सर्वानन्दकरि देवि नमस्ते कालभैरवि॥१॥
+
+करालवक्त्रे महादंष्ट्रे कराली मुण्डमालिनि।
+खड्गखेटकरे घोरे महाकालि नमोऽस्तु ते॥२॥
+
+विकटालोचने देवि विशालाक्षि त्रिलोचने।
+विकीर्णकेशि घोराक्षि महाकालि नमोऽस्तु ते॥३॥
+
+मसानवासिने देवि नग्नरूपे दिगम्बरि।
+प्रेतासनसमासीने महाकालि नमोऽस्तु ते॥४॥
+
+नरमुण्डकरे देवि महाघोरविनाशिनि।
+कराली विकराली च महाकालि नमोऽस्तु ते॥५॥
+
+चण्डमुण्डविनाशि त्वं शुम्भनिशुम्भघातिनि।
+रक्तबीजवधे देवि महाकालि नमोऽस्तु ते॥६॥
+
+ब्रह्माविष्णुशिवाद्यानां पूज्यपाद नमोऽस्तु ते।
+भक्तानां भयहन्त्री च महाकालि नमोऽस्तु ते॥७॥
+
+कालिकाष्टकमेतद्धि भक्तिभावसमन्वितः।
+पठेद्यः प्रयतो मर्त्यः स सिद्धिं लभते ध्रुवम्॥८॥
+
+सर्वपापविनिर्मुक्तः सर्वशत्रुविनाशकम्।
+मोक्षं प्राप्नोति भक्तश्च कालिकाप्रसादतः॥`,
+    meaning:
+      "The eight verses salute Kalika by her fearsome epithets: the terrifying-faced one with great fangs, skull-garland wearer, sky-clad one of the cremation grounds, slayer of Chanda-Munda and Shumbha-Nishumbha. She is worshipped even by Brahma, Vishnu, and Shiva, yet destroys the fears of her devotees.",
+    benefits:
+      "Destroys all sins, defeats enemies, removes fear, and ultimately grants liberation (moksha). Particularly powerful for overcoming black magic, evil spirits, and deeply rooted fear. Those who recite with devotion receive Kalika's direct grace and attain spiritual perfection (Siddhi).",
+  },
+  {
+    id: "lalita-sahasranama-stotram",
+    title: "Lalita Sahasranama (First 50 Names)",
+    deity: "Lalita Devi",
+    faith: "Hindu",
+    type: "Stotram",
+    description:
+      "The Lalita Sahasranama contains 1000 divine names of Goddess Lalita Tripurasundari from the Brahmanda Purana, revealed by Hayagriva to Agastya Muni. The first 50 names are presented here, each being a complete mantra in itself.",
+    fullText: `॥ श्री ललिता सहस्रनाम स्तोत्रम् ॥
+(प्रथम पचास नाम)
+
+ॐ ऐं ह्रीं श्रीं ललिताम्बिकायै नमः।
+
+श्री माता श्री महाराज्ञी श्रीमत् सिंहासनेश्वरी।
+चिदग्निकुण्डसम्भूता देवकार्यसमुद्यता॥१॥
+
+उद्यद्भानुसहस्राभा चतुर्बाहुसमन्विता।
+रागस्वरूपापाशाढ्या क्रोधाकाराङ्कुशोज्ज्वला॥२॥
+
+मनोरूपेक्षुकोदण्डा पञ्चतन्मात्रसायका।
+निजारुणप्रभापूरमज्जद्ब्रह्माण्डमण्डला॥३॥
+
+सर्वारुणाऽनवद्याङ्गी सर्वाभरणभूषिता।
+शिवकामेश्वराङ्कस्था शिवा स्वाधीनवल्लभा॥२१॥
+
+मूलाधारैकनिलया ब्रह्मग्रन्थिविभेदिनी।
+मणिपूरान्तरुदिता विष्णुग्रन्थिविभेदिनी॥३८॥
+
+भवानी भावनागम्या भवारण्यकुठारिका।
+भद्रप्रिया भद्रमूर्तिर्भक्तसौभाग्यदायिनी॥४१॥
+
+निर्लेपा निर्मला नित्या निराकारा निराकुला।
+निर्गुणा नित्यनिर्मुक्ता निर्विकारा निरीश्वरा॥४४॥
+
+दुर्लभा दुर्गमा दुर्गा दुःखहन्त्री सुखप्रदा।
+दुष्टदूरा दुराचारशमनी दोषवर्जिता॥४९॥
+
+सर्वज्ञा सान्द्रकरुणा समानाधिकवर्जिता।
+सर्वशक्तिमयी सर्वमङ्गला सद्गतिप्रदा॥५०॥
+
+ॐ नमो भगवत्यै श्री ललिताम्बिकायै नमः।`,
+    meaning:
+      "The Lalita Sahasranama describes the Goddess from head to toe, then proceeds to cosmic attributes: She sits on the Shri Yantra, wields the sugarcane bow with flower arrows, encompasses all six chakras from Muladhara to Sahasrara, and embodies both nirguna (attributeless) and saguna (with attributes) Brahman.",
+    benefits:
+      "Reciting even the first 50 names grants removal of sins, destruction of enemies, attainment of wealth. The full 1000-name recitation is considered the highest Devi upasana. Particularly powerful for Shakti devotees and those on the Tantric spiritual path.",
+  },
+  {
+    id: "ganga-stotram",
+    title: "Ganga Stotram",
+    deity: "Ganga",
+    faith: "Hindu",
+    type: "Stotra",
+    description:
+      "A devotional hymn praising Goddess Ganga — the sacred river personified as a divine mother who flows from Vishnu's feet through Shiva's matted locks to purify the earth. This stotra destroys sins accumulated over many lifetimes.",
+    fullText: `॥ श्री गंगा स्तोत्रम् ॥
+
+देवि सुरेश्वरि भगवति गंगे
+त्रिभुवनतारिणि तरलतरंगे।
+शंकरमौलिविहारिणि विमले
+मम मतिरास्तां तव पदकमले॥१॥
+
+भागीरथिसुखदायिनि मातस्तव
+जलमहिमा निगमे ख्यातः।
+नाहं जाने तव महिमानं
+पाहि कृपामयि मामज्ञानम्॥२॥
+
+हरिपदपाद्यतरंगिणि गंगे
+हिमविधुमुक्ताधवलतरंगे।
+दूरीकुरु मम दुष्कृतिभारं
+कुरु कृपया भवसागरपारम्॥३॥
+
+तव जलममलं येन निपीतं
+परमपदं खलु तेन गृहीतम्।
+मातर्गंगे त्वयि यो भक्तः
+किल तं द्रष्टुं न यमः शक्तः॥४॥
+
+पतितोद्धारिणि जाह्नवि गंगे
+खण्डितगिरिवरमण्डितभंगे।
+भीष्मजननि हे मुनिवरकन्ये
+पतितनिवारिणि त्रिभुवनधन्ये॥५॥
+
+तव चरणं प्रणमामि देवि
+गंगे हर मम पापं सर्वम्।
+त्रिभुवनसारे वसुधाहारे
+त्वमसि गतिर्मम खलु संसारे॥७॥
+
+गंगास्तोत्रमिदं भक्त्या पठेद्यः
+सुखं लभते नात्र संशयः।
+सर्वपापविनिर्मुक्तः स्नात्वा
+गंगासिन्धौ विमुक्तिं लभते॥`,
+    meaning:
+      "The stotra hails Ganga as the divine goddess who flows from Shiva's matted locks, daughter of Bhagiratha, mother of Bhishma, destroyer of the burden of sins. She is crystal-white like snow and moonlight; devotees of Ganga cannot be touched even by Yama (god of death).",
+    benefits:
+      "Reciting this stotra brings the merit of bathing in the Ganga. Removes sins of many lifetimes, protects from untimely death, and leads to ultimate liberation (mukti). Best recited on Ganga Dashami, Ganga Saptami, or any day near a river.",
+  },
+  // ====== BATCH 4 (Part 7) ======
+  {
+    id: "devi-kavacham",
+    title: "Devi Kavacham",
+    deity: "Durga",
+    faith: "Hindu",
+    type: "Kavach",
+    description:
+      "The divine armor (Kavach) of Goddess Durga, from the Devi Mahatmyam (Markandeya Purana). Brahma revealed this to sage Markandeya. Each verse invokes a specific form of the Devi to protect a specific part of the body — creating a complete shield of divine protection.",
+    fullText: `॥ देवी कवचम् ॥
+(मार्कण्डेय पुराणान्तर्गत श्री दुर्गा सप्तशत्याः अङ्गभूत)
+
+ॐ नमश्चण्डिकायै।
+
+ब्रह्मोवाच —
+अस्ति गुह्यतमं विप्र सर्वभूतोपकारकम्।
+देव्यास्तु कवचं पुण्यं तच्छृणुष्व महामुने॥
+
+प्रथमं शैलपुत्री च द्वितीयं ब्रह्मचारिणी।
+तृतीयं चन्द्रघण्टेति कूष्माण्डेति चतुर्थकम्॥
+
+पञ्चमं स्कन्दमातेति षष्ठं कात्यायनीति च।
+सप्तमं कालरात्रिश्च महागौरीति चाष्टमम्॥
+
+नवमं सिद्धिदात्री च नवदुर्गाः प्रकीर्तिताः।
+
+शिरो मे दीप्तपद्माभा ललाटे च शुलेश्वरी।
+नासिकां च सरस्वती रक्षेच्च कर्णयोर्द्वयम्।
+मुखं चण्डी प्रपायात् मां ग्रीवां च जयदायिनी॥
+
+भुजौ स्कन्दमहाशक्तिः हस्तौ दुर्गा प्रपायात्।
+हृदयं गह्वरेशानी उदरं रक्षतु प्रभो॥
+
+नाभिं पातु महादेवी कटिं रक्षतु चण्डिका।
+जङ्घे महाबला पातु पादौ पातालवासिनी।
+सर्वाङ्गं पातु देवेशी सर्वायुधधारिणी॥
+
+इदं तु कवचं देव्याः पठेद्यः प्रयतः शुचिः।
+तस्य रक्षां करोत्येव सर्वत्र विजयं ददेत्॥`,
+    meaning:
+      "Brahma narrates to Markandeya that this Devi Kavacham is the greatest secret, benefiting all beings. It names the nine Durgas (Navadurgas) and systematically invokes specific forms of Devi to protect every part of the body — from the radiant lotus-like head to the feet protected by Patalavashini.",
+    benefits:
+      "The Devi Kavacham is the most powerful protection prayer. Wearing or reciting this removes all obstacles in battle, danger, poison, fire, and difficult situations. Destroys sins and grants victory over all enemies. Purifies the soul and leads to liberation. Part of the daily Chandi Path recitation.",
+  },
+  {
+    id: "argala-stotram",
+    title: "Argala Stotram",
+    deity: "Durga",
+    faith: "Hindu",
+    type: "Stotra",
+    description:
+      "The Argala Stotram ('Bolt' prayer) is recited as part of the Devi Mahatmyam along with the Kavacham and Keelakam. 'Argala' means bolt — this prayer removes all blockages and opens the door to divine grace. It glorifies Durga's victories and asks for abundance, beauty, victory, and fame.",
+    fullText: `॥ अर्गला स्तोत्रम् ॥
+
+जयन्ती मङ्गला काली भद्रकाली कपालिनी।
+दुर्गा क्षमा शिवा धात्री स्वाहा स्वधा नमोऽस्तु ते॥१॥
+
+मधुकैटभविद्राविविधातृवरदायिनि।
+रूपं देहि जयं देहि यशो देहि द्विषो जहि॥२॥
+
+महिषासुरनिर्नाशि भक्तानां सुखदायिनि।
+रूपं देहि जयं देहि यशो देहि द्विषो जहि॥३॥
+
+रक्तबीजवधे देवि चण्डमुण्डविनाशिनि।
+रूपं देहि जयं देहि यशो देहि द्विषो जहि॥४॥
+
+शुम्भस्यैव निशुम्भस्य धूम्राक्षस्य च मर्दिनि।
+रूपं देहि जयं देहि यशो देहि द्विषो जहि॥५॥
+
+देहि सौभाग्यमारोग्यं देहि मे परमं सुखम्।
+रूपं देहि जयं देहि यशो देहि द्विषो जहि॥११॥
+
+विद्यावन्तं यशस्वन्तं लक्ष्मीवन्तं जनं कुरु।
+रूपं देहि जयं देहि यशो देहि द्विषो जहि॥१५॥
+
+इदं स्तोत्रं पठित्वा तु महास्तोत्रं पठेन्नरः।
+स तु सप्तशतीसंख्यां वाञ्छितां प्राप्नुयाद् ध्रुवम्॥`,
+    meaning:
+      "Argala Stotram glorifies Chandika by her heroic deeds — slaying Madhu-Kaitabha, Mahishasura, Raktabija, Chanda-Munda, Shumbha-Nishumbha. The refrain 'Rupam dehi, jayam dehi, yasho dehi, dviso jahi' (Grant me beauty, victory, fame, destroy my enemies) is repeated throughout.",
+    benefits:
+      "Reciting Argala Stotram grants beauty, fame, victory, good fortune, and health. Destroys enemies and removes diseases. Reading this before the Saptashati multiplies its effect. Fulfills all righteous wishes of the devotee.",
+  },
+  {
+    id: "keelakam-atha-kilakam",
+    title: "Keelakam (Atha Kilakam)",
+    deity: "Durga",
+    faith: "Hindu",
+    type: "Stotra",
+    description:
+      "The Keelakam (also called Kilakam or 'Pin/Key') is the third preparatory stotram of the Devi Mahatmyam, composed by Shiva himself. It is recited after the Kavacham and Argala Stotram. 'Keela' means pin — this prayer unlocks the full power of the Chandi Path recitation.",
+    fullText: `॥ अथ कीलकम् ॥
+
+विशुद्धज्ञानदेहाय त्रिवेदीदिव्यचक्षुषे।
+श्रेयःप्राप्तिनिमित्ताय नमः सोमार्धधारिणे॥१॥
+
+सर्वमेतद्विजानीयान्मन्त्राणामपि कीलकम्।
+सोऽपि क्षेमं समाप्नोति सततं जप्यतत्परः॥२॥
+
+सिद्ध्यन्त्युच्चाटनादीनि वस्तूनि सकलान्यपि।
+एतेन स्तुवतां देवीं स्तोत्रमात्रेण सिद्ध्यति॥३॥
+
+न मन्त्रो नौषधं तत्र न किञ्चिदपि विद्यते।
+विना जप्येन सिद्ध्येत सर्वमुच्चाटनादिकम्॥४॥
+
+स्तोत्रं वै चण्डिकायास्तु तच्च गुह्यं चकार सः।
+समाप्तिर्न भवेत्तस्य पठनाद्यस्य कीलकम्॥५॥
+
+एकवारं त्रिवारं वा पठेत् स्तोत्रमिदं शुभम्।
+तदा सम्पूर्णतामेति चण्डीपाठफलं नृणाम्॥६॥
+
+ॐ क्षमा करोतु देवी मां मम सर्वत्र रक्षतु।
+सर्वसिद्धिं च मे देहि चण्डिके देवि नमोऽस्तु ते॥`,
+    meaning:
+      "Shiva composed this Keelakam to remove the 'pin' blocking the full spiritual power of the Chandi recitation. Without the Keelakam, reciting the Saptashati remains incomplete. The Keelakam teaches that no separate mantra or remedy is needed — the Chandi Path itself, when properly unlocked, accomplishes everything.",
+    benefits:
+      "The Keelakam 'unlocks' the full power of the Devi Mahatmyam. Reciting it ensures the Chandi Path gives complete results. Grants all siddhis and removes obstacles from all spiritual practices. Must be recited before beginning the full Saptashati reading.",
+  },
+  {
+    id: "dasha-ratha-krit-shani-stotra",
+    title: "Dasha Ratha Krit Shani Stotra",
+    deity: "Shani",
+    faith: "Hindu",
+    type: "Stotra",
+    description:
+      "This powerful Shani Stotra was composed by King Dasharatha (father of Lord Rama) to appease Lord Shani (Saturn) when Saturn was about to enter Rohini Nakshatra — an event feared to bring terrible calamities. Dasharatha's prayer moved Shani, who agreed to spare his kingdom.",
+    fullText: `॥ दशरथकृत शनि स्तोत्रम् ॥
+
+नमः कृष्णाय नीलाय शिखिपिच्छनिभाय च।
+नमो नीलमयूखाय नीलोत्पलनिभाय च॥१॥
+
+नमो निर्मांसदेहाय दीर्घश्मश्रुजटाय च।
+नमः पिङ्गलनेत्राय दीर्घाय कृशकाय च॥२॥
+
+नमः श्रुतिधराय ध्वान्ते तिलपुष्पसमप्रभ।
+त्वं सूर्यपुत्रो देवेश क्षमस्व भगवन् शने॥३॥
+
+नमस्त्रिदशाधीश त्वामहं शरणं गतः।
+सूर्यसुत महाभाग शने मां परिपालय॥४॥
+
+नीलाञ्जनसमाभास रविपुत्र यमाग्रज।
+छायामार्तण्डसम्भूत नमस्ते भगवन् शने॥५॥
+
+कोणस्थः पिङ्गलो बभ्रुः कृष्णो रौद्रोऽन्तको यमः।
+सौरिः शनैश्चरो मन्दः पिप्पलाद स एव हि॥६॥
+
+एतानि दश नामानि प्रातरुत्थाय यः पठेत्।
+शनैश्चरकृता पीडा न भवेत् तस्य सर्वदा॥७॥
+
+सर्वव्याधिविनाशाय सर्वापत्तिनिवारणे।
+शनिस्तोत्रमिदं देव पठनाद्विजयी भवेत्॥`,
+    meaning:
+      "King Dasharatha addresses Shani with 10 sacred names: Krishnaya (the dark one), Nilaya (the blue one), Shikhi-piccha-nibhaya (resembling peacock feathers), Pingala-netraya (tawny-eyed), and praises him as the son of Surya, elder to Yama (god of death), born of Chaya and Martanda.",
+    benefits:
+      "Reciting the ten names of Shani every morning completely neutralizes the ill effects of Shani's affliction. Protects from Sade Sati, Shani Dasha, and all Saturn-related problems. Removes diseases, calamities, and grants victory. Particularly effective on Saturdays and during Shani Jayanti.",
+  },
+  {
+    id: "shri-chitragupt-stuti",
+    title: "Shri Chitragupt Stuti",
+    deity: "Chitragupt",
+    faith: "Hindu",
+    type: "Stotra",
+    description:
+      "A stuti (hymn of praise) to Lord Chitragupta — the divine accountant and record-keeper of Dharmaraja Yama's court. Chitragupta maintains the record of every being's karmas. He is the deity of the Kayastha community and is worshipped on Chitragupta Puja (the day after Diwali).",
+    fullText: `॥ श्री चित्रगुप्त स्तुति ॥
+
+ॐ नमो भगवते चित्रगुप्ताय।
+
+चित्रगुप्त नमस्तुभ्यं लेखनी पुस्तकं करे।
+लेखको यमराजस्य नमस्ते चित्रगुप्तक॥१॥
+
+ब्रह्मणो मानसोत्पन्न काया-वापरायण।
+धर्मराजस्य कार्याणि कुरुष्व प्रभो सदा॥२॥
+
+सूर्यसेवक देवाद्य ज्ञानिनां शिरोमणे।
+समस्तगुणसम्पन्न नमस्ते चित्रगुप्तक॥३॥
+
+यमराजस्य यो दूतो धर्मार्थी नित्यसंस्थितः।
+सत्यकर्मप्रकाशाय नमस्ते चित्रगुप्तक॥४॥
+
+सर्वप्राणिनां कर्माणि लिखते यः सदा शुचिः।
+पापनाशाय पुण्यार्थी नमस्ते चित्रगुप्तक॥५॥
+
+जगत्कर्मफलं दाता धर्मराजस्य सेवकः।
+चित्रगुप्त नमस्तुभ्यं पापनाशं कुरुष्व मे॥६॥
+
+नमस्ते देवदेवेश नमस्ते धर्मरक्षक।
+कलमकागजधारी मे नमस्ते ज्ञानदायक॥७॥
+
+जय चित्रगुप्त देव। ॐ चित्रगुप्ताय नमः।`,
+    meaning:
+      "The stuti praises Chitragupta as born from Brahma's mind and body (hence Kayastha — 'born from the body'), holding pen and book (lekhani and pustaka), as the scribe of Dharmaraja (Yama). He is the sun-devotee, jewel among the wise, repository of all virtues, and revealer of true karma.",
+    benefits:
+      "Worshipping Chitragupta with this stuti purifies past karmic records and destroys accumulated sins. Grants clarity, intelligence, success in writing, legal matters, and government. Particularly beneficial for students, writers, lawyers, and accountants. Must be recited on Chitragupta Puja day and Yama Dwitiya (Bhai Dooj).",
+  },
+  {
+    id: "bhaktamar-stotra-jain",
+    title: "Bhaktamar Stotra (Jain)",
+    deity: "Rishabhanatha (Adinath)",
+    faith: "Jain",
+    type: "Stotram",
+    description:
+      "The Bhaktamar Stotra is one of the most celebrated Jain devotional texts, composed by Acharya Manatunga (circa 7th century CE) in praise of the first Tirthankar Rishabhanatha (Adinath). The name 'Bhaktamar' means 'worshipped by devotees.' It consists of 48 verses in the Vasantatilaka metre. Tradition holds that Manatunga composed this while in chains — as he recited each verse, one of his 48 chains broke.",
+    fullText: `॥ भक्तामर स्तोत्र ॥
+(आचार्य मानतुंग विरचित)
+
+भक्तामरप्रणतमौलिमणिप्रभाणाम्
+उद्द्योतकं दलितपापतमोवितानम्।
+सम्यक्प्रणम्य जिनपादयुगं युगादौ
+आलम्बनं भवजले पततां जनानाम्॥१॥
+
+यः संस्तुतः सकलवाङ्मयतत्त्वबोधात्
+उद्भूतबुद्धिपटुभिः सुरलोकनाथैः।
+स्तोत्रैर्जगत्त्रितयचित्तहरैरुदारैः
+स्तोष्ये किलाहमपि तं प्रथमं जिनेन्द्रम्॥२॥
+
+बुद्ध्या विनापि विबुधार्चितपादपीठ!
+स्तोतुं समुद्यतमतिर्विगतत्रपोऽहम्।
+बालं विहाय जलसंस्थितमिन्दुबिम्बम्
+अन्यः क इच्छति जनः सहसाऽवगन्तुम्॥३॥
+
+वक्तुं गुणान् गुणसमुद्र! शशाङ्ककान्ते!
+धत्ते धियं तव किमीश! मतिर्मदीया।
+मन्दाकिनीसलिलबिन्दुपरीक्षणाय
+मन्दो मतिश्च किल मेऽपि विभावयामि॥४॥
+
+सोऽहं तथापि तव भक्तिवशान्मुनीश!
+कर्तुं स्तवं विगतशक्तिरपि प्रवृत्तः।
+आस्तां तव स्तवनमस्तसमस्तदोष
+त्वत्संकथापि जगतां दुरितानि हन्ति॥५॥
+
+दृष्ट्वा भवन्तमनिमेषविलोकनीयं
+नान्यत्र तोषमुपयाति मनो मदीयम्।
+पीत्वा पयः शशिकरद्युतिसोमसारं
+क्षारं जलं जलनिधेरसितुं क इच्छेत्॥६॥
+
+यैः शान्तरागरुचिभिः परमाणुभिस्त्वं
+निर्मापितस्त्रिभुवनैकललामभूत।
+तावन्त एव खलु तेऽप्यणवः पृथिव्यां
+यत्ते समानमपरं न हि रूपमस्ति॥७॥
+
+वक्त्रं क्व ते सुरनरोरगनेत्रहारि
+निःशेषनिर्जितजगत्त्रितयोपमानम्।
+बिम्बं कलंकमलिनं क्व निशाकरस्य
+यद्वासरे भवति पाण्डुपलाशकल्पम्॥८॥
+
+इति भक्तामर स्तोत्रम् (प्रथम अष्ट श्लोकाः)॥`,
+    meaning:
+      "The first eight verses establish the devotional framework: (1) Salutation to Rishabhanatha's feet, the shelter for those drowning in the ocean of existence; (2) Even Indra and the gods sing his praises — Manatunga aspires to do the same; (3-4) Like a child reflecting the moon in water, Manatunga humbly attempts to praise the Supreme; (5) Even speaking of the Tirthankar destroys all sins — the sun dispels darkness from afar; (6-8) The mind that has seen the Tirthankar seeks no other beauty — his body is unique in all three worlds.",
+    benefits:
+      "Reciting Bhaktamar Stotra is believed to break the chains of karma as it broke Manatunga's physical chains. Provides protection from all dangers, cures diseases, grants success in all undertakings, and liberates devotees from worldly suffering. The 48 verses correspond to 48 types of divine protection. Particularly powerful when recited in Jain temples.",
+  },
+  {
+    id: "uvasaggaharam-stotra-jain",
+    title: "Uvasaggaharam Stotra (Jain)",
+    deity: "Parshvanath",
+    faith: "Jain",
+    type: "Stotram",
+    description:
+      "The Uvasaggaharam Stotra is an ancient Jain devotional text composed by Bhadrabahu Swami in praise of Lord Parshvanatha, the 23rd Tirthankar. 'Uvasaggaharam' means 'remover of afflictions and distress.' This stotra is traditionally recited to protect against disease, evil, and calamity.",
+    fullText: `॥ उवसग्गहरं स्तोत्र ॥
+(श्रीभद्रबाहुस्वामिविरचितम् — प्राकृत)
+
+उवसग्गहरं पासं, पासं वंदामि कम्मघणमुक्कं।
+विसहरविसनिन्नासं, मंगलकल्लाणआवासं॥१॥
+
+विसहर-फुलिंग-मंतं, कंठे धारेइ जो सया मणुओ।
+तस्स गह-रोग-मारी, दुट्ठ-जरा जंति उवसामं॥२॥
+
+चिट्ठउ दूरे मंतो, तुज्झ पणामो वि बहुफलो होइ।
+नर-तिरिएसु वि जीवा, पावंति न दुक्खदोगच्चं॥३॥
+
+तुह समत्थ-पासा, देव दिज्जउ मज्झ निच्च-कालं तु।
+दुक्ख-दरिद्द-विनासो, होउ मम तुह समत्थए॥४॥
+
+एवं मए थुओ देवो, चउव्विसं पि जिण-वराणं।
+इह लोए जम्मि जम्मि, सव्व-संपय-पत्तियाए॥५॥
+
+(हिन्दी भावार्थ)
+मैं पार्श्वनाथ को वंदन करता हूँ जो उपसर्गों को हरते हैं,
+जिन्होंने कर्मों के समूह का नाश किया है।
+जो सर्पविष का नाश करते हैं और मंगल के आवास हैं॥१॥
+
+जो मनुष्य इस मंत्र को कंठ में धारण करता है,
+उसके ग्रह-रोग-महामारी, और दुष्ट ज्वर शांत हो जाते हैं॥२॥`,
+    meaning:
+      "Bhadrabahu Swami composed this stotra in Ardhamagadhi Prakrit — the ancient language of Jain scriptures. The stotra praises Parshvanatha as the remover of all afflictions, the destroyer of karma and snake-venom, and the abode of all auspiciousness. Even merely bowing to him brings great benefit to all beings.",
+    benefits:
+      "Traditionally recited for protection from serpent bites, epidemics, malefic planetary influences, and all forms of disease and calamity. Destroys sins, removes poverty, and grants all-round prosperity across many lifetimes. One of the most powerful Jain protective prayers.",
+  },
+  {
+    id: "namokar-stotra-extended-jain",
+    title: "Namokar Stotra — Extended Commentary (Jain)",
+    deity: "Panch Parameshthi",
+    faith: "Jain",
+    type: "Stotram",
+    description:
+      "The Namokar Mantra (also called Navkar Mantra or Panchparmesthi Mantra) is the supreme prayer of Jainism. This extended commentary explains the deep meaning of each pada (phrase) of the five-fold salutation to the Panch Parameshthi — the five supreme spiritual beings: Arihant, Siddha, Acharya, Upadhyaya, and Sadhu.",
+    fullText: `॥ णमोकार महामंत्र — विस्तृत व्याख्या ॥
+
+मूल मंत्र —
+णमो अरिहंताणं।
+णमो सिद्धाणं।
+णमो आयरियाणं।
+णमो उवज्झायाणं।
+णमो लोए सव्वसाहूणं।
+एसो पंच णमोक्कारो, सव्वपावप्पणासणो।
+मंगलाणं च सव्वेसिं, पढमं हवइ मंगलं।
+
+—— पद-दर-पद व्याख्या ——
+
+णमो अरिहंताणं — अरिहंतों को नमस्कार
+अरिहंत = जिन्होंने 'अरि' (शत्रु — काम, क्रोध, लोभ, मोह, अहंकार) को 'हन्त' (नष्ट) किया।
+वे केवलज्ञान (omniscience), केवलदर्शन, अनंतसुख, और अनंतवीर्य प्राप्त करते हैं।
+उनके 34 अतिशय (divine qualities) और 8 महाप्रातिहार्य होते हैं।
+
+णमो सिद्धाणं — सिद्धों को नमस्कार
+सिद्ध = जिन्होंने आठों कर्मों का पूर्णतः क्षय किया।
+वे लोकाकाश के शिखर पर सिद्धशिला पर विराजमान हैं।
+उनकी आत्मा में अनंत ज्ञान, दर्शन, सुख, और शक्ति प्रकट हैं।
+
+णमो आयरियाणं — आचार्यों को नमस्कार
+आचार्य = जो स्वयं सम्यक् आचरण करते हैं और दूसरों को मार्ग दिखाते हैं।
+पाँच आचार पालन: ज्ञानाचार, दर्शनाचार, चारित्राचार, तपाचार, वीर्याचार।
+36 गुणों के धारक।
+
+णमो उवज्झायाणं — उपाध्यायों को नमस्कार
+उपाध्याय = जो साधु-साध्वियों को आगम का अध्ययन कराते हैं।
+25 गुणों के धारक, 46 आगमों के ज्ञाता।
+
+णमो लोए सव्वसाहूणं — सभी साधुओं को नमस्कार
+साधु = जो 5 महाव्रतों के पालक हैं।
+पाँच महाव्रत: अहिंसा, सत्य, अचौर्य, ब्रह्मचर्य, अपरिग्रह।
+
+—— महिमा ——
+एसो पंच णमोक्कारो — यह पंच-नमस्कार
+सव्वपावप्पणासणो — सभी पापों का नाशक है
+मंगलाणं च सव्वेसिं — सभी मंगलों में
+पढमं हवइ मंगलं — यह प्रथम (सर्वोच्च) मंगल है
+
+यह मंत्र किसी व्यक्ति या मूर्ति को नहीं, बल्कि उन गुणों को नमस्कार करता है जो Parameshthi में विद्यमान हैं।
+यह मंत्र अनादि-निधन है — किसी ने इसकी रचना नहीं की, यह सनातन सत्य है।`,
+    meaning:
+      "This extended commentary explains each pada of the Namokar Mantra in depth. The five salutations are not to individuals but to the spiritual qualities of the five supreme beings. The concluding verse declares this the foremost auspiciousness among all auspiciousness.",
+    benefits:
+      "The Namokar Mantra is the most powerful Jain prayer. Reciting it at the start of every activity brings success, protection, and peace. Its recitation at the time of death ensures liberation. Daily 108-time recitation purifies karma, grants mental peace, and accelerates spiritual progress.",
   },
 ];
 

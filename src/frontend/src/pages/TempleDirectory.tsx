@@ -7,16 +7,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { TEMPLE_DIRECTORY, type Temple } from "@/data/holyBooksData";
 import {
-  Building2,
-  CalendarDays,
-  Clock,
-  MapPin,
-  Search,
-  Star,
-  X,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { TEMPLES_DATA, type TempleEntry as Temple } from "@/data/temples-data";
+import { useLanguage } from "@/hooks/useLanguage";
+import { Link } from "@tanstack/react-router";
+import { Building2, Clock, MapPin, Search, Star, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -100,16 +101,14 @@ function TempleCard({
   onClick: () => void;
 }) {
   const style = FAITH_COLORS[temple.faith] ?? FAITH_COLORS.Hindu;
-  const specialTag = temple.tags.find((t) =>
+  const specialTag = temple.benefits.find((t) =>
     SPECIAL_TAGS.some((s) => t.includes(s)),
   );
 
   return (
-    <button
-      type="button"
+    <div
       data-ocid={`temples.item.${idx + 1}`}
-      onClick={onClick}
-      className="text-left p-5 rounded-xl border transition-all duration-200 hover:scale-[1.02] group cursor-pointer flex flex-col"
+      className="text-left p-5 rounded-xl border transition-all duration-200 hover:scale-[1.02] group cursor-pointer relative flex flex-col"
       style={{
         background: "oklch(0.20 0.07 24)",
         borderColor: "oklch(0.78 0.14 75 / 0.15)",
@@ -125,112 +124,126 @@ function TempleCard({
         (e.currentTarget as HTMLElement).style.boxShadow = "none";
       }}
     >
-      {/* Header row */}
-      <div className="flex items-start justify-between mb-3 gap-2">
-        <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center text-lg shrink-0"
-          style={{ background: style.bg, border: `1px solid ${style.border}` }}
-        >
-          {FAITH_ICONS[temple.faith] ?? "🛕"}
-        </div>
-        <span
-          className="text-xs font-semibold px-2 py-0.5 rounded-full border"
-          style={{
-            background: style.bg,
-            color: style.text,
-            borderColor: style.border,
-          }}
-        >
-          {temple.faith}
-        </span>
-      </div>
-
-      {/* Name */}
-      <h3
-        className="font-bold text-sm mb-1 group-hover:underline leading-tight"
-        style={{ color: "oklch(0.90 0.06 70)" }}
-      >
-        {temple.name}
-      </h3>
-
-      {/* Location */}
-      <div className="flex items-center gap-1 mb-2">
-        <MapPin
-          className="h-3 w-3 shrink-0"
-          style={{ color: "oklch(0.55 0.05 55)" }}
-        />
-        <p
-          className="text-xs truncate"
-          style={{ color: "oklch(0.60 0.04 55)" }}
-        >
-          {temple.city}
-          {temple.state ? `, ${temple.state}` : ""}
-        </p>
-      </div>
-
-      {/* Deity */}
-      <Badge
-        variant="outline"
-        className="text-xs mb-2 w-fit max-w-full truncate"
-        style={{
-          borderColor: "oklch(0.68 0.20 48 / 0.25)",
-          color: "oklch(0.72 0.16 55)",
-        }}
-      >
-        {temple.deity}
-      </Badge>
-
-      {/* Special badge */}
-      {specialTag && (
-        <div className="mb-2">
-          <SpecialBadge tag={specialTag} />
-        </div>
-      )}
-
-      {/* History excerpt */}
-      <p
-        className="text-xs leading-relaxed line-clamp-2 flex-1"
-        style={{ color: "oklch(0.58 0.04 55)" }}
-      >
-        {temple.history}
-      </p>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-1 mt-2">
-        {temple.tags.slice(0, 3).map((tag) => (
-          <span
-            key={tag}
-            className="text-[9px] font-medium px-1.5 py-0.5 rounded-full"
+      {/* Hidden click overlay that links to detail page */}
+      <Link
+        to="/temples/$id"
+        params={{ id: temple.id }}
+        className="absolute inset-0 z-0"
+        aria-label={`View details for ${temple.name}`}
+      />
+      <div className="relative z-10 flex flex-col h-full">
+        {/* Header row */}
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <div
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-lg shrink-0"
             style={{
               background: style.bg,
-              color: style.text,
               border: `1px solid ${style.border}`,
             }}
           >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <div className="mt-3 flex items-center justify-between">
-        {temple.visitingHours && (
+            {FAITH_ICONS[temple.faith] ?? "🛕"}
+          </div>
           <span
-            className="text-[10px] flex items-center gap-1"
-            style={{ color: "oklch(0.55 0.05 60)" }}
+            className="text-xs font-semibold px-2 py-0.5 rounded-full border"
+            style={{
+              background: style.bg,
+              color: style.text,
+              borderColor: style.border,
+            }}
           >
-            <Clock className="h-2.5 w-2.5" />
-            {temple.visitingHours.split("(")[0].split(",")[0].trim()}
+            {temple.faith}
           </span>
-        )}
-        <span
-          className="text-xs font-semibold ml-auto"
-          style={{ color: style.accent }}
+        </div>
+
+        {/* Name */}
+        <h3
+          className="font-bold text-sm mb-1 group-hover:underline leading-tight"
+          style={{ color: "oklch(0.90 0.06 70)" }}
         >
-          Details →
-        </span>
+          {temple.name}
+        </h3>
+
+        {/* Location */}
+        <div className="flex items-center gap-1 mb-2">
+          <MapPin
+            className="h-3 w-3 shrink-0"
+            style={{ color: "oklch(0.55 0.05 55)" }}
+          />
+          <p
+            className="text-xs truncate"
+            style={{ color: "oklch(0.60 0.04 55)" }}
+          >
+            {temple.city}
+            {temple.state ? `, ${temple.state}` : ""}
+          </p>
+        </div>
+
+        {/* Deity */}
+        <Badge
+          variant="outline"
+          className="text-xs mb-2 w-fit max-w-full truncate"
+          style={{
+            borderColor: "oklch(0.68 0.20 48 / 0.25)",
+            color: "oklch(0.72 0.16 55)",
+          }}
+        >
+          {temple.deity}
+        </Badge>
+
+        {/* Special badge */}
+        {specialTag && (
+          <div className="mb-2">
+            <SpecialBadge tag={specialTag} />
+          </div>
+        )}
+
+        {/* History excerpt */}
+        <p
+          className="text-xs leading-relaxed line-clamp-2 flex-1"
+          style={{ color: "oklch(0.58 0.04 55)" }}
+        >
+          {temple.shortDescription}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1 mt-2">
+          {temple.benefits.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="text-[9px] font-medium px-1.5 py-0.5 rounded-full"
+              style={{
+                background: style.bg,
+                color: style.text,
+                border: `1px solid ${style.border}`,
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-3 flex items-center justify-between">
+          {temple.timings && (
+            <span
+              className="text-[10px] flex items-center gap-1"
+              style={{ color: "oklch(0.55 0.05 60)" }}
+            >
+              <Clock className="h-2.5 w-2.5" />
+              {temple.timings.split("(")[0].split(",")[0].trim()}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onClick}
+            className="text-xs font-semibold ml-auto"
+            style={{ color: style.accent }}
+          >
+            Details →
+          </button>
+        </div>
       </div>
-    </button>
+    </div>
   );
 }
 
@@ -242,7 +255,7 @@ function TempleModal({
 }: { temple: Temple | null; onClose: () => void }) {
   if (!temple) return null;
   const style = FAITH_COLORS[temple.faith] ?? FAITH_COLORS.Hindu;
-  const specialTag = temple.tags.find((t) =>
+  const specialTag = temple.benefits.find((t) =>
     SPECIAL_TAGS.some((s) => t.includes(s)),
   );
 
@@ -314,7 +327,7 @@ function TempleModal({
         </DialogHeader>
 
         {/* Darshan timings */}
-        {temple.visitingHours && (
+        {temple.timings && (
           <div
             className="p-3 rounded-lg border mt-3 flex items-start gap-3"
             style={{
@@ -334,38 +347,13 @@ function TempleModal({
                 Darshan Timings
               </p>
               <p className="text-sm" style={{ color: "oklch(0.78 0.04 65)" }}>
-                {temple.visitingHours}
+                {temple.timings}
               </p>
             </div>
           </div>
         )}
 
-        {/* Best time */}
-        {temple.bestTime && (
-          <div
-            className="p-3 rounded-lg border mt-2 flex items-start gap-3"
-            style={{
-              background: "oklch(0.21 0.07 26)",
-              borderColor: "oklch(0.68 0.20 48 / 0.2)",
-            }}
-          >
-            <CalendarDays
-              className="h-4 w-4 shrink-0 mt-0.5"
-              style={{ color: "oklch(0.68 0.20 48)" }}
-            />
-            <div>
-              <p
-                className="text-xs font-semibold mb-0.5"
-                style={{ color: "oklch(0.68 0.20 48)" }}
-              >
-                Best Time to Visit
-              </p>
-              <p className="text-sm" style={{ color: "oklch(0.78 0.04 65)" }}>
-                {temple.bestTime}
-              </p>
-            </div>
-          </div>
-        )}
+        {/* Best time - not available in TempleEntry */}
 
         {/* History */}
         <div
@@ -385,12 +373,12 @@ function TempleModal({
             className="text-sm leading-relaxed"
             style={{ color: "oklch(0.78 0.04 65)" }}
           >
-            {temple.history}
+            {temple.shortDescription}
           </p>
         </div>
 
         {/* Tags */}
-        {temple.tags.length > 0 && (
+        {temple.benefits.length > 0 && (
           <div className="mt-4">
             <p
               className="text-xs font-semibold mb-2"
@@ -399,7 +387,7 @@ function TempleModal({
               Tags
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {temple.tags.map((tag) => (
+              {temple.benefits.map((tag) => (
                 <span
                   key={tag}
                   className="text-xs px-2.5 py-1 rounded-full"
@@ -438,13 +426,23 @@ function TempleModal({
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function TempleDirectory() {
+  const { language } = useLanguage();
+  const isHindi = language === "hi";
   const [searchQuery, setSearchQuery] = useState("");
   const [faithFilter, setFaithFilter] = useState<FaithFilter>("All");
   const [viewMode, setViewMode] = useState<ViewMode>("faith");
   const [selectedTemple, setSelectedTemple] = useState<Temple | null>(null);
   const [tagFilter, setTagFilter] = useState<string>("All");
+  const [stateFilter, setStateFilter] = useState<string>("All");
 
-  const allTemples = TEMPLE_DIRECTORY;
+  const allTemples = TEMPLES_DATA;
+
+  const allStates = useMemo(() => {
+    const states = Array.from(
+      new Set(allTemples.map((t) => t.state).filter(Boolean)),
+    ).sort();
+    return states;
+  }, [allTemples]);
 
   const hinduCount = allTemples.filter((t) => t.faith === "Hindu").length;
   const jainCount = allTemples.filter((t) => t.faith === "Jain").length;
@@ -452,8 +450,8 @@ export default function TempleDirectory() {
 
   const popularTags = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const t of TEMPLE_DIRECTORY) {
-      for (const tag of t.tags) {
+    for (const t of TEMPLES_DATA) {
+      for (const tag of t.benefits) {
         if (SPECIAL_TAGS.some((s) => tag.includes(s))) {
           counts[tag] = (counts[tag] ?? 0) + 1;
         }
@@ -469,7 +467,8 @@ export default function TempleDirectory() {
     return allTemples.filter((t) => {
       const matchesFaith = faithFilter === "All" || t.faith === faithFilter;
       const matchesTag =
-        tagFilter === "All" || t.tags.some((tag) => tag === tagFilter);
+        tagFilter === "All" || t.benefits.some((tag) => tag === tagFilter);
+      const matchesState = stateFilter === "All" || t.state === stateFilter;
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         !q ||
@@ -477,10 +476,10 @@ export default function TempleDirectory() {
         t.city.toLowerCase().includes(q) ||
         t.state.toLowerCase().includes(q) ||
         t.deity.toLowerCase().includes(q) ||
-        t.tags.some((tag) => tag.toLowerCase().includes(q));
-      return matchesFaith && matchesTag && matchesSearch;
+        t.benefits.some((tag) => tag.toLowerCase().includes(q));
+      return matchesFaith && matchesTag && matchesState && matchesSearch;
     });
-  }, [allTemples, faithFilter, tagFilter, searchQuery]);
+  }, [allTemples, faithFilter, tagFilter, stateFilter, searchQuery]);
 
   const groupedByState = useMemo(() => {
     if (viewMode !== "state") return null;
@@ -654,6 +653,37 @@ export default function TempleDirectory() {
               ))}
             </div>
 
+            {/* State filter dropdown */}
+            <div className="shrink-0" data-ocid="temples.state.select">
+              <Select value={stateFilter} onValueChange={setStateFilter}>
+                <SelectTrigger
+                  className="text-xs h-8 min-w-[130px] border"
+                  style={{
+                    background: "oklch(0.20 0.07 24)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.78 0.06 65)",
+                  }}
+                >
+                  <SelectValue placeholder={isHindi ? "राज्य" : "State"} />
+                </SelectTrigger>
+                <SelectContent
+                  style={{
+                    background: "oklch(0.18 0.07 22)",
+                    border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+                  }}
+                >
+                  <SelectItem value="All" className="text-xs">
+                    {isHindi ? "सभी राज्य" : "All States"}
+                  </SelectItem>
+                  {allStates.map((s) => (
+                    <SelectItem key={s} value={s} className="text-xs">
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* View mode */}
             <div
               className="flex rounded-lg border overflow-hidden shrink-0"
@@ -771,6 +801,7 @@ export default function TempleDirectory() {
                   setSearchQuery("");
                   setFaithFilter("All");
                   setTagFilter("All");
+                  setStateFilter("All");
                 }}
                 style={{
                   borderColor: "oklch(0.78 0.14 75 / 0.3)",

@@ -1,117 +1,108 @@
 # Spiritual Connect — Design Brief
 
-## Overview
-Sacred, immersive astrology platform with Vedic/numerological analysis. Saffron + gold + cream palette. Ornate, spiritual aesthetic with warm tones. Calculator-driven dashboards, chart visualizations, comparison views, and AI-powered insights.
+## Direction
+Spiritual Connect — comprehensive Vedic platform: Aarti/Chalisa/Mantra/Stotra libraries, astrology calculators, AI Krishna chat, Gita reader, blog with audio, Life Reports, 369 Book shop. Saffron/gold/cream palette, ornate sacred aesthetic.
 
-## Design Direction
-**Tone:** Spiritual maximalism — reverent, warm, immersive. Every surface intentional: no ghost text. Ornate borders, subtle gradients, layered depth.
-**Differentiation:** Sacred geometry integration (Lo Shu Grid, Lagna charts), planet-specific color coding, real-time data recalculation UI, audio accessibility throughout.
+## Tone
+Spiritual maximalism — reverent, immersive, intentional. Every surface layered: ornamental borders, warm accents, temple architecture echoed. No ghost text; all zones have visible hierarchy.
+
+## Differentiation
+Sacred geometry integration (Lo Shu Grid, Lagna charts, Panchang calendar), planet-specific color coding, audio accessibility on all content (TTS + uploaded files), real-time Dasha timeline visualization, Devanagari/Gurmukhi script support.
 
 ## Color Palette (OKLCH)
 
-| Semantic | Light L C H | Dark L C H | Purpose |
-|----------|-------------|-----------|---------|
-| Saffron (Primary) | 0.68 0.2 48 | 0.72 0.18 55 | Dominant Hindu/spiritual accent |
-| Gold (Accent) | 0.78 0.14 75 | 0.78 0.14 75 | Luxury, interactive highlights, buttons |
-| Maroon (Foreground) | 0.35 0.12 25 | — | Deep text, typography hierarchy |
-| Cream (Background) | 0.97 0.015 85 | 0.14 0.04 28 | Light mode base; dark mode base |
-| Chakra 1–5 | 0.65 0.2 30, 0.68 0.2 48, 0.78 0.14 75, 0.62 0.16 120, 0.55 0.18 200 | Adjusted | Dasha visualization, planets |
+| Token | Light (L C H) | Dark (L C H) | Role |
+|-------|---------------|--------------|------|
+| Saffron (Primary) | 0.68 0.2 48 | 0.72 0.18 55 | Dominant spiritual accent, success badges |
+| Gold (Accent) | 0.78 0.14 75 | 0.78 0.14 75 | Luxury highlights, button accents, borders |
+| Maroon (Foreground) | 0.35 0.12 25 | — | Deep text, titles, typography hierarchy |
+| Cream (Background) | 0.97 0.015 85 | 0.14 0.04 28 | Light/dark mode base |
+| Muted | 0.93 0.02 75 | 0.22 0.05 28 | Cards, section backgrounds |
 | Success/Yoga | 0.65 0.16 140 | — | Beneficial yogas, green badges |
 | Caution/Dosha | 0.55 0.22 25 | — | Malefic doshas, warnings |
 
 ## Typography
-- **Display:** Cinzel (Greek geometric serif, luxury sacred temples)
-- **Body:** Lato (warm, readable, contemporary)
-- **Devanagari:** Noto Sans Devanagari (Hindi content, sacred scripts)
-- **Scale:** 14px base → 16px → 20px → 28px → 36px (calculator results) → 48px (hero)
+- **Display:** Cinzel (Greek geometric serif, luxury sacred temples, 28–48px headings)
+- **Body:** Lato (warm, readable, contemporary, 14–20px)
+- **Devanagari:** Noto Sans Devanagari (Hindi content, sacred scripts, 16–20px)
+- **Sacred:** Tiro Devanagari Sanskrit (shloka/verses, 22px, line-height 2.0)
 
 ## Elevation & Depth
 | Layer | Background | Border | Shadow | Use |
 |-------|------------|--------|--------|-----|
-| Base | `bg-background` | none | none | Page background, no decoration |
-| Card | `bg-card` with ornamental-border | `border-border` + gold 40% | `shadow-spiritual` | Aarti, Chalisa, mantra details |
-| Elevated | `bg-card` with gold gradient overlay | gold 30% | `shadow-spiritual` + lift | Modal, popover, featured section |
-| Interactive | `bg-primary` or gold gradient | gold 50% | gold glow on hover | Buttons, speaker buttons, interactive elements |
-| Chart | `--chart-bg` with grid lines | `--grid-lines` 2px | none | Lagna chart, Navamsa, D9, Ashtakvarga grids |
+| Base | `bg-background` | none | none | Page, no decoration |
+| Card | `bg-card` ornamental-border | gold 40% + inner shadow | `shadow-spiritual` | Content library, results |
+| Elevated | `bg-card` + gold gradient | gold 30% | `shadow-spiritual` + lift | Modal, featured section |
+| Interactive | saffron/gold gradient | gold 50% | gold glow on hover | Buttons, speakers |
+| Chart | `--chart-bg` with grid | `--grid-lines` 2px | none | Lagna, Navamsa, D9 |
 
 ## Structural Zones
-
 | Zone | Background | Border | Treatment | Content |
-|------|------------|--------|-----------|---------|
-| Header | `bg-card` ornamental-border-b | gold 30% | Sticky, logo + language toggle + search | Logo, navigation, language selector, voice search |
-| Hero Banner | `bg-gradient` (maroon → deep maroon) | none | Full-width overlay on temple image | Title, subtitle, "Enter Birth Data" CTA |
-| Sidebar/Filter | `bg-muted/30` | `border-border` | Collapse on mobile; ornate accent-left | Calendar, faith selector, category filters |
-| Main Content | `bg-background` | none | Grid layout, alternating `bg-muted/20` rows | Searchable content library, cards in grid |
-| Dashboard Section | `bg-card` grid | `border-border` between cells | Input form top, chart grids, result cards below | Birth data form, Mulank/Bhagyank, Lo Shu Grid, Lagna chart |
-| Calculator Result | `.calculator-result-card` | `border-border` | Gradient bg, speaker button top-right, gold accents | Result value, label, detail, audio button |
-| Chart Grid | `.chart-grid` | dashed 2px `--grid-lines` | SVG overlay for house numbers, planets | Lagna houses, Navamsa, Divisional charts, planet positions |
-| Comparison View | 2-column grid `.comparison-row` | `border-border` between columns | Left/right symmetry, subtle highlight on active | Two birth data sets side-by-side |
-| Product Card | `.product-card` rounded-lg | `border-border` | Image top, specs/details, price/CTA footer | Product image, specs table, price, Add to Cart |
-| Logo Creator | `.canvas-container` dashed border | `--grid-lines` 2px dashed | Toolbar above, canvas below, export buttons | Canvas for symbol placement, alignment indicators |
-| Timeline (Dasha) | `.dasha-timeline` with left border | `--grid-lines` 2px left | Dot-and-line, current entry glows | Mahadasha periods, antardasha sub-entries |
-| Footer | `bg-muted/50` border-t | gold 20% | Right-aligned | Copyright, links, social icons |
+|------|------------|--------|-----------|----------|
+| Header | `bg-card` ornamental-border-b | gold 30% | Sticky, logo + lang toggle | Logo, nav, language picker |
+| Hero Banner | maroon → deep-maroon gradient | none | Full-width overlay | Title, subtitle, CTA |
+| Sidebar/Filter | `bg-muted/30` | `border-border` | Collapse mobile; saffron accent | Calendar, faith filter, category |
+| Main Content | `bg-background` | none | Grid; alternating `bg-muted/20` | Content library, card grid |
+| Dashboard | `bg-card` grid | `border-border` cells | Form top, chart grids below | Birth form, calculator |
+| Blog Article | Image (300px), `.blog-card` | gold left-border | Audio player footer, speed controls | Article preview, TTS + upload |
+| Gita Verse | `.gita-verse-card` gold-left-4 | `border-border` | 4-layer text stack | Sanskrit, transliteration, Hindi, English |
+| 12-Feature Grid | `.feature-grid-12` 2×3 → 4×3 | `.temple-card` borders | Icon circle saffron 10%, hover lift | 12 features: Aarti, Chalisa, etc. |
+| Life Report | `.life-report-hero` maroon bg | — | Form inputs saffron border, Stripe CTA | Birth form, testimonials, FAQ |
+| Footer | `bg-muted/50` border-t | gold 20% | Right-aligned | Copyright, links, socials |
 
 ## Component Patterns
-- **Buttons:** Two tiers — `.btn-spiritual` (saffron gradient) for actions, `.btn-gold` (gold gradient) for CTAs. Speaker buttons: circle 40px, gold background 10%, hover lift + glow.
-- **Badges/Pills:** Inline-flex with px-3 py-1, rounded-full, text-xs. Three semantic colors: success (green), caution (yellow/saffron), warning (red/maroon).
-- **Cards:** Always `ornamental-border` (gold 40% border + inner shadow), rounded-lg, hover lift + shadow increase.
-- **Data Tables:** `planet-table` with muted header row, alternating hover, right-align numbers.
-- **Grids:** Chart grids 3×3 or 4×3 aspect-square cells, dashed border, SVG overlays for labels.
-- **Speaker Buttons:** Circle shape, fixed position (top-right on result cards), gold color, play animation on active.
+- **Buttons:** `.btn-spiritual` (saffron gradient) for actions, `.btn-gold` (gold gradient) for CTAs. Speaker: circle 40px, gold 10% bg, hover lift + glow.
+- **Cards:** `.temple-card` (all content), `.blog-card` (articles), `.gita-verse-card` (verses), `.report-card` (forms). All: ornamental-border, hover lift + shadow-spiritual.
+- **Badges/Pills:** Inline-flex, px-3 py-1, rounded-full, text-xs. Success (green 0.65 0.16 140), caution (saffron 0.68 0.2 48), warning (maroon 0.35 0.12 25).
+- **Audio Player:** `.audio-player-bar` with play/pause, flex progress bar, speed buttons (0.75x/1x/1.5x active: saffron), time display.
+- **Report Forms:** `.report-input` with saffron border 30%, focus glow saffron 10%, rounded-lg.
+- **Testimonials:** `.testimonial-card` center-aligned, avatar (12px round), name (maroon bold), ratings (gold), quote (italic muted).
 
 ## Motion & Interaction
-- **Hover:** All cards lift 2px + shadow increase 200ms ease-out.
-- **Speaker Button:** Pulsing ring `pulse-audio` animation on play, stops on pause.
-- **Chart Reveal:** `.chart-fade` (0.4s scale-up + fade) when data loads.
-- **Score Reveal:** `.score-reveal` (0.6s scale-out from center) for AstroScore.
-- **Dasha Timeline:** Current entry glows with gold dot + subtle pulsing border.
-- **Toggle:** Language toggle (Hindi/English) smooth color transition 200ms.
+- **Hover:** All cards lift 2px + shadow-spiritual 200ms ease-out.
+- **Speaker:** Pulsing ring `pulse-audio` on play, stops on pause.
+- **Chart Reveal:** `.chart-fade` (0.4s scale-up + fade) on data load.
+- **Score Reveal:** `.score-reveal` (0.6s scale-out) for AstroScore.
+- **Dasha Timeline:** Current entry gold dot + subtle pulsing border.
+- **Language Toggle:** Smooth color transition 200ms.
+- **Audio Progress:** Drag to seek, click to jump.
 
 ## Spacing & Rhythm
-- **Density:** Mobile (4px base unit) → 16px gaps. Desktop: 24px gaps on main sections, 12px on nested items.
-- **Padding:** Cards 16px (md) → 24px (lg). Headers 12px (vertical). Buttons 12px (vertical), 16px (horizontal).
+- **Density:** Mobile 4px units, 16px gaps. Desktop: 24px gaps main sections, 12px nested.
+- **Padding:** Cards 16px (md) → 24px (lg). Headers 12px vert. Buttons 12px vert, 16px horiz.
 - **Line Height:** Body 1.6. Devanagari 1.8. Shloka 2.0 (dense sacred text).
 
-## Key Features & Styling
-- **19 AI Question Cards:** Locked-state with grayscale, blurred preview. Unlock button (saffron gradient). Speaker button per card.
-- **Lo Shu Grid:** 3×3 grid, each cell 80px+. Present numbers: success-yoga color, glowing border. Missing: opacity 40%.
-- **Lagna Chart:** North Indian 12-house square, planets in houses (SVG), color-coded by planet type.
-- **Navamsa (D9):** Same layout as Lagna, separate visualization.
-- **Dasha Timeline:** Vertical left-border line, dot at each entry, current entry highlighted with gold dot + glow.
-- **Ashtakvarga Table:** 12 sign columns, rows per planet, cells 40px square. Color graded: high (green 20%), medium (saffron 20%), low (red 20%).
-- **Product Pages:** Hero image + specs grid (label/value pairs) + price (gold text, large) + Add to Cart (gold gradient button) + Stripe checkout.
-- **Logo Creator:** 400px canvas, toolbar with symbol/shape buttons above, numerology/astrology alignment panel below, export PNG/SVG.
-- **Name Selection Tool:** Card-based suggestions, each with name (saffron bold), compatibility score (green badge), missing number impact (red pill).
-- **Horoscope Comparison:** Two-column layout, input forms side-by-side, result sections aligned for direct comparison.
-
 ## Responsive Design
-- **Mobile (< 640px):** Single column, 16px padding, 12px gaps, stacked comparison columns.
-- **Tablet (640–1024px):** 2-column grid for product cards, charts 300px, cards wrap.
-- **Desktop (> 1024px):** 3-column product grid, full comparison side-by-side, charts 400px.
+- **Mobile (< 640px):** 1-col, 16px padding, 12px gaps, stacked compare columns.
+- **Tablet (640–1024px):** 2-col product grid, 2×3 feature grid, charts 300px.
+- **Desktop (> 1024px):** 3-col products, 4×3 feature grid, full compare side-by-side, charts 400px.
 
 ## Dark Mode
-Backgrounds darker by ~30L (0.97 → 0.14, 0.99 → 0.18). Text lightened (0.18 → 0.94). Accent colors lifted slightly in saturation for contrast. Borders slightly brighter (0.28 vs 0.85 in light mode).
+Backgrounds darker by ~30L (0.97 → 0.14, 0.99 → 0.18). Text lightened (0.18 → 0.94). Accent colors lifted slightly in saturation for contrast. Borders brighter (0.28 vs 0.85 light).
 
 ## Constraints
-- ✓ No purple gradients. Only saffron/gold/maroon/cream.
-- ✓ Max 2–3 fonts per category (display + body + mono).
-- ✓ Speaker buttons only on calculator results, not global audio player.
-- ✓ All charts use SVG, not raster. Responsive scaling via `preserveAspectRatio="xMidYMid meet"`.
-- ✓ Every section has a visible background treatment (no ghost text).
-- ✓ Audio speaker buttons loop until explicit stop; no auto-play.
-- ✓ Hindi/English toggle persists in localStorage.
+- ✓ Only saffron/gold/maroon/cream. No purple, teal, generic blues.
+- ✓ Max 2–3 fonts per category (Cinzel display, Lato body, Devanagari scripts).
+- ✓ Speaker buttons on all content (results, verses, articles). Audio auto-loop until stop.
+- ✓ All charts SVG, responsive via `preserveAspectRatio="xMidYMid meet"`.
+- ✓ Every section: visible background treatment (no ghost text).
+- ✓ Hindi/English toggle persistent in localStorage.
+- ✓ Ornamental borders on all elevated surfaces—gold 40% + inner shadow.
 
-## Panchang Feature (Comprehensive Calendar)
-**Layout:** Full-page sacred calendar with 5 key zones: (1) Controls bar — city/date/region selectors with map/calendar/globe icons, (2) Daily summary card showing 20+ data points (sunrise/sunset/moonrise/moonset/nakshatra/tithi/yoga/karana/moon phase/muhurat), (3) Monthly calendar grid (7×6 clickable days), (4) 8 collapsible subsections (Choghadiya/Hora/Lagna/Abhijit/Do Ghati/Panchaka Rahita/Jain Pachchakkhaan/Pancha Pakshi), (5) Festival events strip.
-**Cities:** 5 pre-computed datasets (Delhi, Mumbai, Bangalore, Varanasi, Kolkata) with static astronomical data for current period.
-**Regional Tabs:** 11 terminologies (North/South/East/West India, Tamil/Telugu/Kannada/Malayalam/Punjabi/Marathi/Gujarati, International) with localized labels for all Panchang terms.
-**Color Coding:** Choghadiya periods color-coded (green=auspicious, yellow=mixed, red=inauspicious). Hora rulers cycled through planet colors. Lagna displayed in rasi-specific shades.
-**Data Points:** Daily summary displays 20+ fields: sunrise/sunset times, moonrise/moonset, nakshatra (27), tithi (15), yoga (22), karana (14), rasi, moon day/phase, sun sign, muhurat quality, Abhijit window, Rahu Kalam, Panchaka status.
-**Collapsibles:** Each subsection (Choghadiya, Hora Chakra, Lagna, etc.) with ChevronDown toggle, live countdown timers for active slot, glossary tooltips on hover for unfamiliar terms.
-**Monthly Calendar:** Grid layout with previous/next navigation, day headers (Sun–Sat), festival highlights (saffron marker dot), clickable cells update daily summary above.
-**Festival Events:** Inline strip showing 6 upcoming festivals (date + name), clickable to jump to calendar date.
-**Glossary:** Bottom section with table: Term | Definition (Tithi, Nakshatra, Yoga, Karana, Choghadiya, Muhurat — left border saffron).
-**Mobile Responsiveness:** Stack controls vertically, hide day names on calendar, collapse monthly calendar to sidebar on < 768px, make collapsible sections full-width.
+## New Sections (Gita Upgrade)
+**Gita Layout:** Full 18-chapter grid. Each verse: Sanskrit (22pt Cinzel), transliteration (14pt italic), Hindi (16pt Devanagari bold saffron), English (14pt Lato). Stacked in `.gita-verse-card` (gold left-border 4px). Verse search + chapter nav top. Audio per verse (TTS or uploaded).
+
+**12-Feature Card Grid (Homepage):** "One App. Complete Vedic Guidance" 3×4 grid. Each `.feature-card`: icon circle (saffron 10%), title (maroon Cinzel), description (Lato). Inherits `.temple-card` ornamental-border.
+
+**Blog Audio Player:** Article cards with featured image (300px), title (maroon Cinzel), preview (muted Lato, 2-line clamp), `.audio-player-bar` footer. Speed buttons: 0.75x/1x/1.5x (active saffron). TTS + uploaded files both supported.
+
+**Life Reports Pages (10 types):** Form section (birth date/name/gender, saffron borders), result cards, ₹499 Stripe button. Testimonials strip (4 `.testimonial-card`). FAQ accordion. Page hero: `.life-report-hero` (maroon gradient, cream text).
+
+**369 Book Product Page:** Hero image (400px), title (maroon Cinzel 28pt), price (₹96 gold bold 24pt), description (Lato), Stripe button (gold gradient), reviews grid, related carousel.
+
+**Krishna AI Chat:** Message history (user: cream bg + saffron text, Krishna: `.gita-verse-card` gold-border). Quick topic buttons (10 Gita topics). Chat input + send button (gold).
+
+**Panchang Feature (Calendar):** 5 zones: (1) Controls—city/date/region, (2) Daily summary (20+ fields), (3) Monthly grid (7×6), (4) 8 collapsibles (Choghadiya/Hora/Lagna/etc.), (5) Festival strip. Choghadiya color-coded (green/yellow/red). Regional tabs (11 terminologies).
 
 ## Signature Detail
-**Ornamental borders** on all cards and elevated surfaces — gold inner shadow + border combo creates a "framed sacred object" feel. Echoes temple architecture and manuscript illumination. Differentiates from flat modern design and reinforces spiritual aesthetic.
+Ornamental borders on all cards — gold 40% border + inner shadow creates "framed sacred object" feel. Echoes temple architecture, manuscript illumination. Differentiates from flat modern; reinforces spiritual aesthetic.

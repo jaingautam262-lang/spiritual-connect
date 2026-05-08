@@ -13,6 +13,7 @@ import {
   type GitaVerse,
   gitaOverview,
 } from "@/data/bhagavadGitaData";
+import { useParams } from "@tanstack/react-router";
 import {
   BookOpen,
   Bookmark,
@@ -615,7 +616,20 @@ function BookmarksPanel({
 // ──────────────────────────────────────────────────────────────────────────────
 
 export default function HolyBooksReader() {
-  const [selectedBook, setSelectedBook] = useState<BookId>("bhagavad-gita");
+  // Support both /holy-books-reader/:bookId (route param) and ?book= query param
+  const params = useParams({ strict: false }) as { bookId?: string };
+  const queryBookId = new URLSearchParams(
+    typeof window !== "undefined" ? window.location.search : "",
+  ).get("book");
+  const initialBook =
+    (params.bookId as BookId | undefined) ??
+    (queryBookId as BookId | undefined) ??
+    "bhagavad-gita";
+  const validBookId = BOOKS.some((b) => b.id === initialBook)
+    ? (initialBook as BookId)
+    : "bhagavad-gita";
+
+  const [selectedBook, setSelectedBook] = useState<BookId>(validBookId);
   const [openChapter, setOpenChapter] = useState<number | null>(1);
   const [detailVerse, setDetailVerse] = useState<GitaVerse | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);

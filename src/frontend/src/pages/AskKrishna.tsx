@@ -2,8 +2,23 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "@tanstack/react-router";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  MessageSquarePlus,
+  X,
+} from "lucide-react";
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useLanguage } from "../hooks/useLanguage";
+import { useAskKrishna, useKrishnaHistory } from "../hooks/useQueries";
 
 interface Message {
   id: number;
@@ -12,159 +27,203 @@ interface Message {
   timestamp: Date;
 }
 
-const QUICK_TOPICS = [
-  "Sarkari naukri kab milegi?",
-  "Meri shaadi kab hogi?",
-  "Yeh rishta tikega ya nahi?",
-  "Bache kab honge?",
-  "Paisa kab badhega?",
-  "Mera 2026 kaisa hoga?",
-  "Exam pass hoga ya nahi?",
-  "Mera life ka purpose kya hai?",
-  "Videsh ka yog hai mera?",
-  "Kuch aur poochna hai",
+interface ChatSession {
+  id: string;
+  date: string;
+  firstQuestion: string;
+  messages: Message[];
+}
+
+const SUGGESTED_QUESTIONS_HI = [
+  "जीवन का असली उद्देश्य क्या है?",
+  "कर्म और उसके फल के बारे में क्या कहती है गीता?",
+  "मन की शांति कैसे पाएं?",
+  "प्रेम और भक्ति में क्या अंतर है?",
+  "कष्ट और दुःख का सामना कैसे करें?",
+  "आत्मा क्या है और मृत्यु के बाद क्या होता है?",
+  "सफलता और धन के बारे में गीता क्या कहती है?",
+  "कर्तव्य निभाने में कठिनाई हो तो क्या करें?",
+  "ध्यान और योग का अभ्यास कैसे शुरू करें?",
+  "परिवार और रिश्तों में सही व्यवहार क्या है?",
 ];
 
-const TOPIC_RESPONSES: Record<string, string> = {
-  "Sarkari naukri kab milegi?":
-    "प्रिय साधक, कर्म योग में श्रीकृष्ण कहते हैं — 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।' अपने परिश्रम पर ध्यान दें, फल की चिंता मत करें। आपकी मेहनत ही आपका धर्म है। सरकारी नौकरी के लिए शनि और सूर्य का बल महत्वपूर्ण है। अपना जन्म विवरण दें — मैं आपकी कुंडली में कर्म भाव देखकर मार्गदर्शन दूंगा।",
-  "Meri shaadi kab hogi?":
-    "प्रिय साधक, विवाह जीवन का पवित्र बंधन है। भगवद्गीता में कृष्ण ने रुक्मिणी के साथ अपने विवाह से सिखाया — जो संबंध धर्म पर आधारित हो, वही टिकता है। सातवें भाव और शुक्र की स्थिति विवाह का समय बताती है। आपकी DOB और birth time दें ताकि मैं आपकी कुंडली देख सकूं।",
-  "Yeh rishta tikega ya nahi?":
-    "प्रिय साधक, श्रीकृष्ण कहते हैं — 'अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।' जो संबंध पारस्परिक सम्मान, प्रेम और धर्म पर टिका हो, वह टिकता है। आपकी कुंडली और साथी की कुंडली की अष्टकूट मिलान से स्पष्टता मिलेगी। अपने और अपने साथी का जन्म विवरण साझा करें।",
-  "Bache kab honge?":
-    "प्रिय साधक, संतान सुख ईश्वर का महान आशीर्वाद है। गीता में कृष्ण कहते हैं — 'यदच्छालाभसंतुष्टो द्वन्द्वातीतो विमत्सरः।' पंचम भाव, बृहस्पति और शुक्र की स्थिति संतान योग का निर्धारण करती है। अपनी जन्म तिथि और जन्म स्थान दें — मैं आपकी कुंडली में संतान भाव देखूंगा।",
-  "Paisa kab badhega?":
-    "धन के बारे में श्रीकृष्ण कहते हैं — 'योगः कर्मसु कौशलम्।' कुशलतापूर्वक किया गया कार्य ही धन लाता है। द्वितीय भाव (धन) और एकादश भाव (लाभ) की ग्रह दशा देखना जरूरी है। बृहस्पति का गोचर और शुक्र की दशा धन वृद्धि के मुख्य कारक हैं।",
-  "Mera 2026 kaisa hoga?":
-    "2026 के लिए श्रीकृष्ण का संदेश — 'उद्धरेदात्मनात्मानम्' — स्वयं को ऊपर उठाओ। 2026 में शनि कुंभ राशि में है और बृहस्पति वृषभ से मिथुन में जाएगा। आपकी व्यक्तिगत राशि के अनुसार प्रभाव अलग होगा। अपनी जन्म तिथि बताएं।",
-  "Exam pass hoga ya nahi?":
-    "ज्ञान के लिए श्रीकृष्ण कहते हैं — 'नैव किंचित्करोमीति युक्तो मन्येत तत्त्ववित्।' पूरे मन से तैयारी करें। बुध और पंचम भाव विद्या के कारक हैं। सरस्वती मंत्र का जाप करें — 'ॐ ऐं सरस्वत्यै नमः'। आपकी परीक्षा की तिथि और जन्म विवरण दें।",
-  "Mera life ka purpose kya hai?":
-    "स्वधर्म के बारे में श्रीकृष्ण कहते हैं — 'श्रेयान्स्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात्।' अपना अपूर्ण धर्म भी दूसरे के पूर्ण धर्म से श्रेष्ठ है। आपका जीवन उद्देश्य आपकी जन्म कुंडली के लग्न, सूर्य और दशम भाव में छुपा है। अपना जन्म विवरण दें।",
-  "Videsh ka yog hai mera?":
-    "प्रिय साधक, विदेश यात्रा के लिए कुंडली में द्वादश भाव, नवम भाव और राहु की स्थिति महत्वपूर्ण है। श्रीकृष्ण कहते हैं — 'गच्छ पार्थ यथेच्छसि' — वही मार्ग अपनाओ जो तुम्हारे धर्म के अनुकूल हो। अपनी जन्म कुंडली का विवरण दें ताकि मैं विदेश योग की गणना कर सकूं।",
-  "Kuch aur poochna hai":
-    "नमस्ते प्रिय साधक! श्रीकृष्ण आपके हर प्रश्न का उत्तर देने के लिए तत्पर हैं। गीता के 18 अध्यायों में जीवन के हर पहलू — करियर, विवाह, धन, स्वास्थ्य, आध्यात्म — का समाधान है। अपना प्रश्न निःसंकोच पूछें। मैं आपकी सेवा में उपस्थित हूं। 🙏",
-};
-
-const GITA_RESPONSES = [
-  "श्रीकृष्ण भगवद्गीता 2.47 में कहते हैं — 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।' आपका अधिकार केवल कर्म पर है, फल पर नहीं। यह सत्य आपके प्रश्न के उत्तर में छुपा है। अपना जन्म विवरण साझा करें और मैं आपको व्यक्तिगत मार्गदर्शन दूंगा।",
-  "गीता 6.5 में कृष्ण कहते हैं — 'उद्धरेदात्मनात्मानम्।' स्वयं को स्वयं से ऊपर उठाओ — अपना सबसे अच्छा मित्र भी तुम हो और सबसे बड़ा शत्रु भी। आपकी परिस्थिति में यही शिक्षा सबसे उपयुक्त है। कुंडली विश्लेषण के लिए जन्म विवरण दें।",
-  "भगवद्गीता 3.19 — 'तस्मादसक्तः सततं कार्यं कर्म समाचर।' बिना आसक्ति के निरंतर कर्म करना ही श्रेष्ठ जीवन का मार्ग है। श्रीकृष्ण का यह संदेश आपके जीवन में सफलता का द्वार खोलेगा। विस्तृत परामर्श के लिए अपनी जन्म कुंडली दें।",
-  "गीता 9.22 में कृष्ण वचन देते हैं — 'अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते। तेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्।' जो मुझमें पूर्ण श्रद्धा रखते हैं, उनका योग-क्षेम मैं स्वयं वहन करता हूं। 🙏",
-  "भगवद्गीता 4.7-8 — 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत...' जब-जब धर्म की हानि होती है, तब-तब कृष्ण अवतरित होते हैं। आपके जीवन में भी यही दिव्य शक्ति कार्य कर रही है। अपना जन्म विवरण दें, मैं ज्योतिष और गीता के माध्यम से मार्गदर्शन दूंगा।",
-  "गीता 18.66 — 'सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।' सभी चिंताओं को छोड़कर मुझ पर भरोसा करो। यह गीता का सबसे महान वचन है। आपकी परेशानी चाहे जो भी हो, समाधान है। जन्म कुंडली विवरण दें ताकि व्यक्तिगत मार्गदर्शन मिल सके।",
-  "श्रीकृष्ण गीता 2.14 में कहते हैं — 'मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।' सुख-दुःख तो आते-जाते हैं — इन्हें सहन करना सीखो। यह अनित्य हैं। जीवन की चुनौतियों में ही आपका विकास छुपा है। ज्योतिषीय दृष्टि से आपकी स्थिति देखने के लिए DOB दें।",
-  "गीता 12.13-14 में कृष्ण भक्त के लक्षण बताते हैं — 'अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।' जो सबके प्रति प्रेम रखे, करुणावान हो — वही मुझे प्रिय है। आपके जीवन में सकारात्मक बदलाव लाने के लिए कुंडली विश्लेषण उपयोगी होगा।",
-  "भगवद्गीता 5.29 — 'सुहृदं सर्वभूतानां ज्ञात्वा मां शान्तिमृच्छति।' मुझे सभी प्राणियों का मित्र जानकर शांति प्राप्त होती है। आपके मन में जो प्रश्न है, उसका उत्तर गीता में है। विस्तार से जानने के लिए जन्म विवरण साझा करें।",
-  "गीता 13.28 — 'समं सर्वेषु भूतेषु तिष्ठन्तं परमेश्वरम्।' सभी प्राणियों में समान रूप से परमेश्वर को देखो। यही ज्ञान आपको आपके प्रश्न का उत्तर देगा। व्यक्तिगत ज्योतिष परामर्श के लिए जन्म तिथि, समय और स्थान बताएं।",
+const SUGGESTED_QUESTIONS_EN = [
+  "What is the true purpose of life?",
+  "What does the Gita say about karma and its fruits?",
+  "How can I find peace of mind?",
+  "What is the difference between love and devotion?",
+  "How should I face suffering and pain?",
+  "What is the soul and what happens after death?",
+  "What does the Gita say about success and wealth?",
+  "What to do when fulfilling duty feels difficult?",
+  "How to begin the practice of meditation and yoga?",
+  "What is righteous behavior in family and relationships?",
 ];
 
-const SIDEBAR_CITIES = [
-  "Mumbai",
-  "Delhi",
-  "Bangalore",
-  "Hyderabad",
-  "Chennai",
-  "Kolkata",
-  "Pune",
-  "Ahmedabad",
-  "Jaipur",
-  "Lucknow",
-];
+const SESSIONS_KEY = "krishna_ai_sessions";
 
-const CITY_HINDI: Record<string, string> = {
-  Mumbai: "मुंबई",
-  Delhi: "दिल्ली",
-  Bangalore: "बेंगलुरु",
-  Hyderabad: "हैदराबाद",
-  Chennai: "चेन्नई",
-  Kolkata: "कोलकाता",
-  Pune: "पुणे",
-  Ahmedabad: "अहमदाबाद",
-  Jaipur: "जयपुर",
-  Lucknow: "लखनऊ",
-};
+function loadSessions(): ChatSession[] {
+  try {
+    return JSON.parse(localStorage.getItem(SESSIONS_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
 
-let msgIdCounter = 0;
+function saveSessions(sessions: ChatSession[]) {
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions.slice(-20)));
+}
+
+let msgIdCounter = 100;
 function nextId() {
   return ++msgIdCounter;
 }
 
-const welcomeMessage: Message = {
-  id: nextId(),
-  role: "krishna",
-  text: "🙏 Namaste! How can I guide you today? I am Krishna, and I speak through the timeless wisdom of the Bhagavad Gita. Ask me anything about life, career, relationships, or your destiny — or choose a topic below.",
-  timestamp: new Date(),
-};
+function buildWelcomeMsg(hi: boolean): Message {
+  return {
+    id: nextId(),
+    role: "krishna",
+    text: hi
+      ? "🙏 नमस्ते! मैं कृष्ण हूं और भगवद्गीता के शाश्वत ज्ञान से आपका मार्गदर्शन करने के लिए तत्पर हूं। जीवन, कर्म, रिश्ते या आध्यात्म — कुछ भी पूछें। नीचे दिए गए प्रश्नों से शुरू कर सकते हैं।"
+      : "🙏 Namaste! I am Krishna, ready to guide you with the timeless wisdom of the Bhagavad Gita. Ask me about life, karma, relationships, or spirituality — or choose a suggested question below.",
+    timestamp: new Date(),
+  };
+}
 
 export default function AskKrishna() {
   const { language } = useLanguage();
   const hi = language === "hi";
-  const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
+
+  const [messages, setMessages] = useState<Message[]>(() => [
+    buildWelcomeMsg(hi),
+  ]);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [sessions, setSessions] = useState<ChatSession[]>(loadSessions);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const currentSessionId = useRef(
+    `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
 
+  const askKrishna = useAskKrishna();
+  const { data: historyData } = useKrishnaHistory();
+  const isTyping = askKrishna.isPending;
   const isFirstLoad = messages.length === 1 && messages[0].role === "krishna";
 
+  const suggestedQuestions = hi
+    ? SUGGESTED_QUESTIONS_HI
+    : SUGGESTED_QUESTIONS_EN;
+
+  // Scroll to bottom whenever messages update
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, []); // scroll on any state change — exhaustive-deps false positive
+  }, []);
 
-  function getKrishnaResponse(question: string): string {
-    const topicResponse = TOPIC_RESPONSES[question];
-    if (topicResponse) return topicResponse;
-    const idx = Math.floor(Math.random() * GITA_RESPONSES.length);
-    return GITA_RESPONSES[idx];
-  }
-
-  function sendMessage(text: string) {
-    if (!text.trim()) return;
-    const userMsg: Message = {
-      id: nextId(),
-      role: "user",
-      text: text.trim(),
-      timestamp: new Date(),
+  // Persist session whenever messages change (and there's been at least one user msg)
+  useEffect(() => {
+    const userMsgs = messages.filter((m) => m.role === "user");
+    if (userMsgs.length === 0) return;
+    const session: ChatSession = {
+      id: currentSessionId.current,
+      date: new Date().toLocaleDateString(hi ? "hi-IN" : "en-IN"),
+      firstQuestion: userMsgs[0].text,
+      messages,
     };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setIsTyping(true);
-    setTimeout(
-      () => {
-        const reply = getKrishnaResponse(text.trim());
-        const krishnaMsg: Message = {
-          id: nextId(),
-          role: "krishna",
-          text: reply,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, krishnaMsg]);
-        setIsTyping(false);
-      },
-      1200 + Math.random() * 800,
-    );
-  }
+    setSessions((prev) => {
+      const filtered = prev.filter((s) => s.id !== currentSessionId.current);
+      const updated = [session, ...filtered];
+      saveSessions(updated);
+      return updated;
+    });
+  }, [messages, hi]);
+
+  const sendMessage = useCallback(
+    (text: string) => {
+      if (!text.trim() || isTyping) return;
+      const userMsg: Message = {
+        id: nextId(),
+        role: "user",
+        text: text.trim(),
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput("");
+      askKrishna.mutate(text.trim(), {
+        onSuccess: (reply) => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: nextId(),
+              role: "krishna",
+              text: reply,
+              timestamp: new Date(),
+            },
+          ]);
+        },
+        onError: () => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: nextId(),
+              role: "krishna",
+              text: "__error__",
+              timestamp: new Date(),
+            },
+          ]);
+        },
+      });
+    },
+    [isTyping, askKrishna],
+  );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     sendMessage(input);
-  }
-
-  function handleTopicClick(topic: string) {
-    sendMessage(topic);
     inputRef.current?.focus();
   }
 
-  function handleNewConversation() {
-    setMessages([{ ...welcomeMessage, id: nextId(), timestamp: new Date() }]);
-    setInput("");
-    setIsTyping(false);
+  function handleSuggestionClick(q: string) {
+    setInput(q);
+    inputRef.current?.focus();
   }
+
+  function handleNewChat() {
+    currentSessionId.current = `session-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    setMessages([buildWelcomeMsg(hi)]);
+    setInput("");
+    askKrishna.reset();
+    setSidebarOpen(false);
+  }
+
+  function handleLoadSession(session: ChatSession) {
+    // Restore session messages (revive Date objects)
+    const restored = session.messages.map((m) => ({
+      ...m,
+      timestamp: new Date(m.timestamp),
+    }));
+    currentSessionId.current = session.id;
+    setMessages(restored);
+    setSidebarOpen(false);
+  }
+
+  function handleCopy(text: string, id: number) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  }
+
+  function handleRetry(question: string) {
+    setMessages((prev) => prev.filter((m) => m.text !== "__error__"));
+    sendMessage(question);
+  }
+
+  const lastUserQuestion =
+    [...messages].reverse().find((m) => m.role === "user")?.text ?? "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -175,7 +234,7 @@ export default function AskKrishna() {
             <div className="flex items-center gap-3">
               <span className="text-4xl">🕉️</span>
               <h1 className="text-3xl font-display font-bold text-primary">
-                talkKrishna
+                {hi ? "कृष्ण AI" : "Krishna AI"}
               </h1>
             </div>
             <p className="text-muted-foreground max-w-lg text-sm">
@@ -194,14 +253,120 @@ export default function AskKrishna() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex gap-8 items-start">
-          {/* Main Chat Area */}
+        <div className="flex gap-6 items-start relative">
+          {/* ===== SESSION HISTORY SIDEBAR ===== */}
+          {/* Mobile overlay */}
+          {sidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+              onKeyDown={(e) => e.key === "Escape" && setSidebarOpen(false)}
+              role="presentation"
+            />
+          )}
+          <aside
+            className={`
+              fixed top-0 left-0 h-full w-72 bg-card border-r border-border shadow-xl z-40 flex flex-col transition-transform duration-300
+              lg:static lg:h-auto lg:w-64 lg:shadow-none lg:z-auto lg:translate-x-0 lg:flex lg:flex-shrink-0 lg:rounded-2xl lg:border lg:border-border
+              ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            `}
+          >
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h3 className="font-display font-semibold text-foreground text-sm">
+                {hi ? "सत्र इतिहास" : "Session History"}
+              </h3>
+              <div className="flex gap-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleNewChat}
+                  data-ocid="chat.new_chat_button"
+                  className="flex items-center gap-1 text-xs h-7 px-2"
+                >
+                  <MessageSquarePlus className="w-3 h-3" />
+                  {hi ? "नया" : "New"}
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setSidebarOpen(false)}
+                  className="lg:hidden p-1 rounded hover:bg-muted transition-colors"
+                  aria-label="Close sidebar"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+            </div>
+
+            <ScrollArea className="flex-1 p-3">
+              {sessions.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-8 px-3">
+                  {hi
+                    ? "अभी कोई सत्र नहीं। कृष्ण से बात करें!"
+                    : "No sessions yet. Start chatting with Krishna!"}
+                </p>
+              ) : (
+                <div className="space-y-1.5" data-ocid="sidebar.sessions_list">
+                  {sessions.map((session, idx) => (
+                    <button
+                      key={session.id}
+                      type="button"
+                      onClick={() => handleLoadSession(session)}
+                      data-ocid={`sidebar.session.${idx + 1}`}
+                      className={`w-full text-left p-3 rounded-xl transition-colors hover:bg-primary/10 ${
+                        session.id === currentSessionId.current
+                          ? "bg-primary/10 border border-primary/30"
+                          : "border border-transparent"
+                      }`}
+                    >
+                      <p className="text-xs text-muted-foreground mb-0.5">
+                        {session.date}
+                      </p>
+                      <p className="text-sm text-foreground line-clamp-2 leading-snug">
+                        {session.firstQuestion}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </aside>
+
+          {/* ===== MAIN CHAT AREA ===== */}
           <div className="flex-1 min-w-0">
+            {/* Mobile: toggle sidebar + new chat buttons */}
+            <div className="flex items-center gap-2 mb-3 lg:hidden">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSidebarOpen(true)}
+                data-ocid="chat.open_sidebar_button"
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+                {hi ? "सत्र इतिहास" : "Sessions"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleNewChat}
+                data-ocid="chat.new_chat_mobile_button"
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <MessageSquarePlus className="w-3.5 h-3.5" />
+                {hi ? "नयी चैट" : "New Chat"}
+              </Button>
+            </div>
+
+            {/* Chat box */}
             <div
               className="bg-card rounded-2xl border border-border shadow-sm flex flex-col"
               style={{ height: "70vh" }}
             >
-              {/* Chat History */}
+              {/* Chat messages */}
               <ScrollArea
                 className="flex-1 p-4"
                 ref={scrollRef as React.RefObject<HTMLDivElement>}
@@ -215,7 +380,9 @@ export default function AskKrishna() {
                           ? `chat.krishna_message.${msg.id}`
                           : `chat.user_message.${msg.id}`
                       }
-                      className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+                      className={`flex gap-3 ${
+                        msg.role === "user" ? "flex-row-reverse" : "flex-row"
+                      }`}
                     >
                       {/* Avatar */}
                       <div
@@ -225,31 +392,78 @@ export default function AskKrishna() {
                             : "bg-accent/20 border border-accent/40"
                         }`}
                       >
-                        {msg.role === "krishna" ? "🕉️" : "👤"}
+                        {msg.role === "krishna" ? "🙏" : "👤"}
                       </div>
+
                       {/* Bubble */}
-                      <div
-                        className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                          msg.role === "krishna"
-                            ? "bg-primary/5 border border-primary/20 text-foreground"
-                            : "bg-primary text-primary-foreground"
-                        }`}
-                      >
-                        <p className="whitespace-pre-wrap break-words">
-                          {msg.text}
-                        </p>
-                        <p
-                          className={`text-xs mt-1 opacity-60 ${
-                            msg.role === "user"
-                              ? "text-right text-primary-foreground"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {msg.timestamp.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
+                      <div className="flex flex-col gap-1 max-w-[75%]">
+                        {msg.text === "__error__" ? (
+                          <div
+                            className="rounded-2xl px-4 py-3 text-sm bg-destructive/10 border border-destructive/30 text-destructive"
+                            data-ocid="chat.error_state"
+                          >
+                            <p>
+                              😔{" "}
+                              {hi
+                                ? "अभी जवाब नहीं मिला। कृपया पुनः प्रयास करें।"
+                                : "No response received. Please try again."}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => handleRetry(lastUserQuestion)}
+                              data-ocid="chat.retry_button"
+                              className="mt-2 text-xs text-primary underline hover:no-underline"
+                            >
+                              🔄 {hi ? "पुनः प्रयास करें" : "Retry"}
+                            </button>
+                          </div>
+                        ) : (
+                          <div
+                            className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                              msg.role === "krishna"
+                                ? "bg-primary/5 border border-primary/20 text-foreground"
+                                : "bg-primary text-primary-foreground"
+                            }`}
+                          >
+                            <p className="whitespace-pre-wrap break-words">
+                              {msg.text}
+                            </p>
+                            <div
+                              className={`flex items-center justify-between mt-1.5 gap-2 ${
+                                msg.role === "user" ? "flex-row-reverse" : ""
+                              }`}
+                            >
+                              <p
+                                className={`text-xs opacity-60 ${
+                                  msg.role === "user"
+                                    ? "text-primary-foreground"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {msg.timestamp.toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </p>
+                              {/* Copy button on Krishna messages */}
+                              {msg.role === "krishna" && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopy(msg.text, msg.id)}
+                                  data-ocid={`chat.copy_button.${msg.id}`}
+                                  aria-label="Copy message"
+                                  className="opacity-60 hover:opacity-100 transition-opacity p-0.5 rounded"
+                                >
+                                  {copiedId === msg.id ? (
+                                    <Check className="w-3.5 h-3.5 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -261,22 +475,26 @@ export default function AskKrishna() {
                       data-ocid="chat.loading_state"
                     >
                       <div className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-lg bg-primary/10 border border-primary/30">
-                        🕉️
+                        🙏
                       </div>
                       <div className="bg-primary/5 border border-primary/20 rounded-2xl px-4 py-3">
-                        <div className="flex gap-1 items-center h-5">
-                          <span
-                            className="w-2 h-2 bg-primary/50 rounded-full animate-bounce"
-                            style={{ animationDelay: "0ms" }}
-                          />
-                          <span
-                            className="w-2 h-2 bg-primary/50 rounded-full animate-bounce"
-                            style={{ animationDelay: "150ms" }}
-                          />
-                          <span
-                            className="w-2 h-2 bg-primary/50 rounded-full animate-bounce"
-                            style={{ animationDelay: "300ms" }}
-                          />
+                        <div className="flex gap-2 items-center">
+                          <span className="flex gap-1">
+                            {[0, 1, 2].map((i) => (
+                              <span
+                                key={i}
+                                className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
+                                style={{
+                                  animationDelay: `${i * 0.15}s`,
+                                }}
+                              />
+                            ))}
+                          </span>
+                          <span className="text-xs text-muted-foreground italic">
+                            {hi
+                              ? "कृष्ण जी विचार कर रहे हैं..."
+                              : "Krishna is contemplating..."}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -284,27 +502,27 @@ export default function AskKrishna() {
                 </div>
               </ScrollArea>
 
-              {/* Quick Topic Buttons — shown only on fresh chat */}
+              {/* Suggested Questions (shown when chat is fresh) */}
               {isFirstLoad && (
                 <div className="px-4 pb-3 border-t border-border/50 pt-3">
                   <p className="text-xs text-muted-foreground mb-2">
                     {hi
-                      ? "नीचे एक विषय चुनें या नई बातचीत शुरू करें"
-                      : "Choose a topic below or start a new conversation"}
+                      ? "एक प्रश्न चुनें या खुद लिखें"
+                      : "Choose a question or type your own"}
                   </p>
                   <div
                     className="flex flex-wrap gap-2"
-                    data-ocid="chat.quick_topics"
+                    data-ocid="chat.suggested_questions"
                   >
-                    {QUICK_TOPICS.map((topic, i) => (
+                    {suggestedQuestions.map((q, i) => (
                       <button
-                        key={topic}
+                        key={q}
                         type="button"
-                        onClick={() => handleTopicClick(topic)}
-                        data-ocid={`chat.quick_topic.${i + 1}`}
-                        className="text-xs px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 text-primary hover:bg-primary/15 hover:border-primary/60 transition-colors duration-200 font-medium cursor-pointer"
+                        onClick={() => handleSuggestionClick(q)}
+                        data-ocid={`chat.suggestion.${i + 1}`}
+                        className="text-xs px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 text-primary hover:bg-primary/15 hover:border-primary/60 transition-colors duration-200 font-medium cursor-pointer text-left"
                       >
-                        {topic}
+                        {q}
                       </button>
                     ))}
                   </div>
@@ -324,9 +542,7 @@ export default function AskKrishna() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={
-                      hi
-                        ? "कृष्ण से कुछ भी पूछें..."
-                        : "Ask Krishna anything... career, love, purpose, health"
+                      hi ? "कृष्ण से कुछ भी पूछें..." : "Ask Krishna anything..."
                     }
                     disabled={isTyping}
                     data-ocid="chat.input"
@@ -346,60 +562,65 @@ export default function AskKrishna() {
                 <div className="flex items-center justify-between mt-3">
                   <button
                     type="button"
-                    onClick={handleNewConversation}
+                    onClick={handleNewChat}
                     data-ocid="chat.new_conversation_button"
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
                   >
-                    🔄 {hi ? "नई बातचीत शुरू करें" : "Start New Conversation"}
+                    <MessageSquarePlus className="w-3 h-3" />
+                    {hi ? "नयी बातचीत" : "New Chat"}
                   </button>
                   <Link
-                    to="/shop"
-                    data-ocid="chat.tarot_cta_link"
+                    to="/hindi-blog"
+                    data-ocid="chat.blog_link"
                     className="text-xs text-primary hover:underline font-medium transition-colors"
                   >
-                    🔮{" "}
-                    {hi
-                      ? "कृष्ण का टैरो रीडिंग आज़माएं →"
-                      : "Try Krishna's Tarot Reading →"}
+                    🕉️ {hi ? "दिव्य ज्ञान लेख पढ़ें →" : "Read Divya Gyan Articles →"}
                   </Link>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Desktop Sidebar */}
-          <aside className="hidden lg:flex flex-col gap-6 w-72 flex-shrink-0">
+          {/* ===== RIGHT SIDEBAR (desktop) ===== */}
+          <aside className="hidden lg:flex flex-col gap-6 w-64 flex-shrink-0">
             {/* Nav Links */}
             <div className="bg-card rounded-xl border border-border p-4">
               <h3 className="font-display font-semibold text-foreground mb-3 text-sm uppercase tracking-wide">
-                talkKrishna
+                {hi ? "कृष्ण AI" : "Krishna AI"}
               </h3>
               <nav className="space-y-1">
                 {(
                   [
-                    { en: "Free Kundli", hi: "मुफ़्त कुंडली", to: "/free-kundli" },
                     {
-                      en: "Kundli Matching",
-                      hi: "कुंडली मिलान",
-                      to: "/kundali-matching",
+                      en: "Bhagavad Gita",
+                      hi: "भगवद्गीता",
+                      to: "/bhagavad-gita",
                     },
                     {
-                      en: "Bhajan Library",
-                      hi: "भजन संग्रह",
-                      to: "/bhajan-library",
+                      en: "Hindi Articles",
+                      hi: "दिव्य ज्ञान लेख",
+                      to: "/hindi-blog",
                     },
-                    { en: "Holy Books", hi: "पवित्र ग्रंथ", to: "/holy-books" },
                     { en: "Blog", hi: "ब्लॉग", to: "/blog" },
+                    {
+                      en: "Holy Books",
+                      hi: "पवित्र ग्रंथ",
+                      to: "/holy-books",
+                    },
+                    {
+                      en: "Mantra Library",
+                      hi: "मंत्र संग्रह",
+                      to: "/mantra",
+                    },
                   ] as {
                     en: string;
                     hi: string;
                     to:
-                      | "/"
-                      | "/free-kundli"
-                      | "/kundali-matching"
-                      | "/bhajan-library"
+                      | "/bhagavad-gita"
+                      | "/hindi-blog"
+                      | "/blog"
                       | "/holy-books"
-                      | "/blog";
+                      | "/mantra";
                   }[]
                 ).map((item) => (
                   <Link
@@ -414,103 +635,32 @@ export default function AskKrishna() {
               </nav>
             </div>
 
-            {/* Astrologers Across India */}
-            <div className="bg-card rounded-xl border border-border p-4">
-              <h3 className="font-display font-semibold text-foreground mb-3 text-sm uppercase tracking-wide">
-                {hi ? "भारत भर के ज्योतिषी" : "Astrologers Across India"}
-              </h3>
-              <div className="space-y-1">
-                {SIDEBAR_CITIES.map((city) => (
-                  <Link
-                    key={city}
-                    to="/astrologer"
-                    data-ocid={`sidebar.city_${city.toLowerCase()}_link`}
-                    className="block text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded hover:bg-primary/5 transition-colors"
-                  >
-                    {hi
-                      ? `${CITY_HINDI[city] ?? city} में ज्योतिषी`
-                      : `Astrologer in ${city}`}
-                  </Link>
-                ))}
-                <Link
-                  to="/astrologer"
-                  data-ocid="sidebar.view_all_cities_link"
-                  className="block text-xs text-primary font-medium px-2 py-1.5 mt-1 hover:underline"
-                >
-                  {hi ? "सभी 50+ शहर देखें →" : "View All 50+ Cities →"}
-                </Link>
+            {/* Backend history */}
+            {historyData && historyData.length > 0 && (
+              <div className="bg-card rounded-xl border border-border p-4">
+                <h3 className="font-display font-semibold text-foreground mb-3 text-sm uppercase tracking-wide">
+                  {hi ? "पिछले प्रश्न" : "Recent Questions"}
+                </h3>
+                <div className="space-y-2">
+                  {historyData.slice(0, 4).map((item, idx) => (
+                    <div
+                      key={item.question.slice(0, 20)}
+                      data-ocid={`sidebar.history_item.${idx + 1}`}
+                    >
+                      <p className="text-xs text-foreground line-clamp-2">
+                        {item.question}
+                      </p>
+                      <p className="text-xs text-muted-foreground/60 mt-0.5">
+                        {new Date(
+                          Number(item.timestamp) / 1_000_000,
+                        ).toLocaleDateString(hi ? "hi-IN" : "en-IN")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Free Tools */}
-            <div className="bg-card rounded-xl border border-border p-4">
-              <h3 className="font-display font-semibold text-foreground mb-3 text-sm uppercase tracking-wide">
-                {hi ? "मुफ़्त उपकरण" : "Free Tools"}
-              </h3>
-              <div className="space-y-1">
-                {(
-                  [
-                    { en: "Free Kundli", hi: "मुफ़्त कुंडली", to: "/free-kundli" },
-                    {
-                      en: "Kundli Matching",
-                      hi: "कुंडली मिलान",
-                      to: "/kundali-matching",
-                    },
-                    {
-                      en: "Gemstone Calculator",
-                      hi: "रत्न कैलकुलेटर",
-                      to: "/gemstone-calculator",
-                    },
-                    {
-                      en: "Rudraksha Calculator",
-                      hi: "रुद्राक्ष कैलकुलेटर",
-                      to: "/rudraksha-calculator",
-                    },
-                    { en: "Panchang Today", hi: "आज का पंचांग", to: "/panchang" },
-                  ] as {
-                    en: string;
-                    hi: string;
-                    to:
-                      | "/free-kundli"
-                      | "/kundali-matching"
-                      | "/gemstone-calculator"
-                      | "/rudraksha-calculator"
-                      | "/panchang";
-                  }[]
-                ).map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    data-ocid={`sidebar.tool_${item.to.replace("/", "").replace("-", "_")}_link`}
-                    className="block text-sm text-muted-foreground hover:text-primary px-2 py-1.5 rounded-lg hover:bg-primary/5 transition-colors"
-                  >
-                    {hi ? item.hi : item.en}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            )}
           </aside>
-        </div>
-
-        {/* Mobile bottom section */}
-        <div className="lg:hidden mt-8">
-          <div className="bg-card rounded-xl border border-border p-4">
-            <h3 className="font-semibold text-foreground mb-3 text-sm">
-              {hi ? "भारत भर के ज्योतिषी" : "Astrologers Across India"}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {SIDEBAR_CITIES.map((city) => (
-                <Link
-                  key={city}
-                  to="/astrologer"
-                  data-ocid={`mobile.city_${city.toLowerCase()}_link`}
-                  className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
-                >
-                  {hi ? (CITY_HINDI[city] ?? city) : city}
-                </Link>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>

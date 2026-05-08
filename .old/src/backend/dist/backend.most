@@ -85,6 +85,8 @@ type ChadhavaOffering__290594421 =
     templeId : Text;
     userId : Principal
   };
+type ChatMessage__989679191 =
+  {answer : Text; question : Text; timestamp : Int};
 type CombinedVedicReading__733492072 =
   {
     activeDasha : Text;
@@ -263,6 +265,25 @@ type KundaliMatch__534664220 =
   };
 type Leaf__520550824<T> = {data : Data__159895909<T>};
 type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type LifeReport__884311281 =
+  {
+    content : Text;
+    createdAt : Int;
+    details : Text;
+    dob : Text;
+    id : Text;
+    name : Text;
+    reportType : ReportType__989759999;
+    status : Text;
+    userId : Principal
+  };
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
 type Map__158565046<K, V> = Map__297112838<K, V>;
 type Map__297112838<K, V> =
   {var root : Node__46230540<K, V>; var size : Nat__490723111};
@@ -419,6 +440,7 @@ type ProductSubCategory__1036904949 =
     nameCode : Text;
     productCount : Nat
   };
+type ProductType__220557329 = Text;
 type ProductVariant__478289016 =
   {price : Float; stock : Nat; variantName : Text};
 type Product__853085059 =
@@ -510,6 +532,13 @@ type PujaType__604880237 =
     when : Text;
     whenHindi : Text
   };
+type Purchase__492736444 =
+  {
+    amount : Nat;
+    productType : ProductType__220557329;
+    sessionId : Text;
+    timestamp : Int
+  };
 type ReportRequest__871286806 =
   {
     content : Text;
@@ -523,6 +552,7 @@ type ReportRequest__871286806 =
     tob : Text;
     userId : Principal
   };
+type ReportType__989759999 = Text;
 type ServiceBooking__1054723649 =
   {
     createdAt : Int;
@@ -696,6 +726,12 @@ actor {
       var root : Node__46230540<Text, ChadhavaOffering__290594421>;
       var size : Nat__490723111
     };
+  stable chatHistories :
+    {
+      var root :
+        Node__46230540<Principal, List__415060402<ChatMessage__989679191>>;
+      var size : Nat__490723111
+    };
   stable combinedVedicReadings :
     {
       var root : Node__46230540<Text, CombinedVedicReading__733492072>;
@@ -750,6 +786,12 @@ actor {
   stable kundaliMatches :
     {
       var root : Node__46230540<Text, KundaliMatch__534664220>;
+      var size : Nat__490723111
+    };
+  stable lifeReportCounter : {var value : Nat};
+  stable lifeReports :
+    {
+      var root : Node__46230540<Text, LifeReport__884311281>;
       var size : Nat__490723111
     };
   stable mediaPlayerItems :
@@ -840,6 +882,12 @@ actor {
   stable pujaTypes :
     {
       var root : Node__46230540<Text, PujaType__604880237>;
+      var size : Nat__490723111
+    };
+  stable purchaseStore :
+    {
+      var root :
+        Node__46230540<Principal, List__415060402<Purchase__492736444>>;
       var size : Nat__490723111
     };
   stable reportRequests :

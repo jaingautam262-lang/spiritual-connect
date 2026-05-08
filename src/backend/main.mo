@@ -15,6 +15,12 @@ import AccessControl "mo:caffeineai-authorization/access-control";
 import Stripe "stripe/stripe";
 import OutCall "http-outcalls/outcall";
 import List "mo:core/List";
+import KrishnaTypes "types/krishna";
+import PaymentsTypes "types/payments";
+import LifeReportTypes "types/life_reports";
+import KrishnaAPI "mixins/krishna-api";
+import PaymentsAPI "mixins/payments-api";
+import LifeReportsAPI "mixins/life-reports-api";
 
 
 
@@ -26,6 +32,17 @@ actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
   include MixinObjectStorage();
+
+  // ─── Krishna AI State ─────────────────────────────────────────────────────
+  let chatHistories = Map.empty<Principal, List.List<KrishnaTypes.ChatMessage>>();
+  include KrishnaAPI(chatHistories);
+
+  // ─── Payments State ───────────────────────────────────────────────────────
+  let purchaseStore = Map.empty<Principal, List.List<PaymentsTypes.Purchase>>();
+
+  // ─── Life Reports State ───────────────────────────────────────────────────
+  let lifeReports = Map.empty<Text, LifeReportTypes.LifeReport>();
+  let lifeReportCounter = { var value : Nat = 0 };
 
   // ─── Product Manager Role ─────────────────────────────────────────────────────
   // Stored separately from the authorization extension (which only supports admin/user/guest).
@@ -1989,6 +2006,12 @@ actor {
   public query func transform(input : OutCall.TransformationInput) : async OutCall.TransformationOutput {
     OutCall.transform(input);
   };
+
+  // ─── Payments Mixin (wired after transform is declared) ───────────────────────────
+  include PaymentsAPI(purchaseStore, getStripeConfiguration, transform);
+
+  // ─── Life Reports Mixin ──────────────────────────────────────────────────
+  include LifeReportsAPI(lifeReports, lifeReportCounter, func(p) { AccessControl.isAdmin(accessControlState, p) });
 
   // ─── Blog Articles ────────────────────────────────────────────────────────────
 

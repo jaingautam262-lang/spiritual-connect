@@ -243,6 +243,141 @@ interface BackendActor {
   deleteNewsletterSubscription(
     email: string,
   ): Promise<{ ok: null } | { err: string }>;
+  askKrishna(question: string): Promise<string>;
+  getKrishnaHistory(): Promise<
+    { question: string; answer: string; timestamp: bigint }[]
+  >;
+  createStripeSession(
+    productType: string,
+    amount: number,
+    metadata: string,
+  ): Promise<string>;
+  verifyStripePayment(
+    sessionId: string,
+  ): Promise<{ ok: string } | { err: string }>;
+  createLifeReport(
+    reportType: string,
+    name: string,
+    dob: string,
+    details: string,
+  ): Promise<string>;
+  getLifeReport(reportId: string): Promise<{
+    id: string;
+    reportType: string;
+    content: string;
+    status: string;
+  } | null>;
+}
+
+// ─── Krishna AI ──────────────────────────────────────────────────────────────
+
+export interface KrishnaHistoryItem {
+  question: string;
+  answer: string;
+  timestamp: bigint;
+}
+
+export function useAskKrishna() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (question: string): Promise<string> => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.askKrishna(question);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["krishnaHistory"] });
+    },
+  });
+}
+
+export function useKrishnaHistory() {
+  const { actor, isFetching } = useBackendActor();
+  return useQuery<KrishnaHistoryItem[]>({
+    queryKey: ["krishnaHistory"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getKrishnaHistory();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+// ─── Stripe Session ───────────────────────────────────────────────────────────
+
+export function useCreateStripeSession() {
+  const { actor } = useBackendActor();
+  return useMutation({
+    mutationFn: async ({
+      productType,
+      amount,
+      metadata,
+    }: {
+      productType: string;
+      amount: number;
+      metadata: string;
+    }): Promise<string> => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.createStripeSession(productType, amount, metadata);
+    },
+  });
+}
+
+export function useVerifyPayment() {
+  const { actor } = useBackendActor();
+  return useMutation({
+    mutationFn: async (
+      sessionId: string,
+    ): Promise<{ ok: string } | { err: string }> => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.verifyStripePayment(sessionId);
+    },
+  });
+}
+
+// ─── Life Reports ─────────────────────────────────────────────────────────────
+
+export interface LifeReportResult {
+  id: string;
+  reportType: string;
+  content: string;
+  status: string;
+}
+
+export function useCreateLifeReport() {
+  const { actor } = useBackendActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      reportType,
+      name,
+      dob,
+      details,
+    }: {
+      reportType: string;
+      name: string;
+      dob: string;
+      details: string;
+    }): Promise<string> => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.createLifeReport(reportType, name, dob, details);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lifeReport"] });
+    },
+  });
+}
+
+export function useGetLifeReport(reportId: string) {
+  const { actor, isFetching } = useBackendActor();
+  return useQuery<LifeReportResult | null>({
+    queryKey: ["lifeReport", reportId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getLifeReport(reportId);
+    },
+    enabled: !!actor && !isFetching && !!reportId,
+  });
 }
 
 // ─── Combined Vedic Reading type ─────────────────────────────────────────────

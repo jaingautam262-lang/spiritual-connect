@@ -183,6 +183,11 @@ export interface NumerologyRecord {
     name: string;
     createdAt: Time;
 }
+export interface ChatMessage {
+    question: string;
+    answer: string;
+    timestamp: bigint;
+}
 export interface StripeSessionStatus {
     status: string;
     paymentStatus: string;
@@ -304,6 +309,11 @@ export interface ServiceBooking {
     devoteeName: string;
     location: string;
 }
+export type ProductType = string;
+export interface _ImmutableObjectStorageCreateCertificateResult {
+    method: string;
+    blob_hash: string;
+}
 export interface PalmistryContent {
     id: string;
     title: string;
@@ -320,10 +330,6 @@ export interface PalmistryContent {
     characteristicsEn: string;
     characteristicsHi: string;
 }
-export interface _ImmutableObjectStorageCreateCertificateResult {
-    method: string;
-    blob_hash: string;
-}
 export interface FestivalEvent {
     id: string;
     title: string;
@@ -335,12 +341,6 @@ export interface FestivalEvent {
     faith: string;
     eventType: string;
 }
-export interface CalculatorFAQ {
-    id: string;
-    qaPairs: Array<CalculatorQAPair>;
-    calculatorId: string;
-    calculatorName: string;
-}
 export interface Order {
     id: string;
     total: number;
@@ -349,6 +349,12 @@ export interface Order {
     createdAt: Time;
     stripePaymentIntentId: string;
     items: Array<OrderItem>;
+}
+export interface CalculatorFAQ {
+    id: string;
+    qaPairs: Array<CalculatorQAPair>;
+    calculatorId: string;
+    calculatorName: string;
 }
 export interface ShoppingItem {
     name: string;
@@ -400,6 +406,18 @@ export interface UserProfile {
     email: string;
     gotra: string;
 }
+export interface PujaBooking {
+    id: string;
+    status: string;
+    userId: Principal;
+    createdAt: Time;
+    pujaType: string;
+    specialWishes: string;
+    gotra: string;
+    preferredDate: string;
+    templeId: string;
+    devoteeName: string;
+}
 export interface PanchangCity {
     id: string;
     latitude: number;
@@ -449,18 +467,6 @@ export interface KundaliMatch {
     personAAscendant: string;
     nadiDosha: boolean;
     personAPlace: string;
-}
-export interface PujaBooking {
-    id: string;
-    status: string;
-    userId: Principal;
-    createdAt: Time;
-    pujaType: string;
-    specialWishes: string;
-    gotra: string;
-    preferredDate: string;
-    templeId: string;
-    devoteeName: string;
 }
 export interface CombinedVedicReading {
     id: string;
@@ -551,6 +557,12 @@ export interface WalletTransaction {
     description: string;
     amount: number;
 }
+export interface LifeReportPublic {
+    status: string;
+    content: string;
+    name: string;
+    reportType: ReportType;
+}
 export interface _ImmutableObjectStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
@@ -565,6 +577,17 @@ export interface AstrologerProfile {
     perMinuteRate: number;
     rating: number;
     specializations: Array<string>;
+}
+export interface LifeReport {
+    id: string;
+    dob: string;
+    status: string;
+    content: string;
+    userId: Principal;
+    name: string;
+    createdAt: bigint;
+    reportType: ReportType;
+    details: string;
 }
 export interface VastuContent {
     id: string;
@@ -607,6 +630,12 @@ export interface WebStory {
     createdAt: bigint;
     slides: Array<StorySlide>;
     category: string;
+}
+export interface Purchase {
+    productType: ProductType;
+    timestamp: bigint;
+    sessionId: string;
+    amount: bigint;
 }
 export interface VirtualTempleConfig {
     background: string;
@@ -702,6 +731,7 @@ export interface ProductVariant {
     stock: bigint;
     price: number;
 }
+export type ReportType = string;
 export interface ProductUpdateRequest {
     mrp?: number;
     sku?: string;
@@ -766,15 +796,6 @@ export interface PalmPhotoReading {
     luckySigns: string;
     handType: string;
 }
-export interface VratKathaEntry {
-    id: string;
-    title: string;
-    audioBase64: string;
-    storyText: string;
-    createdAt: Time;
-    hasMockAudio: boolean;
-    festivalName: string;
-}
 export interface Product {
     id: string;
     mrp?: number;
@@ -797,6 +818,15 @@ export interface Product {
     price: number;
     isPersonalised?: boolean;
     gemstoneShape?: string;
+}
+export interface VratKathaEntry {
+    id: string;
+    title: string;
+    audioBase64: string;
+    storyText: string;
+    createdAt: Time;
+    hasMockAudio: boolean;
+    festivalName: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -877,6 +907,7 @@ export interface backendInterface {
      * / Admin-only: add a new vrat katha entry.
      */
     addVratKatha(entry: VratKathaEntry): Promise<void>;
+    askKrishna(question: string): Promise<string>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     /**
      * / Public: book a slot in a puja event. Returns booking reference or error.
@@ -925,6 +956,7 @@ export interface backendInterface {
      * / Admin-only: create a devotional content entry.
      */
     createDevotionalContent(content: DevotionalContent): Promise<void>;
+    createLifeReport(reportType: string, name: string, dob: string, details: string): Promise<string>;
     /**
      * / Authenticated users can create a numerology analysis for themselves.
      */
@@ -969,6 +1001,7 @@ export interface backendInterface {
      * / Authenticated users can create a service booking for themselves. Returns the booking id.
      */
     createServiceBooking(booking: ServiceBooking): Promise<string>;
+    createStripeSession(productType: string, amount: bigint, _metadata: string): Promise<string>;
     /**
      * / Admin or productManager: create a new product sub-category. Returns the generated id.
      */
@@ -1157,6 +1190,7 @@ export interface backendInterface {
      * / Public: get all Jain Pathshala entries.
      */
     getAllJainPathshalaEntries(): Promise<Array<JainPathshalaEntry>>;
+    getAllLifeReports(): Promise<Array<LifeReport>>;
     /**
      * / Public: get all panchang cities.
      */
@@ -1283,6 +1317,7 @@ export interface backendInterface {
      * / Public: get Jain Pathshala entries filtered by category.
      */
     getJainPathshalaEntriesByCategory(category: string): Promise<Array<JainPathshalaEntry>>;
+    getKrishnaHistory(): Promise<Array<ChatMessage>>;
     /**
      * / Authenticated users can retrieve a single kundali match by id (only their own).
      */
@@ -1291,6 +1326,7 @@ export interface backendInterface {
      * / Authenticated users can retrieve all their own kundali match results, sorted newest first.
      */
     getKundaliMatches(): Promise<Array<KundaliMatch>>;
+    getLifeReport(reportId: string): Promise<LifeReportPublic | null>;
     /**
      * / Public: get all media player items.
      */
@@ -1427,6 +1463,7 @@ export interface backendInterface {
      * / Authenticated users can retrieve their own puja reports.
      */
     getUserPujaReports(): Promise<Array<PujaReport>>;
+    getUserPurchases(): Promise<Array<Purchase>>;
     /**
      * / Users may only fetch their own report requests; admins may fetch any user's.
      */
@@ -1587,6 +1624,7 @@ export interface backendInterface {
      * / Admin-only: update an existing Jain Pathshala entry.
      */
     updateJainPathshalaEntry(entry: JainPathshalaEntry): Promise<void>;
+    updateLifeReport(reportId: string, status: string, content: string): Promise<void>;
     /**
      * / Admin-only: update order payment status.
      */
@@ -1676,8 +1714,9 @@ export interface backendInterface {
      * / Admin-only: update an existing web story.
      */
     updateWebStory(story: WebStory): Promise<void>;
+    verifyStripePayment(sessionId: string): Promise<boolean>;
 }
-import type { AstroChart as _AstroChart, AstrologerProfile as _AstrologerProfile, BhajanEntry as _BhajanEntry, BlogArticle as _BlogArticle, CalculatorFAQ as _CalculatorFAQ, CombinedVedicReading as _CombinedVedicReading, ConsultationBookingRequest as _ConsultationBookingRequest, DevotionalContent as _DevotionalContent, GemstoneProduct as _GemstoneProduct, HolyBookEntry as _HolyBookEntry, JainEncyclopediaArticle as _JainEncyclopediaArticle, KundaliMatch as _KundaliMatch, NewsletterSubscription as _NewsletterSubscription, PalmPhotoReading as _PalmPhotoReading, PalmistryContent as _PalmistryContent, PathshalaLesson as _PathshalaLesson, PersonalisedProduct as _PersonalisedProduct, Product as _Product, ProductUpdateRequest as _ProductUpdateRequest, ProductVariant as _ProductVariant, PujaType as _PujaType, SuktamEntry as _SuktamEntry, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, VastuContent as _VastuContent, VastuRoomCheck as _VastuRoomCheck, VirtualTempleConfig as _VirtualTempleConfig, VratKathaEntry as _VratKathaEntry, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { AstroChart as _AstroChart, AstrologerProfile as _AstrologerProfile, BhajanEntry as _BhajanEntry, BlogArticle as _BlogArticle, CalculatorFAQ as _CalculatorFAQ, CombinedVedicReading as _CombinedVedicReading, ConsultationBookingRequest as _ConsultationBookingRequest, DevotionalContent as _DevotionalContent, GemstoneProduct as _GemstoneProduct, HolyBookEntry as _HolyBookEntry, JainEncyclopediaArticle as _JainEncyclopediaArticle, KundaliMatch as _KundaliMatch, LifeReportPublic as _LifeReportPublic, NewsletterSubscription as _NewsletterSubscription, PalmPhotoReading as _PalmPhotoReading, PalmistryContent as _PalmistryContent, PathshalaLesson as _PathshalaLesson, PersonalisedProduct as _PersonalisedProduct, Product as _Product, ProductUpdateRequest as _ProductUpdateRequest, ProductVariant as _ProductVariant, PujaType as _PujaType, SuktamEntry as _SuktamEntry, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, VastuContent as _VastuContent, VastuRoomCheck as _VastuRoomCheck, VirtualTempleConfig as _VirtualTempleConfig, VratKathaEntry as _VratKathaEntry, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _immutableObjectStorageBlobsAreLive(arg0: Array<Uint8Array>): Promise<Array<boolean>> {
@@ -1994,6 +2033,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async askKrishna(arg0: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.askKrishna(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.askKrishna(arg0);
+            return result;
+        }
+    }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
@@ -2154,6 +2207,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createLifeReport(arg0: string, arg1: string, arg2: string, arg3: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createLifeReport(arg0, arg1, arg2, arg3);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createLifeReport(arg0, arg1, arg2, arg3);
+            return result;
+        }
+    }
     async createNumerologyRecord(arg0: NumerologyRecord): Promise<void> {
         if (this.processError) {
             try {
@@ -2305,6 +2372,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createServiceBooking(arg0);
+            return result;
+        }
+    }
+    async createStripeSession(arg0: string, arg1: bigint, arg2: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createStripeSession(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createStripeSession(arg0, arg1, arg2);
             return result;
         }
     }
@@ -2950,6 +3031,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getAllLifeReports(): Promise<Array<LifeReport>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllLifeReports();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllLifeReports();
+            return result;
+        }
+    }
     async getAllPanchangCities(): Promise<Array<PanchangCity>> {
         if (this.processError) {
             try {
@@ -3398,6 +3493,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getKrishnaHistory(): Promise<Array<ChatMessage>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getKrishnaHistory();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getKrishnaHistory();
+            return result;
+        }
+    }
     async getKundaliMatchById(arg0: string): Promise<KundaliMatch | null> {
         if (this.processError) {
             try {
@@ -3424,6 +3533,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getKundaliMatches();
             return result;
+        }
+    }
+    async getLifeReport(arg0: string): Promise<LifeReportPublic | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getLifeReport(arg0);
+                return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getLifeReport(arg0);
+            return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
         }
     }
     async getMediaPlayerItems(): Promise<Array<MediaPlayerItem>> {
@@ -3500,42 +3623,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getNewsletterSubscriptions();
-                return from_candid_vec_n48(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n49(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getNewsletterSubscriptions();
-            return from_candid_vec_n48(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n49(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPalmPhotoReading(arg0: string): Promise<PalmPhotoReading | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getPalmPhotoReading(arg0);
-                return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getPalmPhotoReading(arg0);
-            return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getPalmistryContent(arg0: string): Promise<PalmistryContent | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getPalmistryContent(arg0);
                 return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getPalmistryContent(arg0);
+            const result = await this.actor.getPalmPhotoReading(arg0);
             return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPalmistryContent(arg0: string): Promise<PalmistryContent | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPalmistryContent(arg0);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPalmistryContent(arg0);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPalmistryContents(): Promise<Array<PalmistryContent>> {
@@ -3556,14 +3679,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getPathshalaLesson(arg0);
-                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n52(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPathshalaLesson(arg0);
-            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n52(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPathshalaLessonsByPart(arg0: string): Promise<Array<PathshalaLesson>> {
@@ -3598,14 +3721,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getProduct(arg0);
-                return from_candid_opt_n52(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n53(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getProduct(arg0);
-            return from_candid_opt_n52(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n53(this._uploadFile, this._downloadFile, result);
         }
     }
     async getProductsByCategory(arg0: string): Promise<Array<Product>> {
@@ -3668,14 +3791,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getPujaTypeById(arg0);
-                return from_candid_opt_n53(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPujaTypeById(arg0);
-            return from_candid_opt_n53(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
         }
     }
     async getServiceBookings(): Promise<Array<ServiceBooking>> {
@@ -3724,14 +3847,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getSuktamById(arg0);
-                return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getSuktamById(arg0);
-            return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
         }
     }
     async getSuktams(): Promise<Array<SuktamEntry>> {
@@ -3902,6 +4025,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getUserPurchases(): Promise<Array<Purchase>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserPurchases();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserPurchases();
+            return result;
+        }
+    }
     async getUserReportRequests(arg0: Principal): Promise<Array<ReportRequest>> {
         if (this.processError) {
             try {
@@ -3934,14 +4071,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getVastuContent(arg0);
-                return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getVastuContent(arg0);
-            return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVastuContents(): Promise<Array<VastuContent>> {
@@ -3962,42 +4099,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getVastuRoomCheck(arg0);
-                return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getVastuRoomCheck(arg0);
-            return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getVirtualTempleConfig(arg0: Principal): Promise<VirtualTempleConfig | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getVirtualTempleConfig(arg0);
                 return from_candid_opt_n57(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getVirtualTempleConfig(arg0);
+            const result = await this.actor.getVastuRoomCheck(arg0);
             return from_candid_opt_n57(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getVratKathaById(arg0: string): Promise<VratKathaEntry | null> {
+    async getVirtualTempleConfig(arg0: Principal): Promise<VirtualTempleConfig | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getVratKathaById(arg0);
+                const result = await this.actor.getVirtualTempleConfig(arg0);
                 return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getVratKathaById(arg0);
+            const result = await this.actor.getVirtualTempleConfig(arg0);
             return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getVratKathaById(arg0: string): Promise<VratKathaEntry | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVratKathaById(arg0);
+                return from_candid_opt_n59(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVratKathaById(arg0);
+            return from_candid_opt_n59(this._uploadFile, this._downloadFile, result);
         }
     }
     async getVratKathas(): Promise<Array<VratKathaEntry>> {
@@ -4468,6 +4605,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateLifeReport(arg0: string, arg1: string, arg2: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateLifeReport(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateLifeReport(arg0, arg1, arg2);
+            return result;
+        }
+    }
     async updateOrderPaymentStatus(arg0: string, arg1: string, arg2: string): Promise<void> {
         if (this.processError) {
             try {
@@ -4486,28 +4637,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-                return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-            return from_candid_opt_n49(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async updatePalmistryContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string): Promise<PalmistryContent | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
                 return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+            const result = await this.actor.updatePalmPhotoReading(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
             return from_candid_opt_n50(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updatePalmistryContent(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: string, arg11: string): Promise<PalmistryContent | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePalmistryContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
     async updatePanchangCity(arg0: PanchangCity): Promise<void> {
@@ -4583,14 +4734,14 @@ export class Backend implements backendInterface {
     async updateProductFields(arg0: string, arg1: ProductUpdateRequest): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n59(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n60(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n59(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.updateProductFields(arg0, to_candid_ProductUpdateRequest_n60(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -4724,28 +4875,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
-                return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
-            return from_candid_opt_n55(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async updateVastuRoomCheck(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: bigint, arg6: string, arg7: string, arg8: string): Promise<VastuRoomCheck | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
                 return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+            const result = await this.actor.updateVastuContent(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
             return from_candid_opt_n56(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateVastuRoomCheck(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: bigint, arg6: string, arg7: string, arg8: string): Promise<VastuRoomCheck | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+                return from_candid_opt_n57(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateVastuRoomCheck(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+            return from_candid_opt_n57(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateVratKatha(arg0: VratKathaEntry): Promise<void> {
@@ -4773,6 +4924,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateWebStory(arg0);
+            return result;
+        }
+    }
+    async verifyStripePayment(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.verifyStripePayment(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.verifyStripePayment(arg0);
             return result;
         }
     }
@@ -4840,34 +5005,37 @@ function from_candid_opt_n46(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function from_candid_opt_n47(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_KundaliMatch]): KundaliMatch | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmPhotoReading]): PalmPhotoReading | null {
+function from_candid_opt_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_LifeReportPublic]): LifeReportPublic | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n50(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmistryContent]): PalmistryContent | null {
+function from_candid_opt_n50(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmPhotoReading]): PalmPhotoReading | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n51(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PathshalaLesson]): PathshalaLesson | null {
+function from_candid_opt_n51(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PalmistryContent]): PalmistryContent | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n52(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Product]): Product | null {
+function from_candid_opt_n52(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PathshalaLesson]): PathshalaLesson | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n53(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Product]): Product | null {
     return value.length === 0 ? null : from_candid_Product_n30(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n53(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PujaType]): PujaType | null {
+function from_candid_opt_n54(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PujaType]): PujaType | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n54(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_SuktamEntry]): SuktamEntry | null {
+function from_candid_opt_n55(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_SuktamEntry]): SuktamEntry | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n55(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuContent]): VastuContent | null {
+function from_candid_opt_n56(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuContent]): VastuContent | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n56(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuRoomCheck]): VastuRoomCheck | null {
+function from_candid_opt_n57(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VastuRoomCheck]): VastuRoomCheck | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n57(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VirtualTempleConfig]): VirtualTempleConfig | null {
+function from_candid_opt_n58(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VirtualTempleConfig]): VirtualTempleConfig | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n58(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VratKathaEntry]): VratKathaEntry | null {
+function from_candid_opt_n59(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VratKathaEntry]): VratKathaEntry | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
@@ -5122,7 +5290,7 @@ function from_candid_vec_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function from_candid_vec_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Product>): Array<Product> {
     return value.map((x)=>from_candid_Product_n30(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_NewsletterSubscription>): Array<NewsletterSubscription> {
+function from_candid_vec_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_NewsletterSubscription>): Array<NewsletterSubscription> {
     return value.map((x)=>from_candid_NewsletterSubscription_n12(_uploadFile, _downloadFile, x));
 }
 function to_candid_GemstoneProduct_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: GemstoneProduct): _GemstoneProduct {
@@ -5131,8 +5299,8 @@ function to_candid_GemstoneProduct_n8(_uploadFile: (file: ExternalBlob) => Promi
 function to_candid_PersonalisedProduct_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PersonalisedProduct): _PersonalisedProduct {
     return to_candid_record_n16(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProductUpdateRequest_n59(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProductUpdateRequest): _ProductUpdateRequest {
-    return to_candid_record_n60(_uploadFile, _downloadFile, value);
+function to_candid_ProductUpdateRequest_n60(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProductUpdateRequest): _ProductUpdateRequest {
+    return to_candid_record_n61(_uploadFile, _downloadFile, value);
 }
 function to_candid_Product_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Product): _Product {
     return to_candid_record_n21(_uploadFile, _downloadFile, value);
@@ -5266,7 +5434,7 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
-function to_candid_record_n60(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n61(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     mrp?: number;
     sku?: string;
     subCategory?: string;

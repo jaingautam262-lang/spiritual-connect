@@ -768,6 +768,297 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ One App. Complete Vedic Guidance — 12-feature grid ═══ */}
+      <section
+        className="py-16 px-4"
+        data-ocid="vedic-guidance.section"
+        style={{
+          background:
+            "linear-gradient(180deg, oklch(0.14 0.06 22) 0%, oklch(0.18 0.08 26) 50%, oklch(0.14 0.06 22) 100%)",
+        }}
+      >
+        <div className="container mx-auto">
+          {/* Ornamental top divider */}
+          <div className="flex items-center gap-4 mb-10">
+            <div
+              className="flex-1 h-px"
+              style={{
+                background:
+                  "linear-gradient(to right, transparent, oklch(0.78 0.14 75 / 0.5), transparent)",
+              }}
+            />
+            <span className="text-2xl" style={{ color: "oklch(0.78 0.14 75)" }}>
+              ✦ ॐ ✦
+            </span>
+            <div
+              className="flex-1 h-px"
+              style={{
+                background:
+                  "linear-gradient(to right, transparent, oklch(0.78 0.14 75 / 0.5), transparent)",
+              }}
+            />
+          </div>
+
+          <h2
+            className="font-decorative text-2xl md:text-4xl font-bold text-center mb-2 leading-tight"
+            style={{ color: "oklch(0.78 0.14 75)" }}
+          >
+            एक ऐप। सम्पूर्ण वैदिक मार्गदर्शन
+          </h2>
+          <p
+            className="text-center font-heading text-sm md:text-base tracking-widest uppercase mb-2"
+            style={{ color: "oklch(0.68 0.20 48)" }}
+          >
+            One App. Complete Vedic Guidance
+          </p>
+          <p
+            className="text-center font-body text-sm mb-10 max-w-xl mx-auto"
+            style={{ color: "oklch(0.60 0.04 55)" }}
+          >
+            आरती से AI तक — आपकी आध्यात्मिक यात्रा का हर पड़ाव एक जगह
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: "🪔",
+                titleHi: "आरती संग्रह",
+                titleEn: "Aarti Library",
+                desc: "66+ आरतियां सभी देवी-देवताओं की",
+                to: "/aarti",
+                accent: "oklch(0.68 0.20 48)",
+              },
+              {
+                icon: "📿",
+                titleHi: "चालीसा संग्रह",
+                titleEn: "Chalisa Library",
+                desc: "100+ चालीसा हिंदी अर्थ सहित",
+                to: "/chalisa",
+                accent: "oklch(0.70 0.14 280)",
+              },
+              {
+                icon: "🕉",
+                titleHi: "मंत्र संग्रह",
+                titleEn: "Mantra Library",
+                desc: "पवित्र मंत्र हिंदू, जैन और सिख परंपरा के",
+                to: "/mantra",
+                accent: "oklch(0.55 0.18 160)",
+              },
+              {
+                icon: "📖",
+                titleHi: "स्तोत्र संग्रह",
+                titleEn: "Stotra Library",
+                desc: "दिव्य स्तोत्र शक्ति और आशीर्वाद के लिए",
+                to: "/stotra",
+                accent: "oklch(0.65 0.18 25)",
+              },
+              {
+                icon: "🌸",
+                titleHi: "भगवद गीता",
+                titleEn: "Bhagavad Gita",
+                desc: "18 अध्याय | 700 श्लोक | 4 भाषाओं में",
+                to: "/bhagavad-gita",
+                accent: "oklch(0.72 0.16 140)",
+              },
+              {
+                icon: "🤖",
+                titleHi: "कृष्ण AI",
+                titleEn: "Ask Krishna AI",
+                desc: "गीता-आधारित जीवन मार्गदर्शन",
+                to: "/ask-krishna",
+                accent: "oklch(0.58 0.20 240)",
+              },
+              {
+                icon: "📰",
+                titleHi: "ब्लॉग",
+                titleEn: "Blog & Articles",
+                desc: "आध्यात्मिक लेख हिंदी में",
+                to: "/blog",
+                accent: "oklch(0.68 0.14 200)",
+              },
+              {
+                icon: "🔮",
+                titleHi: "जीवन रिपोर्ट",
+                titleEn: "Life Reports",
+                desc: "10 प्रकार की विस्तृत रिपोर्ट",
+                to: "/life-reports",
+                accent: "oklch(0.65 0.22 300)",
+              },
+              {
+                icon: "🙏",
+                titleHi: "पूजा बुकिंग",
+                titleEn: "Puja Booking",
+                desc: "ऑनलाइन पूजा बुक करें",
+                to: "/puja-booking",
+                accent: "oklch(0.68 0.20 48)",
+              },
+              {
+                icon: "⭐",
+                titleHi: "कुंडली रिपोर्ट",
+                titleEn: "Kundli Report",
+                desc: "200+ पेज व्यक्तिगत कुंडली",
+                to: "/kundli-report",
+                accent: "oklch(0.78 0.14 75)",
+              },
+              {
+                icon: "📚",
+                titleHi: "पवित्र ग्रंथ",
+                titleEn: "Holy Books",
+                desc: "हिंदू, जैन, सिख धर्मग्रंथ",
+                to: "/holy-books",
+                accent: "oklch(0.62 0.16 60)",
+              },
+              {
+                icon: "🛕",
+                titleHi: "मंदिर डायरेक्टरी",
+                titleEn: "Temple Directory",
+                desc: "भारत के प्रमुख मंदिर",
+                to: "/temple-directory",
+                accent: "oklch(0.68 0.18 30)",
+              },
+            ].map((card, i) => (
+              <Link
+                key={card.to}
+                to={card.to}
+                data-ocid={`vedic-guidance.item.${i + 1}`}
+                className="group relative rounded-2xl p-4 flex flex-col transition-all duration-300 hover:scale-[1.04] hover:-translate-y-1"
+                style={{
+                  background:
+                    "linear-gradient(145deg, oklch(0.20 0.08 26), oklch(0.24 0.09 30))",
+                  border: `1px solid ${card.accent}25`,
+                  boxShadow: "0 2px 12px oklch(0 0 0 / 0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.border = `1px solid ${card.accent}60`;
+                  el.style.boxShadow = `0 8px 32px ${card.accent}22`;
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.border = `1px solid ${card.accent}25`;
+                  el.style.boxShadow = "0 2px 12px oklch(0 0 0 / 0.3)";
+                }}
+              >
+                {/* Gold icon circle */}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mb-3 transition-transform duration-200 group-hover:scale-110"
+                  style={{
+                    background: `${card.accent}18`,
+                    border: `1px solid ${card.accent}35`,
+                  }}
+                >
+                  {card.icon}
+                </div>
+                {/* Hindi title */}
+                <h3
+                  className="font-decorative font-bold text-sm leading-snug mb-0.5"
+                  style={{ color: "oklch(0.88 0.06 40)" }}
+                >
+                  {card.titleHi}
+                </h3>
+                {/* English subtitle */}
+                <p
+                  className="font-heading text-xs mb-2 tracking-wide"
+                  style={{ color: card.accent }}
+                >
+                  {card.titleEn}
+                </p>
+                {/* Description */}
+                <p
+                  className="font-body text-xs leading-relaxed flex-1 hidden sm:block"
+                  style={{ color: "oklch(0.60 0.04 55)" }}
+                >
+                  {card.desc}
+                </p>
+                {/* देखें button */}
+                <div
+                  className="flex items-center gap-1 mt-3 text-xs font-heading font-semibold"
+                  style={{ color: card.accent }}
+                >
+                  देखें <ArrowRight className="h-3 w-3" />
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Ornamental bottom divider */}
+          <div className="flex items-center gap-4 mt-10">
+            <div
+              className="flex-1 h-px"
+              style={{
+                background:
+                  "linear-gradient(to right, transparent, oklch(0.78 0.14 75 / 0.5), transparent)",
+              }}
+            />
+            <span className="text-xl" style={{ color: "oklch(0.68 0.20 48)" }}>
+              🪷
+            </span>
+            <div
+              className="flex-1 h-px"
+              style={{
+                background:
+                  "linear-gradient(to right, transparent, oklch(0.78 0.14 75 / 0.5), transparent)",
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 369 Book Promo Banner */}
+      <section
+        className="py-6 px-4"
+        data-ocid="book-promo.section"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.25 0.10 45) 0%, oklch(0.32 0.12 50) 50%, oklch(0.25 0.10 40) 100%)",
+          borderTop: "1px solid oklch(0.78 0.14 75 / 0.3)",
+          borderBottom: "1px solid oklch(0.78 0.14 75 / 0.3)",
+        }}
+      >
+        <div className="container mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3 text-center sm:text-left">
+              <span className="text-3xl">🌟</span>
+              <div>
+                <p
+                  className="font-decorative font-bold text-base md:text-lg leading-tight"
+                  style={{ color: "oklch(0.92 0.08 75)" }}
+                >
+                  369 आकर्षण का नियम — PDF बुक
+                </p>
+                <p
+                  className="font-body text-xs"
+                  style={{ color: "oklch(0.80 0.10 65)" }}
+                >
+                  Law of Attraction • 369 Method • Manifestation Guide
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span
+                className="font-heading font-bold text-2xl"
+                style={{ color: "oklch(0.78 0.14 75)" }}
+              >
+                ₹96
+              </span>
+              <Link
+                to="/369-book"
+                data-ocid="book-promo.primary_button"
+                className="px-6 py-2.5 rounded-full font-heading font-bold text-sm tracking-wide transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.78 0.14 75), oklch(0.68 0.20 48))",
+                  color: "oklch(0.14 0.04 20)",
+                  boxShadow: "0 4px 16px oklch(0.78 0.14 75 / 0.35)",
+                }}
+              >
+                अभी खरीदें →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 px-4 bg-background text-center">
         <div className="container mx-auto max-w-2xl">

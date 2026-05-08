@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "@tanstack/react-router";
-import { MessageCircle, RefreshCw, Share2, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { Loader2, MessageCircle, RefreshCw, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import WhatsAppShare from "../components/WhatsAppShare";
 import {
   type TarotCard,
@@ -12,7 +13,7 @@ import {
   getSynthesis,
 } from "../data/tarotDeckData";
 import { useLanguage } from "../hooks/useLanguage";
-import { useCartStore } from "../stores/cartStore";
+import { useCreateStripeSession } from "../hooks/useQueries";
 
 function tx(en: string, hi: string, language: string) {
   return language === "hi" ? hi : en;
@@ -135,7 +136,11 @@ function CardReveal({
 export default function TarotReading() {
   const { language } = useLanguage();
   const t = (en: string, hi: string) => tx(en, hi, language);
-  const addItem = useCartStore((s) => s.addItem);
+  const createStripeSession = useCreateStripeSession();
+
+  // Detect ?success=true return from Stripe
+  const searchParams = new URLSearchParams(window.location.search);
+  const isSuccess = searchParams.get("success") === "true";
 
   const [intention, setIntention] = useState("");
   const [showPayModal, setShowPayModal] = useState(false);
@@ -144,32 +149,47 @@ export default function TarotReading() {
     null,
   );
   const [readingDone, setReadingDone] = useState(false);
+  const [paidAndRevealed, setPaidAndRevealed] = useState(isSuccess);
+
+  // On Stripe success return: auto-draw cards (run only once on mount)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs once on mount only
+  useEffect(() => {
+    if (isSuccess && !cards) {
+      setIsShuffling(true);
+      setTimeout(() => {
+        const drawn = drawThreeCards();
+        setCards(drawn);
+        setIsShuffling(false);
+        setReadingDone(true);
+        setPaidAndRevealed(true);
+      }, 1500);
+    }
+  }, []);
 
   function handleShuffleClick() {
     setShowPayModal(true);
   }
 
-  function handlePay() {
+  async function handlePay() {
     setShowPayModal(false);
-    addItem({
-      id: `tarot-reading-${Date.now()}`,
-      name: t("Krishna's Tarot Reading", "कृष्ण की तारोट रीडिंग"),
-      price: 100,
-      category: "service",
-      type: "service",
-    });
-    setIsShuffling(true);
-    setTimeout(() => {
-      const drawn = drawThreeCards();
-      setCards(drawn);
-      setIsShuffling(false);
-      setReadingDone(true);
-    }, 1500);
+    try {
+      const url = await createStripeSession.mutateAsync({
+        productType: "tarot",
+        amount: 100,
+        metadata: "Tarot Reading - 3 Card Spread",
+      });
+      window.location.href = url;
+    } catch {
+      toast.error(
+        t("Payment failed, please try again", "भुगतान में समस्या आई, पुनः प्रयास करें"),
+      );
+    }
   }
 
   function handleDrawAgain() {
     setCards(null);
     setReadingDone(false);
+    setPaidAndRevealed(false);
     setIntention("");
     setShowPayModal(true);
   }
@@ -249,8 +269,8 @@ export default function TarotReading() {
               <div className="text-center sm:text-left">
                 <p className="text-sm text-muted-foreground font-body">
                   {t(
-                    "₹100 per reading • Secure payment via Razorpay",
-                    "₹100 प्रति रीडिंग • Razorpay से सुरक्षित भुगतान",
+                    "₹100 per reading • Secure payment via Stripe",
+                    "₹100 प्रति रीडिंग • Stripe से सुरक्षित भुगतान",
                   )}
                 </p>
                 <p className="text-xs text-muted-foreground/70 font-body mt-0.5">
@@ -325,44 +345,109 @@ export default function TarotReading() {
                 )}
               </div>
 
-              <div className="grid gap-5">
-                {cards.map((card, idx) => (
-                  <CardReveal
-                    key={card.id}
-                    card={card}
-                    position={POSITIONS[idx]}
-                    positionIndex={idx}
-                  />
-                ))}
-              </div>
+              {/* Free preview: card names + 1-line meaning */}
+              {!paidAndRevealed && (
+                <div className="space-y-3">
+                  {cards.map((card, idx) => (
+                    <div
+                      key={card.id}
+                      className={`rounded-xl border-2 ${POSITIONS[idx].border} bg-gradient-to-br ${POSITIONS[idx].color} p-4 flex items-center gap-4`}
+                      data-ocid={`tarot.card_preview.${idx + 1}`}
+                    >
+                      <div className="text-4xl w-12 h-12 flex items-center justify-center rounded-lg bg-card/60 border border-border/40 shadow shrink-0">
+                        {card.emoji}
+                      </div>
+                      <div className="min-w-0">
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-display tracking-widest border-primary/50 text-primary mb-1"
+                        >
+                          {POSITIONS[idx].label}
+                        </Badge>
+                        <h3 className="text-base font-display text-primary leading-tight">
+                          {card.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground font-body mt-0.5">
+                          {card.keywordUpright}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Full reading: complete CardReveal (paid) */}
+              {paidAndRevealed && (
+                <div className="grid gap-5">
+                  {cards.map((card, idx) => (
+                    <CardReveal
+                      key={card.id}
+                      card={card}
+                      position={POSITIONS[idx]}
+                      positionIndex={idx}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
 
-            {/* Synthesis */}
-            <section
-              className="bg-gradient-to-br from-primary/10 via-accent/5 to-background rounded-xl border border-primary/30 p-6 space-y-4"
-              data-ocid="tarot.synthesis_section"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">ॐ</span>
+            {/* Unlock CTA — shown only before payment */}
+            {!paidAndRevealed && (
+              <section
+                className="bg-gradient-to-br from-primary/15 via-accent/5 to-background rounded-xl border border-primary/40 p-6 text-center space-y-4"
+                data-ocid="tarot.unlock_section"
+              >
+                <div className="text-3xl">🔮</div>
                 <h2 className="text-xl font-display text-primary">
-                  {t(
-                    "Krishna's Story of Your Journey",
-                    "कृष्ण की आपकी यात्रा की कहानी",
-                  )}
+                  {t("पूर्ण रीडिंग अनलॉक करें — ₹100", "पूर्ण रीडिंग अनलॉक करें — ₹100")}
                 </h2>
-              </div>
-              <div className="space-y-4">
-                {synthesis.split("\n\n").map((para, i) => (
-                  <p
-                    // biome-ignore lint/suspicious/noArrayIndexKey: paragraph order is stable
-                    key={i}
-                    className="text-sm text-foreground/90 font-body leading-relaxed"
-                  >
-                    {para}
-                  </p>
-                ))}
-              </div>
-            </section>
+                <p className="text-sm text-muted-foreground font-body max-w-sm mx-auto">
+                  {t(
+                    "Unlock Krishna's full Gita-rooted interpretation, synthesis, and personal guidance for all 3 cards.",
+                    "तीनों कार्डों की गीता-आधारित व्याख्या, संश्लेषण और व्यक्तिगत मार्गदर्शन अनलॉक करें।",
+                  )}
+                </p>
+                <Button
+                  type="button"
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-display px-10 shadow-lg"
+                  onClick={() => setShowPayModal(true)}
+                  data-ocid="tarot.unlock_button"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  {t("Unlock Full Reading — ₹100", "पूर्ण रीडिंग अनलॉक करें — ₹100")}
+                </Button>
+              </section>
+            )}
+
+            {/* Synthesis — only after payment */}
+            {paidAndRevealed && (
+              <section
+                className="bg-gradient-to-br from-primary/10 via-accent/5 to-background rounded-xl border border-primary/30 p-6 space-y-4"
+                data-ocid="tarot.synthesis_section"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">ॐ</span>
+                  <h2 className="text-xl font-display text-primary">
+                    {t(
+                      "Krishna's Story of Your Journey",
+                      "कृष्ण की आपकी यात्रा की कहानी",
+                    )}
+                  </h2>
+                </div>
+                <div className="space-y-4">
+                  {synthesis.split("\n\n").map((para, i) => (
+                    <p
+                      // biome-ignore lint/suspicious/noArrayIndexKey: paragraph order is stable
+                      key={i}
+                      className="text-sm text-foreground/90 font-body leading-relaxed"
+                    >
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Footer CTAs */}
             <section
@@ -429,6 +514,7 @@ export default function TarotReading() {
               variant="outline"
               className="flex-1 border-border/60 font-body"
               onClick={() => setShowPayModal(false)}
+              disabled={createStripeSession.isPending}
               data-ocid="tarot.payment_cancel_button"
             >
               {t("Cancel", "रद्द करें")}
@@ -437,17 +523,24 @@ export default function TarotReading() {
               type="button"
               className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-display"
               onClick={handlePay}
+              disabled={createStripeSession.isPending}
               data-ocid="tarot.payment_confirm_button"
             >
-              <Share2 className="w-4 h-4 mr-2" />
-              {t("Pay ₹100", "₹100 भुगतान करें")}
+              {createStripeSession.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t("भुगतान प्रक्रिया में...", "भुगतान प्रक्रिया में...")}
+                </>
+              ) : (
+                t("Pay ₹100", "₹100 भुगतान करें")
+              )}
             </Button>
           </div>
 
           <p className="text-center text-xs text-muted-foreground font-body">
             {t(
-              "Secure payment via Razorpay • 7-day money-back guarantee",
-              "Razorpay से सुरक्षित भुगतान • 7 दिन की मनी-बैक गारंटी",
+              "Secure payment via Stripe • 7-day money-back guarantee",
+              "Stripe से सुरक्षित भुगतान • 7 दिन की मनी-बैक गारंटी",
             )}
           </p>
         </DialogContent>

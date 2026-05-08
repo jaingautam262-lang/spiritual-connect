@@ -101,6 +101,11 @@ export interface NumerologyRecord {
     name: string;
     createdAt: Time;
 }
+export interface ChatMessage {
+    question: string;
+    answer: string;
+    timestamp: bigint;
+}
 export interface StripeSessionStatus {
     status: string;
     paymentStatus: string;
@@ -219,6 +224,7 @@ export interface ServiceBooking {
     devoteeName: string;
     location: string;
 }
+export type ProductType = string;
 export interface PalmistryContent {
     id: string;
     title: string;
@@ -246,12 +252,6 @@ export interface FestivalEvent {
     faith: string;
     eventType: string;
 }
-export interface CalculatorFAQ {
-    id: string;
-    qaPairs: Array<CalculatorQAPair>;
-    calculatorId: string;
-    calculatorName: string;
-}
 export interface Order {
     id: string;
     total: number;
@@ -260,6 +260,12 @@ export interface Order {
     createdAt: Time;
     stripePaymentIntentId: string;
     items: Array<OrderItem>;
+}
+export interface CalculatorFAQ {
+    id: string;
+    qaPairs: Array<CalculatorQAPair>;
+    calculatorId: string;
+    calculatorName: string;
 }
 export interface ShoppingItem {
     name: string;
@@ -311,6 +317,18 @@ export interface UserProfile {
     email: string;
     gotra: string;
 }
+export interface PujaBooking {
+    id: string;
+    status: string;
+    userId: Principal;
+    createdAt: Time;
+    pujaType: string;
+    specialWishes: string;
+    gotra: string;
+    preferredDate: string;
+    templeId: string;
+    devoteeName: string;
+}
 export interface PanchangCity {
     id: string;
     latitude: number;
@@ -360,18 +378,6 @@ export interface KundaliMatch {
     personAAscendant: string;
     nadiDosha: boolean;
     personAPlace: string;
-}
-export interface PujaBooking {
-    id: string;
-    status: string;
-    userId: Principal;
-    createdAt: Time;
-    pujaType: string;
-    specialWishes: string;
-    gotra: string;
-    preferredDate: string;
-    templeId: string;
-    devoteeName: string;
 }
 export interface CombinedVedicReading {
     id: string;
@@ -462,6 +468,12 @@ export interface WalletTransaction {
     description: string;
     amount: number;
 }
+export interface LifeReportPublic {
+    status: string;
+    content: string;
+    name: string;
+    reportType: ReportType;
+}
 export interface AstrologerProfile {
     id: string;
     bio: string;
@@ -472,6 +484,17 @@ export interface AstrologerProfile {
     perMinuteRate: number;
     rating: number;
     specializations: Array<string>;
+}
+export interface LifeReport {
+    id: string;
+    dob: string;
+    status: string;
+    content: string;
+    userId: Principal;
+    name: string;
+    createdAt: bigint;
+    reportType: ReportType;
+    details: string;
 }
 export interface VastuContent {
     id: string;
@@ -514,6 +537,12 @@ export interface WebStory {
     createdAt: bigint;
     slides: Array<StorySlide>;
     category: string;
+}
+export interface Purchase {
+    productType: ProductType;
+    timestamp: bigint;
+    sessionId: string;
+    amount: bigint;
 }
 export interface VirtualTempleConfig {
     background: string;
@@ -609,6 +638,7 @@ export interface ProductVariant {
     stock: bigint;
     price: number;
 }
+export type ReportType = string;
 export interface ProductUpdateRequest {
     mrp?: number;
     sku?: string;
@@ -673,15 +703,6 @@ export interface PalmPhotoReading {
     luckySigns: string;
     handType: string;
 }
-export interface VratKathaEntry {
-    id: string;
-    title: string;
-    audioBase64: string;
-    storyText: string;
-    createdAt: Time;
-    hasMockAudio: boolean;
-    festivalName: string;
-}
 export interface Product {
     id: string;
     mrp?: number;
@@ -704,6 +725,15 @@ export interface Product {
     price: number;
     isPersonalised?: boolean;
     gemstoneShape?: string;
+}
+export interface VratKathaEntry {
+    id: string;
+    title: string;
+    audioBase64: string;
+    storyText: string;
+    createdAt: Time;
+    hasMockAudio: boolean;
+    festivalName: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -777,6 +807,7 @@ export interface backendInterface {
      * / Admin-only: add a new vrat katha entry.
      */
     addVratKatha(entry: VratKathaEntry): Promise<void>;
+    askKrishna(question: string): Promise<string>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     /**
      * / Public: book a slot in a puja event. Returns booking reference or error.
@@ -825,6 +856,7 @@ export interface backendInterface {
      * / Admin-only: create a devotional content entry.
      */
     createDevotionalContent(content: DevotionalContent): Promise<void>;
+    createLifeReport(reportType: string, name: string, dob: string, details: string): Promise<string>;
     /**
      * / Authenticated users can create a numerology analysis for themselves.
      */
@@ -869,6 +901,7 @@ export interface backendInterface {
      * / Authenticated users can create a service booking for themselves. Returns the booking id.
      */
     createServiceBooking(booking: ServiceBooking): Promise<string>;
+    createStripeSession(productType: string, amount: bigint, _metadata: string): Promise<string>;
     /**
      * / Admin or productManager: create a new product sub-category. Returns the generated id.
      */
@@ -1057,6 +1090,7 @@ export interface backendInterface {
      * / Public: get all Jain Pathshala entries.
      */
     getAllJainPathshalaEntries(): Promise<Array<JainPathshalaEntry>>;
+    getAllLifeReports(): Promise<Array<LifeReport>>;
     /**
      * / Public: get all panchang cities.
      */
@@ -1183,6 +1217,7 @@ export interface backendInterface {
      * / Public: get Jain Pathshala entries filtered by category.
      */
     getJainPathshalaEntriesByCategory(category: string): Promise<Array<JainPathshalaEntry>>;
+    getKrishnaHistory(): Promise<Array<ChatMessage>>;
     /**
      * / Authenticated users can retrieve a single kundali match by id (only their own).
      */
@@ -1191,6 +1226,7 @@ export interface backendInterface {
      * / Authenticated users can retrieve all their own kundali match results, sorted newest first.
      */
     getKundaliMatches(): Promise<Array<KundaliMatch>>;
+    getLifeReport(reportId: string): Promise<LifeReportPublic | null>;
     /**
      * / Public: get all media player items.
      */
@@ -1327,6 +1363,7 @@ export interface backendInterface {
      * / Authenticated users can retrieve their own puja reports.
      */
     getUserPujaReports(): Promise<Array<PujaReport>>;
+    getUserPurchases(): Promise<Array<Purchase>>;
     /**
      * / Users may only fetch their own report requests; admins may fetch any user's.
      */
@@ -1487,6 +1524,7 @@ export interface backendInterface {
      * / Admin-only: update an existing Jain Pathshala entry.
      */
     updateJainPathshalaEntry(entry: JainPathshalaEntry): Promise<void>;
+    updateLifeReport(reportId: string, status: string, content: string): Promise<void>;
     /**
      * / Admin-only: update order payment status.
      */
@@ -1576,4 +1614,5 @@ export interface backendInterface {
      * / Admin-only: update an existing web story.
      */
     updateWebStory(story: WebStory): Promise<void>;
+    verifyStripePayment(sessionId: string): Promise<boolean>;
 }

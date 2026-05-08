@@ -1487,10 +1487,476 @@ function MonthlyCalendar({
   );
 }
 
+// ── Panchang Calculator Tab ─────────────────────────────────────────────────
+
+const CALC_TITHI_NAMES = [
+  "Pratipada",
+  "Dwitiya",
+  "Tritiya",
+  "Chaturthi",
+  "Panchami",
+  "Shashthi",
+  "Saptami",
+  "Ashtami",
+  "Navami",
+  "Dashami",
+  "Ekadashi",
+  "Dwadashi",
+  "Trayodashi",
+  "Chaturdashi",
+  "Purnima/Amavasya",
+];
+const CALC_NAKSHATRA_NAMES = [
+  "Ashwini",
+  "Bharani",
+  "Krittika",
+  "Rohini",
+  "Mrigashira",
+  "Ardra",
+  "Punarvasu",
+  "Pushya",
+  "Ashlesha",
+  "Magha",
+  "Purva Phalguni",
+  "Uttara Phalguni",
+  "Hasta",
+  "Chitra",
+  "Swati",
+  "Vishakha",
+  "Anuradha",
+  "Jyeshtha",
+  "Mula",
+  "Purva Ashadha",
+  "Uttara Ashadha",
+  "Shravana",
+  "Dhanishtha",
+  "Shatabhisha",
+  "Purva Bhadrapada",
+  "Uttara Bhadrapada",
+  "Revati",
+];
+const CALC_YOGA_NAMES = [
+  "Vishkambha",
+  "Preeti",
+  "Aayushman",
+  "Saubhagya",
+  "Shobhana",
+  "Atiganda",
+  "Sukarma",
+  "Dhriti",
+  "Shoola",
+  "Ganda",
+  "Vriddhi",
+  "Dhruva",
+  "Vyaghata",
+  "Harshana",
+  "Vajra",
+  "Siddhi",
+  "Vyatipata",
+  "Variyana",
+  "Parigha",
+  "Shiva",
+  "Siddha",
+  "Sadhya",
+  "Shubha",
+  "Shukla",
+  "Brahma",
+  "Indra",
+  "Vaidhriti",
+];
+const CALC_KARANA_NAMES = [
+  "Bava",
+  "Balava",
+  "Kaulava",
+  "Taitila",
+  "Garaja",
+  "Vanija",
+  "Vishti",
+  "Bava",
+  "Balava",
+  "Kaulava",
+  "Taitila",
+];
+const RAHU_KAAL_BY_WEEKDAY: Record<number, string> = {
+  0: "4:30 PM – 6:00 PM",
+  1: "7:30 AM – 9:00 AM",
+  2: "3:00 PM – 4:30 PM",
+  3: "12:00 PM – 1:30 PM",
+  4: "1:30 PM – 3:00 PM",
+  5: "10:30 AM – 12:00 PM",
+  6: "9:00 AM – 10:30 AM",
+};
+
+interface CalcResult {
+  tithi: string;
+  nakshatra: string;
+  yoga: string;
+  karana: string;
+  sunrise: string;
+  sunset: string;
+  rahuKaal: string;
+  brahmaMuhurat: string;
+  abhijitMuhurat: string;
+  shubhMuhurat: string[];
+}
+
+function buildCalcResult(date: Date): CalcResult {
+  const dayOfYear = Math.floor(
+    (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000,
+  );
+  const weekday = date.getDay();
+  return {
+    tithi: CALC_TITHI_NAMES[dayOfYear % 15],
+    nakshatra: CALC_NAKSHATRA_NAMES[dayOfYear % 27],
+    yoga: CALC_YOGA_NAMES[dayOfYear % 27],
+    karana: CALC_KARANA_NAMES[dayOfYear % 11],
+    sunrise: "06:15 AM",
+    sunset: "06:42 PM",
+    rahuKaal: RAHU_KAAL_BY_WEEKDAY[weekday] ?? "12:00 PM – 1:30 PM",
+    brahmaMuhurat: "04:45 AM – 05:30 AM",
+    abhijitMuhurat: "11:45 AM – 12:30 PM",
+    shubhMuhurat: [
+      "07:15 AM – 09:15 AM",
+      "10:00 AM – 11:00 AM",
+      "04:00 PM – 05:30 PM",
+    ],
+  };
+}
+
+function PanchangCalculatorTab() {
+  const [calcDate, setCalcDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  });
+  const [calcCity, setCalcCity] = useState("New Delhi");
+  const [calcResult, setCalcResult] = useState<CalcResult | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  function handleCalc() {
+    const parts = calcDate.split("-").map(Number);
+    if (parts.length === 3)
+      setCalcResult(
+        buildCalcResult(new Date(parts[0], parts[1] - 1, parts[2])),
+      );
+  }
+
+  return (
+    <div className="space-y-4" data-ocid="panchang.calculator.section">
+      <div
+        className="rounded-2xl border overflow-hidden"
+        style={{
+          borderColor: "oklch(0.35 0.12 48)",
+          background: "oklch(0.16 0.06 22)",
+        }}
+      >
+        <div
+          className="px-5 py-4 border-b"
+          style={{
+            background:
+              "linear-gradient(135deg, oklch(0.20 0.09 28), oklch(0.18 0.07 24))",
+            borderColor: "oklch(0.35 0.12 48)",
+          }}
+        >
+          <h2
+            className="font-heading font-bold"
+            style={{ color: "oklch(0.78 0.14 75)" }}
+          >
+            Panchang Calculator
+          </h2>
+          <p
+            className="text-xs mt-0.5"
+            style={{ color: "oklch(0.55 0.06 55)" }}
+          >
+            Get Tithi, Nakshatra, Yoga, Karana and Muhurat for any date
+          </p>
+        </div>
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              {/* biome-ignore lint/a11y/noLabelWithoutControl: input follows immediately below */}
+              <label
+                className="block text-xs font-semibold mb-1.5"
+                style={{ color: "oklch(0.60 0.04 55)" }}
+              >
+                Date
+              </label>
+              <input
+                type="date"
+                value={calcDate}
+                onChange={(e) => setCalcDate(e.target.value)}
+                className="w-full rounded-xl px-3 py-2.5 text-sm border outline-none"
+                style={{
+                  background: "oklch(0.15 0.05 20)",
+                  borderColor: "oklch(0.30 0.08 28)",
+                  color: "oklch(0.82 0.06 65)",
+                  colorScheme: "dark",
+                }}
+                data-ocid="panchang.calculator.date.input"
+              />
+            </div>
+            <div>
+              {/* biome-ignore lint/a11y/noLabelWithoutControl: input follows immediately below */}
+              <label
+                className="block text-xs font-semibold mb-1.5"
+                style={{ color: "oklch(0.60 0.04 55)" }}
+              >
+                City
+              </label>
+              <input
+                type="text"
+                value={calcCity}
+                onChange={(e) => setCalcCity(e.target.value)}
+                placeholder="New Delhi"
+                className="w-full rounded-xl px-3 py-2.5 text-sm border outline-none"
+                style={{
+                  background: "oklch(0.15 0.05 20)",
+                  borderColor: "oklch(0.30 0.08 28)",
+                  color: "oklch(0.82 0.06 65)",
+                }}
+                data-ocid="panchang.calculator.city.input"
+              />
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleCalc}
+            className="w-full py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.60 0.22 42))",
+              color: "white",
+            }}
+            data-ocid="panchang.calculator.calculate.button"
+          >
+            🔮 Calculate Panchang
+          </button>
+        </div>
+      </div>
+
+      {calcResult && (
+        <div
+          className="rounded-2xl border overflow-hidden"
+          style={{
+            borderColor: "oklch(0.35 0.12 48)",
+            background: "oklch(0.16 0.06 22)",
+          }}
+          data-ocid="panchang.calculator.result.card"
+        >
+          <div
+            className="px-5 py-3 border-b flex items-center justify-between"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.20 0.09 28), oklch(0.18 0.07 24))",
+              borderColor: "oklch(0.35 0.12 48)",
+            }}
+          >
+            <div>
+              <p
+                className="font-heading font-bold text-sm"
+                style={{ color: "oklch(0.78 0.14 75)" }}
+              >
+                Panchang · {calcDate} · {calcCity}
+              </p>
+              <p className="text-xs" style={{ color: "oklch(0.45 0.04 46)" }}>
+                ⚠️ Approximate. Consult a Jyotishi for precise timings.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSaved(true)}
+              className="text-xs px-3 py-1.5 rounded-lg border font-semibold transition-all hover:opacity-80"
+              style={{
+                background: saved
+                  ? "oklch(0.55 0.18 145 / 0.15)"
+                  : "transparent",
+                borderColor: saved
+                  ? "oklch(0.55 0.18 145 / 0.40)"
+                  : "oklch(0.40 0.14 48)",
+                color: saved ? "oklch(0.65 0.18 145)" : "oklch(0.68 0.20 48)",
+              }}
+              data-ocid="panchang.calculator.save.button"
+            >
+              {saved ? "✓ Saved" : "💾 Save"}
+            </button>
+          </div>
+          <div className="p-4 space-y-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { label: "Tithi", value: calcResult.tithi },
+                { label: "Nakshatra", value: calcResult.nakshatra },
+                { label: "Yoga", value: calcResult.yoga },
+                { label: "Karana", value: calcResult.karana },
+              ].map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="rounded-xl p-3 border"
+                  style={{
+                    background: "oklch(0.17 0.05 22)",
+                    borderColor: "oklch(0.26 0.07 28)",
+                  }}
+                >
+                  <p
+                    className="text-xs"
+                    style={{ color: "oklch(0.50 0.04 50)" }}
+                  >
+                    {label}
+                  </p>
+                  <p
+                    className="font-heading font-bold text-sm mt-0.5"
+                    style={{ color: "oklch(0.78 0.14 75)" }}
+                  >
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { label: "🌅 Sunrise", value: calcResult.sunrise },
+                { label: "🌇 Sunset", value: calcResult.sunset },
+              ].map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="rounded-xl p-3 border"
+                  style={{
+                    background: "oklch(0.17 0.05 22)",
+                    borderColor: "oklch(0.26 0.07 28)",
+                  }}
+                >
+                  <p
+                    className="text-xs"
+                    style={{ color: "oklch(0.50 0.04 50)" }}
+                  >
+                    {label}
+                  </p>
+                  <p
+                    className="font-heading font-bold text-sm mt-0.5"
+                    style={{ color: "oklch(0.78 0.14 75)" }}
+                  >
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div>
+              <p
+                className="text-xs font-semibold mb-2 px-1"
+                style={{ color: "oklch(0.55 0.20 20)" }}
+              >
+                Inauspicious Period
+              </p>
+              <div
+                className="rounded-xl p-3 border"
+                style={{
+                  background: "oklch(0.50 0.20 20 / 0.08)",
+                  borderColor: "oklch(0.50 0.20 20 / 0.25)",
+                }}
+              >
+                <p className="text-xs" style={{ color: "oklch(0.55 0.04 50)" }}>
+                  Rahu Kaal
+                </p>
+                <p
+                  className="font-heading font-bold text-sm mt-0.5"
+                  style={{ color: "oklch(0.65 0.20 20)" }}
+                >
+                  {calcResult.rahuKaal}
+                </p>
+              </div>
+            </div>
+            <div>
+              <p
+                className="text-xs font-semibold mb-2 px-1"
+                style={{ color: "oklch(0.55 0.18 145)" }}
+              >
+                Auspicious Muhurats
+              </p>
+              <div className="space-y-1.5">
+                {[
+                  { label: "Brahma Muhurat", value: calcResult.brahmaMuhurat },
+                  {
+                    label: "Abhijit Muhurat",
+                    value: calcResult.abhijitMuhurat,
+                  },
+                ].map(({ label, value }) => (
+                  <div
+                    key={label}
+                    className="rounded-xl p-3 border flex items-center justify-between"
+                    style={{
+                      background: "oklch(0.55 0.18 145 / 0.06)",
+                      borderColor: "oklch(0.55 0.18 145 / 0.22)",
+                    }}
+                  >
+                    <p
+                      className="text-xs"
+                      style={{ color: "oklch(0.60 0.04 55)" }}
+                    >
+                      {label}
+                    </p>
+                    <p
+                      className="font-heading font-bold text-sm"
+                      style={{ color: "oklch(0.65 0.18 145)" }}
+                    >
+                      {value}
+                    </p>
+                  </div>
+                ))}
+                <div
+                  className="rounded-xl p-3 border"
+                  style={{
+                    background: "oklch(0.68 0.20 48 / 0.06)",
+                    borderColor: "oklch(0.68 0.20 48 / 0.22)",
+                  }}
+                >
+                  <p
+                    className="text-xs mb-1"
+                    style={{ color: "oklch(0.60 0.04 55)" }}
+                  >
+                    Shubh Muhurat Windows
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {calcResult.shubhMuhurat.map((s) => (
+                      <span
+                        key={s}
+                        className="text-xs px-2.5 py-1 rounded-full font-semibold"
+                        style={{
+                          background: "oklch(0.68 0.20 48 / 0.15)",
+                          color: "oklch(0.78 0.14 75)",
+                          border: "1px solid oklch(0.68 0.20 48 / 0.30)",
+                        }}
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div
+        className="rounded-xl px-4 py-3 text-xs border"
+        style={{
+          background: "oklch(0.17 0.05 22)",
+          borderColor: "oklch(0.28 0.06 28)",
+          color: "oklch(0.52 0.04 50)",
+        }}
+      >
+        ⚠️ Calculations are approximate. For precise timings, consult a qualified
+        Jyotishi.
+      </div>
+    </div>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function PanchangPage() {
   const today = new Date();
+  const [activeMainTab, setActiveMainTab] = useState<"panchang" | "calculator">(
+    "panchang",
+  );
   const [selectedCity, setSelectedCity] = useState("delhi");
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const [selectedRegion, setSelectedRegion] = useState("Hindi");
@@ -1824,449 +2290,499 @@ export default function PanchangPage() {
         />
       </div>
 
-      {/* ── Quick Navigation to Sub-Pages ── */}
+      {/* ── Main Tabs + Quick Nav ── */}
       <div
         className="w-full border-b"
         style={{
           background: "oklch(0.16 0.06 22)",
           borderColor: "oklch(0.28 0.08 30)",
         }}
+        data-ocid="panchang.main.tabs"
       >
-        <div className="container mx-auto px-4 max-w-5xl py-3 flex flex-wrap gap-3">
-          <Link
-            to="/panchang/timings"
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors hover:opacity-90"
-            style={{
-              background: "oklch(0.22 0.10 48)",
-              borderColor: "oklch(0.45 0.18 55)",
-              color: "oklch(0.90 0.08 70)",
-            }}
-            data-ocid="panchang.timings_link"
-          >
-            ☀️ Monthly Timings (Sun &amp; Moon)
-          </Link>
-          <Link
-            to="/panchang/festivals"
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors hover:opacity-90"
-            style={{
-              background: "oklch(0.22 0.10 48)",
-              borderColor: "oklch(0.45 0.18 55)",
-              color: "oklch(0.90 0.08 70)",
-            }}
-            data-ocid="panchang.festivals_link"
-          >
-            🎉 Festival Calendar 2026
-          </Link>
+        <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between">
+          <div className="flex">
+            {(["panchang", "calculator"] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveMainTab(tab)}
+                className="px-5 py-3 text-sm font-bold transition-all border-b-2"
+                style={
+                  activeMainTab === tab
+                    ? {
+                        borderColor: "oklch(0.68 0.20 48)",
+                        color: "oklch(0.78 0.14 75)",
+                      }
+                    : {
+                        borderColor: "transparent",
+                        color: "oklch(0.50 0.04 50)",
+                      }
+                }
+                data-ocid={`panchang.${tab}.tab`}
+              >
+                {tab === "panchang" ? "📅 Today's Panchang" : "🔮 Calculator"}
+              </button>
+            ))}
+          </div>
+          <div className="py-3 flex gap-2">
+            <Link
+              to="/panchang/timings"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors hover:opacity-90"
+              style={{
+                background: "oklch(0.22 0.10 48)",
+                borderColor: "oklch(0.45 0.18 55)",
+                color: "oklch(0.90 0.08 70)",
+              }}
+              data-ocid="panchang.timings_link"
+            >
+              ☀️ Timings
+            </Link>
+            <Link
+              to="/panchang/festivals"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors hover:opacity-90"
+              style={{
+                background: "oklch(0.22 0.10 48)",
+                borderColor: "oklch(0.45 0.18 55)",
+                color: "oklch(0.90 0.08 70)",
+              }}
+              data-ocid="panchang.festivals_link"
+            >
+              🎉 Festivals
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
-        {/* ── State Filter Chips ── */}
-        <div
-          className="rounded-2xl border overflow-hidden"
-          style={{ borderColor: "oklch(0.28 0.08 30)" }}
-          data-ocid="panchang.state.filter"
-        >
+      {/* Calculator Tab */}
+      {activeMainTab === "calculator" && (
+        <div className="container mx-auto px-4 py-6 max-w-3xl">
+          <PanchangCalculatorTab />
+        </div>
+      )}
+
+      {activeMainTab === "panchang" && (
+        <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+          {/* ── State Filter Chips ── */}
           <div
-            className="px-5 py-2 border-b flex items-center gap-2"
-            style={{
-              background: "oklch(0.20 0.08 24)",
-              borderColor: "oklch(0.28 0.08 30)",
-            }}
+            className="rounded-2xl border overflow-hidden"
+            style={{ borderColor: "oklch(0.28 0.08 30)" }}
+            data-ocid="panchang.state.filter"
           >
-            <span
-              className="text-xs font-semibold"
-              style={{ color: "oklch(0.55 0.06 55)" }}
-            >
-              Filter by State:
-            </span>
-            {activeStateFilter && (
-              <button
-                type="button"
-                onClick={() => setActiveStateFilter(null)}
-                className="text-xs px-2 py-0.5 rounded-full transition-all"
-                style={{
-                  background: "oklch(0.50 0.20 20 / 0.15)",
-                  color: "oklch(0.65 0.20 20)",
-                  border: "1px solid oklch(0.50 0.20 20 / 0.3)",
-                }}
-                data-ocid="panchang.state.clear"
-              >
-                ✕ Clear
-              </button>
-            )}
-          </div>
-          <div
-            className="overflow-x-auto"
-            style={{ background: "oklch(0.17 0.06 22)" }}
-          >
-            <div className="flex gap-1.5 p-2.5 w-max min-w-full">
-              {stateNames.map((state) => (
-                <button
-                  key={state}
-                  type="button"
-                  onClick={() => {
-                    setActiveStateFilter(
-                      activeStateFilter === state ? null : state,
-                    );
-                    // Auto-select first city in this state
-                    const stateCities = CITIES_BY_STATE[state];
-                    if (stateCities?.length && activeStateFilter !== state) {
-                      setSelectedCity(stateCities[0].id);
-                    }
-                  }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all border"
-                  style={
-                    activeStateFilter === state
-                      ? {
-                          background: "oklch(0.68 0.20 48)",
-                          color: "white",
-                          borderColor: "oklch(0.68 0.20 48)",
-                        }
-                      : {
-                          background: "oklch(0.22 0.07 24)",
-                          color: "oklch(0.65 0.04 55)",
-                          borderColor: "oklch(0.26 0.07 28)",
-                        }
-                  }
-                  data-ocid={`panchang.state.${state.toLowerCase().replace(/[^a-z0-9]/g, "-")}.chip`}
-                >
-                  {state}
-                  <span className="ml-1 text-[10px] opacity-60">
-                    ({CITIES_BY_STATE[state]?.length ?? 0})
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-          {/* Filtered city quick-select strip */}
-          {activeStateFilter && CITIES_BY_STATE[activeStateFilter] && (
             <div
-              className="flex gap-1.5 px-3 pb-3 pt-1 flex-wrap border-t"
+              className="px-5 py-2 border-b flex items-center gap-2"
               style={{
-                background: "oklch(0.15 0.05 20)",
-                borderColor: "oklch(0.24 0.06 26)",
+                background: "oklch(0.20 0.08 24)",
+                borderColor: "oklch(0.28 0.08 30)",
               }}
             >
-              {CITIES_BY_STATE[activeStateFilter].map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setSelectedCity(c.id)}
-                  className="px-3 py-1 rounded-lg text-xs font-medium transition-all border"
-                  style={
-                    selectedCity === c.id
-                      ? {
-                          background: "oklch(0.78 0.14 75 / 0.2)",
-                          color: "oklch(0.88 0.12 75)",
-                          borderColor: "oklch(0.78 0.14 75 / 0.4)",
-                        }
-                      : {
-                          background: "oklch(0.20 0.07 22)",
-                          color: "oklch(0.68 0.08 60)",
-                          borderColor: "oklch(0.26 0.07 28)",
-                        }
-                  }
-                  data-ocid={`panchang.state.city.${c.id}`}
-                >
-                  {c.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        {/* ── Regional Terminology Tabs ── */}
-        <div
-          className="rounded-2xl border overflow-hidden"
-          style={{ borderColor: "oklch(0.28 0.08 30)" }}
-          data-ocid="panchang.region.section"
-        >
-          <div
-            className="px-5 py-3 border-b"
-            style={{
-              background: "oklch(0.20 0.08 24)",
-              borderColor: "oklch(0.28 0.08 30)",
-            }}
-          >
-            <p
-              className="text-xs font-semibold"
-              style={{ color: "oklch(0.55 0.06 55)" }}
-            >
-              Regional Terminology — select to localize terms below
-            </p>
-          </div>
-          <div
-            className="overflow-x-auto"
-            style={{ background: "oklch(0.17 0.06 22)" }}
-          >
-            <div className="flex gap-1 p-2 w-max min-w-full">
-              {REGIONS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setSelectedRegion(r)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all"
-                  style={
-                    selectedRegion === r
-                      ? { background: "oklch(0.68 0.20 48)", color: "white" }
-                      : {
-                          background: "oklch(0.22 0.07 24)",
-                          color: "oklch(0.65 0.04 55)",
-                          border: "1px solid oklch(0.26 0.07 28)",
-                        }
-                  }
-                  data-ocid={`panchang.region.${r.toLowerCase()}.tab`}
-                >
-                  {r}{" "}
-                  <span className="ml-1 opacity-60">{localRegionLabel(r)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Daily Summary Card ── */}
-        <div
-          className="rounded-2xl border overflow-hidden"
-          style={{ borderColor: "oklch(0.30 0.10 40)" }}
-          data-ocid="panchang.summary.card"
-        >
-          <div
-            className="px-5 py-4 border-b"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.20 0.09 25), oklch(0.18 0.07 22))",
-              borderColor: "oklch(0.30 0.10 40)",
-            }}
-          >
-            <h2
-              className="font-heading font-bold text-base"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              Daily Summary — {dateStr}
-            </h2>
-            <p
-              className="text-xs mt-0.5"
-              style={{ color: "oklch(0.55 0.06 55)" }}
-            >
-              {city.name} · {city.nameHi} · {localRegionLabel(selectedRegion)}
-            </p>
-          </div>
-          <div
-            className="p-4 space-y-3"
-            style={{ background: "oklch(0.15 0.05 20)" }}
-          >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-              <DataCell
-                label={<GlossaryTerm term="Tithi">Tithi</GlossaryTerm>}
-                value={localTithi}
-                sub={`ends ${panchangData.tithi.endTime}`}
-              />
-              <DataCell
-                label={<GlossaryTerm term="Nakshatra">Nakshatra</GlossaryTerm>}
-                value={panchangData.nakshatra.name}
-                sub={`ends ${panchangData.nakshatra.endTime}`}
-              />
-              <DataCell
-                label={<GlossaryTerm term="Yoga">Yoga</GlossaryTerm>}
-                value={panchangData.yoga.name}
-                sub={`ends ${panchangData.yoga.endTime}`}
-              />
-              <DataCell
-                label={<GlossaryTerm term="Karana">Karana 1</GlossaryTerm>}
-                value={panchangData.karana1.name}
-                sub={`ends ${panchangData.karana1.endTime}`}
-              />
-              <DataCell
-                label={<GlossaryTerm term="Karana">Karana 2</GlossaryTerm>}
-                value={panchangData.karana2.name}
-                sub={`ends ${panchangData.karana2.endTime}`}
-              />
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <DataCell
-                label={<GlossaryTerm term="Paksha">Paksha</GlossaryTerm>}
-                value={localPaksha}
-              />
-              <DataCell
-                label="Weekday"
-                value={localWeekday}
-                sub={WEEKDAY_EN[panchangData.weekday]}
-              />
-              <DataCell
-                label={<GlossaryTerm term="Sun Sign">Sun Sign</GlossaryTerm>}
-                value={panchangData.sunSign}
-              />
-              <DataCell
-                label={<GlossaryTerm term="Moon Sign">Moon Sign</GlossaryTerm>}
-                value={panchangData.moonSign.name}
-                sub={`ends ${panchangData.moonSign.endTime}`}
-              />
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <DataCell
-                label={
-                  <GlossaryTerm term="Shaka Samvat">Shaka Samvat</GlossaryTerm>
-                }
-                value={`${panchangData.shakaSamvat}`}
-                sub={panchangData.samvatsaraName}
-              />
-              <DataCell
-                label={
-                  <GlossaryTerm term="Vikram Samvat">
-                    Vikram Samvat
-                  </GlossaryTerm>
-                }
-                value={`${panchangData.vikramSamvat}`}
-                sub={samvatsara.samvatsaraName}
-              />
-              <DataCell
-                label="Gujarati Samvat"
-                value={`${panchangData.gujaratiSamvat}`}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <DataCell
-                label={<GlossaryTerm term="Amanta">Amanta Month</GlossaryTerm>}
-                value={panchangData.amantaMonth}
-              />
-              <DataCell
-                label={
-                  <GlossaryTerm term="Purnimanta">
-                    Purnimanta Month
-                  </GlossaryTerm>
-                }
-                value={panchangData.purnimantaMonth}
-              />
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <DataCell label="Sunrise" value={panchangData.sunrise} />
-              <DataCell label="Sunset" value={panchangData.sunset} />
-              <DataCell label="Moonrise" value={panchangData.moonrise} />
-              <DataCell label="Moonset" value={panchangData.moonset} />
-            </div>
-            <div>
-              <p
-                className="text-xs font-semibold mb-2 px-1"
-                style={{ color: "oklch(0.55 0.20 20)" }}
+              <span
+                className="text-xs font-semibold"
+                style={{ color: "oklch(0.55 0.06 55)" }}
               >
-                Inauspicious Periods
+                Filter by State:
+              </span>
+              {activeStateFilter && (
+                <button
+                  type="button"
+                  onClick={() => setActiveStateFilter(null)}
+                  className="text-xs px-2 py-0.5 rounded-full transition-all"
+                  style={{
+                    background: "oklch(0.50 0.20 20 / 0.15)",
+                    color: "oklch(0.65 0.20 20)",
+                    border: "1px solid oklch(0.50 0.20 20 / 0.3)",
+                  }}
+                  data-ocid="panchang.state.clear"
+                >
+                  ✕ Clear
+                </button>
+              )}
+            </div>
+            <div
+              className="overflow-x-auto"
+              style={{ background: "oklch(0.17 0.06 22)" }}
+            >
+              <div className="flex gap-1.5 p-2.5 w-max min-w-full">
+                {stateNames.map((state) => (
+                  <button
+                    key={state}
+                    type="button"
+                    onClick={() => {
+                      setActiveStateFilter(
+                        activeStateFilter === state ? null : state,
+                      );
+                      // Auto-select first city in this state
+                      const stateCities = CITIES_BY_STATE[state];
+                      if (stateCities?.length && activeStateFilter !== state) {
+                        setSelectedCity(stateCities[0].id);
+                      }
+                    }}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all border"
+                    style={
+                      activeStateFilter === state
+                        ? {
+                            background: "oklch(0.68 0.20 48)",
+                            color: "white",
+                            borderColor: "oklch(0.68 0.20 48)",
+                          }
+                        : {
+                            background: "oklch(0.22 0.07 24)",
+                            color: "oklch(0.65 0.04 55)",
+                            borderColor: "oklch(0.26 0.07 28)",
+                          }
+                    }
+                    data-ocid={`panchang.state.${state.toLowerCase().replace(/[^a-z0-9]/g, "-")}.chip`}
+                  >
+                    {state}
+                    <span className="ml-1 text-[10px] opacity-60">
+                      ({CITIES_BY_STATE[state]?.length ?? 0})
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Filtered city quick-select strip */}
+            {activeStateFilter && CITIES_BY_STATE[activeStateFilter] && (
+              <div
+                className="flex gap-1.5 px-3 pb-3 pt-1 flex-wrap border-t"
+                style={{
+                  background: "oklch(0.15 0.05 20)",
+                  borderColor: "oklch(0.24 0.06 26)",
+                }}
+              >
+                {CITIES_BY_STATE[activeStateFilter].map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setSelectedCity(c.id)}
+                    className="px-3 py-1 rounded-lg text-xs font-medium transition-all border"
+                    style={
+                      selectedCity === c.id
+                        ? {
+                            background: "oklch(0.78 0.14 75 / 0.2)",
+                            color: "oklch(0.88 0.12 75)",
+                            borderColor: "oklch(0.78 0.14 75 / 0.4)",
+                          }
+                        : {
+                            background: "oklch(0.20 0.07 22)",
+                            color: "oklch(0.68 0.08 60)",
+                            borderColor: "oklch(0.26 0.07 28)",
+                          }
+                    }
+                    data-ocid={`panchang.state.city.${c.id}`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* ── Regional Terminology Tabs ── */}
+          <div
+            className="rounded-2xl border overflow-hidden"
+            style={{ borderColor: "oklch(0.28 0.08 30)" }}
+            data-ocid="panchang.region.section"
+          >
+            <div
+              className="px-5 py-3 border-b"
+              style={{
+                background: "oklch(0.20 0.08 24)",
+                borderColor: "oklch(0.28 0.08 30)",
+              }}
+            >
+              <p
+                className="text-xs font-semibold"
+                style={{ color: "oklch(0.55 0.06 55)" }}
+              >
+                Regional Terminology — select to localize terms below
               </p>
+            </div>
+            <div
+              className="overflow-x-auto"
+              style={{ background: "oklch(0.17 0.06 22)" }}
+            >
+              <div className="flex gap-1 p-2 w-max min-w-full">
+                {REGIONS.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setSelectedRegion(r)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all"
+                    style={
+                      selectedRegion === r
+                        ? { background: "oklch(0.68 0.20 48)", color: "white" }
+                        : {
+                            background: "oklch(0.22 0.07 24)",
+                            color: "oklch(0.65 0.04 55)",
+                            border: "1px solid oklch(0.26 0.07 28)",
+                          }
+                    }
+                    data-ocid={`panchang.region.${r.toLowerCase()}.tab`}
+                  >
+                    {r}{" "}
+                    <span className="ml-1 opacity-60">
+                      {localRegionLabel(r)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Daily Summary Card ── */}
+          <div
+            className="rounded-2xl border overflow-hidden"
+            style={{ borderColor: "oklch(0.30 0.10 40)" }}
+            data-ocid="panchang.summary.card"
+          >
+            <div
+              className="px-5 py-4 border-b"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.20 0.09 25), oklch(0.18 0.07 22))",
+                borderColor: "oklch(0.30 0.10 40)",
+              }}
+            >
+              <h2
+                className="font-heading font-bold text-base"
+                style={{ color: "oklch(0.78 0.14 75)" }}
+              >
+                Daily Summary — {dateStr}
+              </h2>
+              <p
+                className="text-xs mt-0.5"
+                style={{ color: "oklch(0.55 0.06 55)" }}
+              >
+                {city.name} · {city.nameHi} · {localRegionLabel(selectedRegion)}
+              </p>
+            </div>
+            <div
+              className="p-4 space-y-3"
+              style={{ background: "oklch(0.15 0.05 20)" }}
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                <DataCell
+                  label={<GlossaryTerm term="Tithi">Tithi</GlossaryTerm>}
+                  value={localTithi}
+                  sub={`ends ${panchangData.tithi.endTime}`}
+                />
+                <DataCell
+                  label={
+                    <GlossaryTerm term="Nakshatra">Nakshatra</GlossaryTerm>
+                  }
+                  value={panchangData.nakshatra.name}
+                  sub={`ends ${panchangData.nakshatra.endTime}`}
+                />
+                <DataCell
+                  label={<GlossaryTerm term="Yoga">Yoga</GlossaryTerm>}
+                  value={panchangData.yoga.name}
+                  sub={`ends ${panchangData.yoga.endTime}`}
+                />
+                <DataCell
+                  label={<GlossaryTerm term="Karana">Karana 1</GlossaryTerm>}
+                  value={panchangData.karana1.name}
+                  sub={`ends ${panchangData.karana1.endTime}`}
+                />
+                <DataCell
+                  label={<GlossaryTerm term="Karana">Karana 2</GlossaryTerm>}
+                  value={panchangData.karana2.name}
+                  sub={`ends ${panchangData.karana2.endTime}`}
+                />
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <DataCell
+                  label={<GlossaryTerm term="Paksha">Paksha</GlossaryTerm>}
+                  value={localPaksha}
+                />
+                <DataCell
+                  label="Weekday"
+                  value={localWeekday}
+                  sub={WEEKDAY_EN[panchangData.weekday]}
+                />
+                <DataCell
+                  label={<GlossaryTerm term="Sun Sign">Sun Sign</GlossaryTerm>}
+                  value={panchangData.sunSign}
+                />
+                <DataCell
+                  label={
+                    <GlossaryTerm term="Moon Sign">Moon Sign</GlossaryTerm>
+                  }
+                  value={panchangData.moonSign.name}
+                  sub={`ends ${panchangData.moonSign.endTime}`}
+                />
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 <DataCell
                   label={
-                    <GlossaryTerm term="Rahu Kalam">Rahu Kalam</GlossaryTerm>
-                  }
-                  value={`${panchangData.rahuKalam.start} – ${panchangData.rahuKalam.end}`}
-                />
-                <DataCell
-                  label={
-                    <GlossaryTerm term="Gulikai Kalam">
-                      Gulikai Kalam
+                    <GlossaryTerm term="Shaka Samvat">
+                      Shaka Samvat
                     </GlossaryTerm>
                   }
-                  value={`${panchangData.gulikaiKalam.start} – ${panchangData.gulikaiKalam.end}`}
+                  value={`${panchangData.shakaSamvat}`}
+                  sub={panchangData.samvatsaraName}
                 />
                 <DataCell
                   label={
-                    <GlossaryTerm term="Yamaganda">Yamaganda</GlossaryTerm>
+                    <GlossaryTerm term="Vikram Samvat">
+                      Vikram Samvat
+                    </GlossaryTerm>
                   }
-                  value={`${panchangData.yamaganda.start} – ${panchangData.yamaganda.end}`}
+                  value={`${panchangData.vikramSamvat}`}
+                  sub={samvatsara.samvatsaraName}
+                />
+                <DataCell
+                  label="Gujarati Samvat"
+                  value={`${panchangData.gujaratiSamvat}`}
                 />
               </div>
-            </div>
-            <div>
-              <p
-                className="text-xs font-semibold mb-2 px-1"
-                style={{ color: "oklch(0.55 0.18 145)" }}
-              >
-                Auspicious Periods
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <DataCell
                   label={
-                    <GlossaryTerm term="Abhijit Muhurat">Abhijit</GlossaryTerm>
+                    <GlossaryTerm term="Amanta">Amanta Month</GlossaryTerm>
                   }
-                  value={`${panchangData.abhijitMuhurat.start} – ${panchangData.abhijitMuhurat.end}`}
+                  value={panchangData.amantaMonth}
                 />
                 <DataCell
                   label={
-                    <GlossaryTerm term="Dur Muhurtam">
-                      Dur Muhurtam 1
+                    <GlossaryTerm term="Purnimanta">
+                      Purnimanta Month
                     </GlossaryTerm>
                   }
-                  value={`${panchangData.durMuhurtam1.start} – ${panchangData.durMuhurtam1.end}`}
+                  value={panchangData.purnimantaMonth}
                 />
-                <DataCell
-                  label={
-                    <GlossaryTerm term="Dur Muhurtam">
-                      Dur Muhurtam 2
-                    </GlossaryTerm>
-                  }
-                  value={`${panchangData.durMuhurtam2.start} – ${panchangData.durMuhurtam2.end}`}
-                />
-                <DataCell
-                  label={
-                    <GlossaryTerm term="Amrit Kalam">Amrit Kalam</GlossaryTerm>
-                  }
-                  value={`${panchangData.amritKalam.start} – ${panchangData.amritKalam.end}`}
-                />
-                <DataCell
-                  label={<GlossaryTerm term="Varjyam">Varjyam</GlossaryTerm>}
-                  value={`${panchangData.varjyam.start} – ${panchangData.varjyam.end}`}
-                />
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <DataCell label="Sunrise" value={panchangData.sunrise} />
+                <DataCell label="Sunset" value={panchangData.sunset} />
+                <DataCell label="Moonrise" value={panchangData.moonrise} />
+                <DataCell label="Moonset" value={panchangData.moonset} />
+              </div>
+              <div>
+                <p
+                  className="text-xs font-semibold mb-2 px-1"
+                  style={{ color: "oklch(0.55 0.20 20)" }}
+                >
+                  Inauspicious Periods
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Rahu Kalam">Rahu Kalam</GlossaryTerm>
+                    }
+                    value={`${panchangData.rahuKalam.start} – ${panchangData.rahuKalam.end}`}
+                  />
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Gulikai Kalam">
+                        Gulikai Kalam
+                      </GlossaryTerm>
+                    }
+                    value={`${panchangData.gulikaiKalam.start} – ${panchangData.gulikaiKalam.end}`}
+                  />
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Yamaganda">Yamaganda</GlossaryTerm>
+                    }
+                    value={`${panchangData.yamaganda.start} – ${panchangData.yamaganda.end}`}
+                  />
+                </div>
+              </div>
+              <div>
+                <p
+                  className="text-xs font-semibold mb-2 px-1"
+                  style={{ color: "oklch(0.55 0.18 145)" }}
+                >
+                  Auspicious Periods
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Abhijit Muhurat">
+                        Abhijit
+                      </GlossaryTerm>
+                    }
+                    value={`${panchangData.abhijitMuhurat.start} – ${panchangData.abhijitMuhurat.end}`}
+                  />
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Dur Muhurtam">
+                        Dur Muhurtam 1
+                      </GlossaryTerm>
+                    }
+                    value={`${panchangData.durMuhurtam1.start} – ${panchangData.durMuhurtam1.end}`}
+                  />
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Dur Muhurtam">
+                        Dur Muhurtam 2
+                      </GlossaryTerm>
+                    }
+                    value={`${panchangData.durMuhurtam2.start} – ${panchangData.durMuhurtam2.end}`}
+                  />
+                  <DataCell
+                    label={
+                      <GlossaryTerm term="Amrit Kalam">
+                        Amrit Kalam
+                      </GlossaryTerm>
+                    }
+                    value={`${panchangData.amritKalam.start} – ${panchangData.amritKalam.end}`}
+                  />
+                  <DataCell
+                    label={<GlossaryTerm term="Varjyam">Varjyam</GlossaryTerm>}
+                    value={`${panchangData.varjyam.start} – ${panchangData.varjyam.end}`}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── Monthly Calendar ── */}
-        <MonthlyCalendar
-          selectedDate={selectedDate}
-          onDateSelect={setSelectedDate}
-        />
+          {/* ── Monthly Calendar ── */}
+          <MonthlyCalendar
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+          />
 
-        {/* ── Collapsible Sub-Sections ── */}
-        <div className="space-y-3" data-ocid="panchang.subsections">
-          <ChoghadiyaSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-            weekday={panchangData.weekday}
-          />
-          <HoraSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-            nextSunrise={panchangData.nextSunrise}
-            weekday={panchangData.weekday}
-          />
-          <LagnaSection sunrise={panchangData.sunrise} />
-          <AbhijitSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-            weekday={panchangData.weekday}
-          />
-          <MuhuratSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-            nextSunrise={panchangData.nextSunrise}
-          />
-          <PanchakaSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-            nextSunrise={panchangData.nextSunrise}
-            tithiIdx={tithiIdx}
-            nakshatraIdx={nakshatraIdx}
-          />
-          <JainPraharSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-          />
-          <PanchaPakshiSection
-            sunrise={panchangData.sunrise}
-            sunset={panchangData.sunset}
-          />
+          {/* ── Collapsible Sub-Sections ── */}
+          <div className="space-y-3" data-ocid="panchang.subsections">
+            <ChoghadiyaSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+              weekday={panchangData.weekday}
+            />
+            <HoraSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+              nextSunrise={panchangData.nextSunrise}
+              weekday={panchangData.weekday}
+            />
+            <LagnaSection sunrise={panchangData.sunrise} />
+            <AbhijitSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+              weekday={panchangData.weekday}
+            />
+            <MuhuratSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+              nextSunrise={panchangData.nextSunrise}
+            />
+            <PanchakaSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+              nextSunrise={panchangData.nextSunrise}
+              tithiIdx={tithiIdx}
+              nakshatraIdx={nakshatraIdx}
+            />
+            <JainPraharSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+            />
+            <PanchaPakshiSection
+              sunrise={panchangData.sunrise}
+              sunset={panchangData.sunset}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

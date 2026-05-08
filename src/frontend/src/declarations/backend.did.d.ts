@@ -88,6 +88,11 @@ export interface ChadhavaOffering {
   'templeId' : string,
   'items' : Array<string>,
 }
+export interface ChatMessage {
+  'question' : string,
+  'answer' : string,
+  'timestamp' : bigint,
+}
 export interface CombinedVedicReading {
   'id' : string,
   'sunSign' : string,
@@ -294,6 +299,23 @@ export interface KundaliMatchInput {
   'nadiDosha' : boolean,
   'personAPlace' : string,
 }
+export interface LifeReport {
+  'id' : string,
+  'dob' : string,
+  'status' : string,
+  'content' : string,
+  'userId' : Principal,
+  'name' : string,
+  'createdAt' : bigint,
+  'reportType' : ReportType,
+  'details' : string,
+}
+export interface LifeReportPublic {
+  'status' : string,
+  'content' : string,
+  'name' : string,
+  'reportType' : ReportType,
+}
 export interface MediaPlayerItem {
   'id' : string,
   'title' : string,
@@ -454,6 +476,7 @@ export interface ProductSubCategory {
   'productCount' : bigint,
   'autoCodePrefix' : string,
 }
+export type ProductType = string;
 export interface ProductUpdateRequest {
   'mrp' : [] | [number],
   'sku' : [] | [string],
@@ -541,6 +564,12 @@ export interface PujaType {
   'deity' : string,
   'benefitsHindi' : string,
 }
+export interface Purchase {
+  'productType' : ProductType,
+  'timestamp' : bigint,
+  'sessionId' : string,
+  'amount' : bigint,
+}
 export interface ReportRequest {
   'id' : string,
   'dob' : string,
@@ -553,6 +582,7 @@ export interface ReportRequest {
   'createdAt' : Time,
   'reportType' : string,
 }
+export type ReportType = string;
 export interface SankalpInput {
   'eventId' : string,
   'email' : string,
@@ -804,6 +834,7 @@ export interface _SERVICE {
    * / Admin-only: add a new vrat katha entry.
    */
   'addVratKatha' : ActorMethod<[VratKathaEntry], undefined>,
+  'askKrishna' : ActorMethod<[string], string>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   /**
    * / Public: book a slot in a puja event. Returns booking reference or error.
@@ -886,6 +917,7 @@ export interface _SERVICE {
    * / Admin-only: create a devotional content entry.
    */
   'createDevotionalContent' : ActorMethod<[DevotionalContent], undefined>,
+  'createLifeReport' : ActorMethod<[string, string, string, string], string>,
   /**
    * / Authenticated users can create a numerology analysis for themselves.
    */
@@ -962,6 +994,7 @@ export interface _SERVICE {
    * / Authenticated users can create a service booking for themselves. Returns the booking id.
    */
   'createServiceBooking' : ActorMethod<[ServiceBooking], string>,
+  'createStripeSession' : ActorMethod<[string, bigint, string], string>,
   /**
    * / Admin or productManager: create a new product sub-category. Returns the generated id.
    */
@@ -1177,6 +1210,7 @@ export interface _SERVICE {
    * / Public: get all Jain Pathshala entries.
    */
   'getAllJainPathshalaEntries' : ActorMethod<[], Array<JainPathshalaEntry>>,
+  'getAllLifeReports' : ActorMethod<[], Array<LifeReport>>,
   /**
    * / Public: get all panchang cities.
    */
@@ -1315,6 +1349,7 @@ export interface _SERVICE {
     [string],
     Array<JainPathshalaEntry>
   >,
+  'getKrishnaHistory' : ActorMethod<[], Array<ChatMessage>>,
   /**
    * / Authenticated users can retrieve a single kundali match by id (only their own).
    */
@@ -1323,6 +1358,7 @@ export interface _SERVICE {
    * / Authenticated users can retrieve all their own kundali match results, sorted newest first.
    */
   'getKundaliMatches' : ActorMethod<[], Array<KundaliMatch>>,
+  'getLifeReport' : ActorMethod<[string], [] | [LifeReportPublic]>,
   /**
    * / Public: get all media player items.
    */
@@ -1474,6 +1510,7 @@ export interface _SERVICE {
    * / Authenticated users can retrieve their own puja reports.
    */
   'getUserPujaReports' : ActorMethod<[], Array<PujaReport>>,
+  'getUserPurchases' : ActorMethod<[], Array<Purchase>>,
   /**
    * / Users may only fetch their own report requests; admins may fetch any user's.
    */
@@ -1658,6 +1695,7 @@ export interface _SERVICE {
    * / Admin-only: update an existing Jain Pathshala entry.
    */
   'updateJainPathshalaEntry' : ActorMethod<[JainPathshalaEntry], undefined>,
+  'updateLifeReport' : ActorMethod<[string, string, string], undefined>,
   /**
    * / Admin-only: update order payment status.
    */
@@ -1811,6 +1849,7 @@ export interface _SERVICE {
    * / Admin-only: update an existing web story.
    */
   'updateWebStory' : ActorMethod<[WebStory], undefined>,
+  'verifyStripePayment' : ActorMethod<[string], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

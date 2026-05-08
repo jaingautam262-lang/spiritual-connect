@@ -21,6 +21,16 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
+  BADGE_CONFIG,
+  BRACELET_CATEGORIES,
+  BRACELET_PRODUCTS,
+  type BadgeType,
+  type BraceletProduct,
+  type CategoryType,
+  MATERIAL_FILTERS,
+  type MaterialType,
+} from "../data/braceletData";
+import {
   LUCK_WATCHES,
   type LuckWatch,
   WATCH_FILTER_CONFIG,
@@ -2862,6 +2872,415 @@ function ConcernFilterBar({
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
+// ─── Bracelet Promo + Section ─────────────────────────────────────────────────
+
+function BraceletPromoAndSection() {
+  const [dismissed, setDismissed] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<CategoryType | "All">(
+    "Stone Bracelets",
+  );
+  const [activeMaterial, setActiveMaterial] = useState<MaterialType | "All">(
+    "All",
+  );
+  const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">(
+    "default",
+  );
+  const [activeBadge, setActiveBadge] = useState<BadgeType | "All">("All");
+  const { addItem } = useCartStore();
+
+  const NAV_TABS: Array<{ id: CategoryType | "All"; label: string }> = [
+    { id: "All", label: "All Bracelets" },
+    ...BRACELET_CATEGORIES.map((c) => ({ id: c, label: c })),
+  ];
+
+  const BADGE_FILTER_OPTIONS: Array<BadgeType | "All"> = [
+    "All",
+    "Best Seller",
+    "Trending",
+    "New",
+    "On sale",
+    "Price Drop",
+    "Lux",
+    "925 Silver",
+    "6M Warranty",
+    "Personalise it",
+  ];
+
+  const filtered = useMemo(() => {
+    let list = BRACELET_PRODUCTS.filter((p) => {
+      const catMatch =
+        activeCategory === "All" || p.category === activeCategory;
+      const matMatch =
+        activeMaterial === "All" || p.material === activeMaterial;
+      const badgeMatch =
+        activeBadge === "All" || p.badges.includes(activeBadge as BadgeType);
+      return catMatch && matMatch && badgeMatch;
+    });
+    if (sortBy === "price-asc")
+      list = [...list].sort((a, b) => a.price - b.price);
+    if (sortBy === "price-desc")
+      list = [...list].sort((a, b) => b.price - a.price);
+    return list;
+  }, [activeCategory, activeMaterial, activeBadge, sortBy]);
+
+  function handleAddToCart(p: BraceletProduct) {
+    if (p.badges.includes("Sold out")) return;
+    addItem({ id: p.id, name: p.name, price: p.price, category: p.category });
+    toast.success(`${p.name} added to cart!`, { description: p.priceDisplay });
+  }
+
+  return (
+    <>
+      {/* Bracelet Promo Banner */}
+      {!dismissed && (
+        <div
+          className="relative border-b"
+          style={{
+            background:
+              "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.56 0.18 38) 50%, oklch(0.48 0.16 35))",
+            borderColor: "oklch(0.50 0.18 40)",
+          }}
+          data-ocid="shop.bracelet_promo_banner"
+        >
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <p className="font-heading font-bold text-sm text-white text-center flex-1">
+              <span className="mr-2">🛒</span>
+              Buy 2 &rarr; Flat 15% Off + Free 4 in 1 cable worth Rs.1200 on
+              orders above Rs.5000
+            </p>
+            <button
+              type="button"
+              onClick={() => setDismissed(true)}
+              className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-opacity hover:opacity-70"
+              style={{
+                background: "oklch(0.30 0.10 35 / 0.4)",
+                color: "white",
+              }}
+              data-ocid="shop.bracelet_promo_banner.close_button"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bracelet Section */}
+      <section
+        className="border-b"
+        style={{
+          background: "oklch(0.97 0.015 82)",
+          borderColor: "oklch(0.88 0.03 75)",
+        }}
+        id="bracelets"
+        data-ocid="shop.bracelets.section"
+      >
+        <div className="container mx-auto px-4 py-8">
+          {/* Section Header */}
+          <div className="text-center mb-6">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-3"
+              style={{
+                background: "oklch(0.68 0.20 48 / 0.10)",
+                border: "1px solid oklch(0.68 0.20 48 / 0.25)",
+              }}
+            >
+              <span className="text-sm">📿</span>
+              <span
+                className="text-xs font-heading font-semibold tracking-widest uppercase"
+                style={{ color: "oklch(0.45 0.16 40)" }}
+              >
+                Premium Bracelet Collection
+              </span>
+            </div>
+            <h2
+              className="font-heading text-2xl md:text-3xl font-bold mb-1"
+              style={{ color: "oklch(0.25 0.10 25)" }}
+            >
+              Healing Stone Bracelets
+            </h2>
+            <p
+              className="font-body text-sm"
+              style={{ color: "oklch(0.50 0.06 40)" }}
+            >
+              207 bracelets — Natural Stone, Sterling Silver, NeoLeather, Steel
+              Kada &amp; more
+            </p>
+          </div>
+
+          {/* Category Nav Tabs */}
+          <div className="relative mb-4">
+            <div
+              className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
+              style={{ scrollbarWidth: "none" }}
+              data-ocid="shop.bracelets.category_tabs"
+            >
+              {NAV_TABS.map((tab) => (
+                <button
+                  type="button"
+                  key={tab.id}
+                  onClick={() =>
+                    setActiveCategory(tab.id as CategoryType | "All")
+                  }
+                  className="shrink-0 px-4 py-2 rounded-full text-xs font-heading font-bold transition-all"
+                  style={
+                    activeCategory === tab.id
+                      ? {
+                          background:
+                            "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.56 0.18 40))",
+                          color: "white",
+                        }
+                      : {
+                          background: "oklch(0.92 0.02 75)",
+                          color: "oklch(0.40 0.08 40)",
+                          border: "1px solid oklch(0.85 0.04 70)",
+                        }
+                  }
+                  data-ocid={`shop.bracelets.category_tab.${tab.id
+                    .toLowerCase()
+                    .replace(/\s+/g, "_")
+                    .replace(/[^a-z0-9_]/g, "")}`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Filter Row */}
+          <div className="flex flex-wrap gap-3 mb-5 items-center">
+            {/* Material Filter */}
+            <div className="flex gap-1.5 flex-wrap">
+              {(["All", ...MATERIAL_FILTERS] as const).map((mat) => (
+                <button
+                  type="button"
+                  key={mat}
+                  onClick={() => setActiveMaterial(mat)}
+                  className="px-3 py-1 rounded-full text-xs font-heading transition-all"
+                  style={
+                    activeMaterial === mat
+                      ? { background: "oklch(0.32 0.10 25)", color: "white" }
+                      : {
+                          background: "oklch(0.90 0.02 75)",
+                          color: "oklch(0.42 0.06 40)",
+                          border: "1px solid oklch(0.82 0.04 70)",
+                        }
+                  }
+                  data-ocid={`shop.bracelets.material_filter.${mat
+                    .toLowerCase()
+                    .replace(/\s+/g, "_")
+                    .replace(/[^a-z0-9_]/g, "")}`}
+                >
+                  {mat === "All" ? "All Materials" : mat}
+                </button>
+              ))}
+            </div>
+
+            {/* Badge Filter */}
+            <select
+              value={activeBadge}
+              onChange={(e) =>
+                setActiveBadge(e.target.value as BadgeType | "All")
+              }
+              className="px-3 py-1.5 rounded-full text-xs font-heading border outline-none"
+              style={{
+                background: "oklch(0.96 0.01 80)",
+                color: "oklch(0.35 0.08 35)",
+                borderColor: "oklch(0.82 0.04 70)",
+              }}
+              data-ocid="shop.bracelets.badge_filter.select"
+            >
+              <option value="All">All Badges</option>
+              {BADGE_FILTER_OPTIONS.filter((b) => b !== "All").map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+
+            {/* Sort */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="px-3 py-1.5 rounded-full text-xs font-heading border outline-none ml-auto"
+              style={{
+                background: "oklch(0.96 0.01 80)",
+                color: "oklch(0.35 0.08 35)",
+                borderColor: "oklch(0.82 0.04 70)",
+              }}
+              data-ocid="shop.bracelets.sort.select"
+            >
+              <option value="default">Default</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+          </div>
+
+          {/* Product Count */}
+          <p
+            className="text-xs font-body mb-4"
+            style={{ color: "oklch(0.55 0.06 45)" }}
+          >
+            Showing {filtered.length} of {BRACELET_PRODUCTS.length} bracelets
+          </p>
+
+          {/* Product Grid */}
+          {filtered.length === 0 ? (
+            <div
+              className="py-16 text-center rounded-2xl border"
+              style={{ borderColor: "oklch(0.85 0.04 70)" }}
+              data-ocid="shop.bracelets.empty_state"
+            >
+              <div className="text-4xl mb-3">📿</div>
+              <p
+                className="font-heading text-sm"
+                style={{ color: "oklch(0.52 0.06 45)" }}
+              >
+                No bracelets match your filters
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveCategory("All");
+                  setActiveMaterial("All");
+                  setActiveBadge("All");
+                }}
+                className="mt-3 text-xs font-heading font-semibold"
+                style={{ color: "oklch(0.62 0.18 48)" }}
+              >
+                Reset Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {filtered.map((product, idx) => {
+                const isSoldOut = product.badges.includes("Sold out");
+                return (
+                  <div
+                    key={product.id}
+                    className="rounded-xl border overflow-hidden flex flex-col transition-all hover:shadow-md hover:-translate-y-0.5 relative"
+                    style={{
+                      background: "oklch(0.99 0.006 80)",
+                      borderColor: "oklch(0.88 0.03 75)",
+                      opacity: isSoldOut ? 0.72 : 1,
+                    }}
+                    data-ocid={`shop.bracelets.item.${idx + 1}`}
+                  >
+                    {/* Sold out overlay */}
+                    {isSoldOut && (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center z-10 rounded-xl"
+                        style={{ background: "oklch(0.20 0.04 30 / 0.55)" }}
+                      >
+                        <span
+                          className="font-heading font-bold text-xs px-3 py-1 rounded-full"
+                          style={{
+                            background: "oklch(0.45 0.04 50)",
+                            color: "white",
+                          }}
+                        >
+                          Sold Out
+                        </span>
+                      </div>
+                    )}
+                    {/* Image placeholder */}
+                    <Link
+                      to="/shop/bracelet/$id"
+                      params={{ id: product.id }}
+                      className="block"
+                    >
+                      <div
+                        className="h-28 flex items-center justify-center"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, oklch(0.92 0.04 70), oklch(0.96 0.02 80))",
+                        }}
+                      >
+                        <span className="text-4xl">📿</span>
+                      </div>
+                    </Link>
+                    {/* Badges */}
+                    {product.badges.length > 0 && (
+                      <div className="flex flex-wrap gap-0.5 px-2 pt-1.5">
+                        {product.badges.slice(0, 2).map((badge) => {
+                          const cfg = BADGE_CONFIG[badge as BadgeType];
+                          return (
+                            <span
+                              key={badge}
+                              className="text-xs font-heading font-bold px-1.5 py-0.5 rounded-full"
+                              style={{
+                                background: cfg.bg,
+                                color: cfg.color,
+                                fontSize: "10px",
+                              }}
+                            >
+                              {cfg.label}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <div className="p-2.5 flex flex-col flex-1 gap-2">
+                      <Link
+                        to="/shop/bracelet/$id"
+                        params={{ id: product.id }}
+                        className="min-w-0"
+                      >
+                        <p
+                          className="font-heading font-bold text-xs leading-snug line-clamp-2"
+                          style={{ color: "oklch(0.25 0.08 25)" }}
+                        >
+                          {product.name}
+                        </p>
+                      </Link>
+                      <div className="flex items-baseline gap-1.5 flex-wrap">
+                        <span
+                          className="font-heading font-bold text-sm"
+                          style={{ color: "oklch(0.62 0.20 48)" }}
+                        >
+                          {product.priceDisplay}
+                        </span>
+                        {product.originalPrice && (
+                          <span
+                            className="text-xs font-body line-through"
+                            style={{ color: "oklch(0.58 0.04 50)" }}
+                          >
+                            Rs.{product.originalPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleAddToCart(product)}
+                        disabled={isSoldOut}
+                        className="mt-auto w-full py-1.5 rounded-full text-xs font-heading font-bold transition-all hover:opacity-90"
+                        style={
+                          isSoldOut
+                            ? {
+                                background: "oklch(0.80 0.02 60)",
+                                color: "oklch(0.55 0.04 50)",
+                              }
+                            : {
+                                background:
+                                  "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.56 0.18 40))",
+                                color: "white",
+                              }
+                        }
+                        data-ocid={`shop.bracelets.add_to_cart.${idx + 1}`}
+                      >
+                        {isSoldOut ? "Sold Out" : "Add to Cart"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+    </>
+  );
+}
+
 export default function SpiritualShop() {
   const { data: products = [], isLoading } = useGetAllProducts();
   const addItem = useCartStore((s) => s.addItem);
@@ -3150,6 +3569,9 @@ export default function SpiritualShop() {
           </p>
         </div>
       </div>
+
+      {/* NEW: Bracelet Promo Banner */}
+      <BraceletPromoAndSection />
 
       {/* Cashback Banner */}
       <div

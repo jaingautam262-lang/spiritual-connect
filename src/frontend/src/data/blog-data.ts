@@ -20,6 +20,7 @@ export interface BlogArticle {
   excerptHindi: string;
   createdAt: number;
   updatedAt: number;
+  audioUrl?: string;
 }
 
 export const blogArticles: BlogArticle[] = [

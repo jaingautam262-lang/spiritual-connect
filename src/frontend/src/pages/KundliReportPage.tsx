@@ -12,10 +12,11 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@tanstack/react-router";
-import { Check, X } from "lucide-react";
+import { Check, Loader2, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useCreateStripeSession } from "../hooks/useQueries";
 
 const STEPS = [
   {
@@ -145,7 +146,7 @@ const PLANS = [
 
 export default function KundliReportPage() {
   const [selectedPlan, setSelectedPlan] = useState("basic");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, _setSubmitted] = useState(false);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -155,15 +156,68 @@ export default function KundliReportPage() {
     birthPlace: "",
     language: "",
   });
+  const createStripeSession = useCreateStripeSession();
 
-  function handleSubmit(e: React.FormEvent) {
+  // Detect ?success=true return from Stripe
+  const searchParams = new URLSearchParams(window.location.search);
+  const isPaymentSuccess = searchParams.get("success") === "true";
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.phone || !form.dob) {
       toast.error("Please fill all required fields");
       return;
     }
-    setSubmitted(true);
-    toast.success("Your Kundli Report request has been submitted!");
+    const plan = PLANS.find((p) => p.id === selectedPlan);
+    const amount = plan?.price ?? 499;
+    try {
+      const url = await createStripeSession.mutateAsync({
+        productType: "kundli",
+        amount,
+        metadata: JSON.stringify({ ...form, plan: selectedPlan }),
+      });
+      window.location.href = url;
+    } catch {
+      toast.error("भुगतान में समस्या आई, पुनः प्रयास करें");
+    }
+  }
+
+  // Show success confirmation if returned from Stripe with ?success=true
+  if (isPaymentSuccess || submitted) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center px-4"
+        style={{ background: "oklch(0.12 0.04 30)" }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-2xl p-10 text-center max-w-md w-full"
+          style={{
+            background: "oklch(0.18 0.06 30)",
+            border: "1px solid oklch(0.55 0.18 140 / 0.4)",
+          }}
+          data-ocid="kundli.success_state"
+        >
+          <div className="text-6xl mb-4">🌟</div>
+          <h3
+            className="text-2xl font-bold mb-3"
+            style={{
+              color: "oklch(0.78 0.14 75)",
+              fontFamily: "Cinzel, serif",
+            }}
+          >
+            भुगतान सफल!
+          </h3>
+          <p className="text-lg mb-2" style={{ color: "oklch(0.65 0.04 65)" }}>
+            आपकी कुंडली 2 दिनों में WhatsApp पर भेजी जाएगी
+          </p>
+          <p className="text-sm" style={{ color: "oklch(0.50 0.04 55)" }}>
+            हमारे वैदिक ज्योतिषी आपकी रिपोर्ट तैयार कर रहे हैं। धन्यवाद!
+          </p>
+        </motion.div>
+      </div>
+    );
   }
 
   return (
@@ -235,162 +289,64 @@ export default function KundliReportPage() {
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* Form */}
           <div>
-            {!submitted ? (
-              <form
-                onSubmit={handleSubmit}
-                className="rounded-2xl p-6 space-y-5"
+            <form
+              onSubmit={handleSubmit}
+              className="rounded-2xl p-6 space-y-5"
+              style={{
+                background: "oklch(0.18 0.06 30)",
+                border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+              }}
+            >
+              <h2
+                className="text-xl font-bold"
                 style={{
-                  background: "oklch(0.18 0.06 30)",
-                  border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+                  color: "oklch(0.78 0.14 75)",
+                  fontFamily: "Cinzel, serif",
                 }}
               >
-                <h2
-                  className="text-xl font-bold"
-                  style={{
-                    color: "oklch(0.78 0.14 75)",
-                    fontFamily: "Cinzel, serif",
-                  }}
-                >
-                  Enter Your Information
-                </h2>
+                Enter Your Information
+              </h2>
 
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Full Name *
-                  </Label>
-                  <Input
-                    data-ocid="kundli.name_input"
-                    placeholder="Your full name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="mt-1"
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>
+                  Full Name *
+                </Label>
+                <Input
+                  data-ocid="kundli.name_input"
+                  placeholder="Your full name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="mt-1"
+                  style={{
+                    background: "oklch(0.14 0.04 28)",
+                    border: "1px solid oklch(0.32 0.06 35)",
+                    color: "oklch(0.88 0.04 75)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>
+                  Phone Number *
+                </Label>
+                <div className="flex gap-2 mt-1">
+                  <div
+                    className="flex items-center px-3 rounded-lg text-sm"
                     style={{
                       background: "oklch(0.14 0.04 28)",
                       border: "1px solid oklch(0.32 0.06 35)",
-                      color: "oklch(0.88 0.04 75)",
+                      color: "oklch(0.72 0.04 65)",
                     }}
-                  />
-                </div>
-
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Phone Number *
-                  </Label>
-                  <div className="flex gap-2 mt-1">
-                    <div
-                      className="flex items-center px-3 rounded-lg text-sm"
-                      style={{
-                        background: "oklch(0.14 0.04 28)",
-                        border: "1px solid oklch(0.32 0.06 35)",
-                        color: "oklch(0.72 0.04 65)",
-                      }}
-                    >
-                      +91
-                    </div>
-                    <Input
-                      data-ocid="kundli.phone_input"
-                      placeholder="Phone number"
-                      value={form.phone}
-                      onChange={(e) =>
-                        setForm({ ...form, phone: e.target.value })
-                      }
-                      style={{
-                        background: "oklch(0.14 0.04 28)",
-                        border: "1px solid oklch(0.32 0.06 35)",
-                        color: "oklch(0.88 0.04 75)",
-                      }}
-                    />
+                  >
+                    +91
                   </div>
-                </div>
-
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Gender *
-                  </Label>
-                  <RadioGroup
-                    data-ocid="kundli.gender_radio"
-                    value={form.gender}
-                    onValueChange={(v) => setForm({ ...form, gender: v })}
-                    className="flex gap-6 mt-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem value="male" id="male" />
-                      <Label
-                        htmlFor="male"
-                        style={{ color: "oklch(0.75 0.05 70)" }}
-                      >
-                        Male
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem value="female" id="female" />
-                      <Label
-                        htmlFor="female"
-                        style={{ color: "oklch(0.75 0.05 70)" }}
-                      >
-                        Female
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Date of Birth *
-                  </Label>
                   <Input
-                    data-ocid="kundli.dob_input"
-                    type="date"
-                    value={form.dob}
-                    onChange={(e) => setForm({ ...form, dob: e.target.value })}
-                    className="mt-1"
-                    style={{
-                      background: "oklch(0.14 0.04 28)",
-                      border: "1px solid oklch(0.32 0.06 35)",
-                      color: "oklch(0.88 0.04 75)",
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Birth Time
-                  </Label>
-                  <Input
-                    data-ocid="kundli.time_input"
-                    placeholder="HH:MM AM/PM"
-                    value={form.birthTime}
+                    data-ocid="kundli.phone_input"
+                    placeholder="Phone number"
+                    value={form.phone}
                     onChange={(e) =>
-                      setForm({ ...form, birthTime: e.target.value })
+                      setForm({ ...form, phone: e.target.value })
                     }
-                    className="mt-1"
-                    style={{
-                      background: "oklch(0.14 0.04 28)",
-                      border: "1px solid oklch(0.32 0.06 35)",
-                      color: "oklch(0.88 0.04 75)",
-                    }}
-                  />
-                  <p
-                    className="text-xs mt-1"
-                    style={{ color: "oklch(0.50 0.04 55)" }}
-                  >
-                    Don't know your exact birth time? We can analyze with 80%
-                    accuracy
-                  </p>
-                </div>
-
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Birth Place *
-                  </Label>
-                  <Input
-                    data-ocid="kundli.place_input"
-                    placeholder="City, State"
-                    value={form.birthPlace}
-                    onChange={(e) =>
-                      setForm({ ...form, birthPlace: e.target.value })
-                    }
-                    className="mt-1"
                     style={{
                       background: "oklch(0.14 0.04 28)",
                       border: "1px solid oklch(0.32 0.06 35)",
@@ -398,81 +354,161 @@ export default function KundliReportPage() {
                     }}
                   />
                 </div>
+              </div>
 
-                <div>
-                  <Label style={{ color: "oklch(0.75 0.05 70)" }}>
-                    Report Language
-                  </Label>
-                  <Select
-                    value={form.language}
-                    onValueChange={(v) => setForm({ ...form, language: v })}
-                  >
-                    <SelectTrigger
-                      data-ocid="kundli.language_select"
-                      className="mt-1"
-                      style={{
-                        background: "oklch(0.14 0.04 28)",
-                        border: "1px solid oklch(0.32 0.06 35)",
-                        color: "oklch(0.88 0.04 75)",
-                      }}
-                    >
-                      <SelectValue placeholder="Select language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        "Hindi",
-                        "English",
-                        "Telugu",
-                        "Tamil",
-                        "Kannada",
-                        "Gujarati",
-                        "Marathi",
-                      ].map((l) => (
-                        <SelectItem key={l} value={l.toLowerCase()}>
-                          {l}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button
-                  type="submit"
-                  data-ocid="kundli.submit_button"
-                  size="lg"
-                  className="w-full py-5 font-bold rounded-xl text-base"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, oklch(0.62 0.18 48), oklch(0.78 0.14 75))",
-                    color: "oklch(0.14 0.04 30)",
-                  }}
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>Gender *</Label>
+                <RadioGroup
+                  data-ocid="kundli.gender_radio"
+                  value={form.gender}
+                  onValueChange={(v) => setForm({ ...form, gender: v })}
+                  className="flex gap-6 mt-2"
                 >
-                  Get my detailed Kundli →
-                </Button>
-              </form>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="rounded-2xl p-8 text-center"
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="male" id="male" />
+                    <Label
+                      htmlFor="male"
+                      style={{ color: "oklch(0.75 0.05 70)" }}
+                    >
+                      Male
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="female" id="female" />
+                    <Label
+                      htmlFor="female"
+                      style={{ color: "oklch(0.75 0.05 70)" }}
+                    >
+                      Female
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>
+                  Date of Birth *
+                </Label>
+                <Input
+                  data-ocid="kundli.dob_input"
+                  type="date"
+                  value={form.dob}
+                  onChange={(e) => setForm({ ...form, dob: e.target.value })}
+                  className="mt-1"
+                  style={{
+                    background: "oklch(0.14 0.04 28)",
+                    border: "1px solid oklch(0.32 0.06 35)",
+                    color: "oklch(0.88 0.04 75)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>
+                  Birth Time
+                </Label>
+                <Input
+                  data-ocid="kundli.time_input"
+                  placeholder="HH:MM AM/PM"
+                  value={form.birthTime}
+                  onChange={(e) =>
+                    setForm({ ...form, birthTime: e.target.value })
+                  }
+                  className="mt-1"
+                  style={{
+                    background: "oklch(0.14 0.04 28)",
+                    border: "1px solid oklch(0.32 0.06 35)",
+                    color: "oklch(0.88 0.04 75)",
+                  }}
+                />
+                <p
+                  className="text-xs mt-1"
+                  style={{ color: "oklch(0.50 0.04 55)" }}
+                >
+                  Don't know your exact birth time? We can analyze with 80%
+                  accuracy
+                </p>
+              </div>
+
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>
+                  Birth Place *
+                </Label>
+                <Input
+                  data-ocid="kundli.place_input"
+                  placeholder="City, State"
+                  value={form.birthPlace}
+                  onChange={(e) =>
+                    setForm({ ...form, birthPlace: e.target.value })
+                  }
+                  className="mt-1"
+                  style={{
+                    background: "oklch(0.14 0.04 28)",
+                    border: "1px solid oklch(0.32 0.06 35)",
+                    color: "oklch(0.88 0.04 75)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <Label style={{ color: "oklch(0.75 0.05 70)" }}>
+                  Report Language
+                </Label>
+                <Select
+                  value={form.language}
+                  onValueChange={(v) => setForm({ ...form, language: v })}
+                >
+                  <SelectTrigger
+                    data-ocid="kundli.language_select"
+                    className="mt-1"
+                    style={{
+                      background: "oklch(0.14 0.04 28)",
+                      border: "1px solid oklch(0.32 0.06 35)",
+                      color: "oklch(0.88 0.04 75)",
+                    }}
+                  >
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      "Hindi",
+                      "English",
+                      "Telugu",
+                      "Tamil",
+                      "Kannada",
+                      "Gujarati",
+                      "Marathi",
+                    ].map((l) => (
+                      <SelectItem key={l} value={l.toLowerCase()}>
+                        {l}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button
+                type="submit"
+                data-ocid="kundli.submit_button"
+                size="lg"
+                className="w-full py-5 font-bold rounded-xl text-base"
+                disabled={createStripeSession.isPending}
                 style={{
-                  background: "oklch(0.18 0.06 30)",
-                  border: "1px solid oklch(0.55 0.18 140 / 0.4)",
+                  background:
+                    "linear-gradient(135deg, oklch(0.62 0.18 48), oklch(0.78 0.14 75))",
+                  color: "oklch(0.14 0.04 30)",
                 }}
               >
-                <div className="text-6xl mb-4">🌟</div>
-                <h3
-                  className="text-2xl font-bold mb-3"
-                  style={{ color: "oklch(0.78 0.14 75)" }}
-                >
-                  Submitted Successfully!
-                </h3>
-                <p style={{ color: "oklch(0.65 0.04 65)" }}>
-                  Your Kundli report will be delivered to your WhatsApp within 2
-                  days.
-                </p>
-              </motion.div>
-            )}
+                {createStripeSession.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    रिपोर्ट तैयार हो रही है...
+                  </>
+                ) : (
+                  `Get my detailed Kundli — ₹${PLANS.find((p) => p.id === selectedPlan)?.price ?? 299} →`
+                )}
+              </Button>
+            </form>
           </div>
 
           {/* What you'll find */}
@@ -634,7 +670,11 @@ export default function KundliReportPage() {
                     selectedPlan === plan.id
                       ? "oklch(0.20 0.08 35)"
                       : "oklch(0.18 0.06 30)",
-                  border: `2px solid ${selectedPlan === plan.id ? "oklch(0.62 0.18 48)" : "oklch(0.30 0.07 35)"}`,
+                  border: `2px solid ${
+                    selectedPlan === plan.id
+                      ? "oklch(0.62 0.18 48)"
+                      : "oklch(0.30 0.07 35)"
+                  }`,
                 }}
                 onClick={() => setSelectedPlan(plan.id)}
                 whileHover={{ scale: 1.02 }}
@@ -708,21 +748,43 @@ export default function KundliReportPage() {
           </div>
           <div className="text-center">
             <Button
+              type="button"
               data-ocid="kundli.buy_now_button"
               size="lg"
               className="px-12 py-5 text-lg font-bold rounded-xl hover:scale-105 transition-transform"
+              disabled={createStripeSession.isPending}
               style={{
                 background:
                   "linear-gradient(135deg, oklch(0.62 0.18 48), oklch(0.78 0.14 75))",
                 color: "oklch(0.12 0.04 25)",
               }}
-              onClick={() =>
-                toast.success(
-                  `${PLANS.find((p) => p.id === selectedPlan)?.name} selected! Proceed to payment.`,
-                )
-              }
+              onClick={async () => {
+                if (!form.name || !form.phone || !form.dob) {
+                  toast.error("Please fill all required fields");
+                  return;
+                }
+                const plan = PLANS.find((p) => p.id === selectedPlan);
+                const amount = plan?.price ?? 299;
+                try {
+                  const url = await createStripeSession.mutateAsync({
+                    productType: "kundli",
+                    amount,
+                    metadata: JSON.stringify({ ...form, plan: selectedPlan }),
+                  });
+                  window.location.href = url;
+                } catch {
+                  toast.error("भुगतान में समस्या आई, पुनः प्रयास करें");
+                }
+              }}
             >
-              BUY NOW ➜
+              {createStripeSession.isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  रिपोर्ट तैयार हो रही है...
+                </>
+              ) : (
+                `BUY NOW — ₹${PLANS.find((p) => p.id === selectedPlan)?.price ?? 299} ➜`
+              )}
             </Button>
           </div>
         </section>
@@ -745,6 +807,7 @@ export default function KundliReportPage() {
             </p>
             <Link to="/baby-name-report">
               <Button
+                type="button"
                 data-ocid="kundli.baby_name_link"
                 variant="outline"
                 className="rounded-xl"

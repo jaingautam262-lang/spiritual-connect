@@ -1,6 +1,33 @@
+/**
+ * stotraData_batch3.ts — Batch 3 Stotras
+ *
+ * These stotras live in stotraData.ts (canonical source) and are
+ * re-exported here as stotraDataBatch3 for consumers that import by batch.
+ *
+ * Stotras included:
+ *   1. Surya Raksha Ashtakam     (surya-raksha-ashtakam)
+ *   2. Annapurna Ashtakam        (annapurna-ashtakam)
+ *   3. Kalika Ashtakam           (kalika-ashtakam)
+ *   4. Lalita Sahasranama        (lalita-sahasranama-stotram)
+ *   5. Ganga Stotram             (ganga-stotram)
+ */
+import { stotraData } from "./stotraData";
 import type { Stotra } from "./stotraData";
 
-export const stotraDataBatch3: Stotra[] = [
+const BATCH3_IDS = new Set([
+  "surya-raksha-ashtakam",
+  "annapurna-ashtakam",
+  "kalika-ashtakam",
+  "lalita-sahasranama-stotram",
+  "ganga-stotram",
+]);
+
+export const stotraDataBatch3: Stotra[] = stotraData.filter((s) =>
+  BATCH3_IDS.has(s.id),
+);
+
+// Legacy export kept for backward compatibility
+const _legacy: Stotra[] = [
   {
     id: "surya-raksha-ashtakam",
     title: "Surya Raksha Ashtakam",
@@ -370,3 +397,4 @@ export const stotraDataBatch3: Stotra[] = [
       "Reciting this stotra brings the merit of bathing in the Ganga. Removes sins of many lifetimes, protects from untimely death, and leads to ultimate liberation (mukti). Best recited on Ganga Dashami, Ganga Saptami, or any day near a river. Even imagining the Ganga while reciting this gives spiritual benefit.",
   },
 ];
+export { _legacy as stotraDataBatch3Legacy };

@@ -10,6 +10,8 @@ import {
   User,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import AudioPlayer from "../components/AudioPlayer";
+import TTSAudioPlayer from "../components/TTSAudioPlayer";
 import {
   type BlogArticle as Article12,
   BLOG_ARTICLES_12,
@@ -104,6 +106,7 @@ interface UnifiedArticle {
   tags: string[];
   readTime?: number;
   featuredEmoji?: string;
+  audioUrl?: string;
 }
 
 function fromLegacy(a: LegacyBlogArticle): UnifiedArticle {
@@ -119,6 +122,7 @@ function fromLegacy(a: LegacyBlogArticle): UnifiedArticle {
     publishDate: a.publishDate,
     category: a.category,
     tags: a.tags,
+    audioUrl: a.audioUrl,
   };
 }
 
@@ -134,6 +138,7 @@ function fromNew(a: BlogArticleNew): UnifiedArticle {
     publishDate: a.publishDate,
     category: a.category,
     tags: a.tags,
+    audioUrl: a.audioUrl,
   };
 }
 
@@ -205,6 +210,7 @@ function RelatedCard({
 export default function BlogDetail() {
   const { slug } = useParams({ from: "/blog/$slug" });
   const [lang, setLang] = useState<"en" | "hi">("en");
+  const [audioTab, setAudioTab] = useState<"tts" | "upload">("tts");
 
   const { data: backendArticle, isLoading } = useBlogArticleBySlug(slug);
   const { data: allBackendArticles } = usePublishedBlogArticles();
@@ -298,6 +304,12 @@ export default function BlogDetail() {
   const displayContent =
     lang === "hi" && article.contentHi ? article.contentHi : article.content;
   const categoryLabel = lang === "hi" ? meta.labelHindi : meta.label;
+
+  // Strip HTML tags for TTS plain text
+  const plainTextForTTS = displayContent
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
   return (
     <div className="min-h-screen" style={{ background: "oklch(0.13 0.05 25)" }}>
@@ -408,6 +420,142 @@ export default function BlogDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Article Body */}
             <div className="lg:col-span-2">
+              {/* ── Dual Audio Player Section ── */}
+              <div
+                className="rounded-2xl border mb-8 overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.19 0.07 28 / 0.9), oklch(0.23 0.09 34 / 0.9))",
+                  borderColor: "oklch(0.78 0.14 75 / 0.22)",
+                }}
+                data-ocid="blog_detail.audio_section"
+              >
+                {/* Tab header */}
+                <div
+                  className="flex border-b"
+                  style={{ borderColor: "oklch(0.78 0.14 75 / 0.15)" }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setAudioTab("tts")}
+                    className="flex-1 py-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                    style={{
+                      background:
+                        audioTab === "tts"
+                          ? "oklch(0.78 0.14 75 / 0.12)"
+                          : "transparent",
+                      color:
+                        audioTab === "tts"
+                          ? "oklch(0.88 0.08 70)"
+                          : "oklch(0.55 0.04 50)",
+                      borderBottom:
+                        audioTab === "tts"
+                          ? "2px solid oklch(0.78 0.14 75)"
+                          : "2px solid transparent",
+                    }}
+                    data-ocid="blog_detail.audio_tts_tab"
+                  >
+                    🔊{" "}
+                    {lang === "hi"
+                      ? "लेख सुनें (Auto Voice)"
+                      : "Listen (Auto Voice)"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAudioTab("upload")}
+                    className="flex-1 py-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                    style={{
+                      background:
+                        audioTab === "upload"
+                          ? "oklch(0.78 0.14 75 / 0.12)"
+                          : "transparent",
+                      color:
+                        audioTab === "upload"
+                          ? "oklch(0.88 0.08 70)"
+                          : "oklch(0.55 0.04 50)",
+                      borderBottom:
+                        audioTab === "upload"
+                          ? "2px solid oklch(0.78 0.14 75)"
+                          : "2px solid transparent",
+                    }}
+                    data-ocid="blog_detail.audio_upload_tab"
+                  >
+                    🎙 {lang === "hi" ? "रिकॉर्डेड ऑडियो" : "Recorded Audio"}
+                    {article.audioUrl && (
+                      <span
+                        className="ml-1 px-1.5 py-0.5 rounded-full"
+                        style={{
+                          background: "oklch(0.62 0.14 145 / 0.2)",
+                          color: "oklch(0.62 0.14 145)",
+                          fontSize: "9px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        LIVE
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Tab content */}
+                <div className="p-4">
+                  {audioTab === "tts" ? (
+                    <TTSAudioPlayer
+                      text={plainTextForTTS}
+                      language="hi-IN"
+                      title={lang === "hi" ? "लेख सुनें" : "Listen to Article"}
+                    />
+                  ) : article.audioUrl ? (
+                    <AudioPlayer
+                      title={displayTitle}
+                      audioUrl={article.audioUrl}
+                    />
+                  ) : (
+                    <div
+                      className="rounded-xl border p-5 flex flex-col items-center gap-3 text-center"
+                      style={{
+                        background: "oklch(0.18 0.06 28 / 0.6)",
+                        borderColor: "oklch(0.78 0.14 75 / 0.15)",
+                      }}
+                      data-ocid="blog_detail.audio_upload_empty_state"
+                    >
+                      <span className="text-3xl">🎙</span>
+                      <p
+                        className="text-sm font-heading font-semibold"
+                        style={{ color: "oklch(0.78 0.14 75)" }}
+                      >
+                        {lang === "hi"
+                          ? "रिकॉर्डेड ऑडियो उपलब्ध नहीं"
+                          : "No Recorded Audio Yet"}
+                      </p>
+                      <p
+                        className="text-xs leading-relaxed max-w-xs"
+                        style={{ color: "oklch(0.58 0.04 50)" }}
+                      >
+                        {lang === "hi"
+                          ? "Admin panel से इस लेख के लिए audio file upload करें।"
+                          : "Upload an audio file for this article from the Admin panel."}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setAudioTab("tts")}
+                        className="text-xs px-4 py-2 rounded-full font-semibold transition-all"
+                        style={{
+                          background: "oklch(0.68 0.18 48 / 0.15)",
+                          color: "oklch(0.78 0.14 75)",
+                          border: "1px solid oklch(0.78 0.14 75 / 0.25)",
+                        }}
+                        data-ocid="blog_detail.audio_switch_tts"
+                      >
+                        {lang === "hi"
+                          ? "Auto Voice से सुनें →"
+                          : "Switch to Auto Voice →"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div
                 className="prose prose-sm max-w-none leading-relaxed"
                 style={

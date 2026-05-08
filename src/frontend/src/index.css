@@ -1071,6 +1071,192 @@
     box-shadow: 0 4px 12px oklch(var(--saffron) / 0.3);
   }
 
+  /* New Section Cards — Blog, Reports, Gita */
+  .blog-card {
+    @apply bg-card rounded-lg border border-border overflow-hidden transition-all duration-300 hover:shadow-spiritual;
+  }
+
+  .blog-card-image {
+    @apply w-full aspect-video object-cover;
+  }
+
+  .blog-card-title {
+    @apply font-heading text-lg md:text-xl font-bold mt-4 px-4;
+    color: oklch(var(--maroon));
+  }
+
+  .blog-card-preview {
+    @apply text-sm font-body text-muted-foreground px-4 mt-2 line-clamp-2;
+  }
+
+  .blog-card-footer {
+    @apply flex items-center justify-between p-4 border-t border-border;
+  }
+
+  .audio-player-bar {
+    @apply w-full bg-card rounded-lg border border-border p-4 flex items-center gap-3;
+  }
+
+  .audio-progress {
+    @apply flex-1 h-1 bg-muted rounded-full cursor-pointer;
+  }
+
+  .audio-controls {
+    @apply flex items-center gap-2;
+  }
+
+  .audio-speed-btn {
+    @apply px-2 py-1 rounded text-xs font-medium transition-all duration-200;
+    background: oklch(var(--muted));
+    color: oklch(var(--foreground));
+  }
+
+  .audio-speed-btn:hover {
+    background: oklch(var(--saffron));
+    color: oklch(0.99 0.005 80);
+  }
+
+  .audio-speed-btn.active {
+    background: oklch(var(--saffron));
+    color: oklch(0.99 0.005 80);
+  }
+
+  .report-card {
+    @apply bg-card rounded-lg border border-border p-6 transition-all duration-300 hover:shadow-spiritual;
+  }
+
+  .report-form {
+    @apply space-y-4 mb-6;
+  }
+
+  .report-input {
+    @apply w-full px-4 py-2 rounded-lg border border-border bg-input text-foreground;
+    border-color: oklch(var(--saffron) / 0.3);
+  }
+
+  .report-input:focus {
+    outline: none;
+    border-color: oklch(var(--saffron));
+    box-shadow: 0 0 0 2px oklch(var(--saffron) / 0.1);
+  }
+
+  .report-select {
+    @apply report-input;
+  }
+
+  .gita-verse-card {
+    @apply bg-card rounded-lg border-l-4 border-b border-r border-border p-6 md:p-8 transition-all duration-300;
+    border-left-color: oklch(var(--gold));
+  }
+
+  .gita-verse-card:hover {
+    box-shadow: 0 4px 16px oklch(var(--gold) / 0.15);
+    transform: translateY(-2px);
+  }
+
+  .gita-verse-sanskrit {
+    @apply font-shloka text-xl md:text-2xl mb-4;
+    color: oklch(var(--maroon));
+    line-height: 2.0;
+  }
+
+  .gita-verse-transliteration {
+    @apply font-body text-sm md:text-base text-muted-foreground mb-3 italic;
+  }
+
+  .gita-verse-hindi {
+    @apply font-devanagari text-base md:text-lg font-semibold mb-4;
+    color: oklch(var(--saffron));
+  }
+
+  .gita-verse-english {
+    @apply font-body text-sm md:text-base text-foreground leading-relaxed;
+  }
+
+  .gita-chapter-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6;
+  }
+
+  .gita-chapter-card {
+    @apply bg-card rounded-lg border border-border p-4 cursor-pointer transition-all duration-300 hover:shadow-spiritual;
+  }
+
+  .gita-chapter-number {
+    @apply text-2xl font-heading font-bold mb-2;
+    color: oklch(var(--saffron));
+  }
+
+  .gita-chapter-title {
+    @apply font-heading font-bold mb-1;
+    color: oklch(var(--maroon));
+  }
+
+  .gita-chapter-verses {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .feature-grid-12 {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6;
+  }
+
+  .feature-card {
+    @apply temple-card p-6 flex flex-col items-center text-center transition-all duration-300 hover:shadow-gold;
+  }
+
+  .feature-card-icon {
+    @apply w-16 h-16 rounded-full flex items-center justify-center mb-4;
+    background: oklch(var(--saffron) / 0.1);
+    color: oklch(var(--saffron));
+  }
+
+  .feature-card-title {
+    @apply font-heading font-bold text-base md:text-lg;
+    color: oklch(var(--maroon));
+  }
+
+  .feature-card-description {
+    @apply text-xs md:text-sm text-muted-foreground mt-2;
+  }
+
+  .testimonial-card {
+    @apply bg-card rounded-lg border border-border p-4 md:p-6 text-center;
+  }
+
+  .testimonial-avatar {
+    @apply w-12 h-12 rounded-full mx-auto mb-3 object-cover;
+  }
+
+  .testimonial-name {
+    @apply font-heading font-bold text-sm md:text-base;
+    color: oklch(var(--maroon));
+  }
+
+  .testimonial-rating {
+    @apply text-xs text-yellow-500 mt-1;
+  }
+
+  .testimonial-quote {
+    @apply font-body text-xs md:text-sm text-muted-foreground mt-3 italic;
+  }
+
+  .life-report-hero {
+    @apply relative w-full py-12 md:py-16 px-4 text-center;
+    background: linear-gradient(
+      135deg,
+      oklch(0.35 0.12 25) 0%,
+      oklch(0.22 0.08 22) 100%
+    );
+  }
+
+  .life-report-hero-title {
+    @apply font-heading text-3xl md:text-4xl font-bold mb-2;
+    color: oklch(0.99 0.005 80);
+  }
+
+  .life-report-hero-subtitle {
+    @apply font-body text-base md:text-lg text-white/80;
+  }
+
   /* Script / language font classes */
   .font-devanagari {
     font-family: "Noto Sans Devanagari", "Mangal", sans-serif;

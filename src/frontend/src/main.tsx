@@ -59,6 +59,68 @@ import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import "./index.css";
+import ConnectionStatus from "./components/ConnectionStatus";
+// TikTok Pixel — loaded as a side-effect script block
+declare global {
+  interface Window {
+    ttq: unknown;
+    TiktokAnalyticsObject: string;
+  }
+}
+{
+  const _w = window as any;
+  _w.TiktokAnalyticsObject = "ttq";
+  if (!_w.ttq) {
+    _w.ttq = [];
+  }
+  const ttq = _w.ttq;
+  ttq.methods = [
+    "page",
+    "track",
+    "identify",
+    "instances",
+    "debug",
+    "on",
+    "off",
+    "once",
+    "ready",
+    "alias",
+    "group",
+    "enableCookie",
+    "disableCookie",
+  ];
+  const setAndDefer = (obj: any, method: string) => {
+    obj[method] = (...args: unknown[]) => {
+      obj.push([method, ...args]);
+    };
+  };
+  for (let _i = 0; _i < ttq.methods.length; _i++)
+    setAndDefer(ttq, ttq.methods[_i]);
+  ttq.instance = (id: string) => {
+    const e = ttq._i?.[id] || [];
+    for (let _n = 0; _n < ttq.methods.length; _n++)
+      setAndDefer(e, ttq.methods[_n]);
+    return e;
+  };
+  ttq.load = (e: string, n?: unknown) => {
+    const scriptUrl = "https://analytics.tiktok.com/i18n/pixel/events.js";
+    ttq._i = ttq._i || {};
+    ttq._i[e] = [];
+    ttq._i[e]._u = scriptUrl;
+    ttq._t = ttq._t || {};
+    ttq._t[e] = +new Date();
+    ttq._o = ttq._o || {};
+    ttq._o[e] = n || {};
+    const scriptEl = document.createElement("script");
+    scriptEl.type = "text/javascript";
+    scriptEl.async = true;
+    scriptEl.src = `${scriptUrl}?sdkid=${e}&lib=ttq`;
+    const firstScript = document.getElementsByTagName("script")[0];
+    firstScript.parentNode?.insertBefore(scriptEl, firstScript);
+  };
+  ttq.load("TIKTOKNATIVEPLACEHOLDERID");
+  ttq.page();
+}
 
 BigInt.prototype.toJSON = function () {
   return this.toString();
@@ -85,6 +147,7 @@ function Root() {
     <ErrorBoundary>
       <InternetIdentityProvider>
         <LanguageProvider>
+          <ConnectionStatus />
           <App />
         </LanguageProvider>
       </InternetIdentityProvider>

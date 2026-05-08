@@ -26,10 +26,20 @@ import type React from "react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import type { BhajanEntry, HolyBookEntry, VratKathaEntry } from "../backend";
+import { type Ashtakam, ashtakamDataA } from "../data/ashtakamDataA";
+import { ashtakamDataB } from "../data/ashtakamDataB";
+import { ashtakamDataC } from "../data/ashtakamDataC";
 import type { FestivalEvent } from "../data/festival-calendar-data";
+import { kavachBatch2025 } from "../data/kavachBatch2025";
+import { type Kavach, kavachDataA } from "../data/kavachDataA";
+import { kavachDataB } from "../data/kavachDataB";
+import { kavachData_C } from "../data/kavachData_C";
 import { pujaTypesData } from "../data/pujaTypesData";
+import { sahasranamaData } from "../data/sahasranamaData";
 import type { ProductVariant, ProductWithMRP } from "../data/shopData_new";
 import { ALL_NEW_PRODUCTS } from "../data/shopData_new";
+import type { Stotra } from "../data/stotraData";
+import { type Stuti, stutiData } from "../data/stutiData";
 import {
   useAddBhajan,
   useAddFestivalEvent,
@@ -63,6 +73,328 @@ import {
   useWebStories,
 } from "../hooks/useQueries";
 import type { BlogArticle, PujaReport, WebStory } from "../types/backend-types";
+
+// ─── All kavach/ashtakam/stuti/sahasranama data combined ─────────────────────
+const ALL_KAVACHS: Kavach[] = [
+  ...kavachDataA,
+  ...kavachDataB,
+  ...kavachData_C,
+  ...kavachBatch2025,
+];
+
+const ALL_ASHTAKAMS: Ashtakam[] = [
+  ...ashtakamDataA,
+  ...ashtakamDataB,
+  ...ashtakamDataC,
+];
+
+const ALL_STUTIS: Stuti[] = [...stutiData];
+const ALL_SAHASRANAMAS: Stotra[] = [...sahasranamaData];
+
+// ─── Generic read-only content management tab ────────────────────────────────
+interface ContentEntry {
+  id: string;
+  name?: string;
+  title?: string;
+  deity?: string;
+  faith?: string;
+  benefits?: string;
+  meaning?: string;
+}
+
+interface StaticContentManagementProps {
+  label: string;
+  icon: string;
+  entries: ContentEntry[];
+  fields: { key: keyof ContentEntry; label: string }[];
+  ocidPrefix: string;
+}
+
+function StaticContentManagement({
+  label,
+  icon,
+  entries,
+  fields,
+  ocidPrefix,
+}: StaticContentManagementProps) {
+  const [localHidden, setLocalHidden] = useState<Set<string>>(new Set());
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState<Record<string, string>>({});
+  const [search, setSearch] = useState("");
+
+  const visible = entries
+    .filter((e) => !localHidden.has(e.id))
+    .filter((e) => {
+      const q = search.toLowerCase();
+      if (!q) return true;
+      return (
+        (e.name || e.title || "").toLowerCase().includes(q) ||
+        (e.deity || "").toLowerCase().includes(q)
+      );
+    })
+    .slice(0, 20);
+
+  const handleAdd = (ev: React.FormEvent) => {
+    ev.preventDefault();
+    toast.success(
+      `${label} entry noted (frontend state only — data file update required to persist)`,
+    );
+    setShowForm(false);
+    setForm({});
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Info banner */}
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-sm text-foreground">
+        <span className="font-semibold">ℹ️ Note:</span> Content stored in
+        frontend data files. Contact developer to update data files. Entries
+        added here exist in local state only and will reset on reload.
+      </div>
+
+      {/* Stats */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-foreground flex items-center gap-2">
+            {icon} {label}
+            <Badge variant="secondary" className="ml-1">
+              {entries.length - localHidden.size} entries
+            </Badge>
+          </h2>
+          <Button
+            size="sm"
+            onClick={() => setShowForm((v) => !v)}
+            data-ocid={`${ocidPrefix}.toggle_form_button`}
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Add Entry
+          </Button>
+        </div>
+
+        {/* Search */}
+        <Input
+          placeholder={`Search ${label.toLowerCase()}...`}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-4"
+          data-ocid={`${ocidPrefix}.search_input`}
+        />
+
+        {/* Add form */}
+        {showForm && (
+          <form
+            onSubmit={handleAdd}
+            className="bg-muted/40 rounded-lg p-4 mb-4 space-y-3 border border-border"
+          >
+            <h3 className="font-semibold text-sm text-foreground">
+              Add New {label} Entry
+            </h3>
+            {fields.map((f) => (
+              <div key={f.key}>
+                <Label className="text-sm mb-1 block">{f.label}</Label>
+                {f.key === "benefits" || f.key === "meaning" ? (
+                  <Textarea
+                    value={form[f.key] || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, [f.key]: e.target.value }))
+                    }
+                    rows={2}
+                    placeholder={f.label}
+                  />
+                ) : (
+                  <Input
+                    value={form[f.key] || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, [f.key]: e.target.value }))
+                    }
+                    placeholder={f.label}
+                  />
+                )}
+              </div>
+            ))}
+            <Textarea
+              placeholder="Full text / content"
+              rows={4}
+              value={form.fullText || ""}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, fullText: e.target.value }))
+              }
+            />
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                size="sm"
+                data-ocid={`${ocidPrefix}.submit_button`}
+              >
+                <CheckCircle className="w-4 h-4 mr-1" /> Save (Local)
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowForm(false);
+                  setForm({});
+                }}
+                data-ocid={`${ocidPrefix}.cancel_button`}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* List */}
+        <div className="space-y-2">
+          {visible.map((entry, i) => (
+            <div
+              key={entry.id}
+              className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border"
+              data-ocid={`${ocidPrefix}.item.${i + 1}`}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-sm text-foreground truncate">
+                  {entry.name || entry.title || entry.id}
+                </p>
+                {entry.deity && (
+                  <p className="text-xs text-muted-foreground">
+                    {entry.deity}
+                    {entry.faith ? ` · ${entry.faith}` : ""}
+                  </p>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive hover:bg-destructive/10 shrink-0"
+                onClick={() =>
+                  setLocalHidden((prev) => new Set([...prev, entry.id]))
+                }
+                aria-label="Hide entry"
+                data-ocid={`${ocidPrefix}.delete_button.${i + 1}`}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+          {visible.length === 0 && (
+            <p
+              className="text-center text-muted-foreground text-sm py-4"
+              data-ocid={`${ocidPrefix}.empty_state`}
+            >
+              No entries found.
+            </p>
+          )}
+          {entries.length > 20 && (
+            <p className="text-xs text-muted-foreground text-center pt-2">
+              Showing first 20 of {entries.length} entries
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Kavach Management Tab ────────────────────────────────────────────────────
+function KavachManagement() {
+  return (
+    <StaticContentManagement
+      label="Kavach"
+      icon="🛡️"
+      entries={ALL_KAVACHS.map((k) => ({
+        id: k.id,
+        name: k.name,
+        deity: k.deity,
+        faith: k.faith,
+        benefits: k.benefits,
+      }))}
+      fields={[
+        { key: "name", label: "Title (English)" },
+        { key: "deity", label: "Deity" },
+        { key: "faith", label: "Faith" },
+        { key: "benefits", label: "Benefits" },
+      ]}
+      ocidPrefix="admin.kavach"
+    />
+  );
+}
+
+// ─── Ashtakam Management Tab ──────────────────────────────────────────────────
+function AshtakamManagement() {
+  return (
+    <StaticContentManagement
+      label="Ashtakam"
+      icon="🔔"
+      entries={ALL_ASHTAKAMS.map((a) => ({
+        id: a.id,
+        name: a.name,
+        deity: a.deity,
+        faith: "Hindu",
+        benefits: a.benefits,
+        meaning: a.meaning,
+      }))}
+      fields={[
+        { key: "name", label: "Title (English)" },
+        { key: "deity", label: "Deity" },
+        { key: "faith", label: "Faith" },
+        { key: "meaning", label: "Meaning" },
+        { key: "benefits", label: "Benefits" },
+      ]}
+      ocidPrefix="admin.ashtakam"
+    />
+  );
+}
+
+// ─── Stuti Management Tab ─────────────────────────────────────────────────────
+function StutiManagement() {
+  return (
+    <StaticContentManagement
+      label="Stuti"
+      icon="🙏"
+      entries={ALL_STUTIS.map((s) => ({
+        id: s.id,
+        name: s.name,
+        deity: s.deity,
+        faith: s.faith,
+        benefits: s.benefits,
+        meaning: s.meaning,
+      }))}
+      fields={[
+        { key: "name", label: "Title (English)" },
+        { key: "deity", label: "Deity" },
+        { key: "faith", label: "Faith" },
+        { key: "meaning", label: "Meaning" },
+        { key: "benefits", label: "Benefits" },
+      ]}
+      ocidPrefix="admin.stuti"
+    />
+  );
+}
+
+// ─── Sahasranam Management Tab ────────────────────────────────────────────────
+function SahasranamManagement() {
+  return (
+    <StaticContentManagement
+      label="Sahasranam"
+      icon="📿"
+      entries={ALL_SAHASRANAMAS.map((s) => ({
+        id: s.id,
+        name: s.title,
+        deity: s.deity,
+        faith: s.faith,
+      }))}
+      fields={[
+        { key: "name", label: "Title (English)" },
+        { key: "deity", label: "Deity" },
+        { key: "faith", label: "Faith" },
+        { key: "meaning", label: "Meaning" },
+        { key: "benefits", label: "Benefits" },
+      ]}
+      ocidPrefix="admin.sahasranam"
+    />
+  );
+}
 
 const ADMIN_PASSWORD = "admin123";
 const PM_PASSWORD = "pm123";
@@ -4838,6 +5170,34 @@ export default function AdminCMS() {
             >
               <User className="w-4 h-4" /> Personalised Products
             </TabsTrigger>
+            <TabsTrigger
+              value="kavach"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.kavach_tab"
+            >
+              🛡️ Kavach
+            </TabsTrigger>
+            <TabsTrigger
+              value="ashtakam"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.ashtakam_tab"
+            >
+              🔔 Ashtakam
+            </TabsTrigger>
+            <TabsTrigger
+              value="stuti"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.stuti_tab"
+            >
+              🙏 Stuti
+            </TabsTrigger>
+            <TabsTrigger
+              value="sahasranam"
+              className="flex items-center gap-1.5"
+              data-ocid="admin.sahasranam_tab"
+            >
+              📿 Sahasranam
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bhajans">
@@ -4884,6 +5244,18 @@ export default function AdminCMS() {
           </TabsContent>
           <TabsContent value="personalised">
             <PersonalisedProductsManagement />
+          </TabsContent>
+          <TabsContent value="kavach">
+            <KavachManagement />
+          </TabsContent>
+          <TabsContent value="ashtakam">
+            <AshtakamManagement />
+          </TabsContent>
+          <TabsContent value="stuti">
+            <StutiManagement />
+          </TabsContent>
+          <TabsContent value="sahasranam">
+            <SahasranamManagement />
           </TabsContent>
         </Tabs>
       </div>

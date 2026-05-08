@@ -183,6 +183,7 @@ type SankalpInput =
    mobile: text;
    specialWishes: text;
  };
+type ReportType = text;
 type ReportRequest = 
  record {
    content: text;
@@ -195,6 +196,13 @@ type ReportRequest =
    status: text;
    tob: text;
    userId: principal;
+ };
+type Purchase = 
+ record {
+   amount: nat;
+   productType: ProductType;
+   sessionId: text;
+   timestamp: int;
  };
 type PujaType = 
  record {
@@ -289,6 +297,7 @@ type ProductUpdateRequest =
    variantLabel: opt text;
    variants: opt vec ProductVariant;
  };
+type ProductType = text;
 type ProductSubCategory = 
  record {
    autoCodePrefix: text;
@@ -462,6 +471,25 @@ type MediaPlayerItem =
    faith: text;
    id: text;
    title: text;
+ };
+type LifeReportPublic = 
+ record {
+   content: text;
+   name: text;
+   reportType: ReportType;
+   status: text;
+ };
+type LifeReport = 
+ record {
+   content: text;
+   createdAt: int;
+   details: text;
+   dob: text;
+   id: text;
+   name: text;
+   reportType: ReportType;
+   status: text;
+   userId: principal;
  };
 type KundaliMatchInput = 
  record {
@@ -691,6 +719,12 @@ type CombinedVedicReading =
    sunSign: text;
    userId: principal;
  };
+type ChatMessage = 
+ record {
+   answer: text;
+   question: text;
+   timestamp: int;
+ };
 type ChadhavaOffering = 
  record {
    createdAt: Time;
@@ -822,6 +856,7 @@ service : {
   addUserPrasadDeliveryRequest: (request: PrasadDeliveryRequest) -> ();
   /// Admin-only: add a new vrat katha entry.
   addVratKatha: (entry: VratKathaEntry) -> ();
+  askKrishna: (question: text) -> (text);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
   /// Public: book a slot in a puja event. Returns booking reference or error.
   bookPujaEventSlot: (sankalp: SankalpInput) ->
@@ -855,6 +890,8 @@ service : {
   createConsultationAppointment: (appointment: ConsultationAppointment) -> ();
   /// Admin-only: create a devotional content entry.
   createDevotionalContent: (content: DevotionalContent) -> ();
+  createLifeReport: (reportType: text, name: text, dob: text, details:
+   text) -> (text);
   /// Authenticated users can create a numerology analysis for themselves.
   createNumerologyRecord: ("record": NumerologyRecord) -> ();
   /// Authenticated users can place an order for themselves.
@@ -884,6 +921,8 @@ service : {
   createReportRequest: (request: ReportRequest) -> ();
   /// Authenticated users can create a service booking for themselves. Returns the booking id.
   createServiceBooking: (booking: ServiceBooking) -> (text);
+  createStripeSession: (productType: text, amount: nat, _metadata: text) ->
+   (text);
   /// Admin or productManager: create a new product sub-category. Returns the generated id.
   createSubCategory: (name: text, nameCode: text, autoCodePrefix: text) ->
    (text);
@@ -993,6 +1032,7 @@ service : {
   getAllJainKathas: () -> (vec JainKatha) query;
   /// Public: get all Jain Pathshala entries.
   getAllJainPathshalaEntries: () -> (vec JainPathshalaEntry) query;
+  getAllLifeReports: () -> (vec LifeReport) query;
   /// Public: get all panchang cities.
   getAllPanchangCities: () -> (vec PanchangCity) query;
   /// Admin-only: get all Pathshala lessons (published and unpublished).
@@ -1066,10 +1106,12 @@ service : {
   /// Public: get Jain Pathshala entries filtered by category.
   getJainPathshalaEntriesByCategory: (category: text) ->
    (vec JainPathshalaEntry) query;
+  getKrishnaHistory: () -> (vec ChatMessage) query;
   /// Authenticated users can retrieve a single kundali match by id (only their own).
   getKundaliMatchById: (id: text) -> (opt KundaliMatch) query;
   /// Authenticated users can retrieve all their own kundali match results, sorted newest first.
   getKundaliMatches: () -> (vec KundaliMatch) query;
+  getLifeReport: (reportId: text) -> (opt LifeReportPublic) query;
   /// Public: get all media player items.
   getMediaPlayerItems: () -> (vec MediaPlayerItem) query;
   /// Public: get media player items filtered by contentType (aarti/chalisa/mantra/bhajan/katha).
@@ -1144,6 +1186,7 @@ service : {
   getUserPujaBookings: (userId: principal) -> (vec PujaBooking) query;
   /// Authenticated users can retrieve their own puja reports.
   getUserPujaReports: () -> (vec PujaReport) query;
+  getUserPurchases: () -> (vec Purchase) query;
   /// Users may only fetch their own report requests; admins may fetch any user's.
   getUserReportRequests: (userId: principal) -> (vec ReportRequest) query;
   /// Authenticated users can retrieve their own service bookings.
@@ -1231,6 +1274,7 @@ service : {
   updateJainKatha: (katha: JainKatha) -> ();
   /// Admin-only: update an existing Jain Pathshala entry.
   updateJainPathshalaEntry: (entry: JainPathshalaEntry) -> ();
+  updateLifeReport: (reportId: text, status: text, content: text) -> ();
   /// Admin-only: update order payment status.
   updateOrderPaymentStatus: (id: text, paymentStatus: text,
    stripePaymentIntentId: text) -> ();
@@ -1292,4 +1336,5 @@ service : {
   updateVratKatha: (entry: VratKathaEntry) -> ();
   /// Admin-only: update an existing web story.
   updateWebStory: (story: WebStory) -> ();
+  verifyStripePayment: (sessionId: text) -> (bool);
 }

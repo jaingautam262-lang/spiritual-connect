@@ -22,7 +22,235 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+// Structured dropdown menus
+const PANCHANG_MENU = [
+  { to: "/panchang", labelEn: "Today's Panchang", labelHi: "आज का पंचांग" },
+  { to: "/live-panchang", labelEn: "Live Panchang", labelHi: "लाइव पंचांग" },
+  {
+    to: "/tamil-panchangam",
+    labelEn: "Tamil Panchangam",
+    labelHi: "तमिल पंचांगम",
+  },
+  {
+    to: "/malayalam-panchangam",
+    labelEn: "Malayalam Panchangam",
+    labelHi: "मलयालम पंचांगम",
+  },
+  {
+    to: "/bengali-panjika",
+    labelEn: "Bengali Panjika",
+    labelHi: "बंगाली पंजिका",
+  },
+  {
+    to: "/panchang/do-ghati",
+    labelEn: "Do Ghati Panchang",
+    labelHi: "दो घड़ी पंचांग",
+  },
+  { to: "/panchang/lagna", labelEn: "Lagna Calculator", labelHi: "लग्न कैल्कुलेटर" },
+  { to: "/panchang/hora", labelEn: "Hora Calculator", labelHi: "होरा कैल्कुलेटर" },
+  {
+    to: "/panchang/pancha-pakshi",
+    labelEn: "Pancha Pakshi",
+    labelHi: "पंच पक्षी",
+  },
+  {
+    to: "/panchang/auspicious-yogas",
+    labelEn: "Auspicious Yogas",
+    labelHi: "शुभ योग",
+  },
+  { to: "/panchang/shubha-dates", labelEn: "Shubha Dates", labelHi: "शुभ तिथि" },
+  {
+    to: "/panchang/jain-pachchakhaan",
+    labelEn: "Jain Pachchakhaan",
+    labelHi: "जैन पच्चक्खान",
+  },
+  {
+    to: "/panchang/panchaka-rahita",
+    labelEn: "Panchaka Rahita",
+    labelHi: "पंचक रहित",
+  },
+];
+const ASTRONOMY_MENU = [
+  { to: "/solar-eclipse", labelEn: "Solar Eclipse 2026", labelHi: "सूर्य ग्रहण" },
+  { to: "/lunar-eclipse", labelEn: "Lunar Eclipse 2026", labelHi: "चंद्र ग्रहण" },
+  {
+    to: "/planetary-positions",
+    labelEn: "Planetary Positions",
+    labelHi: "ग्रह स्थिति",
+  },
+  { to: "/graha-gochara", labelEn: "Graha Gochara", labelHi: "ग्रह गोचर" },
+  {
+    to: "/graha-asta-uday",
+    labelEn: "Graha Asta/Uday",
+    labelHi: "ग्रह अस्त/उदय",
+  },
+  {
+    to: "/graha-vakri-margi",
+    labelEn: "Vakri/Margi 2026",
+    labelHi: "वक्री/मार्गी",
+  },
+  { to: "/vernal-equinox", labelEn: "Vernal Equinox", labelHi: "वसंत विषुव" },
+  {
+    to: "/summer-solstice",
+    labelEn: "Summer Solstice",
+    labelHi: "ग्रीष्म अयनांत",
+  },
+  { to: "/autumnal-equinox", labelEn: "Autumnal Equinox", labelHi: "शरद विषुव" },
+  {
+    to: "/winter-solstice",
+    labelEn: "Winter Solstice",
+    labelHi: "शीतकालीन अयनांत",
+  },
+  { to: "/indian-seasons", labelEn: "Six Indian Seasons", labelHi: "षट् ऋतुएं" },
+  { to: "/hindu-sunrise", labelEn: "Sunrise Times", labelHi: "सूर्योदय" },
+  { to: "/kumbha-mela", labelEn: "Kumbha Mela", labelHi: "कुंभ मेला" },
+];
+const AUSPICIOUS_YOGA_MENU = [
+  { to: "/ravi-yoga", labelEn: "Ravi Yoga", labelHi: "रवि योग" },
+  {
+    to: "/sarvartha-siddhi-yoga",
+    labelEn: "Sarvartha Siddhi Yoga",
+    labelHi: "सर्वार्थ सिद्धि",
+  },
+  {
+    to: "/amrit-siddhi-yoga",
+    labelEn: "Amrit Siddhi Yoga",
+    labelHi: "अमृत सिद्धि",
+  },
+  { to: "/dwipushkar-yoga", labelEn: "Dwipushkar Yoga", labelHi: "द्विपुष्कर" },
+  { to: "/tripushkar-yoga", labelEn: "Tripushkar Yoga", labelHi: "त्रिपुष्कर" },
+  { to: "/ravi-pushya-yoga", labelEn: "Ravi Pushya Yoga", labelHi: "रवि पुष्य" },
+  { to: "/guru-pushya-yoga", labelEn: "Guru Pushya Yoga", labelHi: "गुरु पुष्य" },
+  { to: "/maitreya-yoga", labelEn: "Maitreya Yoga", labelHi: "मैत्रेय" },
+  {
+    to: "/gajachchhaya-yoga",
+    labelEn: "Gajachchhaya Yoga",
+    labelHi: "गजच्छाया",
+  },
+  { to: "/rahu-kalam", labelEn: "Rahu Kalam", labelHi: "राहु काल" },
+  { to: "/ganda-moola", labelEn: "Ganda Moola", labelHi: "गंड मूल" },
+  { to: "/abhijit-nakshatra", labelEn: "Abhijit Nakshatra", labelHi: "अभिजित" },
+  { to: "/panchak", labelEn: "Panchak", labelHi: "पंचक" },
+];
+const MUHURAT_MENU = [
+  { to: "/vivah-muhurat", labelEn: "Vivah Muhurat", labelHi: "विवाह मुहूर्त" },
+  {
+    to: "/griha-pravesh-muhurat",
+    labelEn: "Griha Pravesh",
+    labelHi: "गृह प्रवेश",
+  },
+  {
+    to: "/vehicle-purchase-muhurat",
+    labelEn: "Vehicle Purchase",
+    labelHi: "वाहन खरीद",
+  },
+  {
+    to: "/property-purchase-muhurat",
+    labelEn: "Property Purchase",
+    labelHi: "संपत्ति",
+  },
+  {
+    to: "/shop-opening-muhurat",
+    labelEn: "Shop Opening",
+    labelHi: "दुकान उद्घाटन",
+  },
+  { to: "/money-deposit-muhurat", labelEn: "Money Deposit", labelHi: "धन जमा" },
+  { to: "/loan-taking-muhurat", labelEn: "Loan Taking", labelHi: "ऋण लेना" },
+  { to: "/loan-giving-muhurat", labelEn: "Loan Giving", labelHi: "ऋण देना" },
+  { to: "/garbhadhana", labelEn: "Garbhadhana", labelHi: "गर्भाधान" },
+  { to: "/namakarana", labelEn: "Namakarana", labelHi: "नामकरण" },
+  { to: "/annaprashana", labelEn: "Annaprashana", labelHi: "अन्नप्राशन" },
+  { to: "/mundana", labelEn: "Mundana/Mundan", labelHi: "मुंडन" },
+  { to: "/vidyarambha", labelEn: "Vidyarambha", labelHi: "विद्यारंभ" },
+  { to: "/janeu-upanayana", labelEn: "Upanayana", labelHi: "उपनयन" },
+  { to: "/vivaha-lagna", labelEn: "Vivaha Lagna", labelHi: "विवाह लग्न" },
+];
+const ASTROLOGY_MENU = [
+  { to: "/free-kundli", labelEn: "Free Kundli", labelHi: "मुफ्त कुंडली" },
+  { to: "/nakshatra", labelEn: "27 Nakshatras", labelHi: "27 नक्षत्र" },
+  { to: "/full-moon-dates", labelEn: "Full Moon 2026", labelHi: "पूर्णिमा" },
+  { to: "/new-moon-dates", labelEn: "Amavasya 2026", labelHi: "अमावस्या" },
+  { to: "/marriage-dates", labelEn: "Marriage Dates", labelHi: "विवाह दिन" },
+  { to: "/rahu-kalam", labelEn: "Rahu Kalam", labelHi: "राहु काल" },
+  { to: "/panchak", labelEn: "Panchak", labelHi: "पंचक" },
+  { to: "/calculator/rashi", labelEn: "Rashi Calculator", labelHi: "राशि" },
+  {
+    to: "/sunsign-calculator",
+    labelEn: "Sunsign Calculator",
+    labelHi: "सन साइन",
+  },
+  { to: "/ganda-moola", labelEn: "Ganda Moola", labelHi: "गंड मूल" },
+  { to: "/abhijit-nakshatra", labelEn: "Abhijit Nakshatra", labelHi: "अभिजित" },
+];
+
+function DropdownMenu({
+  items,
+  label,
+  labelHi,
+  isHindi,
+  onClose,
+}: {
+  items: { to: string; labelEn: string; labelHi: string }[];
+  label: string;
+  labelHi: string;
+  isHindi: boolean;
+  onClose: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="px-3 py-2 rounded-md text-xs font-heading font-medium tracking-wide flex items-center gap-1 hover:bg-white/10 transition-all"
+        style={{ color: "oklch(0.88 0.06 75)" }}
+      >
+        {isHindi ? labelHi : label}
+        <ChevronDown
+          className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <div
+          className="absolute top-full left-0 mt-2 rounded-xl shadow-2xl border z-50 overflow-auto"
+          style={{
+            background: "oklch(0.20 0.08 22)",
+            borderColor: "oklch(0.78 0.14 75 / 0.2)",
+            minWidth: "200px",
+            maxHeight: "70vh",
+          }}
+        >
+          {items.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => {
+                setOpen(false);
+                onClose();
+              }}
+              className="block px-4 py-2.5 text-xs hover:bg-white/10 transition-colors"
+              style={{ color: "oklch(0.85 0.06 65)" }}
+            >
+              {isHindi ? item.labelHi : item.labelEn}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const navLinks = [
+  { to: "/ask-krishna", label: "🙏 Krishna AI", tKey: "krishnaAI" },
   { to: "/aarti", label: "🧘 Aarti", tKey: "aarti" },
   { to: "/chalisa", label: "📖 Chalisa", tKey: "chalisa" },
   { to: "/mantra", label: "🔔 Mantra", tKey: "mantra" },
@@ -96,6 +324,9 @@ const shopSection = {
     { to: "/kartik-shop", label: "💍 KartikJewels Collection" },
     { to: "/dhwani-shop", label: "🔮 Spiritual Connect" },
     { to: "/yantra-shop", label: "🔯 Yantra Shop" },
+    { to: "/etchcraft-emporium", label: "✨ Etchcraft Emporium" },
+    { to: "/dhwani-astro", label: "🌙 Dhwani Astro" },
+    { to: "/divine-hindu-store", label: "🕉️ Divine Hindu Store" },
     { to: "/shop?category=rings", label: "💍 Gemstone Rings" },
     { to: "/shop?category=crystal-towers", label: "🗼 Crystal Towers" },
     { to: "/shop?category=coin-pendants", label: "🪙 Coin Pendants" },
@@ -188,6 +419,7 @@ const megaMenuSections = [
       { to: "/temple-directory", label: "🛕 Temples & Tirthas" },
       { to: "/temple-services", label: "Puja Services" },
       { to: "/pujas-catalog", label: "🙏 Book a Puja" },
+      { to: "/puja-karo", label: "🪔 PoojaKaro Services" },
       { to: "/puja-booking", label: "📋 Puja Booking" },
       { to: "/booking-history", label: "🕰️ बुकिंग इतिहास" },
       { to: "/puja-types", label: "📋 Puja Types Directory" },
@@ -208,6 +440,9 @@ const megaMenuSections = [
     links: [
       { to: "/calculator-index", label: "🔢 All Calculators" },
       { to: "/numerology", label: "Numerology" },
+      { to: "/numerology-hub", label: "🔢 Numerology Hub" },
+      { to: "/numerology-bracelets", label: "📿 Numerology Bracelets" },
+      { to: "/numerology-report-full", label: "📋 Numerology Report" },
       { to: "/business-tools", label: "Business Tools" },
     ],
   },
@@ -233,6 +468,10 @@ const megaMenuSections = [
       { to: "/moolank-calculator", label: "🔢 Moolank Calculator" },
       { to: "/ratti-calculator", label: "⚖️ Ratti Converter" },
       { to: "/bracelet-calculator", label: "📿 Bracelet Calculator" },
+      { to: "/daily-guide", label: "📅 Daily Guide" },
+      { to: "/calculators/wealth-money", label: "💰 Wealth Calculator" },
+      { to: "/calculators/govt-job-success", label: "🏛️ Govt Job Calculator" },
+      { to: "/calculators/career-potential", label: "💼 Career Potential" },
     ],
   },
   {
@@ -255,6 +494,7 @@ const megaMenuSections = [
     title: "📝 Blog & Stories",
     links: [
       { to: "/blog", label: "📖 Spiritual Blog" },
+      { to: "/hindi-blog", label: "🕉️ दिव्य ज्ञान लेख" },
       { to: "/web-stories", label: "✨ Web Stories" },
       { to: "/festival-calendar", label: "📅 Festival Calendar" },
     ],
@@ -395,6 +635,51 @@ const allMobileLinks = [
   { to: "/top-hindu-festivals", label: "🏆 Top 25 Hindu Festivals" },
   { to: "/top-hindu-festivals-20", label: "Top 20 Hindu Festivals" },
   { to: "/top-hindu-festivals-10", label: "Top 10 Hindu Festivals" },
+  // New routes
+  { to: "/panchang", label: "🗓️ Panchang" },
+  { to: "/tamil-panchangam", label: "🌍 Tamil Panchangam" },
+  { to: "/malayalam-panchangam", label: "🌴 Malayalam Panchangam" },
+  { to: "/bengali-panjika", label: "🏵️ Bengali Panjika" },
+  { to: "/solar-eclipse", label: "🌞 Solar Eclipse 2026" },
+  { to: "/lunar-eclipse", label: "🌕 Lunar Eclipse 2026" },
+  { to: "/planetary-positions", label: "🪐 Planetary Positions" },
+  { to: "/graha-gochara", label: "🌍 Graha Gochara" },
+  { to: "/graha-vakri-margi", label: "🔄 Vakri/Margi 2026" },
+  { to: "/full-moon-dates", label: "🌕 Purnima 2026" },
+  { to: "/new-moon-dates", label: "🌑 Amavasya 2026" },
+  { to: "/marriage-dates", label: "💍 Marriage Dates" },
+  { to: "/nakshatra", label: "🌟 27 Nakshatras" },
+  { to: "/rahu-kalam", label: "🚫 Rahu Kalam" },
+  { to: "/ganda-moola", label: "⚡ Ganda Moola" },
+  { to: "/abhijit-nakshatra", label: "⭐ Abhijit Nakshatra" },
+  { to: "/panchak", label: "🌙 Panchak" },
+  { to: "/indian-seasons", label: "🌱 6 Indian Seasons" },
+  { to: "/kumbha-mela", label: "🌊 Kumbha Mela" },
+  { to: "/sunsign-calculator", label: "☀️ Sun Sign Calculator" },
+  { to: "/ravi-yoga", label: "✨ Ravi Yoga" },
+  { to: "/vivah-muhurat", label: "💍 Vivah Muhurat" },
+  { to: "/griha-pravesh-muhurat", label: "🏠 Griha Pravesh Muhurat" },
+  { to: "/vehicle-purchase-muhurat", label: "🚗 Vehicle Purchase Muhurat" },
+
+  { to: "/etchcraft-emporium", label: "✨ Etchcraft Emporium" },
+  { to: "/dhwani-astro", label: "🌙 Dhwani Astro" },
+  { to: "/divine-hindu-store", label: "🕉️ Divine Hindu Store" },
+  { to: "/puja-karo", label: "🪔 PoojaKaro" },
+  { to: "/numerology-hub", label: "🔢 Numerology Hub" },
+  { to: "/numerology-bracelets", label: "📿 Numerology Bracelets" },
+  { to: "/numerology-report-full", label: "📋 Numerology Report" },
+  { to: "/panchang/do-ghati", label: "🕖 Do Ghati Panchang" },
+  { to: "/panchang/lagna", label: "🔮 Lagna Calculator" },
+  { to: "/panchang/hora", label: "⏰ Hora Calculator" },
+  { to: "/panchang/pancha-pakshi", label: "🐦 Pancha Pakshi" },
+  { to: "/panchang/auspicious-yogas", label: "✨ Auspicious Yogas" },
+  { to: "/panchang/shubha-dates", label: "📝 Shubha Dates" },
+  { to: "/panchang/jain-pachchakhaan", label: "🛕 Jain Pachchakhaan" },
+  { to: "/panchang/panchaka-rahita", label: "🌙 Panchaka Rahita" },
+  { to: "/calculators/wealth-money", label: "💰 Wealth Calculator" },
+  { to: "/calculators/govt-job-success", label: "🏛️ Govt Job Calculator" },
+  { to: "/calculators/career-potential", label: "💼 Career Potential" },
+  { to: "/shop-opening-muhurat", label: "🏪 Shop Opening Muhurat" },
 ];
 
 const footerSections = [
@@ -550,7 +835,7 @@ export default function Layout({ children }: LayoutProps) {
   const isAuthenticated = !!identity;
   const megaRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -640,6 +925,47 @@ export default function Layout({ children }: LayoutProps) {
                   {link.label.split(" ")[0]} {t(link.tKey)}
                 </Link>
               ))}
+
+              {/* Panchang Dropdown */}
+              <DropdownMenu
+                items={PANCHANG_MENU}
+                label="Panchang"
+                labelHi="पंचांग"
+                isHindi={language === "hi"}
+                onClose={() => setMegaMenuOpen(false)}
+              />
+              {/* Astronomy Dropdown */}
+              <DropdownMenu
+                items={ASTRONOMY_MENU}
+                label="Astronomy"
+                labelHi="खगोल"
+                isHindi={language === "hi"}
+                onClose={() => setMegaMenuOpen(false)}
+              />
+              {/* Yoga Dropdown */}
+              <DropdownMenu
+                items={AUSPICIOUS_YOGA_MENU}
+                label="Yoga"
+                labelHi="योग"
+                isHindi={language === "hi"}
+                onClose={() => setMegaMenuOpen(false)}
+              />
+              {/* Muhurat Dropdown */}
+              <DropdownMenu
+                items={MUHURAT_MENU}
+                label="Muhurat"
+                labelHi="मुहूर्त"
+                isHindi={language === "hi"}
+                onClose={() => setMegaMenuOpen(false)}
+              />
+              {/* Astrology Dropdown */}
+              <DropdownMenu
+                items={ASTROLOGY_MENU}
+                label="Astrology"
+                labelHi="ज्योतिष"
+                isHindi={language === "hi"}
+                onClose={() => setMegaMenuOpen(false)}
+              />
 
               {/* Mega Menu */}
               <div className="relative" ref={megaRef}>

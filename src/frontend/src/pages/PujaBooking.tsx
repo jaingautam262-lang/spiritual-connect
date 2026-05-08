@@ -5,1325 +5,1223 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
-import { Search } from "lucide-react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  MapPin,
+  Play,
+  Star,
+  Video,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { type PujaItem, pujaItems } from "../data/pujaListData";
 import {
-  type TempleDarshanVideo,
-  templeDarshanVideos,
-} from "../data/templeDarshanVideos";
-import { useCreatePujaBooking } from "../hooks/useQueries";
+  useCreatePujaBooking,
+  useGetCallerUserProfile,
+} from "../hooks/useQueries";
 
-const FAITH_STYLES = {
-  Hindu: {
-    bg: "oklch(0.68 0.20 48 / 0.2)",
-    text: "oklch(0.88 0.10 70)",
-    border: "oklch(0.68 0.20 48 / 0.3)",
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const PUJA_TYPES = [
+  "Satyanarayan Puja",
+  "Ganesh Puja",
+  "Lakshmi Puja",
+  "Rudrabhishek",
+  "Navgrah Puja",
+  "Kaal Sarp Puja",
+  "Mangal Dosh Puja",
+  "Graha Pravesh Puja",
+  "Vivah Puja",
+  "Naming Ceremony",
+  "Birthday Puja",
+  "Pitru Tarpan",
+  "Custom Puja",
+];
+
+const TIME_SLOTS = [
+  { id: "morning", label: "Morning", sublabel: "6–9 AM", emoji: "🌅" },
+  { id: "mid-morning", label: "Mid-Morning", sublabel: "9–12 PM", emoji: "☀️" },
+  { id: "evening", label: "Evening", sublabel: "4–7 PM", emoji: "🌆" },
+  { id: "night", label: "Night", sublabel: "7–10 PM", emoji: "🌙" },
+];
+
+const LOCATIONS = [
+  { id: "temple", label: "At Temple", emoji: "🛕" },
+  { id: "home", label: "At Home", emoji: "🏠" },
+  { id: "online", label: "Online", emoji: "📱" },
+];
+
+const NAKSHATRAS = [
+  "Ashwini",
+  "Bharani",
+  "Krittika",
+  "Rohini",
+  "Mrigashira",
+  "Ardra",
+  "Punarvasu",
+  "Pushya",
+  "Ashlesha",
+  "Magha",
+  "Purva Phalguni",
+  "Uttara Phalguni",
+  "Hasta",
+  "Chitra",
+  "Swati",
+  "Vishakha",
+  "Anuradha",
+  "Jyeshtha",
+  "Mula",
+  "Purva Ashadha",
+  "Uttara Ashadha",
+  "Shravana",
+  "Dhanishtha",
+  "Shatabhisha",
+  "Purva Bhadrapada",
+  "Uttara Bhadrapada",
+  "Revati",
+];
+
+const RASHIS = [
+  "Mesh (Aries)",
+  "Vrishabha (Taurus)",
+  "Mithuna (Gemini)",
+  "Karka (Cancer)",
+  "Simha (Leo)",
+  "Kanya (Virgo)",
+  "Tula (Libra)",
+  "Vrischika (Scorpio)",
+  "Dhanu (Sagittarius)",
+  "Makara (Capricorn)",
+  "Kumbha (Aquarius)",
+  "Meena (Pisces)",
+];
+
+const DAAN_AMOUNTS = [51, 101, 501, 1001, 2101, 5001];
+const DAAN_PURPOSES = [
+  "General Daan",
+  "Annadaan",
+  "Gaushala",
+  "Vidya Daan",
+  "Gobardhan Puja",
+];
+
+const PUJA_EVENTS = [
+  {
+    date: "2026-01-14",
+    label: "Jan 14",
+    name: "Makar Sankranti Puja",
+    price: 501,
+    emoji: "☀️",
+    deity: "Surya Dev",
   },
-  Jain: {
-    bg: "oklch(0.55 0.15 200 / 0.2)",
-    text: "oklch(0.75 0.10 200)",
-    border: "oklch(0.55 0.15 200 / 0.3)",
+  {
+    date: "2026-01-29",
+    label: "Jan 29",
+    name: "Basant Panchami Puja",
+    price: 1001,
+    emoji: "🌸",
+    deity: "Saraswati",
   },
+  {
+    date: "2026-02-12",
+    label: "Feb 12",
+    name: "Mahashivaratri Puja",
+    price: 1501,
+    emoji: "🕉️",
+    deity: "Shiva",
+  },
+  {
+    date: "2026-03-14",
+    label: "Mar 14",
+    name: "Holi Puja",
+    price: 501,
+    emoji: "🎨",
+    deity: "Krishna",
+  },
+  {
+    date: "2026-04-09",
+    label: "Apr 9",
+    name: "Ram Navami Puja",
+    price: 1001,
+    emoji: "🙏",
+    deity: "Ram",
+  },
+  {
+    date: "2026-04-14",
+    label: "Apr 14",
+    name: "Hanuman Jayanti Puja",
+    price: 501,
+    emoji: "🐒",
+    deity: "Hanuman",
+  },
+  {
+    date: "2026-05-07",
+    label: "May 7",
+    name: "Akshaya Tritiya Puja",
+    price: 2001,
+    emoji: "✨",
+    deity: "Lakshmi",
+  },
+  {
+    date: "2026-07-01",
+    label: "Jul 1",
+    name: "Guru Purnima Puja",
+    price: 1001,
+    emoji: "🌕",
+    deity: "Guru",
+  },
+  {
+    date: "2026-08-03",
+    label: "Aug 3",
+    name: "Hariyali Teej Puja",
+    price: 501,
+    emoji: "💚",
+    deity: "Parvati",
+  },
+  {
+    date: "2026-08-25",
+    label: "Aug 25",
+    name: "Ganesh Chaturthi Puja",
+    price: 1501,
+    emoji: "🐘",
+    deity: "Ganesha",
+  },
+  {
+    date: "2026-10-02",
+    label: "Oct 2–11",
+    name: "Navratri Puja",
+    price: 5001,
+    emoji: "🪔",
+    deity: "Durga",
+  },
+  {
+    date: "2026-11-01",
+    label: "Nov 1",
+    name: "Diwali Lakshmi Puja",
+    price: 2001,
+    emoji: "🪔",
+    deity: "Lakshmi",
+  },
+  {
+    date: "2026-11-10",
+    label: "Nov 10",
+    name: "Chhath Puja",
+    price: 1001,
+    emoji: "☀️",
+    deity: "Surya",
+  },
+];
+
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+interface PujaForm {
+  pujaType: string;
+  date: string;
+  timeSlot: string;
+  locationMode: string;
+  cityAddress: string;
+  fullName: string;
+  gotra: string;
+  fatherName: string;
+  nakshatra: string;
+  rashi: string;
+  intention: string;
+  familyMembers: string;
+  daanAmount: number | null;
+  customDaan: string;
+  daanPurpose: string;
+}
+
+const defaultForm: PujaForm = {
+  pujaType: "",
+  date: "",
+  timeSlot: "",
+  locationMode: "",
+  cityAddress: "",
+  fullName: "",
+  gotra: "",
+  fatherName: "",
+  nakshatra: "",
+  rashi: "",
+  intention: "",
+  familyMembers: "1",
+  daanAmount: null,
+  customDaan: "",
+  daanPurpose: "",
 };
 
-const BOOKING_TYPE_STYLES = {
-  Online: {
-    bg: "oklch(0.55 0.18 150 / 0.2)",
-    text: "oklch(0.75 0.10 150)",
-    border: "oklch(0.55 0.18 150 / 0.3)",
-  },
-  "At Temple": {
-    bg: "oklch(0.58 0.18 30 / 0.2)",
-    text: "oklch(0.85 0.12 60)",
-    border: "oklch(0.58 0.18 30 / 0.3)",
-  },
-  "At Home": {
-    bg: "oklch(0.55 0.18 280 / 0.2)",
-    text: "oklch(0.78 0.10 280)",
-    border: "oklch(0.55 0.18 280 / 0.3)",
-  },
-};
+// ─── Sub-components ─────────────────────────────────────────────────────────
 
-type ViewState = "list" | "detail" | "book" | "confirmed";
-function VideoDarshan() {
-  const [activeVideo, setActiveVideo] = useState<TempleDarshanVideo>(
-    templeDarshanVideos[0],
+function SectionHeading({
+  emoji,
+  title,
+  subtitle,
+}: { emoji: string; title: string; subtitle?: string }) {
+  return (
+    <div className="mb-5">
+      <h2
+        className="font-heading font-bold text-xl flex items-center gap-2"
+        style={{ color: "oklch(0.88 0.14 75)" }}
+      >
+        <span className="text-2xl">{emoji}</span>
+        {title}
+      </h2>
+      {subtitle && (
+        <p
+          className="text-sm mt-1 ml-9"
+          style={{ color: "oklch(0.65 0.04 55)" }}
+        >
+          {subtitle}
+        </p>
+      )}
+    </div>
   );
-  const [showAll, setShowAll] = useState(false);
-  const [regionFilter, setRegionFilter] = useState("All");
+}
 
-  const REGIONS = [
-    "All",
-    "North India",
-    "South India",
-    "West India",
-    "East India",
-    "Central India",
-  ];
-
-  const featuredTemples = templeDarshanVideos.slice(0, 6);
-
-  const filteredTemples =
-    regionFilter === "All"
-      ? templeDarshanVideos
-      : templeDarshanVideos.filter((t) => t.region === regionFilter);
-
-  const regionBadgeColors: Record<
-    string,
-    { bg: string; text: string; border: string }
-  > = {
-    "North India": {
-      bg: "oklch(0.55 0.18 260 / 0.20)",
-      text: "oklch(0.78 0.14 260)",
-      border: "oklch(0.55 0.18 260 / 0.35)",
-    },
-    "South India": {
-      bg: "oklch(0.55 0.18 145 / 0.20)",
-      text: "oklch(0.72 0.14 145)",
-      border: "oklch(0.55 0.18 145 / 0.35)",
-    },
-    "West India": {
-      bg: "oklch(0.68 0.20 48 / 0.20)",
-      text: "oklch(0.85 0.14 60)",
-      border: "oklch(0.68 0.20 48 / 0.35)",
-    },
-    "East India": {
-      bg: "oklch(0.55 0.18 200 / 0.20)",
-      text: "oklch(0.75 0.12 200)",
-      border: "oklch(0.55 0.18 200 / 0.35)",
-    },
-    "Central India": {
-      bg: "oklch(0.55 0.18 28 / 0.20)",
-      text: "oklch(0.80 0.14 35)",
-      border: "oklch(0.55 0.18 28 / 0.35)",
-    },
-  };
-
+function Card({
+  children,
+  className = "",
+}: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className="py-10 px-4"
+      className={`rounded-2xl border p-5 ${className}`}
       style={{
-        background:
-          "linear-gradient(160deg, oklch(0.17 0.07 22) 0%, oklch(0.13 0.05 20) 100%)",
-        borderBottom: "1px solid oklch(0.78 0.14 75 / 0.12)",
+        background: "oklch(0.20 0.07 22)",
+        borderColor: "oklch(0.78 0.14 75 / 0.18)",
       }}
-      data-ocid="video_darshan.section"
     >
-      <div className="container mx-auto max-w-5xl">
-        {/* Heading */}
-        <div className="text-center mb-7">
-          <h2
-            className="font-decorative text-2xl md:text-3xl font-bold mb-1"
-            style={{ color: "oklch(0.88 0.14 75)" }}
-          >
-            🕉️ Live Temple Darshan
-          </h2>
-          <p className="text-sm" style={{ color: "oklch(0.68 0.06 55)" }}>
-            Watch live darshan and aarti from {templeDarshanVideos.length}{" "}
-            sacred temples across India
-          </p>
-        </div>
+      {children}
+    </div>
+  );
+}
 
-        {/* Featured Player */}
-        <div
-          className="rounded-2xl overflow-hidden mb-5"
-          style={{
-            border: "1.5px solid oklch(0.78 0.14 75 / 0.25)",
-            boxShadow: "0 0 32px oklch(0.68 0.20 48 / 0.10)",
-          }}
-        >
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <iframe
-              key={activeVideo.youtubeVideoId}
-              src={`https://www.youtube.com/embed/${activeVideo.youtubeVideoId}?autoplay=0&rel=0`}
-              title={`${activeVideo.templeName} - Live Darshan`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 w-full h-full"
-              style={{ border: 0 }}
-            />
-          </div>
-          <div
-            className="px-5 py-3 flex items-center justify-between gap-3"
-            style={{
-              background: "oklch(0.18 0.07 22)",
-              borderTop: "1px solid oklch(0.78 0.14 75 / 0.12)",
+function EventCalendar({
+  onSelectEvent,
+}: { onSelectEvent: (e: (typeof PUJA_EVENTS)[0]) => void }) {
+  const [selected, setSelected] = useState<string | null>(null);
+  return (
+    <div data-ocid="puja_booking.calendar.section">
+      <SectionHeading
+        emoji="📅"
+        title="Upcoming Sacred Puja Events"
+        subtitle="Click an event to pre-fill your booking date"
+      />
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+        data-ocid="puja_booking.events.list"
+      >
+        {PUJA_EVENTS.map((ev, i) => (
+          <button
+            key={ev.date}
+            type="button"
+            onClick={() => {
+              setSelected(ev.date);
+              onSelectEvent(ev);
             }}
+            className="rounded-xl p-4 text-left transition-all hover:scale-[1.01] active:scale-100"
+            style={{
+              background:
+                selected === ev.date
+                  ? "oklch(0.68 0.20 48 / 0.18)"
+                  : "oklch(0.22 0.07 22)",
+              border: `1.5px solid ${selected === ev.date ? "oklch(0.78 0.14 75 / 0.6)" : "oklch(0.78 0.14 75 / 0.15)"}`,
+              boxShadow:
+                selected === ev.date
+                  ? "0 0 12px oklch(0.78 0.14 75 / 0.15)"
+                  : "none",
+            }}
+            data-ocid={`puja_booking.event.item.${i + 1}`}
           >
-            <div className="min-w-0 flex-1">
-              <p
-                className="font-heading font-semibold text-sm truncate"
-                style={{ color: "oklch(0.90 0.06 75)" }}
-              >
-                {activeVideo.templeName}
-              </p>
-              <p
-                className="text-xs truncate"
-                style={{ color: "oklch(0.68 0.04 55)" }}
-              >
-                {activeVideo.deity} · {activeVideo.location}
-              </p>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {(() => {
-                const rc = regionBadgeColors[activeVideo.region];
-                return rc ? (
-                  <span
-                    className="px-2 py-0.5 rounded-full text-[10px] font-heading font-semibold"
-                    style={{
-                      background: rc.bg,
-                      color: rc.text,
-                      border: `1px solid ${rc.border}`,
-                    }}
-                  >
-                    {activeVideo.region}
-                  </span>
-                ) : null;
-              })()}
-              {activeVideo.isLive && (
-                <span
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold tracking-wide"
-                  style={{
-                    background: "oklch(0.50 0.22 27 / 0.25)",
-                    color: "oklch(0.75 0.18 28)",
-                    border: "1px solid oklch(0.60 0.20 27 / 0.35)",
-                  }}
+            <div className="flex items-start gap-3">
+              <span className="text-2xl mt-0.5">{ev.emoji}</span>
+              <div className="min-w-0 flex-1">
+                <p
+                  className="font-heading font-semibold text-sm truncate"
+                  style={{ color: "oklch(0.90 0.06 75)" }}
                 >
-                  <span
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: "oklch(0.65 0.22 28)" }}
-                  />
-                  LIVE
-                </span>
+                  {ev.name}
+                </p>
+                <p
+                  className="text-xs mt-0.5"
+                  style={{ color: "oklch(0.70 0.12 65)" }}
+                >
+                  {ev.label} · {ev.deity}
+                </p>
+                <p
+                  className="text-xs mt-1 font-semibold"
+                  style={{ color: "oklch(0.78 0.20 48)" }}
+                >
+                  ₹{ev.price.toLocaleString("en-IN")}
+                </p>
+              </div>
+              {selected === ev.date && (
+                <CheckCircle2
+                  className="h-4 w-4 shrink-0 mt-0.5"
+                  style={{ color: "oklch(0.78 0.14 75)" }}
+                />
               )}
             </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PujaSelection({
+  form,
+  setForm,
+}: {
+  form: PujaForm;
+  setForm: React.Dispatch<React.SetStateAction<PujaForm>>;
+}) {
+  return (
+    <Card>
+      <SectionHeading
+        emoji="🛕"
+        title="Puja Selection"
+        subtitle="Choose your puja type, date, time and venue"
+      />
+      <div className="space-y-5">
+        {/* Puja Type */}
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+            Puja Type / पूजा प्रकार *
+          </Label>
+          <select
+            value={form.pujaType}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, pujaType: e.target.value }))
+            }
+            className="w-full rounded-lg px-3 py-2.5 text-sm"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.puja_type.select"
+          >
+            <option value="">Select Puja Type...</option>
+            {PUJA_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Date */}
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>Date / तिथि *</Label>
+          <div className="relative">
+            <CalendarDays
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+              style={{ color: "oklch(0.60 0.05 55)" }}
+            />
+            <Input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+              min={new Date().toISOString().split("T")[0]}
+              className="pl-10"
+              style={{
+                background: "oklch(0.22 0.07 22)",
+                borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                color: "oklch(0.88 0.04 70)",
+              }}
+              data-ocid="puja_booking.date.input"
+            />
           </div>
         </div>
 
-        {/* Featured Temple Thumbnail Row */}
-        <div
-          className="flex gap-3 overflow-x-auto pb-2"
-          style={{ scrollbarWidth: "thin" }}
-        >
-          {featuredTemples.map((temple) => (
-            <button
-              key={temple.id}
-              type="button"
-              onClick={() => setActiveVideo(temple)}
-              className="shrink-0 rounded-xl overflow-hidden transition-all duration-200 text-left"
-              style={{
-                width: 160,
-                border:
-                  activeVideo.id === temple.id
-                    ? "2px solid oklch(0.78 0.14 75)"
-                    : "1.5px solid oklch(0.78 0.14 75 / 0.18)",
-                background: "oklch(0.20 0.07 22)",
-                boxShadow:
-                  activeVideo.id === temple.id
-                    ? "0 0 12px oklch(0.78 0.14 75 / 0.25)"
-                    : "none",
-              }}
-              data-ocid={`video_darshan.temple_card.${temple.id}`}
-            >
-              <div
-                className="relative"
+        {/* Time Slots */}
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+            Time Slot / समय *
+          </Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {TIME_SLOTS.map((slot) => (
+              <button
+                key={slot.id}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, timeSlot: slot.id }))}
+                className="rounded-lg p-3 text-center transition-all"
                 style={{
-                  paddingTop: "56.25%",
-                  background: "oklch(0.16 0.06 20)",
+                  background:
+                    form.timeSlot === slot.id
+                      ? "oklch(0.68 0.20 48 / 0.20)"
+                      : "oklch(0.22 0.07 22)",
+                  border: `1.5px solid ${form.timeSlot === slot.id ? "oklch(0.78 0.14 75 / 0.6)" : "oklch(0.78 0.14 75 / 0.15)"}`,
                 }}
+                data-ocid={`puja_booking.time_slot.${slot.id}`}
               >
-                <img
-                  src={`https://img.youtube.com/vi/${temple.youtubeVideoId}/mqdefault.jpg`}
-                  alt={temple.templeName}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                {temple.isLive && (
-                  <span
-                    className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider"
-                    style={{
-                      background: "oklch(0.45 0.22 27 / 0.85)",
-                      color: "oklch(0.95 0.06 60)",
-                    }}
-                  >
-                    LIVE
-                  </span>
-                )}
-              </div>
-              <div className="p-2">
+                <div className="text-xl mb-1">{slot.emoji}</div>
                 <p
-                  className="text-[11px] font-heading font-semibold leading-tight line-clamp-1"
+                  className="text-xs font-heading font-semibold"
                   style={{ color: "oklch(0.88 0.06 75)" }}
                 >
-                  {temple.templeName}
+                  {slot.label}
                 </p>
                 <p
-                  className="text-[10px] mt-0.5 line-clamp-1"
-                  style={{ color: "oklch(0.60 0.04 55)" }}
+                  className="text-[10px] mt-0.5"
+                  style={{ color: "oklch(0.65 0.04 55)" }}
                 >
-                  {temple.deity}
+                  {slot.sublabel}
                 </p>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* View All Temples expandable section */}
-        <div className="mt-5">
-          <button
-            type="button"
-            onClick={() => setShowAll((v) => !v)}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-heading font-semibold text-sm transition-all"
-            style={{
-              background: showAll
-                ? "oklch(0.68 0.20 48 / 0.12)"
-                : "oklch(0.22 0.07 22)",
-              border: "1.5px solid oklch(0.78 0.14 75 / 0.20)",
-              color: "oklch(0.85 0.10 70)",
-            }}
-            data-ocid="video_darshan.view_all_button"
-          >
-            {showAll ? "▲ Hide" : "▼ View All Temples"} (
-            {templeDarshanVideos.length})
-          </button>
-
-          {showAll && (
-            <div className="mt-4">
-              {/* Region filter buttons */}
-              <div
-                className="flex flex-wrap gap-2 mb-4"
-                data-ocid="video_darshan.region_filters"
+        {/* Location */}
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+            Location / स्थान *
+          </Label>
+          <div className="grid grid-cols-3 gap-2">
+            {LOCATIONS.map((loc) => (
+              <button
+                key={loc.id}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, locationMode: loc.id }))}
+                className="rounded-lg p-3 text-center transition-all"
+                style={{
+                  background:
+                    form.locationMode === loc.id
+                      ? "oklch(0.68 0.20 48 / 0.20)"
+                      : "oklch(0.22 0.07 22)",
+                  border: `1.5px solid ${form.locationMode === loc.id ? "oklch(0.78 0.14 75 / 0.6)" : "oklch(0.78 0.14 75 / 0.15)"}`,
+                }}
+                data-ocid={`puja_booking.location.${loc.id}`}
               >
-                {REGIONS.map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRegionFilter(r)}
-                    className="px-3 py-1.5 rounded-full text-xs font-heading font-semibold transition-all"
-                    style={{
-                      background:
-                        regionFilter === r
-                          ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
-                          : "oklch(0.22 0.07 22)",
-                      color:
-                        regionFilter === r ? "white" : "oklch(0.75 0.08 60)",
-                      border:
-                        regionFilter === r
-                          ? "1.5px solid oklch(0.68 0.20 48)"
-                          : "1.5px solid oklch(0.78 0.14 75 / 0.20)",
-                    }}
-                    data-ocid={`video_darshan.region_filter.${r.toLowerCase().replace(/\s+/g, "_")}`}
-                  >
-                    {r}{" "}
-                    {r !== "All"
-                      ? `(${templeDarshanVideos.filter((t) => t.region === r).length})`
-                      : `(${templeDarshanVideos.length})`}
-                  </button>
-                ))}
-              </div>
-
-              {/* Temple grid */}
-              <div
-                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
-                data-ocid="video_darshan.all_temples_grid"
-              >
-                {filteredTemples.map((temple, idx) => {
-                  const rc = regionBadgeColors[temple.region];
-                  return (
-                    <button
-                      key={temple.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveVideo(temple);
-                        setShowAll(false);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      className="rounded-xl overflow-hidden transition-all duration-200 text-left hover:scale-[1.02]"
-                      style={{
-                        background: "oklch(0.20 0.07 22)",
-                        border:
-                          activeVideo.id === temple.id
-                            ? "2px solid oklch(0.78 0.14 75)"
-                            : "1.5px solid oklch(0.78 0.14 75 / 0.18)",
-                        boxShadow:
-                          activeVideo.id === temple.id
-                            ? "0 0 10px oklch(0.78 0.14 75 / 0.22)"
-                            : "none",
-                      }}
-                      data-ocid={`video_darshan.all_temple_card.${idx + 1}`}
-                    >
-                      <div
-                        className="relative"
-                        style={{
-                          paddingTop: "56.25%",
-                          background: "oklch(0.16 0.06 20)",
-                        }}
-                      >
-                        <img
-                          src={`https://img.youtube.com/vi/${temple.youtubeVideoId}/mqdefault.jpg`}
-                          alt={temple.templeName}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                        {temple.isLive && (
-                          <span
-                            className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider"
-                            style={{
-                              background: "oklch(0.45 0.22 27 / 0.85)",
-                              color: "oklch(0.95 0.06 60)",
-                            }}
-                          >
-                            LIVE
-                          </span>
-                        )}
-                        {activeVideo.id === temple.id && (
-                          <div
-                            className="absolute inset-0 flex items-center justify-center"
-                            style={{ background: "oklch(0.68 0.20 48 / 0.25)" }}
-                          >
-                            <span className="text-white text-lg">▶</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-2.5">
-                        <p
-                          className="text-xs font-heading font-semibold leading-tight line-clamp-1 mb-1"
-                          style={{ color: "oklch(0.88 0.06 75)" }}
-                        >
-                          {temple.templeName}
-                        </p>
-                        <p
-                          className="text-[10px] line-clamp-1 mb-1.5"
-                          style={{ color: "oklch(0.65 0.05 60)" }}
-                        >
-                          {temple.deity}
-                        </p>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {rc && (
-                            <span
-                              className="inline-block px-1.5 py-0.5 rounded-full text-[9px] font-heading font-semibold"
-                              style={{
-                                background: rc.bg,
-                                color: rc.text,
-                                border: `1px solid ${rc.border}`,
-                              }}
-                            >
-                              {temple.region}
-                            </span>
-                          )}
-                        </div>
-                        <p
-                          className="text-[9px] mt-1 flex items-center gap-0.5"
-                          style={{ color: "oklch(0.55 0.04 50)" }}
-                        >
-                          📍 {temple.location}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
+                <div className="text-2xl mb-1">{loc.emoji}</div>
+                <p
+                  className="text-xs font-heading font-semibold"
+                  style={{ color: "oklch(0.88 0.06 75)" }}
+                >
+                  {loc.label}
+                </p>
+              </button>
+            ))}
+          </div>
+          {form.locationMode === "home" && (
+            <div className="mt-3 space-y-2">
+              <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+                City / Address
+              </Label>
+              <div className="relative">
+                <MapPin
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                  style={{ color: "oklch(0.60 0.05 55)" }}
+                />
+                <Input
+                  value={form.cityAddress}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, cityAddress: e.target.value }))
+                  }
+                  placeholder="Enter your city and full address"
+                  className="pl-10"
+                  style={{
+                    background: "oklch(0.22 0.07 22)",
+                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
+                    color: "oklch(0.88 0.04 70)",
+                  }}
+                  data-ocid="puja_booking.city_address.input"
+                />
               </div>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
-interface BookingForm {
-  devoteeName: string;
-  gotra: string;
-  fatherName: string;
-  dob: string;
-  city: string;
-  phone: string;
-  date: string;
-  time: string;
-  location: string;
-  sankalpText: string;
-  dakshina: string;
-  customDakshina: string;
-  prasadDelivery: boolean;
-  videoDarshan: boolean;
+function SankalpForm({
+  form,
+  setForm,
+}: {
+  form: PujaForm;
+  setForm: React.Dispatch<React.SetStateAction<PujaForm>>;
+}) {
+  return (
+    <Card>
+      <SectionHeading
+        emoji="🪔"
+        title="Sankalp / संकल्प"
+        subtitle="Personalize your puja with your details"
+      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+            Full Name / पूरा नाम *
+          </Label>
+          <Input
+            value={form.fullName}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, fullName: e.target.value }))
+            }
+            placeholder="Sanskrit / Hindi name acceptable"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              borderColor: "oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.sankalp.full_name.input"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>Gotra / गोत्र</Label>
+          <Input
+            value={form.gotra}
+            onChange={(e) => setForm((f) => ({ ...f, gotra: e.target.value }))}
+            placeholder="e.g. Kashyap, Bharadwaj"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              borderColor: "oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.sankalp.gotra.input"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+            Father's Name / पिता का नाम
+          </Label>
+          <Input
+            value={form.fatherName}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, fatherName: e.target.value }))
+            }
+            placeholder="Father's full name"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              borderColor: "oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.sankalp.father_name.input"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+            Nakshatra / नक्षत्र
+          </Label>
+          <select
+            value={form.nakshatra}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, nakshatra: e.target.value }))
+            }
+            className="w-full rounded-lg px-3 py-2.5 text-sm"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.sankalp.nakshatra.select"
+          >
+            <option value="">Select Nakshatra...</option>
+            {NAKSHATRAS.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>Rashi / राशि</Label>
+          <select
+            value={form.rashi}
+            onChange={(e) => setForm((f) => ({ ...f, rashi: e.target.value }))}
+            className="w-full rounded-lg px-3 py-2.5 text-sm"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.sankalp.rashi.select"
+          >
+            <option value="">Select Rashi...</option>
+            {RASHIS.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-2">
+          <Label style={{ color: "oklch(0.82 0.06 70)" }}>Family Members</Label>
+          <Input
+            type="number"
+            min="1"
+            max="20"
+            value={form.familyMembers}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, familyMembers: e.target.value }))
+            }
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              borderColor: "oklch(0.78 0.14 75 / 0.2)",
+              color: "oklch(0.88 0.04 70)",
+            }}
+            data-ocid="puja_booking.sankalp.family_members.input"
+          />
+        </div>
+      </div>
+      <div className="space-y-2 mt-4">
+        <Label style={{ color: "oklch(0.82 0.06 70)" }}>
+          Sankalp Intention / मनोकामना
+        </Label>
+        <Textarea
+          value={form.intention}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, intention: e.target.value }))
+          }
+          placeholder="For health, wealth, peace, prosperity of our family..."
+          rows={3}
+          style={{
+            background: "oklch(0.22 0.07 22)",
+            borderColor: "oklch(0.78 0.14 75 / 0.2)",
+            color: "oklch(0.88 0.04 70)",
+          }}
+          data-ocid="puja_booking.sankalp.intention.textarea"
+        />
+      </div>
+    </Card>
+  );
 }
 
-const DAKSHINA_OPTIONS = [
-  { value: "101", label: "₹101" },
-  { value: "251", label: "₹251" },
-  { value: "501", label: "₹501" },
-  { value: "1001", label: "₹1001" },
-  { value: "custom", label: "Custom" },
-];
-
-const UPCOMING_PUJAS = [
-  {
-    id: "np1",
-    name: "Navratri Puja",
-    date: "Oct 3, 2026",
-    time: "6:00 AM",
-    type: "Devi Puja",
-    emoji: "🪔",
-  },
-  {
-    id: "np2",
-    name: "Diwali Lakshmi Puja",
-    date: "Oct 20, 2026",
-    time: "6:00 PM",
-    type: "Wealth Puja",
-    emoji: "✨",
-  },
-  {
-    id: "np3",
-    name: "Ganesh Chaturthi",
-    date: "Aug 22, 2026",
-    time: "7:00 AM",
-    type: "Ganesh Puja",
-    emoji: "🐘",
-  },
-  {
-    id: "np4",
-    name: "Shivratri Rudrabhishek",
-    date: "Feb 18, 2027",
-    time: "12:00 AM",
-    type: "Shiva Puja",
-    emoji: "🕉️",
-  },
-  {
-    id: "np5",
-    name: "Satyanarayan Puja",
-    date: "Every Purnima",
-    time: "Flexible",
-    type: "Vishnu Puja",
-    emoji: "🙏",
-  },
-];
-
-const defaultForm: BookingForm = {
-  devoteeName: "",
-  gotra: "",
-  fatherName: "",
-  dob: "",
-  city: "",
-  phone: "",
-  date: "",
-  time: "",
-  location: "",
-  sankalpText: "",
-  dakshina: "",
-  customDakshina: "",
-  prasadDelivery: false,
-  videoDarshan: false,
-};
-
-function PujaCard({
-  puja,
-  onSelect,
-  onBook,
-}: { puja: PujaItem; onSelect: () => void; onBook: () => void }) {
-  const faithStyle = FAITH_STYLES[puja.faith];
-  const bookingStyle = BOOKING_TYPE_STYLES[puja.booking_type];
+function DaanSection({
+  form,
+  setForm,
+}: {
+  form: PujaForm;
+  setForm: React.Dispatch<React.SetStateAction<PujaForm>>;
+}) {
   return (
-    <div
-      className="border rounded-xl p-5 transition-all duration-200 hover:shadow-lg"
-      style={{
-        background: "oklch(0.20 0.07 22)",
-        borderColor: "oklch(0.78 0.14 75 / 0.2)",
-      }}
-      data-ocid={`puja.item.${puja.id}`}
-    >
-      <div className="flex items-start gap-3 mb-3">
-        <span className="text-3xl">{puja.emoji}</span>
-        <div className="min-w-0 flex-1">
-          <h3
-            className="font-heading font-bold text-base leading-tight"
-            style={{ color: "oklch(0.92 0.06 75)" }}
+    <Card>
+      <SectionHeading
+        emoji="🪙"
+        title="Daan / Bhet / Dakshina"
+        subtitle="Offered with pure intention for divine blessings"
+      />
+      <div
+        className="flex flex-wrap gap-2 mb-4"
+        data-ocid="puja_booking.daan.amounts"
+      >
+        {DAAN_AMOUNTS.map((amt) => (
+          <button
+            key={amt}
+            type="button"
+            onClick={() =>
+              setForm((f) => ({
+                ...f,
+                daanAmount: f.daanAmount === amt ? null : amt,
+                customDaan: "",
+              }))
+            }
+            className="px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all"
+            style={{
+              background:
+                form.daanAmount === amt
+                  ? "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))"
+                  : "oklch(0.22 0.07 22)",
+              color: form.daanAmount === amt ? "white" : "oklch(0.80 0.04 60)",
+              border: `1px solid ${form.daanAmount === amt ? "oklch(0.68 0.20 48)" : "oklch(0.78 0.14 75 / 0.2)"}`,
+            }}
+            data-ocid={`puja_booking.daan.amount.${amt}`}
           >
-            {puja.name}
-          </h3>
-          <p
-            className="text-xs mt-0.5"
-            style={{ color: "oklch(0.78 0.14 75)" }}
+            ₹{amt.toLocaleString("en-IN")}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() =>
+            setForm((f) => ({
+              ...f,
+              daanAmount: null,
+              customDaan: f.customDaan || "",
+            }))
+          }
+          className="px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all"
+          style={{
+            background:
+              form.daanAmount === null && form.customDaan !== ""
+                ? "oklch(0.22 0.07 22)"
+                : "oklch(0.22 0.07 22)",
+            color: "oklch(0.80 0.04 60)",
+            border: "1px solid oklch(0.78 0.14 75 / 0.2)",
+          }}
+          data-ocid="puja_booking.daan.custom_button"
+        >
+          Custom
+        </button>
+      </div>
+      {(form.customDaan !== "" || form.daanAmount === null) && (
+        <Input
+          value={form.customDaan}
+          onChange={(e) =>
+            setForm((f) => ({
+              ...f,
+              customDaan: e.target.value,
+              daanAmount: null,
+            }))
+          }
+          placeholder="Enter custom amount (₹)"
+          className="mb-4"
+          style={{
+            background: "oklch(0.22 0.07 22)",
+            borderColor: "oklch(0.78 0.14 75 / 0.2)",
+            color: "oklch(0.88 0.04 70)",
+          }}
+          data-ocid="puja_booking.daan.custom.input"
+        />
+      )}
+      <div className="space-y-2">
+        <Label style={{ color: "oklch(0.82 0.06 70)" }}>Purpose / उद्देश्य</Label>
+        <div className="flex flex-wrap gap-2">
+          {DAAN_PURPOSES.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() =>
+                setForm((f) => ({
+                  ...f,
+                  daanPurpose: f.daanPurpose === p ? "" : p,
+                }))
+              }
+              className="px-3 py-1.5 rounded-full text-xs font-heading transition-all"
+              style={{
+                background:
+                  form.daanPurpose === p
+                    ? "oklch(0.55 0.15 200 / 0.30)"
+                    : "oklch(0.22 0.07 22)",
+                color:
+                  form.daanPurpose === p
+                    ? "oklch(0.80 0.12 200)"
+                    : "oklch(0.70 0.04 60)",
+                border: `1px solid ${form.daanPurpose === p ? "oklch(0.55 0.15 200 / 0.5)" : "oklch(0.78 0.14 75 / 0.15)"}`,
+              }}
+              data-ocid={`puja_booking.daan.purpose.${p.toLowerCase().replace(/\s+/g, "_")}`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div
+        className="mt-4 rounded-lg px-4 py-3"
+        style={{
+          background: "oklch(0.68 0.20 48 / 0.08)",
+          border: "1px solid oklch(0.68 0.20 48 / 0.2)",
+        }}
+      >
+        <p className="text-xs" style={{ color: "oklch(0.75 0.08 65)" }}>
+          🙏 Daan is offered with pure intention for divine blessings. It is not
+          mandatory to book a puja.
+        </p>
+      </div>
+    </Card>
+  );
+}
+
+function VideoDarshanSection() {
+  const [playing, setPlaying] = useState(false);
+  return (
+    <Card>
+      <SectionHeading
+        emoji="📹"
+        title="Video Darshan"
+        subtitle="Watch live darshan — available for registered participants"
+      />
+      <div
+        className="rounded-xl overflow-hidden mb-4"
+        style={{
+          background: "oklch(0.16 0.06 20)",
+          border: "1px solid oklch(0.78 0.14 75 / 0.15)",
+        }}
+      >
+        <div className="relative" style={{ paddingTop: "56.25%" }}>
+          {playing ? (
+            <iframe
+              src="https://www.youtube.com/embed/HgQs7vBWvxA?autoplay=1&rel=0"
+              title="Live Temple Darshan"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 0 }}
+            />
+          ) : (
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center gap-4"
+              style={{
+                background:
+                  "linear-gradient(135deg, oklch(0.17 0.07 22), oklch(0.13 0.05 20))",
+              }}
+            >
+              <div className="text-5xl">🕉️</div>
+              <button
+                type="button"
+                onClick={() => setPlaying(true)}
+                className="flex items-center gap-2 px-6 py-3 rounded-full font-heading font-semibold transition-all hover:scale-105"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+                  color: "white",
+                }}
+                data-ocid="puja_booking.video_darshan.play_button"
+              >
+                <Play className="h-4 w-4" /> Watch Live Darshan
+              </button>
+              <p
+                className="text-xs text-center px-4"
+                style={{ color: "oklch(0.60 0.04 55)" }}
+              >
+                Kashi Vishwanath Aarti · Live Stream
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        {[
+          { icon: "🌅", label: "Live Darshan", sub: "Join on booking date" },
+          { icon: "📱", label: "WhatsApp Link", sub: "Sent 1 hour before" },
+          { icon: "🔴", label: "Recording", sub: "Available 24 hrs" },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="flex-1 min-w-[100px] rounded-lg p-3 text-center"
+            style={{
+              background: "oklch(0.22 0.07 22)",
+              border: "1px solid oklch(0.78 0.14 75 / 0.12)",
+            }}
           >
-            {puja.hindi_name}
+            <div className="text-xl mb-1">{item.icon}</div>
+            <p
+              className="text-xs font-heading font-semibold"
+              style={{ color: "oklch(0.85 0.06 70)" }}
+            >
+              {item.label}
+            </p>
+            <p
+              className="text-[10px] mt-0.5"
+              style={{ color: "oklch(0.60 0.04 55)" }}
+            >
+              {item.sub}
+            </p>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function BookingSummary({
+  form,
+  onSubmit,
+  isLoading,
+  isLoggedIn,
+}: {
+  form: PujaForm;
+  onSubmit: () => void;
+  isLoading: boolean;
+  isLoggedIn: boolean;
+}) {
+  const timeLabel =
+    TIME_SLOTS.find((s) => s.id === form.timeSlot)?.label ?? "—";
+  const locLabel =
+    LOCATIONS.find((l) => l.id === form.locationMode)?.label ?? "—";
+  const daanTotal =
+    form.daanAmount ?? (form.customDaan ? Number(form.customDaan) : 0);
+  const pujaFee = form.pujaType ? 1001 : 0;
+  const total = pujaFee + daanTotal;
+
+  return (
+    <Card>
+      <SectionHeading emoji="✅" title="Booking Summary" />
+      <div className="space-y-3 mb-5">
+        {[
+          { label: "Puja", value: form.pujaType || "Not selected" },
+          { label: "Date", value: form.date || "Not selected" },
+          { label: "Time", value: timeLabel },
+          { label: "Location", value: locLabel },
+          { label: "Name", value: form.fullName || "Not filled" },
+        ].map((row) => (
+          <div key={row.label} className="flex justify-between text-sm">
+            <span style={{ color: "oklch(0.65 0.04 55)" }}>{row.label}</span>
+            <span
+              className="font-medium"
+              style={{ color: "oklch(0.85 0.06 70)" }}
+            >
+              {row.value}
+            </span>
+          </div>
+        ))}
+        <div
+          className="border-t pt-3"
+          style={{ borderColor: "oklch(0.78 0.14 75 / 0.15)" }}
+        >
+          <div className="flex justify-between text-sm">
+            <span style={{ color: "oklch(0.65 0.04 55)" }}>Puja Fee</span>
+            <span style={{ color: "oklch(0.85 0.06 70)" }}>
+              ₹{pujaFee.toLocaleString("en-IN")}
+            </span>
+          </div>
+          {daanTotal > 0 && (
+            <div className="flex justify-between text-sm mt-1">
+              <span style={{ color: "oklch(0.65 0.04 55)" }}>
+                Daan / Dakshina
+              </span>
+              <span style={{ color: "oklch(0.78 0.14 75)" }}>
+                ₹{daanTotal.toLocaleString("en-IN")}
+              </span>
+            </div>
+          )}
+          <div className="flex justify-between font-bold text-base mt-2">
+            <span style={{ color: "oklch(0.82 0.06 70)" }}>Total</span>
+            <span style={{ color: "oklch(0.88 0.14 75)" }}>
+              ₹{total.toLocaleString("en-IN")}
+            </span>
+          </div>
+        </div>
+      </div>
+      {!isLoggedIn && (
+        <div
+          className="rounded-lg px-4 py-3 mb-4"
+          style={{
+            background: "oklch(0.55 0.18 30 / 0.12)",
+            border: "1px solid oklch(0.60 0.18 30 / 0.3)",
+          }}
+        >
+          <p className="text-xs" style={{ color: "oklch(0.80 0.12 50)" }}>
+            ⚠️ Please login to confirm your booking and save it to your account.
           </p>
         </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-3">
-        <Badge
-          style={{
-            background: faithStyle.bg,
-            color: faithStyle.text,
-            border: `1px solid ${faithStyle.border}`,
-          }}
-        >
-          {puja.faith}
-        </Badge>
-        <Badge
-          style={{
-            background: bookingStyle.bg,
-            color: bookingStyle.text,
-            border: `1px solid ${bookingStyle.border}`,
-          }}
-        >
-          {puja.booking_type}
-        </Badge>
-      </div>
-
-      <div
-        className="grid grid-cols-2 gap-2 mb-3 text-xs"
-        style={{ color: "oklch(0.70 0.04 60)" }}
-      >
-        <div>⏱️ {puja.duration}</div>
-        <div>
-          👨‍⚕️{" "}
-          {puja.priest_count === 0
-            ? "Self"
-            : `${puja.priest_count} Priest${puja.priest_count > 1 ? "s" : ""}`}
-        </div>
-        <div>🕉️ {puja.deity}</div>
-        <div>💰 {puja.price_range}</div>
-      </div>
-
-      <p
-        className="text-xs line-clamp-2 mb-4"
-        style={{ color: "oklch(0.68 0.04 55)" }}
-      >
-        {puja.significance.slice(0, 120)}...
-      </p>
-
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1"
-          onClick={onSelect}
-          style={{
-            borderColor: "oklch(0.78 0.14 75 / 0.3)",
-            color: "oklch(0.88 0.06 75)",
-          }}
-          data-ocid={`puja.details_button.${puja.id}`}
-        >
-          View Details
-        </Button>
-        <Button
-          size="sm"
-          className="flex-1"
-          onClick={onBook}
-          style={{
-            background:
-              "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
-            color: "white",
-          }}
-          data-ocid={`puja.book_button.${puja.id}`}
-        >
-          Book Now
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-function PujaDetail({
-  puja,
-  onBook,
-  onBack,
-}: { puja: PujaItem; onBook: () => void; onBack: () => void }) {
-  const faithStyle = FAITH_STYLES[puja.faith];
-  const bookingStyle = BOOKING_TYPE_STYLES[puja.booking_type];
-  return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <button
+      )}
+      <Button
         type="button"
-        onClick={onBack}
-        className="flex items-center gap-2 mb-6 text-sm transition-colors hover:opacity-80"
-        style={{ color: "oklch(0.78 0.14 75)" }}
-        data-ocid="puja.back_button"
-      >
-        ← Back to Puja List
-      </button>
-      <div
-        className="rounded-2xl overflow-hidden border"
+        onClick={onSubmit}
+        disabled={isLoading}
+        className="w-full py-3 text-base font-heading font-semibold disabled:opacity-60"
         style={{
-          background: "oklch(0.20 0.07 22)",
-          borderColor: "oklch(0.78 0.14 75 / 0.2)",
+          background:
+            "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
+          color: "white",
         }}
+        data-ocid="puja_booking.submit_button"
       >
-        <div
-          className="p-6"
-          style={{
-            background:
-              "linear-gradient(135deg, oklch(0.22 0.08 22), oklch(0.18 0.06 20))",
-          }}
-        >
-          <div className="flex items-start gap-4 mb-4">
-            <span className="text-5xl">{puja.emoji}</span>
-            <div>
-              <h2
-                className="font-decorative text-2xl font-bold"
-                style={{ color: "oklch(0.92 0.06 75)" }}
-              >
-                {puja.name}
-              </h2>
-              <p
-                className="text-base mt-0.5"
-                style={{ color: "oklch(0.78 0.14 75)" }}
-              >
-                {puja.hindi_name}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <Badge
-                  style={{
-                    background: faithStyle.bg,
-                    color: faithStyle.text,
-                    border: `1px solid ${faithStyle.border}`,
-                  }}
-                >
-                  {puja.faith}
-                </Badge>
-                <Badge
-                  style={{
-                    background: bookingStyle.bg,
-                    color: bookingStyle.text,
-                    border: `1px solid ${bookingStyle.border}`,
-                  }}
-                >
-                  {puja.booking_type}
-                </Badge>
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: "Deity", value: puja.deity },
-              { label: "Duration", value: puja.duration },
-              {
-                label: "Priests",
-                value:
-                  puja.priest_count === 0 ? "Self" : `${puja.priest_count}`,
-              },
-              { label: "Price", value: puja.price_range },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-lg p-3 text-center"
-                style={{ background: "oklch(0.24 0.07 22 / 0.6)" }}
-              >
-                <p
-                  className="text-[10px] uppercase tracking-wider mb-1"
-                  style={{ color: "oklch(0.68 0.12 65)" }}
-                >
-                  {item.label}
-                </p>
-                <p
-                  className="text-sm font-medium"
-                  style={{ color: "oklch(0.88 0.06 75)" }}
-                >
-                  {item.value}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6 space-y-6">
-          <div>
-            <h3
-              className="font-heading font-semibold mb-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              📖 Significance / महत्व
-            </h3>
-            <p
-              className="text-sm leading-relaxed"
-              style={{ color: "oklch(0.78 0.04 60)" }}
-            >
-              {puja.significance}
-            </p>
-          </div>
-
-          <div>
-            <h3
-              className="font-heading font-semibold mb-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              🛕 Occasion / अवसर
-            </h3>
-            <p className="text-sm" style={{ color: "oklch(0.78 0.04 60)" }}>
-              {puja.occasion}
-            </p>
-          </div>
-
-          <div>
-            <h3
-              className="font-heading font-semibold mb-3"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              🌿 Samagri List / सामग्री
-            </h3>
-            <ul className="space-y-2">
-              {puja.samagri_list.map((item) => (
-                <li
-                  key={item.slice(0, 30)}
-                  className="flex items-start gap-2 text-sm"
-                  style={{ color: "oklch(0.78 0.04 60)" }}
-                >
-                  <span
-                    className="mt-0.5 text-xs shrink-0"
-                    style={{ color: "oklch(0.68 0.20 48)" }}
-                  >
-                    ◆
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div
-            className="rounded-lg p-4"
-            style={{
-              background: "oklch(0.22 0.07 22)",
-              borderLeft: "3px solid oklch(0.78 0.14 75)",
-            }}
-          >
-            <h3
-              className="font-heading font-semibold mb-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              🕉️ Mantra Count
-            </h3>
-            <p className="text-sm" style={{ color: "oklch(0.80 0.04 60)" }}>
-              {puja.mantra_count}
-            </p>
-          </div>
-
-          <Button
-            onClick={onBook}
-            className="w-full py-3 text-base font-heading font-semibold"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
-              color: "white",
-            }}
-            data-ocid="puja.detail_book_button"
-          >
-            🙏 Book This Puja — {puja.price_range}
-          </Button>
-        </div>
-      </div>
-    </div>
+        {isLoading ? "Submitting Booking..." : "🙏 Confirm Booking"}
+      </Button>
+      <p
+        className="text-[11px] text-center mt-3"
+        style={{ color: "oklch(0.55 0.04 50)" }}
+      >
+        Our pandit will contact you within 24 hours to confirm details.
+      </p>
+    </Card>
   );
 }
 
-function BookingFormView({
-  puja,
-  onConfirm,
-  onBack,
-  isLoading,
-}: {
-  puja: PujaItem;
-  onConfirm: (form: BookingForm) => void;
-  onBack: () => void;
-  isLoading: boolean;
-}) {
-  const [form, setForm] = useState<BookingForm>({ ...defaultForm });
-  const setF =
-    (field: keyof BookingForm) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value =
-        e.target.type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : e.target.value;
-      setForm((f) => ({ ...f, [field]: value }));
-    };
+function MyBookings({ userId }: { userId: string | null }) {
+  // Mock booking history for display (real data via useGetUserPujaBookings)
+  const mockBookings = [
+    {
+      id: "PB-XKMD1",
+      pujaType: "Satyanarayan Puja",
+      date: "2025-12-15",
+      time: "morning",
+      location: "temple",
+      status: "Completed",
+    },
+    {
+      id: "PB-ABY72",
+      pujaType: "Ganesh Puja",
+      date: "2026-01-08",
+      time: "evening",
+      location: "home",
+      status: "Confirmed",
+    },
+    {
+      id: "PB-QRT44",
+      pujaType: "Rudrabhishek",
+      date: "2026-02-12",
+      time: "morning",
+      location: "temple",
+      status: "Pending",
+    },
+  ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.devoteeName || !form.phone || !form.date) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
-    onConfirm(form);
+  const statusColors: Record<
+    string,
+    { bg: string; text: string; border: string }
+  > = {
+    Confirmed: {
+      bg: "oklch(0.55 0.18 150 / 0.15)",
+      text: "oklch(0.70 0.15 150)",
+      border: "oklch(0.55 0.18 150 / 0.3)",
+    },
+    Pending: {
+      bg: "oklch(0.68 0.20 48 / 0.15)",
+      text: "oklch(0.82 0.16 55)",
+      border: "oklch(0.68 0.20 48 / 0.3)",
+    },
+    Completed: {
+      bg: "oklch(0.55 0.10 240 / 0.15)",
+      text: "oklch(0.70 0.10 240)",
+      border: "oklch(0.55 0.10 240 / 0.3)",
+    },
   };
 
-  return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <button
-        type="button"
-        onClick={onBack}
-        className="flex items-center gap-2 mb-6 text-sm"
-        style={{ color: "oklch(0.78 0.14 75)" }}
-        data-ocid="puja.booking_back_button"
-      >
-        ← Back to Puja Details
-      </button>
-      <div
-        className="rounded-2xl border overflow-hidden"
-        style={{
-          background: "oklch(0.20 0.07 22)",
-          borderColor: "oklch(0.78 0.14 75 / 0.2)",
-        }}
-      >
-        {/* Header */}
+  if (!userId) {
+    return (
+      <Card>
+        <SectionHeading emoji="📋" title="My Bookings" />
         <div
-          className="p-5"
-          style={{
-            background: "oklch(0.22 0.08 22)",
-            borderBottom: "1px solid oklch(0.78 0.14 75 / 0.15)",
-          }}
+          className="text-center py-8"
+          data-ocid="puja_booking.my_bookings.empty_state"
         >
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">{puja.emoji}</span>
-            <div>
-              <h2
-                className="font-heading font-bold text-lg"
-                style={{ color: "oklch(0.92 0.06 75)" }}
-              >
-                Book: {puja.name}
-              </h2>
-              <p className="text-sm" style={{ color: "oklch(0.78 0.14 75)" }}>
-                {puja.price_range} · {puja.booking_type}
-              </p>
-            </div>
-          </div>
+          <div className="text-4xl mb-3">🔐</div>
+          <p className="text-sm" style={{ color: "oklch(0.65 0.04 55)" }}>
+            Login to view your booking history and manage upcoming pujas.
+          </p>
         </div>
+      </Card>
+    );
+  }
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-7">
-          {/* ──── SANKALP SECTION ──── */}
-          <div>
-            <h3
-              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              <span>🪔</span> Sankalp Details / संकल्प
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Devotee Name* / भक्त नाम
-                </Label>
-                <Input
-                  value={form.devoteeName}
-                  onChange={setF("devoteeName")}
-                  placeholder="Full name"
-                  required
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.devotee_name_input"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Gotra / गोत्र
-                </Label>
-                <Input
-                  value={form.gotra}
-                  onChange={setF("gotra")}
-                  placeholder="e.g. Kashyap, Bharadwaj"
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.gotra_input"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Father's Name / पिता का नाम
-                </Label>
-                <Input
-                  value={form.fatherName}
-                  onChange={setF("fatherName")}
-                  placeholder="Father's full name"
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.father_name_input"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Date of Birth / जन्म तिथि
-                </Label>
-                <Input
-                  type="date"
-                  value={form.dob}
-                  onChange={setF("dob")}
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.dob_input"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Phone* / मोबाइल
-                </Label>
-                <Input
-                  value={form.phone}
-                  onChange={setF("phone")}
-                  placeholder="+91 9876543210"
-                  required
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.phone_input"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  City / शहर
-                </Label>
-                <Input
-                  value={form.city}
-                  onChange={setF("city")}
-                  placeholder="Your city"
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.city_input"
-                />
-              </div>
-            </div>
-            <div className="space-y-2 mt-4">
-              <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                Wish / Sankalp Text / मनोकामना
-              </Label>
-              <Textarea
-                value={form.sankalpText}
-                onChange={setF("sankalpText")}
-                placeholder="Write your wish or sankalp (e.g. For health and prosperity of our family)..."
-                rows={2}
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                  color: "oklch(0.90 0.04 70)",
-                }}
-                data-ocid="puja.sankalp_textarea"
-              />
-            </div>
-          </div>
-
-          {/* ──── SCHEDULE ──── */}
-          <div>
-            <h3
-              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              <span>📅</span> Preferred Date &amp; Time
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Date* / तिथि
-                </Label>
-                <Input
-                  type="date"
-                  value={form.date}
-                  onChange={setF("date")}
-                  required
-                  min={new Date().toISOString().split("T")[0]}
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.date_input"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Time / समय
-                </Label>
-                <Input
-                  type="time"
-                  value={form.time}
-                  onChange={setF("time")}
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.time_input"
-                />
-              </div>
-            </div>
-            {puja.booking_type === "At Home" && (
-              <div className="space-y-2 mt-4">
-                <Label style={{ color: "oklch(0.82 0.06 70)" }}>
-                  Address / पता
-                </Label>
-                <Input
-                  value={form.location}
-                  onChange={setF("location")}
-                  placeholder="Full address for pandit visit"
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                    color: "oklch(0.90 0.04 70)",
-                  }}
-                  data-ocid="puja.location_input"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* ──── UPCOMING PUJAS CALENDAR ──── */}
-          <div>
-            <h3
-              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              <span>🗓️</span> Upcoming Sacred Events
-            </h3>
+  return (
+    <Card>
+      <SectionHeading
+        emoji="📋"
+        title="My Bookings"
+        subtitle="Your past and upcoming puja bookings"
+      />
+      <div className="space-y-3" data-ocid="puja_booking.my_bookings.list">
+        {mockBookings.map((bk, i) => {
+          const sc = statusColors[bk.status] ?? statusColors.Pending;
+          const timeLabel =
+            TIME_SLOTS.find((s) => s.id === bk.time)?.sublabel ?? bk.time;
+          const locLabel =
+            LOCATIONS.find((l) => l.id === bk.location)?.label ?? bk.location;
+          return (
             <div
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-              data-ocid="puja.upcoming_events"
+              key={bk.id}
+              className="rounded-xl p-4"
+              style={{
+                background: "oklch(0.22 0.07 22)",
+                border: "1px solid oklch(0.78 0.14 75 / 0.12)",
+              }}
+              data-ocid={`puja_booking.my_bookings.item.${i + 1}`}
             >
-              {UPCOMING_PUJAS.map((event) => (
-                <button
-                  key={event.id}
-                  type="button"
-                  onClick={() => {
-                    const eventDate = event.date.includes("/")
-                      ? event.date
-                      : new Date(event.date).toISOString().split("T")[0];
-                    if (!eventDate.includes("NaN"))
-                      setForm((f) => ({ ...f, date: eventDate }));
-                  }}
-                  className="flex items-start gap-3 p-3 rounded-xl text-left transition-all hover:scale-[1.01]"
-                  style={{
-                    background: "oklch(0.22 0.07 22)",
-                    border: "1px solid oklch(0.78 0.14 75 / 0.15)",
-                  }}
-                  data-ocid={`puja.event.${event.id}`}
-                >
-                  <span className="text-2xl mt-0.5">{event.emoji}</span>
-                  <div className="min-w-0">
-                    <p
-                      className="font-heading font-semibold text-sm"
-                      style={{ color: "oklch(0.88 0.06 75)" }}
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p
+                    className="font-heading font-semibold text-sm truncate"
+                    style={{ color: "oklch(0.88 0.06 75)" }}
+                  >
+                    {bk.pujaType}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                    <span
+                      className="flex items-center gap-1 text-xs"
+                      style={{ color: "oklch(0.65 0.04 55)" }}
                     >
-                      {event.name}
-                    </p>
-                    <p
-                      className="text-xs mt-0.5"
-                      style={{ color: "oklch(0.68 0.12 65)" }}
+                      <CalendarDays className="h-3 w-3" />
+                      {bk.date}
+                    </span>
+                    <span
+                      className="flex items-center gap-1 text-xs"
+                      style={{ color: "oklch(0.65 0.04 55)" }}
                     >
-                      {event.date} · {event.time}
-                    </p>
-                    <p
-                      className="text-xs"
-                      style={{ color: "oklch(0.60 0.04 55)" }}
+                      <Clock className="h-3 w-3" />
+                      {timeLabel}
+                    </span>
+                    <span
+                      className="flex items-center gap-1 text-xs"
+                      style={{ color: "oklch(0.65 0.04 55)" }}
                     >
-                      {event.type}
-                    </p>
+                      <MapPin className="h-3 w-3" />
+                      {locLabel}
+                    </span>
                   </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ──── DAAN / BHET ──── */}
-          <div>
-            <h3
-              className="font-heading font-semibold text-base mb-4 flex items-center gap-2"
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              <span>🪙</span> Daan / Bhet / Dakshina
-            </h3>
-            <div
-              className="flex flex-wrap gap-2 mb-3"
-              data-ocid="puja.dakshina_options"
-            >
-              {DAKSHINA_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() =>
-                    setForm((f) => ({ ...f, dakshina: opt.value }))
-                  }
-                  className="px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all"
+                  <p
+                    className="text-[10px] mt-1.5 font-mono"
+                    style={{ color: "oklch(0.55 0.04 50)" }}
+                  >
+                    Ref: {bk.id}
+                  </p>
+                </div>
+                <span
+                  className="shrink-0 px-2.5 py-1 rounded-full text-xs font-heading font-semibold"
                   style={{
-                    background:
-                      form.dakshina === opt.value
-                        ? "oklch(0.68 0.20 48)"
-                        : "oklch(0.22 0.07 22)",
-                    color:
-                      form.dakshina === opt.value
-                        ? "white"
-                        : "oklch(0.80 0.04 60)",
-                    border: `1px solid ${form.dakshina === opt.value ? "oklch(0.68 0.20 48)" : "oklch(0.78 0.14 75 / 0.2)"}`,
+                    background: sc.bg,
+                    color: sc.text,
+                    border: `1px solid ${sc.border}`,
                   }}
-                  data-ocid={`puja.dakshina.${opt.value}`}
                 >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-            {form.dakshina === "custom" && (
-              <Input
-                value={form.customDakshina}
-                onChange={setF("customDakshina")}
-                placeholder="Enter custom amount (₹)"
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                  color: "oklch(0.90 0.04 70)",
-                }}
-                data-ocid="puja.custom_dakshina_input"
-              />
-            )}
-            {/* Prasad + Video Darshan toggles */}
-            <div className="flex flex-col gap-3 mt-4">
-              <label
-                className="flex items-center gap-3 cursor-pointer p-3 rounded-lg"
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  border: "1px solid oklch(0.78 0.14 75 / 0.15)",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={form.prasadDelivery}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, prasadDelivery: e.target.checked }))
-                  }
-                  className="w-4 h-4 accent-amber-500"
-                  data-ocid="puja.prasad_delivery_checkbox"
-                />
-                <span
-                  className="text-sm"
-                  style={{ color: "oklch(0.85 0.06 70)" }}
-                >
-                  🙏 Prasad Home Delivery (add ₹99)
+                  {bk.status}
                 </span>
-              </label>
-              <label
-                className="flex items-center gap-3 cursor-pointer p-3 rounded-lg"
-                style={{
-                  background: "oklch(0.22 0.07 22)",
-                  border: "1px solid oklch(0.78 0.14 75 / 0.15)",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={form.videoDarshan}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, videoDarshan: e.target.checked }))
-                  }
-                  className="w-4 h-4 accent-amber-500"
-                  data-ocid="puja.video_darshan_checkbox"
-                />
-                <span
-                  className="text-sm"
-                  style={{ color: "oklch(0.85 0.06 70)" }}
-                >
-                  📹 Join via Video Darshan (Live puja stream link sent to your
-                  WhatsApp)
-                </span>
-              </label>
+              </div>
             </div>
-          </div>
-
-          <div
-            className="rounded-lg p-4"
-            style={{
-              background: "oklch(0.22 0.07 22)",
-              border: "1px solid oklch(0.78 0.14 75 / 0.15)",
-            }}
-          >
-            <p className="text-xs" style={{ color: "oklch(0.65 0.04 55)" }}>
-              By booking, you agree to our terms. Payment to be made upon
-              confirmation. Our pandit will contact you within 24 hours.
-              {form.videoDarshan &&
-                " A video link will be sent to your phone number."}
-            </p>
-          </div>
-
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 text-base font-heading font-semibold disabled:opacity-60"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
-              color: "white",
-            }}
-            data-ocid="puja.submit_button"
-          >
-            {isLoading
-              ? "Submitting Booking..."
-              : `🙏 Confirm Booking — ${puja.price_range}`}
-          </Button>
-        </form>
+          );
+        })}
       </div>
-    </div>
+    </Card>
   );
 }
 
+// ─── Confirmation Screen ──────────────────────────────────────────────────────
+
 function BookingConfirmation({
-  puja,
   bookingRef,
+  form,
   onReset,
-}: { puja: PujaItem; bookingRef: string; onReset: () => void }) {
+}: { bookingRef: string; form: PujaForm; onReset: () => void }) {
   return (
-    <div className="max-w-xl mx-auto px-4 py-16 text-center">
-      <div className="text-6xl mb-6">🎉</div>
+    <div className="max-w-lg mx-auto px-4 py-16 text-center">
+      <div className="text-6xl mb-4">🎉</div>
       <h2
-        className="font-decorative text-2xl font-bold mb-3"
-        style={{ color: "oklch(0.78 0.14 75)" }}
-        data-ocid="puja.success_state"
+        className="font-decorative text-2xl font-bold mb-2"
+        style={{ color: "oklch(0.88 0.14 75)" }}
+        data-ocid="puja_booking.success_state"
       >
         Booking Confirmed!
       </h2>
-      <p className="text-base mb-2" style={{ color: "oklch(0.88 0.06 75)" }}>
-        {puja.name}
+      <p className="text-sm mb-6" style={{ color: "oklch(0.70 0.04 60)" }}>
+        {form.pujaType} · {form.date}
       </p>
       <div
-        className="rounded-xl p-5 my-6"
+        className="rounded-xl p-5 mb-6"
         style={{
           background: "oklch(0.20 0.07 22)",
           border: "1px solid oklch(0.78 0.14 75 / 0.2)",
         }}
       >
-        <p className="text-sm mb-2" style={{ color: "oklch(0.65 0.04 55)" }}>
+        <p className="text-xs mb-1" style={{ color: "oklch(0.65 0.04 55)" }}>
           Booking Reference
         </p>
         <p
-          className="font-mono text-lg font-bold"
-          style={{ color: "oklch(0.78 0.14 75)" }}
+          className="font-mono text-xl font-bold"
+          style={{ color: "oklch(0.88 0.14 75)" }}
         >
           {bookingRef}
         </p>
         <p className="text-xs mt-3" style={{ color: "oklch(0.60 0.04 50)" }}>
-          Our team will contact you within 24 hours to confirm the details and
-          arrange payment.
+          Our team will contact you within 24 hours to confirm and arrange
+          payment.
         </p>
       </div>
       <div className="flex gap-3 justify-center">
         <Button
+          type="button"
           onClick={onReset}
           style={{
             background:
               "linear-gradient(135deg, oklch(0.68 0.20 48), oklch(0.58 0.18 40))",
             color: "white",
           }}
-          data-ocid="puja.book_another_button"
+          data-ocid="puja_booking.book_another_button"
         >
           Book Another Puja
         </Button>
@@ -1332,120 +1230,85 @@ function BookingConfirmation({
   );
 }
 
+// ─── Main Page ───────────────────────────────────────────────────────────────
+
 export default function PujaBooking() {
-  const [view, setView] = useState<ViewState>("list");
-  const [selectedPuja, setSelectedPuja] = useState<PujaItem | null>(null);
-  const [search, setSearch] = useState("");
-  const [faithFilter, setFaithFilter] = useState<"All" | "Hindu" | "Jain">(
-    "All",
-  );
-  const [typeFilter, setTypeFilter] = useState<
-    "All" | "Online" | "At Temple" | "At Home"
-  >("All");
+  const [form, setForm] = useState<PujaForm>({ ...defaultForm });
+  const [confirmed, setConfirmed] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
   const { identity } = useInternetIdentity();
   const createBooking = useCreatePujaBooking();
+  const { data: _profile } = useGetCallerUserProfile();
 
-  const filtered = pujaItems.filter((p) => {
-    const matchSearch =
-      !search ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.hindi_name.includes(search) ||
-      p.deity.toLowerCase().includes(search.toLowerCase());
-    const matchFaith = faithFilter === "All" || p.faith === faithFilter;
-    const matchType = typeFilter === "All" || p.booking_type === typeFilter;
-    return matchSearch && matchFaith && matchType;
-  });
+  const isLoggedIn = !!identity;
+  const userId = identity ? identity.getPrincipal().toString() : null;
 
-  const handleBook = async (form: BookingForm) => {
-    if (!selectedPuja) return;
-    if (!identity) {
-      toast.error("Please login to book a puja.", {
-        description: "Use the Login button in the header.",
-      });
+  const handleEventSelect = (ev: (typeof PUJA_EVENTS)[0]) => {
+    setForm((f) => ({ ...f, date: ev.date, pujaType: f.pujaType || ev.name }));
+  };
+
+  const handleSubmit = async () => {
+    if (!form.pujaType || !form.date || !form.timeSlot || !form.locationMode) {
+      toast.error("Please fill in puja type, date, time slot, and location.");
       return;
     }
-    const ref = `PB-${Date.now().toString(36).toUpperCase()}-${selectedPuja.id.slice(0, 4).toUpperCase()}`;
-    const dakshinaAmt =
-      form.dakshina === "custom" ? form.customDakshina : form.dakshina;
+    if (!form.fullName) {
+      toast.error("Please enter your name for the Sankalp.");
+      return;
+    }
+    const ref = `PB-${Date.now().toString(36).toUpperCase()}`;
+    const specialWishes = [
+      `Gotra: ${form.gotra}`,
+      `Father: ${form.fatherName}`,
+      `Nakshatra: ${form.nakshatra}`,
+      `Rashi: ${form.rashi}`,
+      `Intention: ${form.intention}`,
+      `Family Members: ${form.familyMembers}`,
+      `Daan: ₹${form.daanAmount ?? form.customDaan}`,
+      `Daan Purpose: ${form.daanPurpose}`,
+      `Location Detail: ${form.cityAddress}`,
+    ]
+      .filter((s) => !s.endsWith(": "))
+      .join(" | ");
+
     try {
-      await createBooking.mutateAsync({
-        id: ref,
-        userId: identity.getPrincipal(),
-        templeId: selectedPuja.id,
-        devoteeName: form.devoteeName,
-        gotra: form.gotra,
-        pujaType: selectedPuja.name,
-        preferredDate: `${form.date}T${form.time || "06:00"}`,
-        specialWishes: [
-          `Phone: ${form.phone}`,
-          `City: ${form.city}`,
-          `Father: ${form.fatherName}`,
-          `DOB: ${form.dob}`,
-          `Sankalp: ${form.sankalpText}`,
-          `Dakshina: ₹${dakshinaAmt}`,
-          `Prasad Delivery: ${form.prasadDelivery ? "Yes" : "No"}`,
-          `Video Darshan: ${form.videoDarshan ? "Yes" : "No"}`,
-          `Location: ${form.location}`,
-        ].join("\n"),
-        status: "pending",
-        createdAt: BigInt(Date.now()),
-      });
+      if (identity) {
+        await createBooking.mutateAsync({
+          id: ref,
+          userId: identity.getPrincipal(),
+          templeId: form.locationMode,
+          devoteeName: form.fullName,
+          gotra: form.gotra,
+          pujaType: form.pujaType,
+          preferredDate: `${form.date}T${form.timeSlot}`,
+          specialWishes,
+          status: "pending",
+          createdAt: BigInt(Date.now()),
+        });
+      }
       setBookingRef(ref);
-      setView("confirmed");
+      setConfirmed(true);
       toast.success("Booking submitted!", { description: `Ref: ${ref}` });
     } catch {
-      // Offline fallback
       setBookingRef(ref);
-      setView("confirmed");
+      setConfirmed(true);
       toast.success("Booking recorded!", { description: `Ref: ${ref}` });
     }
   };
 
-  if (view === "confirmed" && selectedPuja) {
+  if (confirmed) {
     return (
       <div
         className="min-h-screen"
         style={{ background: "oklch(0.14 0.05 20)" }}
       >
         <BookingConfirmation
-          puja={selectedPuja}
           bookingRef={bookingRef}
+          form={form}
           onReset={() => {
-            setView("list");
-            setSelectedPuja(null);
+            setConfirmed(false);
+            setForm({ ...defaultForm });
           }}
-        />
-      </div>
-    );
-  }
-
-  if (view === "book" && selectedPuja) {
-    return (
-      <div
-        className="min-h-screen"
-        style={{ background: "oklch(0.14 0.05 20)" }}
-      >
-        <BookingFormView
-          puja={selectedPuja}
-          onConfirm={handleBook}
-          onBack={() => setView("detail")}
-          isLoading={createBooking.isPending}
-        />
-      </div>
-    );
-  }
-
-  if (view === "detail" && selectedPuja) {
-    return (
-      <div
-        className="min-h-screen"
-        style={{ background: "oklch(0.14 0.05 20)" }}
-      >
-        <PujaDetail
-          puja={selectedPuja}
-          onBook={() => setView("book")}
-          onBack={() => setView("list")}
         />
       </div>
     );
@@ -1455,183 +1318,82 @@ export default function PujaBooking() {
     <div className="min-h-screen" style={{ background: "oklch(0.14 0.05 20)" }}>
       {/* Hero */}
       <div
-        className="py-12 px-4"
+        className="py-14 px-4 text-center"
         style={{
           background:
-            "linear-gradient(135deg, oklch(0.20 0.08 22) 0%, oklch(0.16 0.06 20) 100%)",
+            "linear-gradient(135deg, oklch(0.20 0.09 22) 0%, oklch(0.16 0.06 20) 50%, oklch(0.18 0.08 32) 100%)",
           borderBottom: "1px solid oklch(0.78 0.14 75 / 0.15)",
         }}
       >
-        <div className="container mx-auto max-w-5xl text-center">
+        <div className="container mx-auto max-w-3xl">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-heading font-semibold tracking-wider"
+            style={{
+              background: "oklch(0.68 0.20 48 / 0.15)",
+              border: "1px solid oklch(0.68 0.20 48 / 0.35)",
+              color: "oklch(0.82 0.14 65)",
+            }}
+          >
+            <Star className="h-3 w-3" /> SACRED PUJA BOOKING
+          </div>
           <h1
             className="font-decorative text-4xl md:text-5xl font-bold mb-3"
-            style={{ color: "oklch(0.78 0.14 75)" }}
+            style={{ color: "oklch(0.88 0.14 75)" }}
           >
-            🙏 Puja Booking
+            Book a Sacred Puja
           </h1>
-          <p className="text-lg mb-1" style={{ color: "oklch(0.88 0.06 75)" }}>
-            पूजा बुकिंग — Hindu & Jain Sacred Ceremonies
+          <p className="text-lg mb-2" style={{ color: "oklch(0.78 0.10 70)" }}>
+            पवित्र पूजा बुकिंग करें
           </p>
           <p
-            className="text-sm max-w-2xl mx-auto mb-8"
+            className="text-sm max-w-xl mx-auto"
             style={{ color: "oklch(0.65 0.04 55)" }}
           >
-            Book authentic pujas performed by qualified pandits. Online, at
-            temple, or at your home. Choose from 20 sacred ceremonies.
+            Authentic pujas by qualified pandits — online, at temple, or at your
+            home. Personalized Sankalp, Daan options, and Video Darshan
+            included.
           </p>
-
-          {/* Search */}
-          <div className="relative max-w-md mx-auto mb-6">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-              style={{ color: "oklch(0.60 0.05 55)" }}
-            />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search puja name, deity, or occasion..."
-              className="pl-10 border"
-              style={{
-                background: "oklch(0.22 0.07 22)",
-                borderColor: "oklch(0.78 0.14 75 / 0.2)",
-                color: "oklch(0.90 0.04 70)",
-              }}
-              data-ocid="puja.search_input"
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            {(["All", "Hindu", "Jain"] as const).map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setFaithFilter(f)}
-                className="px-4 py-1.5 rounded-full text-xs font-heading font-medium transition-all"
-                style={{
-                  background:
-                    faithFilter === f
-                      ? "oklch(0.68 0.20 48)"
-                      : "oklch(0.22 0.07 22)",
-                  color: faithFilter === f ? "white" : "oklch(0.80 0.04 60)",
-                  border: `1px solid ${faithFilter === f ? "oklch(0.68 0.20 48)" : "oklch(0.78 0.14 75 / 0.2)"}`,
-                }}
-                data-ocid={`puja.faith_filter.${f.toLowerCase()}`}
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            {[
+              { icon: "🛕", label: "Authentic Pandits" },
+              { icon: "📿", label: "Personalized Sankalp" },
+              { icon: "📹", label: "Video Darshan" },
+              { icon: "🚚", label: "Prasad Delivery" },
+            ].map((f) => (
+              <div
+                key={f.label}
+                className="flex items-center gap-1.5 text-xs"
+                style={{ color: "oklch(0.75 0.08 65)" }}
               >
-                {f}
-              </button>
-            ))}
-            <span
-              className="w-px h-5 self-center"
-              style={{ background: "oklch(0.78 0.14 75 / 0.2)" }}
-            />
-            {(["All", "Online", "At Temple", "At Home"] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTypeFilter(t)}
-                className="px-4 py-1.5 rounded-full text-xs font-heading font-medium transition-all"
-                style={{
-                  background:
-                    typeFilter === t
-                      ? "oklch(0.55 0.15 200)"
-                      : "oklch(0.22 0.07 22)",
-                  color: typeFilter === t ? "white" : "oklch(0.80 0.04 60)",
-                  border: `1px solid ${typeFilter === t ? "oklch(0.55 0.15 200)" : "oklch(0.78 0.14 75 / 0.2)"}`,
-                }}
-                data-ocid={`puja.type_filter.${t.toLowerCase().replace(/\s+/g, "_")}`}
-              >
-                {t}
-              </button>
+                <span>{f.icon}</span>
+                {f.label}
+              </div>
             ))}
           </div>
         </div>
       </div>
 
-      <VideoDarshan />
-      {/* Puja Grid */}
+      {/* Content Grid */}
       <div className="container mx-auto max-w-6xl px-4 py-10">
-        {filtered.length === 0 ? (
-          <div className="text-center py-20" data-ocid="puja.empty_state">
-            <p
-              className="text-lg mb-3"
-              style={{ color: "oklch(0.65 0.04 55)" }}
-            >
-              No pujas found matching your filters
-            </p>
-            <Button
-              variant="link"
-              onClick={() => {
-                setSearch("");
-                setFaithFilter("All");
-                setTypeFilter("All");
-              }}
-              style={{ color: "oklch(0.78 0.14 75)" }}
-            >
-              Clear all filters
-            </Button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main column */}
+          <div className="lg:col-span-2 space-y-8">
+            <EventCalendar onSelectEvent={handleEventSelect} />
+            <PujaSelection form={form} setForm={setForm} />
+            <SankalpForm form={form} setForm={setForm} />
+            <DaanSection form={form} setForm={setForm} />
+            <VideoDarshanSection />
           </div>
-        ) : (
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-            data-ocid="puja.list"
-          >
-            {filtered.map((puja) => (
-              <PujaCard
-                key={puja.id}
-                puja={puja}
-                onSelect={() => {
-                  setSelectedPuja(puja);
-                  setView("detail");
-                }}
-                onBook={() => {
-                  setSelectedPuja(puja);
-                  setView("book");
-                }}
-              />
-            ))}
+          {/* Sidebar */}
+          <div className="space-y-8">
+            <BookingSummary
+              form={form}
+              onSubmit={handleSubmit}
+              isLoading={createBooking.isPending}
+              isLoggedIn={isLoggedIn}
+            />
+            <MyBookings userId={userId} />
           </div>
-        )}
-
-        {/* Info section */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[
-            {
-              emoji: "🏠",
-              title: "At Home Service",
-              desc: "Qualified pandits come to your home. Available in 500+ cities across India.",
-            },
-            {
-              emoji: "🛕",
-              title: "Temple Booking",
-              desc: "Book pujas at major temples. Your sankalp and name read during the ritual.",
-            },
-            {
-              emoji: "💻",
-              title: "Online Puja",
-              desc: "Live-streamed puja with priest. You participate via video call in real time.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-xl p-5 text-center"
-              style={{
-                background: "oklch(0.20 0.07 22)",
-                border: "1px solid oklch(0.78 0.14 75 / 0.15)",
-              }}
-            >
-              <div className="text-3xl mb-3">{item.emoji}</div>
-              <h3
-                className="font-heading font-semibold mb-2"
-                style={{ color: "oklch(0.88 0.06 75)" }}
-              >
-                {item.title}
-              </h3>
-              <p className="text-sm" style={{ color: "oklch(0.65 0.04 55)" }}>
-                {item.desc}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </div>

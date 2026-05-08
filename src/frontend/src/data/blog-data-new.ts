@@ -15,6 +15,7 @@ export interface BlogArticleNew {
   excerpt: string;
   createdAt: number;
   updatedAt: number;
+  audioUrl?: string;
 }
 
 export type NewCategory =
